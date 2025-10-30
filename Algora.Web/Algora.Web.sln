@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Web", "Algora.Web.csproj", "{9A0FC832-E6D8-4426-8C80-C53434DA7AA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.API", "..\Algora.API\Algora.API.csproj", "{E5C75DB6-30E6-4D8A-B8A6-F85668CDCA38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Application", "..\Algora.Application\Algora.Application.csproj", "{6D309083-9272-4A1F-9015-86E2B3767BC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Domain", "..\Algora.Domain\Algora.Domain.csproj", "{88C4917C-4F8E-4100-834A-21618F6D49C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Infrastructure", "..\Algora.Infrastructure\Algora.Infrastructure.csproj", "{021D9B2F-29C9-40B6-AC3C-A4545FB8A105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Tests", "..\Algora.Tests\Algora.Tests.csproj", "{6792CB00-C19C-4FF2-828E-C2594C8F92F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.IntegrationTests", "..\Algora.IntegrationTests\Algora.IntegrationTests.csproj", "{4272CA30-06E0-414B-B29A-1FE8299EB3B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A0FC832-E6D8-4426-8C80-C53434DA7AA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A0FC832-E6D8-4426-8C80-C53434DA7AA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A0FC832-E6D8-4426-8C80-C53434DA7AA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A0FC832-E6D8-4426-8C80-C53434DA7AA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C75DB6-30E6-4D8A-B8A6-F85668CDCA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C75DB6-30E6-4D8A-B8A6-F85668CDCA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C75DB6-30E6-4D8A-B8A6-F85668CDCA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C75DB6-30E6-4D8A-B8A6-F85668CDCA38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D309083-9272-4A1F-9015-86E2B3767BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D309083-9272-4A1F-9015-86E2B3767BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D309083-9272-4A1F-9015-86E2B3767BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D309083-9272-4A1F-9015-86E2B3767BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88C4917C-4F8E-4100-834A-21618F6D49C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88C4917C-4F8E-4100-834A-21618F6D49C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88C4917C-4F8E-4100-834A-21618F6D49C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88C4917C-4F8E-4100-834A-21618F6D49C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{021D9B2F-29C9-40B6-AC3C-A4545FB8A105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{021D9B2F-29C9-40B6-AC3C-A4545FB8A105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{021D9B2F-29C9-40B6-AC3C-A4545FB8A105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{021D9B2F-29C9-40B6-AC3C-A4545FB8A105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6792CB00-C19C-4FF2-828E-C2594C8F92F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6792CB00-C19C-4FF2-828E-C2594C8F92F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6792CB00-C19C-4FF2-828E-C2594C8F92F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6792CB00-C19C-4FF2-828E-C2594C8F92F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4272CA30-06E0-414B-B29A-1FE8299EB3B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4272CA30-06E0-414B-B29A-1FE8299EB3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4272CA30-06E0-414B-B29A-1FE8299EB3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4272CA30-06E0-414B-B29A-1FE8299EB3B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C96BF0B-2609-4E0F-AD56-7F779A0B74C4}
+	EndGlobalSection
+EndGlobal
