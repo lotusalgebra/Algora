@@ -4,9 +4,9 @@ using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ShopifySharp;
-using ShopifySharp.Infrastructure;
-using System;
-
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ var config = builder.Configuration;
 
 
 builder.Services.Configure<ShopifyOptions>(config.GetSection("Shopify"));
-//builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
+builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
 builder.Services.AddScoped<IShopifyOAuthService, ShopifyOAuthService>();
 builder.Services.AddScoped<IShopifyGraphService, ShopifyGraphService>();
 builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen();
 
 
 // Add services to the container.
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -78,6 +79,12 @@ app.MapGet("/api/products", async ([FromQuery] string shop, IShopifyOAuthService
     var query = "{\n  products(first: 20) {\n    edges {\n      node {\n        id\n        title\n        status\n      }\n    }\n  }\n}";
     var json = await graph.PostAsync(shop, token, query);
     return Results.Content(json, "application/json");
+});
+
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/dashboard");
+    return Task.CompletedTask;
 });
 
 app.UseRouting();
