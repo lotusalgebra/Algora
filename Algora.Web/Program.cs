@@ -9,32 +9,41 @@ var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
 
+// Bind Shopify-related configuration from appsettings.json -> Shopify section
 builder.Services.Configure<ShopifyOptions>(config.GetSection("Shopify"));
 
-// Optional: make the bound options instance directly available if you need the POCO
+// Optional: expose the bound ShopifyOptions POCO directly for code that prefers the concrete type
+// Prefer injecting IOptions<ShopifyOptions> into services where possible.
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ShopifyOptions>>().Value);
 
+// Configure EF Core with SQLite using the "Default" connection string (fallback to local file)
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
 
+// Register infrastructure services (repository, shop context, Shopify clients, app services).
+// The extension method AddInfrastructureServices centralizes registrations to keep Program.cs tidy.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add services to the container.
+// Add Razor Pages support for the UI (this is a Razor Pages project)
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
+    // Enable swagger in development to inspect APIs quickly
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-// OAuth install
+// OAuth install endpoint
+// - Accepts `shop` as query string and builds the OAuth install URL for the merchant.
+// - Saves a short-lived `state` cookie to validate the callback.
 app.MapGet("/auth/install", ([FromQuery] string shop, [FromServices] IOptions<ShopifyOptions> opt, HttpResponse res) =>
 {
     var state = Guid.NewGuid().ToString("N");
@@ -43,7 +52,9 @@ app.MapGet("/auth/install", ([FromQuery] string shop, [FromServices] IOptions<Sh
     return Results.Redirect(url);
 });
 
-// OAuth callback
+// OAuth callback endpoint
+// - Validates HMAC and state cookie then exchanges the temporary code for a permanent access token.
+// - On success redirects to the application UI.
 app.MapGet("/auth/callback", async (HttpContext http, [FromServices] IOptions<ShopifyOptions> opt, [FromServices] IShopifyOAuthService oauth) =>
 {
     var q = http.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
@@ -56,7 +67,9 @@ app.MapGet("/auth/callback", async (HttpContext http, [FromServices] IOptions<Sh
     return Results.Redirect("/app?shop=" + shop);
 });
 
-// Webhooks
+// Webhooks receiver
+// - Validates the webhook HMAC and persists the raw payload to the database for auditing/troubleshooting.
+// - Keeps the handler minimal and fast; heavy work should be queued to background processing.
 app.MapPost("/webhooks/{topic}", async (HttpRequest req, [FromRoute] string topic, [FromServices] IOptions<ShopifyOptions> opt, [FromServices] AppDbContext db) =>
 {
     var shop = req.Headers["X-Shopify-Shop-Domain"].ToString();
@@ -70,7 +83,9 @@ app.MapPost("/webhooks/{topic}", async (HttpRequest req, [FromRoute] string topi
     return Results.Ok();
 });
 
-// Example GraphQL API
+// Example GraphQL proxy endpoint
+// - Demonstrates how to call the Shopify GraphQL wrapper service.
+// - Expects `shop` query parameter and uses IShopifyOAuthService to obtain the stored access token.
 app.MapGet("/api/products", async ([FromQuery] string shop, [FromServices] IShopifyOAuthService oauth, [FromServices] IShopifyGraphService graph) =>
 {
     var token = await oauth.GetAccessTokenAsync(shop);
@@ -81,14 +96,18 @@ app.MapGet("/api/products", async ([FromQuery] string shop, [FromServices] IShop
     return Results.Content(json, "application/json");
 });
 
+// Root redirect to application's dashboard
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/dashboard");
     return Task.CompletedTask;
 });
 
+// Routing & authorization middleware for Razor Pages
 app.UseRouting();
 app.UseAuthorization();
+
+// Static assets mapping and Razor Pages endpoints
 app.MapStaticAssets();
 app.MapRazorPages().WithStaticAssets();
 
