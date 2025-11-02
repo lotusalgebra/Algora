@@ -1,5 +1,6 @@
 ﻿using Algora.Application.Interfaces;
 using Algora.Domain.Entities;
+using Algora.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;

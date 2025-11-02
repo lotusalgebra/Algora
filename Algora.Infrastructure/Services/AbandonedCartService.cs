@@ -1,4 +1,4 @@
-﻿using Algora.Application.DTOs.Order;
+﻿using Algora.Application.DTOs;
 using Algora.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 

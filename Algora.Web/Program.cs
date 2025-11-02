@@ -1,5 +1,6 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
+using Algora.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

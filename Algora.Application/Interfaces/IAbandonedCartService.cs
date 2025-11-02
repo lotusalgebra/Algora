@@ -1,9 +1,4 @@
-﻿using Algora.Application.DTOs.Order;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Algora.Application.DTOs;
 
 namespace Algora.Application.Interfaces
 {

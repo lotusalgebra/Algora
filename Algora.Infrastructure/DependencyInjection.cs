@@ -1,7 +1,9 @@
 ﻿using Algora.Application.Interfaces;
+using Algora.Infrastructure.Licensing;
 using Algora.Infrastructure.Persistence;
 using Algora.Infrastructure.Services;
 using Algora.Infrastructure.Shopify;
+using Algora.Infrastructure.Shopify.Billing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +29,10 @@ public static class DependencyInjection
         // Template and PDF generation
         services.AddScoped<IInvoiceTemplateService, InvoiceTemplateService>();
         services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
+
+        services.AddScoped<IShopifyBillingService, ShopifyBillingService>();
+        services.AddScoped<ILicenseService, LicenseService>();
+
 
         services.AddRepositoryLayer();
 

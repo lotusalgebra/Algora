@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Algora.Application.DTOs.Order
+namespace Algora.Application.DTOs
 {
     public record CartItemDto
     {
