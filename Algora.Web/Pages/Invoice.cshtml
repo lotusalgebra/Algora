@@ -1,0 +1,52 @@
+﻿@page
+@model Algora.Application.DTOs.InvoicePdfDto
+@{
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        .header { border-bottom: 3px solid #222; margin-bottom: 20px; }
+        .company { font-size: 22px; font-weight: bold; color: #004aad; }
+        .invoice { float: right; }
+        .items th, .items td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+        .total { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company">Algora E-Commerce</div>
+        <div class="invoice">Invoice #: @Model.InvoiceNumber<br />Date: @Model.InvoiceDate.ToShortDateString()</div>
+    </div>
+
+    <h3>Billing To:</h3>
+    <p>@Model.CustomerName<br />@Model.CustomerEmail<br />@Model.BillingAddress</p>
+
+    <h3>Items:</h3>
+    <table class="items" width="100%">
+        <thead>
+            <tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Lines)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Total.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <h3 style="text-align:right;">
+        Subtotal: @Model.Subtotal.ToString("C")<br/>
+        Tax: @Model.Tax.ToString("C")<br/>
+        <span class="total">Total: @Model.Total.ToString("C")</span>
+    </h3>
+</body>
+</html>

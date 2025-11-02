@@ -1,28 +1,28 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
-using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ShopifySharp;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
 
-
 builder.Services.Configure<ShopifyOptions>(config.GetSection("Shopify"));
-builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
-builder.Services.AddScoped<IShopifyOAuthService, ShopifyOAuthService>();
-builder.Services.AddScoped<IShopifyGraphService, ShopifyGraphService>();
+
+// Optional: make the bound options instance directly available if you need the POCO
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<ShopifyOptions>>().Value);
+
+builder.Services.AddDbContext<AppDbContext>(o =>
+    o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 // Add services to the container.
-
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // OAuth install
-app.MapGet("/auth/install", ([FromQuery] string shop, IOptions<ShopifyOptions> opt, HttpResponse res) =>
+app.MapGet("/auth/install", ([FromQuery] string shop, [FromServices] IOptions<ShopifyOptions> opt, HttpResponse res) =>
 {
     var state = Guid.NewGuid().ToString("N");
     res.Cookies.Append("state", state, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.None });
@@ -44,7 +44,7 @@ app.MapGet("/auth/install", ([FromQuery] string shop, IOptions<ShopifyOptions> o
 });
 
 // OAuth callback
-app.MapGet("/auth/callback", async (HttpContext http, IOptions<ShopifyOptions> opt, IShopifyOAuthService oauth) =>
+app.MapGet("/auth/callback", async (HttpContext http, [FromServices] IOptions<ShopifyOptions> opt, [FromServices] IShopifyOAuthService oauth) =>
 {
     var q = http.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
     if (!q.TryGetValue("shop", out var shop) || !q.TryGetValue("code", out var code)) return Results.BadRequest("Missing shop/code");
@@ -57,7 +57,7 @@ app.MapGet("/auth/callback", async (HttpContext http, IOptions<ShopifyOptions> o
 });
 
 // Webhooks
-app.MapPost("/webhooks/{topic}", async (HttpRequest req, string topic, IOptions<ShopifyOptions> opt, AppDbContext db) =>
+app.MapPost("/webhooks/{topic}", async (HttpRequest req, [FromRoute] string topic, [FromServices] IOptions<ShopifyOptions> opt, [FromServices] AppDbContext db) =>
 {
     var shop = req.Headers["X-Shopify-Shop-Domain"].ToString();
     var hmacHeader = req.Headers["X-Shopify-Hmac-Sha256"].ToString();
@@ -71,7 +71,7 @@ app.MapPost("/webhooks/{topic}", async (HttpRequest req, string topic, IOptions<
 });
 
 // Example GraphQL API
-app.MapGet("/api/products", async ([FromQuery] string shop, IShopifyOAuthService oauth, IShopifyGraphService graph) =>
+app.MapGet("/api/products", async ([FromQuery] string shop, [FromServices] IShopifyOAuthService oauth, [FromServices] IShopifyGraphService graph) =>
 {
     var token = await oauth.GetAccessTokenAsync(shop);
     if (string.IsNullOrEmpty(token)) return Results.Unauthorized();
