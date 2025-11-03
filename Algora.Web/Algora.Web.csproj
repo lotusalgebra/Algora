@@ -17,4 +17,9 @@
     <ProjectReference Include="..\Algora.Infrastructure\Algora.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Marketing\" />
+    <Folder Include="Pages\Order\" />
+  </ItemGroup>
+
 </Project>

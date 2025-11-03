@@ -2,11 +2,9 @@ using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ShopifySharp;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
