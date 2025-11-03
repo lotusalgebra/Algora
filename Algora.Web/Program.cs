@@ -23,6 +23,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
@@ -45,7 +49,6 @@ static bool IsValidShopifyHmac(string secret, IQueryCollection query)
     if (!query.TryGetValue("hmac", out var hmacValues)) return false;
     var hmac = hmacValues.ToString();
 
-    // Build message string from query excluding hmac and signature, sorted by key
     var items = query
         .Where(kv => kv.Key != "hmac" && kv.Key != "signature")
         .Select(kv => new KeyValuePair<string, string>(kv.Key, kv.Value.ToString()))
@@ -67,19 +70,15 @@ app.MapGet("/auth/callback", async (HttpContext http, [FromServices] ShopifyOpti
     var code = q["code"].ToString();
     var state = q["state"].ToString();
 
-    // Validate state cookie
     if (!http.Request.Cookies.TryGetValue("shopify_state", out var savedState) || savedState != state)
         return Results.BadRequest("Invalid state");
 
-    // Validate HMAC
     if (!IsValidShopifyHmac(opt.ApiSecret, http.Request.Query))
         return Results.BadRequest("Invalid HMAC");
 
-    // Exchange temporary code for access token and persist via IShopifyOAuthService
     try
     {
         var token = await oauth.ExchangeCodeForTokenAsync(shop, code);
-        // optional: return success UI or redirect to SPA/admin area
         return Results.Redirect("/dashboard");
     }
     catch (Exception ex)
