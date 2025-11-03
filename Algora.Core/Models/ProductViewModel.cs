@@ -13,6 +13,7 @@ namespace Algora.Core.Models
         public string Description { get; set; } = string.Empty;
         public string Tags { get; set; } = string.Empty;
         public string Vendor { get; set; } = string.Empty;
+        public int Stock { get; set; }
         public decimal Price { get; set; }
     }
 }

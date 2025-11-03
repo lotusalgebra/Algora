@@ -1,0 +1,14 @@
+﻿@using Algora.Core.Models
+@model ProductViewModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+<h2>@Model.Title</h2>
+<p><strong>Price:</strong> ₹@Model.Price</p>
+<p><strong>Stock:</strong> @Model.Stock</p>
+<p><strong>Tags:</strong> @Model.Tags</p>
+<p><strong>Description:</strong></p>
+<p>@Model.Description</p>
+
+<a href="/products/edit/@Model.Id" class="btn btn-warning">Edit</a>
+<a href="/products" class="btn btn-secondary">Back</a>

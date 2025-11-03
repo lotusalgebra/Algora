@@ -1,0 +1,12 @@
+﻿@using Algora.Core.Models
+@model ProductViewModel
+@{
+    ViewData["Title"] = "Delete Product";
+}
+<h3>Are you sure you want to delete this product?</h3>
+<p><strong>@Model.Title</strong> (₹@Model.Price)</p>
+
+<form method="post" action="/products/delete/@Model.Id">
+    <button class="btn btn-danger">Delete</button>
+    <a href="/products" class="btn btn-secondary">Cancel</a>
+</form>

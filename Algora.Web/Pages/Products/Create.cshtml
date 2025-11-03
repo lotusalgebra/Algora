@@ -1,0 +1,32 @@
+﻿@using Algora.Core.Models
+@model ProductViewModel
+@{
+    ViewData["Title"] = "Add Product";
+}
+<h2>Add New Product</h2>
+<form method="post" class="mt-3">
+    <div class="mb-3">
+        <label>Title</label>
+        <input asp-for="Title" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label>Price (₹)</label>
+            <input asp-for="Price" type="number" step="0.01" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label>Stock</label>
+            <input asp-for="Stock" type="number" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label>Tags</label>
+            <input asp-for="Tags" class="form-control" placeholder="comma-separated" />
+        </div>
+    </div>
+    <button class="btn btn-success">Save</button>
+    <a href="/products" class="btn btn-secondary">Cancel</a>
+</form>

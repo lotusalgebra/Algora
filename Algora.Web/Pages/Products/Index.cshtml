@@ -1,4 +1,43 @@
-﻿@page
-@model Algora.Web.Pages.Products.IndexModel
+﻿@using Algora.Core.Models
+@model IEnumerable<ProductViewModel>
 @{
+    ViewData["Title"] = "Products";
 }
+
+<h2 class="mb-3">Product Management</h2>
+
+<form method="get" class="d-flex mb-3">
+    <input type="text" name="search" value="@ViewBag.Search" class="form-control me-2" placeholder="Search by name or tag" />
+    <button class="btn btn-outline-primary">Search</button>
+    <a href="/products/create" class="btn btn-primary ms-2">Add Product</a>
+</form>
+
+<table class="table table-bordered table-striped align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Price (₹)</th>
+            <th>Stock</th>
+            <th>Tags</th>
+            <th style="width:180px">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Title</td>
+                <td>@p.Price</td>
+                <td>@p.Stock</td>
+                <td>@p.Tags</td>
+                <td>
+                    <a class="btn btn-sm btn-info" href="/products/details/@p.Id">View</a>
+                    <a class="btn btn-sm btn-warning" href="/products/edit/@p.Id">Edit</a>
+                    <a class="btn btn-sm btn-danger" href="/products/delete/@p.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

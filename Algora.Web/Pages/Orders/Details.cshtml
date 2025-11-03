@@ -1,0 +1,40 @@
+﻿@using Algora.Core.Models
+@model OrderViewModel
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+<h3>Order #@Model.Id</h3>
+<p><strong>Customer:</strong> @Model.CustomerName (@Model.Email)</p>
+<p><strong>Status:</strong> <span class="badge bg-secondary">@Model.Status</span></p>
+<p><strong>Date:</strong> @Model.Date.ToString("dd MMM yyyy")</p>
+
+<hr />
+<h5>Shipping Info</h5>
+<p>@Model.ShippingAddress</p>
+
+<h5>Billing Info</h5>
+<p>@Model.BillingAddress</p>
+
+<h5>Items</h5>
+<table class="table table-bordered">
+    <thead><tr><th>Item</th><th>Qty</th><th>Price (₹)</th><th>Subtotal</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Qty</td>
+                <td>@item.Price</td>
+                <td>@(item.Price* item.Qty)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p><strong>Total:</strong> ₹@Model.TotalAmount</p>
+
+<div class="mt-3">
+    <a href="/orders/editstatus/@Model.Id" class="btn btn-warning">Update Status</a>
+    <a href="/orders" class="btn btn-secondary">Back</a>
+    <a href="#" class="btn btn-outline-success">📄 Generate Invoice</a>
+    <a href="#" class="btn btn-outline-primary">💬 WhatsApp Update</a>
+</div>
