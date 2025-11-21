@@ -9,6 +9,12 @@ using System.Text.Json;
 
 namespace Algora.Infrastructure.AI;
 
+/// <summary>
+/// Service that generates marketing-ready product descriptions using an AI provider (OpenAI).
+/// - Reads optional defaults from configuration (OpenAI:ApiKey, OpenAI:Model, OpenAI:Temperature, OpenAI:MaxTokens).
+/// - Does not hardcode model or runtime parameters; callers may provide them explicitly.
+/// - Maps supplied model properties into a prompt and extracts the AI response into <see cref="ProductDescriptionDto"/>.
+/// </summary>
 public class AiProductDescriptionService : IAiProductDescriptionService
 {
     private readonly ILogger<AiProductDescriptionService> _logger;
@@ -18,6 +24,14 @@ public class AiProductDescriptionService : IAiProductDescriptionService
     private readonly double? _defaultTemperature;
     private readonly int? _defaultMaxTokens;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="AiProductDescriptionService"/>.
+    /// Expects an OpenAI API key to be present at configuration key "OpenAI:ApiKey".
+    /// Optionally reads default model, temperature and max tokens from configuration.
+    /// </summary>
+    /// <param name="config">Configuration used to read OpenAI settings.</param>
+    /// <param name="logger">Logger instance.</param>
+    /// <param name="httpFactory">Optional <see cref="IHttpClientFactory"/> for HttpClient creation.</param>
     public AiProductDescriptionService(IConfiguration config, ILogger<AiProductDescriptionService> logger, IHttpClientFactory? httpFactory = null)
     {
         _apiKey = config["OpenAI:ApiKey"] ?? throw new Exception("Missing OpenAI API key");
@@ -33,8 +47,16 @@ public class AiProductDescriptionService : IAiProductDescriptionService
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
     }
 
-    // Backwards-compatible convenience method. This does NOT hardcode model/params;
-    // it will use configuration or require caller to set them when using the generic method.
+    /// <summary>
+    /// Convenience overload that generates a product description using the provided attributes.
+    /// This method uses configuration defaults for model/temperature/maxTokens; ensure configuration contains OpenAI:Model etc.
+    /// </summary>
+    /// <param name="title">Product title.</param>
+    /// <param name="category">Product category.</param>
+    /// <param name="color">Product color.</param>
+    /// <param name="material">Product material.</param>
+    /// <param name="features">Comma-separated features or short features summary.</param>
+    /// <returns>A <see cref="ProductDescriptionDto"/> containing the generated description and input metadata.</returns>
     public Task<ProductDescriptionDto> GenerateDescriptionAsync(string title, string category, string color, string material, string features)
     {
         var model = new
@@ -58,6 +80,16 @@ public class AiProductDescriptionService : IAiProductDescriptionService
     /// - via configuration keys: OpenAI:Model, OpenAI:Temperature, OpenAI:MaxTokens.
     /// This enforces "no hardcoded model/params" inside the implementation.
     /// </summary>
+    /// <typeparam name="TModel">Type of the input model; reflection is used to read public properties.</typeparam>
+    /// <param name="model">Model instance containing product attributes.</param>
+    /// <param name="includeProperties">Optional whitelist of property names to include in the prompt. If null, a fallback selection is used.</param>
+    /// <param name="tone">Optional tone guidance for the copywriter prompt.</param>
+    /// <param name="approxWords">Approximate target word count for the generated description.</param>
+    /// <param name="modelName">Optional model name to override configuration default (e.g. "gpt-4o-mini").</param>
+    /// <param name="temperature">Optional sampling temperature override.</param>
+    /// <param name="maxTokens">Optional max tokens override.</param>
+    /// <returns>A <see cref="ProductDescriptionDto"/> populated with the generated description and input metadata.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when required AI runtime parameters are not provided.</exception>
     public async Task<ProductDescriptionDto> GenerateDescriptionAsync<TModel>(TModel model, string[]? includeProperties = null, string? tone = null, int approxWords = 150, string? modelName = null, double? temperature = null, int? maxTokens = null)
     {
         if (model == null) throw new ArgumentNullException(nameof(model));
@@ -183,6 +215,13 @@ public class AiProductDescriptionService : IAiProductDescriptionService
         }
     }
 
+    /// <summary>
+    /// Extracts the generated text from an OpenAI chat completion JSON payload.
+    /// Handles common response shapes from different model responses.
+    /// Returns empty string when extraction fails.
+    /// </summary>
+    /// <param name="json">The raw JSON response body from the OpenAI chat completions endpoint.</param>
+    /// <returns>Extracted text or empty string if not found.</returns>
     private static string ExtractChatCompletionText(string json)
     {
         try
@@ -225,6 +264,10 @@ public class AiProductDescriptionService : IAiProductDescriptionService
         return string.Empty;
     }
 
+    /// <summary>
+    /// Splits a Pascal/Camel-case identifier into words (e.g. "ProductName" -> "Product Name").
+    /// Used to make prompt property labels more human-readable.
+    /// </summary>
     private static string SplitCamelCase(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return input;

@@ -6,6 +6,27 @@ using System.Threading.Tasks;
 
 namespace Algora.Application.DTOs
 {
+    /// <summary>
+    /// Data transfer object that represents a product returned from the store.
+    /// Typically mapped from Shopify product responses (GraphQL or REST).
+    /// </summary>
+    /// <param name="Id">
+    /// The product identifier as a string. For Graph API this is usually the global id (GID)
+    /// (for example: "gid://shopify/Product/1234567890"). For REST responses this may be the stringified id.
+    /// </param>
+    /// <param name="NumericId">
+    /// Numeric product identifier (Shopify's numeric id). Use this for numeric comparisons and routing.
+    /// </param>
+    /// <param name="Title">Human-friendly product title.</param>
+    /// <param name="Handle">
+    /// Optional product handle/slug used in storefront URLs (for example: "classic-t-shirt").
+    /// </param>
+    /// <param name="Tags">
+    /// Read-only list of tags associated with the product. Each tag is a single string value.
+    /// </param>
+    /// <param name="Variants">
+    /// Read-only list of variants for the product. Each entry describes a product variant (price, sku, options).
+    /// </param>
     public record ProductDto
     (
         string Id,
