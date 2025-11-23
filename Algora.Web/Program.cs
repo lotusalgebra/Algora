@@ -2,6 +2,7 @@ using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,8 +13,19 @@ var config = builder.Configuration;
 // DbContext (example; keep your existing registration if different)
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlite(config.GetConnectionString("Default") ?? "Data Source=algora.db"));
-builder.Services.AddControllers();
+
+// allow controllers to return views and still use Razor Pages files
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// make MVC view engine also search the Pages folder
+builder.Services.Configure<RazorViewEngineOptions>(options =>
+{
+    // Search Pages per-controller: /Pages/{Controller}/{View}.cshtml
+    options.ViewLocationFormats.Insert(0, "/Pages/{1}/{0}.cshtml");
+    // Shared pages folder
+    options.ViewLocationFormats.Insert(1, "/Pages/Shared/{0}.cshtml");
+});
 
 var app = builder.Build();
 
@@ -28,8 +40,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseAuthorization();
-app.MapControllers();
-app.MapRazorPages();
 
 // OAuth install endpoint
 app.MapGet("/auth/install", ([FromQuery] string shop, [FromServices] ShopifyOptions opt, HttpResponse res) =>
@@ -87,4 +97,6 @@ app.MapGet("/auth/callback", async (HttpContext http, [FromServices] ShopifyOpti
     }
 });
 
+app.MapControllers();
+app.MapRazorPages();
 app.Run();
