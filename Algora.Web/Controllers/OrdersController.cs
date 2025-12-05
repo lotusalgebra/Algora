@@ -10,5 +10,7 @@ namespace Algora.Web.Controllers
         {
             return View(); // make sure Views/Orders/Index.cshtml exists
         }
+
+       
     }
 }
