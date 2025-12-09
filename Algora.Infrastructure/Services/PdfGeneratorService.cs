@@ -3,11 +3,7 @@ using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Algora.Infrastructure.Services;
 

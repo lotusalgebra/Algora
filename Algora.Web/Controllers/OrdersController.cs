@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Algora.Core.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Algora.Web.Controllers
 {
@@ -11,6 +12,11 @@ namespace Algora.Web.Controllers
             return View(); // make sure Views/Orders/Index.cshtml exists
         }
 
-       
+        [HttpGet("/orders/details")]
+        public IActionResult Details() => View();
+
+        [HttpGet("/orders/dashboard")]
+        public IActionResult Dashboard() => View();
+
     }
 }

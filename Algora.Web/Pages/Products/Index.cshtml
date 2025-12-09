@@ -211,219 +211,469 @@
                     <div class="flex-auto p-6 px-0 pb-0">
                         <div class="overflow-x-auto table-responsive ps">
                             <div class="dataTable-wrapper dataTable-loading no-footer sortable searchable fixed-columns">
-                                <div class="dataTable-top"><div class="dataTable-dropdown"><label><select class="dataTable-selector"><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option></select> entries per page</label></div><div class="dataTable-search"><input class="dataTable-input focus:shadow-soft-primary-outline dark:text-white/80 ease-soft focus:outline-none focus:transition-shadow" placeholder="Search..." type="text"></div></div><div class="dataTable-container">
-                                    <table class="table dataTable-table" datatable="" id="products-list">
-                                        <thead class="thead-light">
-                                            <tr><th data-sortable="" style="width: 52.2744%;"><a href="#" class="dataTable-sorter">Product</a></th><th data-sortable="" style="width: 8.59206%;"><a href="#" class="dataTable-sorter">Category</a></th><th data-sortable="" style="width: 6.6426%;"><a href="#" class="dataTable-sorter">Price</a></th><th data-sortable="" style="width: 8.66426%;"><a href="#" class="dataTable-sorter">SKU</a></th><th data-sortable="" style="width: 7.14801%;"><a href="#" class="dataTable-sorter">Quantity</a></th><th data-sortable="" style="width: 10.6137%;"><a href="#" class="dataTable-sorter">Status</a></th><th data-sortable="" style="width: 6.20939%;"><a href="#" class="dataTable-sorter">Action</a></th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck1" checked="">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/adidas-hoodie.jpg" alt="hoodie">
-                                                        <h6 class="my-auto ml-4 dark:text-white">BKLGO Full Zip Hoodie</h6>
+                               
+                                <table class="table" datatable id="products-list">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>SKU</th>
+                                            <th>Quantity</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck1" checked>
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Clothing</td>
-                                                <td class="leading-normal text-sm">$1,321</td>
-                                                <td class="leading-normal text-sm">243598234</td>
-                                                <td class="leading-normal text-sm">0</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck2" checked="">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/macbook-pro.jpg" alt="mac">
-                                                        <h6 class="my-auto ml-4 dark:text-white">MacBook Pro</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/adidas-hoodie.jpg" alt="hoodie">
+                                                    <h6 class="my-auto ml-4 dark:text-white">BKLGO Full Zip Hoodie</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Clothing</td>
+                                            <td class="leading-normal text-sm">$1,321</td>
+                                            <td class="leading-normal text-sm">243598234</td>
+                                            <td class="leading-normal text-sm">0</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck2" checked>
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Electronics</td>
-                                                <td class="leading-normal text-sm">$1,869</td>
-                                                <td class="leading-normal text-sm">877712</td>
-                                                <td class="leading-normal text-sm">0</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck3">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/metro-chair.jpg" alt="metro-chair">
-                                                        <h6 class="my-auto ml-4 dark:text-white">Metro Bar Stool</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/macbook-pro.jpg" alt="mac">
+                                                    <h6 class="my-auto ml-4 dark:text-white">MacBook Pro</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Electronics</td>
+                                            <td class="leading-normal text-sm">$1,869</td>
+                                            <td class="leading-normal text-sm">877712</td>
+                                            <td class="leading-normal text-sm">0</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck3">
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Furniture</td>
-                                                <td class="leading-normal text-sm">$99</td>
-                                                <td class="leading-normal text-sm">0134729</td>
-                                                <td class="leading-normal text-sm">978</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck10">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/alchimia-chair.jpg" alt="alchimia">
-                                                        <h6 class="my-auto ml-4 dark:text-white">Alchimia Chair</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/metro-chair.jpg" alt="metro-chair">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Metro Bar Stool</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Furniture</td>
+                                            <td class="leading-normal text-sm">$99</td>
+                                            <td class="leading-normal text-sm">0134729</td>
+                                            <td class="leading-normal text-sm">978</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck10">
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Furniture</td>
-                                                <td class="leading-normal text-sm">$2,999</td>
-                                                <td class="leading-normal text-sm">113213</td>
-                                                <td class="leading-normal text-sm">0</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck5">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/fendi-coat.jpg" alt="fendi">
-                                                        <h6 class="my-auto ml-4 dark:text-white">Fendi Gradient Coat</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/alchimia-chair.jpg" alt="alchimia">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Alchimia Chair</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Furniture</td>
+                                            <td class="leading-normal text-sm">$2,999</td>
+                                            <td class="leading-normal text-sm">113213</td>
+                                            <td class="leading-normal text-sm">0</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck5">
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Clothing</td>
-                                                <td class="leading-normal text-sm">$869</td>
-                                                <td class="leading-normal text-sm">634729</td>
-                                                <td class="leading-normal text-sm">725</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck6">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/off-white-jacket.jpg" alt="off_white">
-                                                        <h6 class="my-auto ml-4 dark:text-white">Off White Cotton Bomber</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/fendi-coat.jpg" alt="fendi">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Fendi Gradient Coat</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Clothing</td>
+                                            <td class="leading-normal text-sm">$869</td>
+                                            <td class="leading-normal text-sm">634729</td>
+                                            <td class="leading-normal text-sm">725</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck6">
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Clothing</td>
-                                                <td class="leading-normal text-sm">$1,869</td>
-                                                <td class="leading-normal text-sm">634729</td>
-                                                <td class="leading-normal text-sm">725</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="flex">
-                                                        <div class="my-auto block min-h-6 pl-7">
-                                                            <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck7" checked="">
-                                                        </div>
-                                                        <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/yohji-yamamoto.jpg" alt="yohji">
-                                                        <h6 class="my-auto ml-4 dark:text-white">Y-3 Yohji Yamamoto</h6>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/off-white-jacket.jpg" alt="off_white">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Off White Cotton Bomber</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Clothing</td>
+                                            <td class="leading-normal text-sm">$1,869</td>
+                                            <td class="leading-normal text-sm">634729</td>
+                                            <td class="leading-normal text-sm">725</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck7" checked>
                                                     </div>
-                                                </td>
-                                                <td class="leading-normal text-sm">Shoes</td>
-                                                <td class="leading-normal text-sm">$869</td>
-                                                <td class="leading-normal text-sm">634729</td>
-                                                <td class="leading-normal text-sm">725</td>
-                                                <td>
-                                                    <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">In Stock</span>
-                                                </td>
-                                                <td class="leading-normal text-sm">
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;" class="mx-4">
-                                                        <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                    <a href="javascript:;">
-                                                        <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-
-                                    </table>
-                                </div><div class="dataTable-bottom"><div class="dataTable-info">Showing 1 to 7 of 15 entries</div><nav class="dataTable-pagination"><ul class="dataTable-pagination-list"><li class="pager"><a href="#" data-page="1">‹</a></li><li class="active"><a href="#" data-page="1">1</a></li><li class=""><a href="#" data-page="2">2</a></li><li class=""><a href="#" data-page="3">3</a></li><li class="pager"><a href="#" data-page="2">›</a></li></ul></nav></div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/yohji-yamamoto.jpg" alt="yohji">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Y-3 Yohji Yamamoto</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Shoes</td>
+                                            <td class="leading-normal text-sm">$869</td>
+                                            <td class="leading-normal text-sm">634729</td>
+                                            <td class="leading-normal text-sm">725</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">In Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck9" checked>
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/mcqueen-shirt.jpg" alt="mcqueen">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Alexander McQueen</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Clothing</td>
+                                            <td class="leading-normal text-sm">$1,199</td>
+                                            <td class="leading-normal text-sm">00121399</td>
+                                            <td class="leading-normal text-sm">51293</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck11" checked>
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/yellow-chair.jpg" alt="coco">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Luin Floor Lamp</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Furniture</td>
+                                            <td class="leading-normal text-sm">$1,900</td>
+                                            <td class="leading-normal text-sm">434729</td>
+                                            <td class="leading-normal text-sm">1100191321</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">In Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck12">
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/heron-tshirt.jpg" alt="heron">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Heron Preston T-shirt</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Clothing</td>
+                                            <td class="leading-normal text-sm">$149</td>
+                                            <td class="leading-normal text-sm">928341</td>
+                                            <td class="leading-normal text-sm">0</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck13" checked>
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/living-chair.jpg" alt="coco">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Gray Living Chair</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Furniture</td>
+                                            <td class="leading-normal text-sm">$2,099</td>
+                                            <td class="leading-normal text-sm">9912834</td>
+                                            <td class="leading-normal text-sm">32</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck4">
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/orange-sofa.jpg" alt="yohji">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Derbyshire Orange Sofa</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Furniture</td>
+                                            <td class="leading-normal text-sm">$2,999</td>
+                                            <td class="leading-normal text-sm">561151</td>
+                                            <td class="leading-normal text-sm">22</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck8" checked>
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/burberry.jpg" alt="undercover">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Burberry Low-Tops</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Shoes</td>
+                                            <td class="leading-normal text-sm">$869</td>
+                                            <td class="leading-normal text-sm">634729</td>
+                                            <td class="leading-normal text-sm">725</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck22">
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/d&g-skirt.jpg" alt="D&G">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Dolce & Gabbana Skirt</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Designer</td>
+                                            <td class="leading-normal text-sm">$999</td>
+                                            <td class="leading-normal text-sm">01827391</td>
+                                            <td class="leading-normal text-sm">0</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-red-700 bg-red-200">Out of Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flex">
+                                                    <div class="my-auto block min-h-6 pl-7">
+                                                        <input class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-150 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" type="checkbox" id="customCheck23" checked>
+                                                    </div>
+                                                    <img class="ml-4 w-1/10" src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/soft-ui-design-system/assets/img/ecommerce/undercover.jpg" alt="undercover">
+                                                    <h6 class="my-auto ml-4 dark:text-white">Undercover T-shirt</h6>
+                                                </div>
+                                            </td>
+                                            <td class="leading-normal text-sm">Shoes</td>
+                                            <td class="leading-normal text-sm">$869</td>
+                                            <td class="leading-normal text-sm">634729</td>
+                                            <td class="leading-normal text-sm">725</td>
+                                            <td>
+                                                <span class="py-1.8 px-3 text-xxs rounded-1 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-lime-600 bg-lime-200">in Stock</span>
+                                            </td>
+                                            <td class="leading-normal text-sm">
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-eye text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;" class="mx-4">
+                                                    <i class="fas fa-user-edit text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                                <a href="javascript:;">
+                                                    <i class="fas fa-trash text-slate-400 dark:text-white/70"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>SKU</th>
+                                            <th>Quantity</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                </div>
                             </div>
                             <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div>
                         </div>
@@ -431,7 +681,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    
     @section Scripts {
-    <script src="~/js/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/js/datatable.js" asp-append-version="true"></script>
 }

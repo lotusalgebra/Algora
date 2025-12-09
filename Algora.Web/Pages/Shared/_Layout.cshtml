@@ -6,12 +6,12 @@
     <title>@ViewData["Title"] - Algora.Web</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous"></script>
     <script src="~/js/popper.min.js"></script>
     <!-- Nucleo Icons -->
     <link rel="stylesheet" href="~/css/nucleo-icons.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/nucleo-svg.css" asp-append-version="true" />
-   
+
     <link rel="stylesheet" href="~/css/algora.web.css" asp-append-version="true" />
 
     @await RenderSectionAsync("css", required: false)
@@ -946,18 +946,18 @@
         </aside>
         <!-- end sidenav -->
         @RenderBody()
-      
+
     </main>
     <!-- plugin for charts  -->
     <script src="~/js/plugins/chartjs.min.js" asp-append-version="true"></script>
-   
+
     <!-- github button -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="~/js/plugins/perfect-scrollbar.min.js" asp-append-version="true"></script>
     <!-- main script file  -->
     <script src="~/js/algora.web.js" asp-append-version="true"></script>
     <script src="~/js/nav-pills.js" asp-append-version="true"></script>
-     <script src="~/js/sidenav-burger.js" asp-append-version="true"></script>
+  
     <script src="~/js/sidenav.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
