@@ -1,11 +1,42 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.Infrastructure.Data;
+using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+
+// Preload libwkhtmltox native library from a known path
+var baseDir = AppContext.BaseDirectory;
+var nativeDir = Path.Combine(AppContext.BaseDirectory, "runtimes", "win-x64", "native");
+var libPath1 = Path.Combine(nativeDir, "libwkhtmltox.dll");
+var libPath2 = Path.Combine(nativeDir, "wkhtmltox.dll");
+
+// Expand PATH to include the native directory
+var currentPath = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+if (!currentPath.Contains(nativeDir, StringComparison.OrdinalIgnoreCase))
+{
+    Environment.SetEnvironmentVariable("PATH", nativeDir + Path.PathSeparator + currentPath);
+}
+
+// Try to load either lib name
+bool loaded = false;
+if (File.Exists(libPath1) && NativeLibrary.TryLoad(libPath1, out _)) loaded = true;
+else if (File.Exists(libPath2) && NativeLibrary.TryLoad(libPath2, out _)) loaded = true;
+
+if (!loaded)
+{
+    // Fallback: rely on PATH (may still succeed if files are elsewhere)
+    // If it still fails at runtime, ensure the DLLs exist at nativeDir or adjust this path.
+    Console.WriteLine($"wkhtmltopdf native library not found at: {nativeDir}");
+}
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -26,6 +57,14 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
     // Shared pages folder
     options.ViewLocationFormats.Insert(1, "/Pages/Shared/{0}.cshtml");
 });
+
+// Register application services used by Pages\InvoiceDownload.cshtml.cs
+builder.Services.AddSingleton<IInvoiceTemplateService, InvoiceTemplateService>();
+
+// Register wkhtmltopdf converter and PDF service
+var pdfConverter = new SynchronizedConverter(new PdfTools());
+builder.Services.AddSingleton<IConverter>(pdfConverter);
+builder.Services.AddSingleton<IPdfGeneratorService, WkHtmlToPdfGeneratorService>();
 
 var app = builder.Build();
 

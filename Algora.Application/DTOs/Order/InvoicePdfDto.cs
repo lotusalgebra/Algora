@@ -17,6 +17,6 @@ namespace Algora.Application.DTOs
         public decimal Subtotal { get; init; }
         public decimal Tax { get; init; }
         public decimal Total { get; init; }
-        public IEnumerable<InvoiceLineDto> Lines { get; init; } = [];
+        public IEnumerable<InvoiceLineDto> Lines { get; init; } = Array.Empty<InvoiceLineDto>();
     }
 }

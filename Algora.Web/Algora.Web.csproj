@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,11 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Required by RazorLight to load metadata references at runtime -->
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+
+    <!-- Ensures reference assemblies are available when publishing (optional but helpful) -->
+    <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="WkHtmlToPdf" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,4 +33,68 @@
     <Folder Include="Views\Customer\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="bin\Debug\net9.0\wkhtmltox.dll" />
+    <None Include="bin\Release\net9.0\wkhtmltox.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- include the shipped DLL -->
+    <None Include="runtimes\win-x64\native\wkhtmltox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+    <!-- also ensure a file named libwkhtmltox.dll is copied (rename step below will create it) -->
+    <None Include="runtimes\win-x64\native\libwkhtmltox.dll" Condition="Exists('runtimes\win-x64\native\libwkhtmltox.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- If you store the DLL under a 'native' folder at project root, include it -->
+    <None Include="native\wkhtmltox.dll" Condition="Exists('$(ProjectDir)native\wkhtmltox.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Copy native DLLs if present -->
+    <None Include="runtimes\win-x64\native\wkhtmltox.dll" Condition="Exists('$(ProjectDir)runtimes\win-x64\native\wkhtmltox.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+    <None Include="runtimes\win-x64\native\libwkhtmltox.dll" Condition="Exists('$(ProjectDir)runtimes\win-x64\native\libwkhtmltox.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- After build, copy and rename wkhtmltox.dll -> libwkhtmltox.dll into the output folder -->
+  <Target Name="CopyAndRenameWkhtml" AfterTargets="Build">
+    <PropertyGroup>
+      <OutDirRef>$(OutputPath)</OutDirRef>
+      <SourceDllA>$(ProjectDir)runtimes\win-x64\native\libwkhtmltox.dll</SourceDllA>
+      <SourceDllB>$(ProjectDir)runtimes\win-x64\native\wkhtmltox.dll</SourceDllB>
+    </PropertyGroup>
+
+    <!-- Copy libwkhtmltox.dll if it exists -->
+    <Copy SourceFiles="$(SourceDllA)"
+          DestinationFolder="$(OutDirRef)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(SourceDllA)')" />
+
+    <!-- Copy wkhtmltox.dll and also create libwkhtmltox.dll alias if only wkhtmltox.dll exists -->
+    <Copy SourceFiles="$(SourceDllB)"
+          DestinationFolder="$(OutDirRef)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(SourceDllB)')" />
+    <Copy SourceFiles="$(SourceDllB)"
+          DestinationFiles="$(OutDirRef)libwkhtmltox.dll"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(SourceDllB)') and !Exists('$(OutDirRef)libwkhtmltox.dll') and '$(OS)' == 'Windows_NT'" />
+  </Target>
+
 </Project>
+    

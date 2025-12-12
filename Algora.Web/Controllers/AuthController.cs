@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using RazorLight;
 
 namespace Algora.Web.Controllers
 {
@@ -28,12 +29,14 @@ namespace Algora.Web.Controllers
     /// <param name="opt">Bound Shopify options (ApiKey, ApiSecret, AppUrl, Scopes).</param>
     /// <param name="httpFactory">Http client factory used for token exchange requests.</param>
     /// <param name="db">EF Core DbContext for persisting shop/install information.</param>
+    /// <param name="templateService">RazorLight template service for rendering HTML email/notifications.</param>
     [Route("auth")]
-    public class AuthController(IOptions<ShopifyOptions> opt, IHttpClientFactory httpFactory, AppDbContext db) : Controller
+    public class AuthController(IOptions<ShopifyOptions> opt, IHttpClientFactory httpFactory, AppDbContext db, IRazorLightEngine templateService) : Controller
     {
         private readonly ShopifyOptions _opt = opt.Value;
         private readonly IHttpClientFactory _httpFactory = httpFactory;
         private readonly AppDbContext _db = db; // EF DbContext storing shops/tokens
+        private readonly IRazorLightEngine _templateService = templateService;
 
         /// <summary>
         /// Initiates the OAuth install flow by redirecting the merchant to Shopify's authorization page.
