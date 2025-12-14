@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -16,9 +16,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.10" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
     <PackageReference Include="WkHtmlToPdf" Version="1.0.2" />
   </ItemGroup>
 
@@ -80,20 +80,11 @@
     </PropertyGroup>
 
     <!-- Copy libwkhtmltox.dll if it exists -->
-    <Copy SourceFiles="$(SourceDllA)"
-          DestinationFolder="$(OutDirRef)"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(SourceDllA)')" />
+    <Copy SourceFiles="$(SourceDllA)" DestinationFolder="$(OutDirRef)" SkipUnchangedFiles="true" Condition="Exists('$(SourceDllA)')" />
 
     <!-- Copy wkhtmltox.dll and also create libwkhtmltox.dll alias if only wkhtmltox.dll exists -->
-    <Copy SourceFiles="$(SourceDllB)"
-          DestinationFolder="$(OutDirRef)"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(SourceDllB)')" />
-    <Copy SourceFiles="$(SourceDllB)"
-          DestinationFiles="$(OutDirRef)libwkhtmltox.dll"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(SourceDllB)') and !Exists('$(OutDirRef)libwkhtmltox.dll') and '$(OS)' == 'Windows_NT'" />
+    <Copy SourceFiles="$(SourceDllB)" DestinationFolder="$(OutDirRef)" SkipUnchangedFiles="true" Condition="Exists('$(SourceDllB)')" />
+    <Copy SourceFiles="$(SourceDllB)" DestinationFiles="$(OutDirRef)libwkhtmltox.dll" SkipUnchangedFiles="true" Condition="Exists('$(SourceDllB)') and !Exists('$(OutDirRef)libwkhtmltox.dll') and '$(OS)' == 'Windows_NT'" />
   </Target>
 
 </Project>
