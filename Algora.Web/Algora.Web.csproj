@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+    <!-- Cookie authentication is included in ASP.NET Core shared framework - no package needed -->
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="10.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
@@ -88,4 +88,3 @@
   </Target>
 
 </Project>
-    

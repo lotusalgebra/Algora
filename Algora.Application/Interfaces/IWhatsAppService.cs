@@ -1,33 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Algora.Application.DTOs.Communication;
 
-namespace Algora.Application.Interfaces
+namespace Algora.Application.Interfaces;
+
+/// <summary>
+/// Service for managing WhatsApp communications.
+/// </summary>
+public interface IWhatsAppService
 {
-    /// <summary>
-    /// Abstraction for sending WhatsApp messages.
-    /// Implementations should handle provider-specific details (Twilio, Meta Business API, etc.),
-    /// rate limiting, retries and delivery reporting as appropriate.
-    /// </summary>
-    public interface IWhatsAppService
-    {
-        /// <summary>
-        /// Sends an order-related update message to the specified phone number using WhatsApp.
-        /// </summary>
-        /// <param name="toPhone">
-        /// Destination phone number in E.164 format (for example: "+15551234567").
-        /// Implementations may validate or normalize the number before sending.
-        /// </param>
-        /// <param name="message">
-        /// Message body to deliver. Keep content concise; if templates are required by the provider,
-        /// the implementation should map or transform the text accordingly.
-        /// </param>
-        /// <returns>
-        /// A task that completes when the send request has been queued or completed.
-        /// Implementations should throw on unrecoverable errors or return a failed task when sending fails.
-        /// </returns>
-        Task SendOrderUpdateAsync(string toPhone, string message);
-    }
+    // Templates
+    Task<WhatsAppTemplateDto?> GetTemplateAsync(int templateId);
+    Task<IEnumerable<WhatsAppTemplateDto>> GetTemplatesAsync(string shopDomain, string? status = null);
+    Task<WhatsAppTemplateDto> CreateTemplateAsync(string shopDomain, CreateWhatsAppTemplateDto dto);
+    Task<WhatsAppTemplateDto> UpdateTemplateAsync(int templateId, UpdateWhatsAppTemplateDto dto);
+    Task<bool> DeleteTemplateAsync(int templateId);
+    Task<bool> SubmitTemplateForApprovalAsync(int templateId);
+
+    // Messages
+    Task<WhatsAppMessageDto> SendTemplateMessageAsync(string shopDomain, SendWhatsAppTemplateMessageDto dto);
+    Task<WhatsAppMessageDto> SendTextMessageAsync(string shopDomain, SendWhatsAppTextMessageDto dto);
+    Task<WhatsAppMessageDto?> GetMessageAsync(int messageId);
+    Task<PaginatedResult<WhatsAppMessageDto>> GetMessagesAsync(string shopDomain, int page = 1, int pageSize = 50);
+
+    // Conversations
+    Task<WhatsAppConversationDto?> GetConversationAsync(int conversationId);
+    Task<WhatsAppConversationDto?> GetConversationByPhoneAsync(string shopDomain, string phoneNumber);
+    Task<PaginatedResult<WhatsAppConversationDto>> GetConversationsAsync(string shopDomain, int page = 1, int pageSize = 20);
+    Task<IEnumerable<WhatsAppMessageDto>> GetConversationMessagesAsync(int conversationId, int limit = 50);
+    Task<bool> CloseConversationAsync(int conversationId);
+
+    // Campaigns
+    Task<WhatsAppCampaignDto?> GetCampaignAsync(int campaignId);
+    Task<WhatsAppCampaignDto> CreateCampaignAsync(string shopDomain, CreateWhatsAppCampaignDto dto);
+    Task<bool> SendCampaignAsync(int campaignId);
+
+    // Webhooks
+    Task HandleIncomingMessageAsync(string shopDomain, WhatsAppWebhookPayload payload);
+    Task HandleStatusUpdateAsync(string shopDomain, WhatsAppStatusPayload payload);
 }

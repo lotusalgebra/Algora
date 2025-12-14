@@ -3,6 +3,7 @@ using Algora.Infrastructure.Data;
 using Algora.Infrastructure.Licensing;
 using Algora.Infrastructure.Persistence;
 using Algora.Infrastructure.Services;
+using Algora.Infrastructure.Services.Communication;
 using Algora.Infrastructure.Shopify;
 using Algora.Infrastructure.Shopify.Billing;
 using DinkToPdf;
@@ -24,7 +25,7 @@ public static class DependencyInjection
             ?? throw new InvalidOperationException("Connection string 'Default' not found in configuration.");
         services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
 
-        // ----- Shopify config -----
+        // ----- Shopify config (app-level defaults, can be overridden per shop in database) -----
         services.Configure<ShopifyOptions>(configuration.GetSection("Shopify"));
         services.AddSingleton(sp => sp.GetRequiredService<IOptions<ShopifyOptions>>().Value);
 
@@ -32,15 +33,19 @@ public static class DependencyInjection
         services.AddControllersWithViews();
         services.AddRazorPages();
 
-        // Make MVC view engine also search the Pages folder
         services.Configure<RazorViewEngineOptions>(options =>
         {
             options.ViewLocationFormats.Insert(0, "/Pages/{1}/{0}.cshtml");
             options.ViewLocationFormats.Insert(1, "/Pages/Shared/{0}.cshtml");
         });
 
-        // ----- Shopify context & GraphQL -----
-        services.AddScoped<IShopContext, ShopContext>();
+        // ----- HttpContext accessor -----
+        services.AddHttpContextAccessor();
+
+        // ----- Shop & Shopify services -----
+        services.AddScoped<IShopService, ShopService>();
+        services.AddScoped<IShopContext, HttpShopContext>();
+        services.AddScoped<IShopifyOAuthService, ShopifyOAuthService>();
         services.AddScoped<IShopifyGraphClient, ShopifyGraphClient>();
 
         // ----- Shopify functional services -----
@@ -49,10 +54,15 @@ public static class DependencyInjection
         services.AddScoped<IShopifyInvoiceService, ShopifyInvoiceService>();
         services.AddScoped<IShopifyProductService, ShopifyProductGraphService>();
 
+        // ----- Communication services (settings loaded from database per shop) -----
+        services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();
+        services.AddScoped<IEmailMarketingService, EmailMarketingService>();
+        services.AddScoped<ISmsService, SmsService>();
+        services.AddScoped<INotificationService, NotificationService>();
+
         // ----- Template and PDF generation -----
         services.AddScoped<IInvoiceTemplateService, InvoiceTemplateService>();
 
-        // wkhtmltopdf converter (singleton, thread-safe via SynchronizedConverter)
         var pdfConverter = new SynchronizedConverter(new PdfTools());
         services.AddSingleton<IConverter>(pdfConverter);
         services.AddSingleton<IPdfGeneratorService, WkHtmlToPdfGeneratorService>();
@@ -61,15 +71,10 @@ public static class DependencyInjection
         services.AddScoped<IShopifyBillingService, ShopifyBillingService>();
         services.AddScoped<ILicenseService, LicenseService>();
 
-        // ----- HttpContext & Shop context -----
-        services.AddHttpContextAccessor();
-        services.AddScoped<IShopContext, HttpShopContext>();
-        services.AddScoped<IShopifyOAuthService, ShopifyOAuthService>();
-
         // ----- Repository layer -----
         services.AddRepositoryLayer();
 
-        // ----- HttpClient (for Shopify REST + GraphQL) -----
+        // ----- HttpClient -----
         services.AddHttpClient();
 
         return services;
