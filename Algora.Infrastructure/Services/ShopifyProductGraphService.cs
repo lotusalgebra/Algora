@@ -55,7 +55,7 @@ namespace Algora.Infrastructure.Services
                       pageInfo { hasNextPage }
                     }
                   }",
-                    Variables = new Dictionary<string, object?>
+                    Variables = new Dictionary<string, object>
                     {
                         { "first", 250 },
                         { "after", cursor }
@@ -187,7 +187,7 @@ namespace Algora.Infrastructure.Services
         // Private convenience: run GraphQL and return raw JSON string or null
         private async Task<string?> SendGraphQueryRawAsync(string gql, object? variables = null)
         {
-            var variableDict = new Dictionary<string, object?>();
+            var variableDict = new Dictionary<string, object>();
             if (variables != null)
             {
                 foreach (var prop in variables.GetType().GetProperties())

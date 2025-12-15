@@ -1,5 +1,6 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
+using Algora.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
@@ -43,6 +44,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register all infrastructure services (DB, Shopify, PDF, etc.)
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// ----- Auth Microservice Client -----
+builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>();
 
 // Add authentication services
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -125,3 +129,5 @@ app.MapGet("/auth/callback", async (HttpContext http, [FromServices] IShopifyOAu
 app.MapControllers();
 app.MapRazorPages();
 app.Run();
+
+

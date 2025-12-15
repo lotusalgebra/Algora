@@ -20,19 +20,18 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // ----- Database (SQL Server LocalDB) -----
-        string? connectionString = configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException("Connection string 'Default' not found in configuration.");
+        // ----- Database -----
+        var connectionString = configuration.GetConnectionString("Default")
+            ?? throw new InvalidOperationException("Connection string 'Default' not found.");
         services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
 
-        // ----- Shopify config (app-level defaults, can be overridden per shop in database) -----
+        // ----- Shopify config (app-level defaults, can be overridden per shop) -----
         services.Configure<ShopifyOptions>(configuration.GetSection("Shopify"));
         services.AddSingleton(sp => sp.GetRequiredService<IOptions<ShopifyOptions>>().Value);
 
         // ----- MVC / Razor Pages -----
         services.AddControllersWithViews();
         services.AddRazorPages();
-
         services.Configure<RazorViewEngineOptions>(options =>
         {
             options.ViewLocationFormats.Insert(0, "/Pages/{1}/{0}.cshtml");
@@ -42,7 +41,7 @@ public static class DependencyInjection
         // ----- HttpContext accessor -----
         services.AddHttpContextAccessor();
 
-        // ----- Shop & Shopify services -----
+        // ----- Shop management -----
         services.AddScoped<IShopService, ShopService>();
         services.AddScoped<IShopContext, HttpShopContext>();
         services.AddScoped<IShopifyOAuthService, ShopifyOAuthService>();
@@ -53,16 +52,17 @@ public static class DependencyInjection
         services.AddScoped<IShopifyCustomerService, ShopifyCustomerService>();
         services.AddScoped<IShopifyInvoiceService, ShopifyInvoiceService>();
         services.AddScoped<IShopifyProductService, ShopifyProductGraphService>();
+        services.AddScoped<IAbandonedCartService, AbandonedCartService>();
 
-        // ----- Communication services (settings loaded from database per shop) -----
+        // ----- Communication services (per-shop settings from database) -----
         services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();
         services.AddScoped<IEmailMarketingService, EmailMarketingService>();
         services.AddScoped<ISmsService, SmsService>();
+        services.AddScoped<IWhatsAppService, WhatsAppService>();
         services.AddScoped<INotificationService, NotificationService>();
 
         // ----- Template and PDF generation -----
         services.AddScoped<IInvoiceTemplateService, InvoiceTemplateService>();
-
         var pdfConverter = new SynchronizedConverter(new PdfTools());
         services.AddSingleton<IConverter>(pdfConverter);
         services.AddSingleton<IPdfGeneratorService, WkHtmlToPdfGeneratorService>();
@@ -76,6 +76,8 @@ public static class DependencyInjection
 
         // ----- HttpClient -----
         services.AddHttpClient();
+        services.AddMemoryCache();
+        services.AddScoped<IAppConfigurationService, AppConfigurationService>();
 
         return services;
     }

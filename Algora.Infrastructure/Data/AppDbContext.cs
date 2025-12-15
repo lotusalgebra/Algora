@@ -21,6 +21,7 @@ namespace Algora.Infrastructure.Data
         public DbSet<AuditLog> AuditLogs { get; set; } = null!;
         public DbSet<AppUser> AppUsers { get; set; } = null!;
         public DbSet<ApiKey> ApiKeys { get; set; } = null!;
+        public DbSet<AppConfiguration> AppConfigurations { get; set; } = null!;
 
         // ----- E-commerce entities -----
         public DbSet<Customer> Customers { get; set; } = null!;
@@ -511,6 +512,15 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.EntityType).IsRequired().HasMaxLength(50);
                 b.HasOne(x => x.Tag).WithMany().HasForeignKey(x => x.TagId).OnDelete(DeleteBehavior.Cascade);
                 b.HasIndex(x => new { x.EntityType, x.EntityId, x.TagId }).IsUnique();
+            });
+
+            modelBuilder.Entity<AppConfiguration>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Key).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Value).HasMaxLength(1000);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.HasIndex(x => x.Key).IsUnique();
             });
         }
     }
