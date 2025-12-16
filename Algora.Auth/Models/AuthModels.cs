@@ -16,7 +16,7 @@ public record LoginRequest
 public record RegisterRequest
 {
     [Required]
-    public string ShopDomain { get; init; } = string.Empty;
+    public string? ShopDomain { get; init; } = null;
 
     [Required, EmailAddress]
     public string Email { get; init; } = string.Empty;

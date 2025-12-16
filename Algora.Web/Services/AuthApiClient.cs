@@ -8,9 +8,10 @@ public class AuthApiClient : IAuthApiClient
     private readonly HttpClient _httpClient;
     private readonly IAppConfigurationService _configService;
     private readonly ILogger<AuthApiClient> _logger;
+    private string? _cachedBaseUrl;
 
     public AuthApiClient(
-        HttpClient httpClient, 
+        HttpClient httpClient,
         IAppConfigurationService configService,
         ILogger<AuthApiClient> logger)
     {
@@ -19,21 +20,30 @@ public class AuthApiClient : IAuthApiClient
         _logger = logger;
     }
 
-    private async Task<string> GetBaseUrlAsync()
+    private async Task EnsureBaseUrlAsync()
     {
-        var baseUrl = await _configService.GetValueAsync("AuthService:BaseUrl");
-        return baseUrl ?? throw new InvalidOperationException("AuthService:BaseUrl not configured in database");
+        if (_httpClient.BaseAddress is null)
+        {
+            _cachedBaseUrl ??= await _configService.GetValueAsync("AuthService:BaseUrl")
+                ?? throw new InvalidOperationException("AuthService:BaseUrl not configured in database");
+            _httpClient.BaseAddress = new Uri(_cachedBaseUrl);
+        }
     }
 
     public async Task<AuthResponse?> LoginAsync(LoginRequest request)
     {
         try
         {
-            var baseUrl = await GetBaseUrlAsync();
-            _httpClient.BaseAddress = new Uri(baseUrl);
-            
+            await EnsureBaseUrlAsync();
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", request);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Login failed: {StatusCode} - {Error}", response.StatusCode, errorContent);
+                return null;
+            }
+            
             return await response.Content.ReadFromJsonAsync<AuthResponse>();
         }
         catch (Exception ex)
@@ -47,11 +57,16 @@ public class AuthApiClient : IAuthApiClient
     {
         try
         {
-            var baseUrl = await GetBaseUrlAsync();
-            _httpClient.BaseAddress = new Uri(baseUrl);
-            
+            await EnsureBaseUrlAsync();
             var response = await _httpClient.PostAsJsonAsync("api/auth/register", request);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogWarning("Registration failed: {StatusCode} - {Error}", response.StatusCode, errorContent);
+                return null;
+            }
+            
             return await response.Content.ReadFromJsonAsync<AuthResponse>();
         }
         catch (Exception ex)
@@ -65,11 +80,14 @@ public class AuthApiClient : IAuthApiClient
     {
         try
         {
-            var baseUrl = await GetBaseUrlAsync();
-            _httpClient.BaseAddress = new Uri(baseUrl);
-            
+            await EnsureBaseUrlAsync();
             var response = await _httpClient.PostAsJsonAsync("api/auth/refresh", new { RefreshToken = refreshToken });
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            
             return await response.Content.ReadFromJsonAsync<AuthResponse>();
         }
         catch (Exception ex)

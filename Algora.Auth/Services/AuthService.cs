@@ -12,17 +12,20 @@ public class AuthService : IAuthService
     private readonly IJwtService _jwtService;
     private readonly JwtSettings _jwtSettings;
     private readonly ILogger<AuthService> _logger;
+    private readonly bool _allowAutoCreateShop;
 
     public AuthService(
         AppDbContext db,
         IJwtService jwtService,
         IOptions<JwtSettings> jwtSettings,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IOptions<AuthSettings> authOptions)
     {
         _db = db;
         _jwtService = jwtService;
         _jwtSettings = jwtSettings.Value;
         _logger = logger;
+        _allowAutoCreateShop = authOptions.Value.AllowAutoCreateShop;
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
@@ -67,11 +70,21 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // Check if shop exists
-        var shopExists = await _db.Shops.AnyAsync(s => s.Domain == request.ShopDomain);
-        if (!shopExists)
+        // Check if shop exists, create if not (for development)
+        var shop = await _db.Shops.FirstOrDefaultAsync(s => s.Domain == request.ShopDomain);
+        if (shop is null && _allowAutoCreateShop)
         {
-            return new AuthResponse { Success = false, Message = "Shop not found. Please install the app first." };
+            // Auto-create shop for development - remove in production
+            shop = new Shop
+            {
+                Domain = request.ShopDomain!,
+                ShopName = request.ShopDomain,
+                IsActive = true,
+                InstalledAt = DateTime.UtcNow
+            };
+            _db.Shops.Add(shop);
+            await _db.SaveChangesAsync();
+            _logger.LogWarning("Auto-created shop {ShopDomain} during registration (dev mode)", request.ShopDomain);
         }
 
         // Check if user already exists

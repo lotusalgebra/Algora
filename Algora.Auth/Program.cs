@@ -1,4 +1,5 @@
 using Algora.Auth.Middleware;
+using Algora.Auth.Models;
 using Algora.Auth.Services;
 using Algora.Infrastructure;
 using Algora.Infrastructure.Data;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ----- Configuration -----
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<ShopifySettings>(builder.Configuration.GetSection("Shopify"));
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("Auth"));
 
 // ----- Database -----
 var connectionString = builder.Configuration.GetConnectionString("Default")

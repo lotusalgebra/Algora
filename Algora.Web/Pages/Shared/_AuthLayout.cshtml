@@ -1,0 +1,21 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Algora</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="~/css/nucleo-icons.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/nucleo-svg.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/algora.web.css" asp-append-version="true" />
+    @await RenderSectionAsync("css", required: false)
+</head>
+<body class="m-0 font-sans antialiased font-normal text-left leading-default text-base dark:bg-slate-950 bg-gray-50 text-slate-500 dark:text-white/80">
+    @RenderBody()
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

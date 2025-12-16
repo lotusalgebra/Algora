@@ -1,0 +1,284 @@
+﻿@page "/auth/register"
+@model Algora.Web.Pages.Auth.RegisterModel
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_AuthLayout";
+}
+
+<main class="mt-0 transition-all duration-200 ease-soft-in-out">
+    <section class="min-h-screen mb-32">
+        <div class="relative flex items-start pt-12 pb-56 m-4 overflow-hidden bg-center bg-cover min-h-50-screen rounded-xl" style="background-image: url('/img/curved-images/curved14.jpg')">
+            <span class="absolute top-0 left-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-gray-900 to-slate-800 opacity-60"></span>
+            <div class="container z-10">
+                <div class="flex flex-wrap justify-center -mx-3">
+                    <div class="w-full max-w-full px-3 mx-auto mt-0 text-center lg:flex-0 shrink-0 lg:w-5/12">
+                        <h1 class="mt-12 mb-2 text-white">Welcome!</h1>
+                        <p class="text-white">Create your account to get started with Algora</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="flex flex-wrap -mx-3 -mt-48 md:-mt-56 lg:-mt-48">
+                <div class="w-full max-w-full px-3 mx-auto mt-0 md:flex-0 shrink-0 md:w-7/12 lg:w-5/12 xl:w-4/12">
+                    <div class="relative z-0 flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                        <div class="p-6 mb-0 text-center bg-white border-b-0 rounded-t-2xl">
+                            <h5>Register</h5>
+                        </div>
+                        <div class="flex-auto p-6">
+                            <form method="post" id="registerForm">
+                                <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+                                
+                                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                                {
+                                    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                                        @Model.ErrorMessage
+                                    </div>
+                                }
+
+                                <!-- Shop URL Field -->
+                                <div class="mb-4">
+                                    <label asp-for="Input.ShopDomain" class="block text-sm font-medium text-gray-700 mb-1">Shop URL</label>
+                                    <input asp-for="Input.ShopDomain" type="text" id="shopDomain"
+                                           class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" 
+                                           placeholder="your-store.myshopify.com" />
+                                    <span asp-validation-for="Input.ShopDomain" class="text-red-500 text-xs"></span>
+                                </div>
+                                
+                                <!-- Name Field -->
+                                <div class="mb-4">
+                                    <label asp-for="Input.Name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <input asp-for="Input.Name" type="text" 
+                                           class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" 
+                                           placeholder="Name" />
+                                    <span asp-validation-for="Input.Name" class="text-red-500 text-xs"></span>
+                                </div>
+                                
+                                <!-- Email Field -->
+                                <div class="mb-4">
+                                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input asp-for="Input.Email" type="email" id="email"
+                                           class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" 
+                                           placeholder="Email" />
+                                    <span asp-validation-for="Input.Email" class="text-red-500 text-xs"></span>
+                                </div>
+                                
+                                <!-- Password Field -->
+                                <div class="mb-4">
+                                    <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                    <input asp-for="Input.Password" type="password" id="password"
+                                           class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" 
+                                           placeholder="Password" />
+                                    <span asp-validation-for="Input.Password" class="text-red-500 text-xs"></span>
+                                    <!-- Password Strength Indicator -->
+                                    <div id="passwordStrength" class="mt-2 hidden">
+                                        <div class="flex gap-1 mb-1">
+                                            <div id="strengthBar1" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                            <div id="strengthBar2" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                            <div id="strengthBar3" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                            <div id="strengthBar4" class="h-1 w-1/4 bg-gray-200 rounded"></div>
+                                        </div>
+                                        <p id="strengthText" class="text-xs text-gray-500"></p>
+                                    </div>
+                                    <!-- Password Requirements -->
+                                    <ul class="mt-2 text-xs text-gray-500 space-y-1" id="passwordRequirements">
+                                        <li id="reqLength" class="flex items-center gap-1">
+                                            <span class="req-icon">○</span> At least 8 characters
+                                        </li>
+                                        <li id="reqUpper" class="flex items-center gap-1">
+                                            <span class="req-icon">○</span> One uppercase letter
+                                        </li>
+                                        <li id="reqLower" class="flex items-center gap-1">
+                                            <span class="req-icon">○</span> One lowercase letter
+                                        </li>
+                                        <li id="reqNumber" class="flex items-center gap-1">
+                                            <span class="req-icon">○</span> One number
+                                        </li>
+                                        <li id="reqSpecial" class="flex items-center gap-1">
+                                            <span class="req-icon">○</span> One special character
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Confirm Password Field -->
+                                <div class="mb-4">
+                                    <label asp-for="Input.ConfirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                                    <input asp-for="Input.ConfirmPassword" type="password" id="confirmPassword"
+                                           class="text-sm focus:shadow-soft-primary-outline leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-fuchsia-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" 
+                                           placeholder="Confirm Password" />
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-red-500 text-xs"></span>
+                                    <p id="passwordMatch" class="text-xs mt-1 hidden"></p>
+                                </div>
+                                
+                                <!-- Terms Checkbox -->
+                                <div class="min-h-6 pl-7 mb-0.5 block">
+                                    <input asp-for="Input.AgreeTerms" id="agreeTerms"
+                                           class="w-5 h-5 ease-soft -ml-7 rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all after:content-['\f00c'] checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" 
+                                           type="checkbox" />
+                                    <label class="mb-2 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700" for="agreeTerms">
+                                        I agree to the <a href="#" class="font-bold text-slate-700">Terms and Conditions</a>
+                                    </label>
+                                    <span asp-validation-for="Input.AgreeTerms" class="text-red-500 text-xs block"></span>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="submit" id="submitBtn"
+                                            class="inline-block w-full px-6 py-3 mt-6 mb-2 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer active:opacity-85 hover:scale-102 hover:shadow-soft-xs leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800">
+                                        Sign up
+                                    </button>
+                                </div>
+                                <p class="mt-4 mb-0 leading-normal text-sm">
+                                    Already have an account? 
+                                    <a asp-page="/Auth/Login" class="font-bold text-slate-700">Sign in</a>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const emailInput = document.getElementById('email');
+            const shopDomainInput = document.getElementById('shopDomain');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const passwordMatch = document.getElementById('passwordMatch');
+            
+            // Password strength checking
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                passwordStrength.classList.remove('hidden');
+                
+                // Check requirements
+                const hasLength = password.length >= 8;
+                const hasUpper = /[A-Z]/.test(password);
+                const hasLower = /[a-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecial = /[^\da-zA-Z]/.test(password);
+                
+                // Update requirement indicators
+                updateRequirement('reqLength', hasLength);
+                updateRequirement('reqUpper', hasUpper);
+                updateRequirement('reqLower', hasLower);
+                updateRequirement('reqNumber', hasNumber);
+                updateRequirement('reqSpecial', hasSpecial);
+                
+                // Calculate strength
+                const strength = [hasLength, hasUpper, hasLower, hasNumber, hasSpecial].filter(Boolean).length;
+                updateStrengthBars(strength);
+                
+                // Check password match if confirm field has value
+                if (confirmPasswordInput.value) {
+                    checkPasswordMatch();
+                }
+            });
+            
+            // Password match checking
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            function checkPasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword) {
+                    passwordMatch.classList.remove('hidden');
+                    if (password === confirmPassword) {
+                        passwordMatch.textContent = '✓ Passwords match';
+                        passwordMatch.className = 'text-xs mt-1 text-green-600';
+                    } else {
+                        passwordMatch.textContent = '✗ Passwords do not match';
+                        passwordMatch.className = 'text-xs mt-1 text-red-600';
+                    }
+                } else {
+                    passwordMatch.classList.add('hidden');
+                }
+            }
+            
+            function updateRequirement(elementId, isMet) {
+                const element = document.getElementById(elementId);
+                const icon = element.querySelector('.req-icon');
+                if (isMet) {
+                    icon.textContent = '✓';
+                    element.classList.add('text-green-600');
+                    element.classList.remove('text-gray-500');
+                } else {
+                    icon.textContent = '○';
+                    element.classList.remove('text-green-600');
+                    element.classList.add('text-gray-500');
+                }
+            }
+            
+            function updateStrengthBars(strength) {
+                const bars = ['strengthBar1', 'strengthBar2', 'strengthBar3', 'strengthBar4'];
+                const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+                const texts = ['Weak', 'Fair', 'Good', 'Strong'];
+                const strengthText = document.getElementById('strengthText');
+                
+                bars.forEach((barId, index) => {
+                    const bar = document.getElementById(barId);
+                    bar.className = 'h-1 w-1/4 rounded';
+                    
+                    if (index < strength - 1) {
+                        bar.classList.add(colors[Math.min(strength - 2, 3)]);
+                    } else {
+                        bar.classList.add('bg-gray-200');
+                    }
+                });
+                
+                if (strength > 1) {
+                    strengthText.textContent = texts[Math.min(strength - 2, 3)];
+                    strengthText.className = 'text-xs ' + (strength >= 4 ? 'text-green-600' : strength >= 3 ? 'text-yellow-600' : 'text-red-600');
+                } else {
+                    strengthText.textContent = '';
+                }
+            }
+            
+            // Email validation with visual feedback
+            emailInput.addEventListener('blur', function() {
+                const email = this.value;
+                const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                
+                if (email && !emailRegex.test(email)) {
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+            
+            // Shop domain formatting
+            shopDomainInput.addEventListener('blur', function() {
+                let value = this.value.trim().toLowerCase();
+                
+                // Remove https://, http://, and trailing slashes
+                value = value.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                
+                // Auto-append .myshopify.com if not present
+                if (value && !value.includes('.myshopify.com') && !value.includes('.')) {
+                    value = value + '.myshopify.com';
+                }
+                
+                this.value = value;
+                
+                // Validate format
+                const shopRegex = /^[a-zA-Z0-9][a-zA-Z0-9\-]*\.myshopify\.com$/;
+                if (value && !shopRegex.test(value)) {
+                    this.classList.add('border-red-500');
+                    this.classList.remove('border-gray-300');
+                } else {
+                    this.classList.remove('border-red-500');
+                    this.classList.add('border-gray-300');
+                }
+            });
+        });
+    </script>
+}
