@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/orders"
 @model Algora.Web.Pages.Orders.IndexModel
 @{
     ViewData["Title"] = "Orders";
@@ -19,7 +19,7 @@
                                 <option value="100">100</option>
                             </select>
                             <button type="submit" class="btn btn-sm btn-primary">Refresh</button>
-                        </form>
+                        </form> 
                     </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
@@ -44,7 +44,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (!Model.Orders.Any())
+                                @if (Model.Orders == null || !Model.Orders.Any())
                                 {
                                     <tr>
                                         <td colspan="7" class="text-center py-4 text-secondary">
@@ -52,56 +52,59 @@
                                         </td>
                                     </tr>
                                 }
-                                @foreach (var order in Model.Orders)
+                                else
                                 {
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">@order.Name</h6>
-                                                    <p class="text-xs text-secondary mb-0">#@order.Id</p>
+                                    @foreach (var order in Model.Orders)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">@order.Name</h6>
+                                                        <p class="text-xs text-secondary mb-0">#@order.Id</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@(order.Email ?? "N/A")</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            @{
-                                                var statusClass = order.FinancialStatus?.ToLower() switch
-                                                {
-                                                    "paid" => "bg-gradient-success",
-                                                    "pending" => "bg-gradient-warning",
-                                                    "refunded" => "bg-gradient-secondary",
-                                                    _ => "bg-gradient-info"
-                                                };
-                                            }
-                                            <span class="badge badge-sm @statusClass">@(order.FinancialStatus ?? "Unknown")</span>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            @{
-                                                var fulfillClass = order.FulfillmentStatus?.ToLower() switch
-                                                {
-                                                    "fulfilled" => "bg-gradient-success",
-                                                    "partial" => "bg-gradient-warning",
-                                                    null or "" => "bg-gradient-secondary",
-                                                    _ => "bg-gradient-info"
-                                                };
-                                            }
-                                            <span class="badge badge-sm @fulfillClass">@(order.FulfillmentStatus ?? "Unfulfilled")</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">@order.TotalPrice.ToString("C")</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">@order.CreatedAt.ToString("MMM dd, yyyy")</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <a href="/orders/@order.Id" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="View Details">
-                                                View
-                                            </a>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@(order.Email ?? "N/A")</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                @{
+                                                    var statusClass = order.FinancialStatus?.ToLower() switch
+                                                    {
+                                                        "paid" => "bg-gradient-success",
+                                                        "pending" => "bg-gradient-warning",
+                                                        "refunded" => "bg-gradient-secondary",
+                                                        _ => "bg-gradient-info"
+                                                    };
+                                                }
+                                                <span class="badge badge-sm @statusClass">@(order.FinancialStatus ?? "Unknown")</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                @{
+                                                    var fulfillClass = order.FulfillmentStatus?.ToLower() switch
+                                                    {
+                                                        "fulfilled" => "bg-gradient-success",
+                                                        "partial" => "bg-gradient-warning",
+                                                        null or "" => "bg-gradient-secondary",
+                                                        _ => "bg-gradient-info"
+                                                    };
+                                                }
+                                                <span class="badge badge-sm @fulfillClass">@(order.FulfillmentStatus ?? "Unfulfilled")</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">@order.TotalPrice.ToString("C")</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">@order.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="/orders/@order.Id" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" title="View Details">
+                                                    View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             </tbody>
                         </table>

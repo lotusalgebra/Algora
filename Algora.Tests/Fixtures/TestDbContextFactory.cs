@@ -117,6 +117,7 @@ public static class TestDbContextFactory
             TriggerType = "welcome",
             IsActive = true
         };
+        context.EmailAutomations.Add(automation);
 
         await context.SaveChangesAsync();
 

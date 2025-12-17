@@ -28,29 +28,51 @@ public class ShopifyOrderService : IShopifyOrderService
 
     public async Task<IEnumerable<OrderDto>> GetAllAsync(int limit = 25)
     {
+        _logger.LogInformation("Fetching orders for shop: {ShopDomain}", _context.ShopDomain);
+
         var service = CreateOrderService();
 
+        // Fetch all orders regardless of status - include orders from all time
         var filter = new ShopifySharp.Filters.OrderListFilter
         {
             Limit = limit,
-            Fields = "id,name,email,total_price,financial_status,fulfillment_status,created_at"
+            Status = "any", // "any" includes open, closed, and cancelled orders
+            CreatedAtMin = DateTime.UtcNow.AddYears(-2) // Include orders from last 2 years
         };
 
-        var orders = await service.ListAsync(filter);
+        _logger.LogInformation("Calling Shopify API with filter: Status={Status}, Limit={Limit}, CreatedAtMin={CreatedAtMin}",
+            filter.Status, filter.Limit, filter.CreatedAtMin);
 
-        // `ListResult<Order>` has an `Items` collection; enumerate that (null-safe).
-        var items = orders?.Items ?? Enumerable.Empty<Order>();
-        return items.Select(o => new OrderDto
+        try
         {
-            Id = o.Id ?? 0,
-            Name = o.Name,
-            Email = o.Email,
-            FinancialStatus = o.FinancialStatus,
-            FulfillmentStatus = o.FulfillmentStatus,
-            // TotalPrice is decimal? on the Shopify type — use the value or fallback to 0m.
-            TotalPrice = o.TotalPrice ?? 0m,
-            CreatedAt = o.CreatedAt?.DateTime ?? DateTime.Now
-        });
+            var orders = await service.ListAsync(filter);
+
+            // `ListResult<Order>` has an `Items` collection; enumerate that (null-safe).
+            var items = orders?.Items ?? Enumerable.Empty<Order>();
+            _logger.LogInformation("Retrieved {Count} orders from Shopify", items.Count());
+
+            foreach (var o in items.Take(3))
+            {
+                _logger.LogInformation("Order: {Id} - {Name} - {Status} - {FinancialStatus}",
+                    o.Id, o.Name, o.ClosedAt.HasValue ? "closed" : "open", o.FinancialStatus);
+            }
+
+            return items.Select(o => new OrderDto
+            {
+                Id = o.Id ?? 0,
+                Name = o.Name,
+                Email = o.Email,
+                FinancialStatus = o.FinancialStatus,
+                FulfillmentStatus = o.FulfillmentStatus,
+                TotalPrice = o.TotalPrice ?? 0m,
+                CreatedAt = o.CreatedAt?.DateTime ?? DateTime.Now
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching orders from Shopify API");
+            throw;
+        }
     }
 
     public async Task<OrderDto?> GetByIdAsync(long id)

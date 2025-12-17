@@ -3,8 +3,6 @@ using Algora.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Algora.Web.Pages.Orders;
@@ -29,6 +27,8 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
+        ViewData["Title"] = "Orders";
+        
         try
         {
             Orders = await _orderService.GetAllAsync(Limit);

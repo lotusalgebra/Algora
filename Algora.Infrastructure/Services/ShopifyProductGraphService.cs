@@ -9,27 +9,32 @@ using System.Reflection;
 using Algora.Application.Interfaces;
 using Algora.Application.DTOs;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Algora.Infrastructure.Services
 {
     public class ShopifyProductGraphService : IShopifyProductService
     {
         private readonly GraphService _graphService;
+        private readonly ILogger<ShopifyProductGraphService> _logger;
 
         // Constructor updated for DI: accept IShopContext (registered in DI) instead of primitive strings.
-        public ShopifyProductGraphService(IShopContext shopContext)
+        public ShopifyProductGraphService(IShopContext shopContext, ILogger<ShopifyProductGraphService> logger)
         {
+            _logger = logger;
             if (shopContext == null) throw new ArgumentNullException(nameof(shopContext));
             if (string.IsNullOrWhiteSpace(shopContext.ShopDomain))
                 throw new InvalidOperationException("Shop domain missing in shop context.");
             if (string.IsNullOrWhiteSpace(shopContext.AccessToken))
                 throw new InvalidOperationException("Shop access token missing in shop context.");
 
+            _logger.LogInformation("Creating GraphService for shop: {ShopDomain}", shopContext.ShopDomain);
             _graphService = new GraphService(shopContext.ShopDomain, shopContext.AccessToken);
         }
 
         public async Task<List<ProductViewModel>> GetAllProductsAsync()
         {
+            _logger.LogInformation("GetAllProductsAsync called");
             var all = new List<ProductViewModel>();
             string? cursor = null;
             bool hasNext = true;
@@ -62,88 +67,111 @@ namespace Algora.Infrastructure.Services
                     }
                 };
 
-                // GraphService.PostAsync may return a typed object (GraphResponse) not a string.
-                object? respObj = await _graphService.PostAsync(request);
-                if (respObj == null)
-                    break;
-
-                // Robust normalization of the response into a JSON string:
-                string raw = string.Empty;
-
-                // 1) If the response object itself is a string
-                if (respObj is string sResp)
+                try
                 {
-                    raw = sResp;
-                }
-                // 2) If the response object is a JsonElement (boxed struct)
-                else if (respObj is JsonElement jeResp)
-                {
-                    raw = jeResp.GetRawText();
-                }
-                else
-                {
-                    // 3) Try to find a "Json" property (GraphResponse.Json) and handle string/JsonElement inside it
-                    var jsonProp = respObj.GetType().GetProperty("Json", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                    if (jsonProp != null)
+                    // GraphService.PostAsync may return a typed object (GraphResponse) not a string.
+                    _logger.LogInformation("Sending GraphQL request to Shopify");
+                    object? respObj = await _graphService.PostAsync(request);
+                    if (respObj == null)
                     {
-                        var jsonVal = jsonProp.GetValue(respObj);
-                        if (jsonVal is string js) raw = js;
-                        else if (jsonVal is JsonElement je) raw = je.GetRawText();
-                        else if (jsonVal != null) raw = JsonSerializer.Serialize(jsonVal);
+                        _logger.LogWarning("GraphQL response was null");
+                        break;
                     }
-                }
 
-                // 4) Final fallback - use ToString() if it looks useful, otherwise serialize the whole object
-                if (string.IsNullOrWhiteSpace(raw))
-                {
-                    var toStr = respObj.ToString();
-                    raw = !string.IsNullOrWhiteSpace(toStr) ? toStr : JsonSerializer.Serialize(respObj);
-                }
+                    _logger.LogInformation("GraphQL response type: {Type}", respObj.GetType().FullName);
 
-                if (string.IsNullOrWhiteSpace(raw))
-                    break;
+                    // Robust normalization of the response into a JSON string:
+                    string raw = string.Empty;
 
-                var result = JsonSerializer.Deserialize<ProductsQueryResult>(raw, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                if (result?.Data?.Products?.Edges == null || result.Data.Products.Edges.Count == 0)
-                {
-                    // No more results or unexpected shape
-                    break;
-                }
-
-                foreach (var edge in result.Data.Products.Edges)
-                {
-                    var p = edge.Node;
-                    if (p == null) continue;
-
-                    var view = new ProductViewModel
+                    // 1) If the response object itself is a string
+                    if (respObj is string sResp)
                     {
-                        // Parse numeric id from Shopify global id (e.g. "gid://shopify/Product/12345")
-                        Id = ParseShopifyId(p.Id),
+                        raw = sResp;
+                    }
+                    // 2) If the response object is a JsonElement (boxed struct)
+                    else if (respObj is JsonElement jeResp)
+                    {
+                        raw = jeResp.GetRawText();
+                    }
+                    else
+                    {
+                        // 3) Try to find a "Json" property (GraphResponse.Json) and handle string/JsonElement inside it
+                        var jsonProp = respObj.GetType().GetProperty("Json", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                        if (jsonProp != null)
+                        {
+                            var jsonVal = jsonProp.GetValue(respObj);
+                            if (jsonVal is string js) raw = js;
+                            else if (jsonVal is JsonElement je) raw = je.GetRawText();
+                            else if (jsonVal != null) raw = JsonSerializer.Serialize(jsonVal);
+                        }
+                    }
 
-                        Title = p.Title ?? string.Empty,
-                        Description = p.DescriptionHtml ?? string.Empty,
-                        Vendor = p.Vendor ?? string.Empty,
-                        Tags = p.Tags != null ? string.Join(",", p.Tags) : string.Empty
-                    };
+                    // 4) Final fallback - use ToString() if it looks useful, otherwise serialize the whole object
+                    if (string.IsNullOrWhiteSpace(raw))
+                    {
+                        var toStr = respObj.ToString();
+                        raw = !string.IsNullOrWhiteSpace(toStr) ? toStr : JsonSerializer.Serialize(respObj);
+                    }
 
-                    // Safe price parsing
-                    var priceStr = p.Variants?.Edges?.FirstOrDefault()?.Node?.Price;
-                    if (!decimal.TryParse(priceStr, out var price))
-                        price = 0m;
-                    view.Price = price;
+                    _logger.LogDebug("Raw GraphQL response (first 500 chars): {Response}", raw?.Length > 500 ? raw.Substring(0, 500) : raw);
 
-                    all.Add(view);
+                    if (string.IsNullOrWhiteSpace(raw))
+                    {
+                        _logger.LogWarning("Raw response string is empty");
+                        break;
+                    }
+
+                    var result = JsonSerializer.Deserialize<ProductsQueryResult>(raw, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (result?.Data?.Products?.Edges == null || result.Data.Products.Edges.Count == 0)
+                    {
+                        _logger.LogWarning("No products in response. Data is null: {DataNull}, Products is null: {ProductsNull}",
+                            result?.Data == null, result?.Data?.Products == null);
+                        break;
+                    }
+
+                    _logger.LogInformation("Retrieved {Count} products in this page", result.Data.Products.Edges.Count);
+
+                    foreach (var edge in result.Data.Products.Edges)
+                    {
+                        var p = edge.Node;
+                        if (p == null) continue;
+
+                        var view = new ProductViewModel
+                        {
+                            // Parse numeric id from Shopify global id (e.g. "gid://shopify/Product/12345")
+                            Id = ParseShopifyId(p.Id),
+
+                            Title = p.Title ?? string.Empty,
+                            Description = p.DescriptionHtml ?? string.Empty,
+                            Vendor = p.Vendor ?? string.Empty,
+                            Tags = p.Tags != null ? string.Join(",", p.Tags) : string.Empty
+                        };
+
+                        // Safe price parsing
+                        var priceStr = p.Variants?.Edges?.FirstOrDefault()?.Node?.Price;
+                        if (!decimal.TryParse(priceStr, out var price))
+                            price = 0m;
+                        view.Price = price;
+
+                        all.Add(view);
+                    }
+
+                    hasNext = result.Data.Products.PageInfo?.HasNextPage ?? false;
+                    cursor = result.Data.Products.Edges.LastOrDefault()?.Cursor;
+                    if (!hasNext) break;
                 }
-
-                hasNext = result.Data.Products.PageInfo?.HasNextPage ?? false;
-                cursor = result.Data.Products.Edges.LastOrDefault()?.Cursor;
-                if (!hasNext) break;
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error fetching products from Shopify GraphQL API");
+                    throw;
+                }
             }
 
+            _logger.LogInformation("Total products retrieved: {Count}", all.Count);
             return all;
         }
 

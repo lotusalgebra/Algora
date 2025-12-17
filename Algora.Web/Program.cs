@@ -1,11 +1,7 @@
-using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
 
 // Preload libwkhtmltox native library from known paths (must run before host is built)
 var baseDir = AppContext.BaseDirectory;
@@ -70,61 +66,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
-// ----- OAuth endpoints (minimal APIs) -----
-
-// Update the OAuth endpoints to use the service methods
-
-// OAuth install endpoint
-app.MapGet("/auth/install", async ([FromQuery] string shop, [FromServices] IShopifyOAuthService oauth, HttpResponse res) =>
-{
-    if (string.IsNullOrWhiteSpace(shop)) return Results.BadRequest("shop query is required");
-    
-    var state = Guid.NewGuid().ToString("N");
-    res.Cookies.Append("shopify_state", state, new CookieOptions 
-    { 
-        HttpOnly = true, 
-        Secure = true, 
-        SameSite = SameSiteMode.None 
-    });
-
-    var url = await oauth.GetAuthorizationUrlAsync(shop, state);
-    return Results.Redirect(url);
-});
-
-// OAuth callback endpoint  
-app.MapGet("/auth/callback", async (HttpContext http, [FromServices] IShopifyOAuthService oauth) =>
-{
-    var q = http.Request.Query;
-    var shop = q["shop"].ToString();
-    var code = q["code"].ToString();
-    var state = q["state"].ToString();
-    var hmac = q["hmac"].ToString();
-
-    if (!http.Request.Cookies.TryGetValue("shopify_state", out var savedState) || savedState != state)
-        return Results.BadRequest("Invalid state");
-
-    // Build message for HMAC validation
-    var items = q
-        .Where(kv => kv.Key != "hmac" && kv.Key != "signature")
-        .Select(kv => new KeyValuePair<string, string>(kv.Key, kv.Value.ToString()))
-        .OrderBy(kv => kv.Key, StringComparer.Ordinal)
-        .Select(kv => $"{kv.Key}={kv.Value}");
-    var message = string.Join("&", items);
-
-    if (!await oauth.ValidateHmacAsync(shop, message, hmac))
-        return Results.BadRequest("Invalid HMAC");
-
-    try
-    {
-        var token = await oauth.ExchangeCodeForTokenAsync(shop, code);
-        return Results.Redirect("/dashboard");
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(detail: ex.Message);
-    }
-});
 
 app.MapControllers();
 app.MapRazorPages();
