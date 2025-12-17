@@ -69,51 +69,31 @@ namespace Algora.Infrastructure.Services
 
                 try
                 {
-                    // GraphService.PostAsync may return a typed object (GraphResponse) not a string.
+                    // GraphService.PostAsync returns GraphResult in ShopifySharp 6.x
                     _logger.LogInformation("Sending GraphQL request to Shopify");
-                    object? respObj = await _graphService.PostAsync(request);
-                    if (respObj == null)
-                    {
-                        _logger.LogWarning("GraphQL response was null");
-                        break;
-                    }
+                    var graphResult = await _graphService.PostAsync(request);
 
-                    _logger.LogInformation("GraphQL response type: {Type}", respObj.GetType().FullName);
+                    _logger.LogInformation("GraphResult type: {Type}", graphResult.GetType().FullName);
 
-                    // Robust normalization of the response into a JSON string:
-                    string raw = string.Empty;
+                    // Get raw JSON string from IJsonElement
+                    // IJsonElement wraps JsonElement, try to get the underlying value
+                    string raw;
+                    var jsonInterface = graphResult.Json;
 
-                    // 1) If the response object itself is a string
-                    if (respObj is string sResp)
+                    // Try to get RawText via reflection (IJsonElement may have GetRawText method)
+                    var getRawTextMethod = jsonInterface.GetType().GetMethod("GetRawText");
+                    if (getRawTextMethod != null)
                     {
-                        raw = sResp;
-                    }
-                    // 2) If the response object is a JsonElement (boxed struct)
-                    else if (respObj is JsonElement jeResp)
-                    {
-                        raw = jeResp.GetRawText();
+                        raw = (string?)getRawTextMethod.Invoke(jsonInterface, null) ?? string.Empty;
                     }
                     else
                     {
-                        // 3) Try to find a "Json" property (GraphResponse.Json) and handle string/JsonElement inside it
-                        var jsonProp = respObj.GetType().GetProperty("Json", BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                        if (jsonProp != null)
-                        {
-                            var jsonVal = jsonProp.GetValue(respObj);
-                            if (jsonVal is string js) raw = js;
-                            else if (jsonVal is JsonElement je) raw = je.GetRawText();
-                            else if (jsonVal != null) raw = JsonSerializer.Serialize(jsonVal);
-                        }
+                        // Fallback: serialize the object
+                        raw = JsonSerializer.Serialize(jsonInterface);
                     }
 
-                    // 4) Final fallback - use ToString() if it looks useful, otherwise serialize the whole object
-                    if (string.IsNullOrWhiteSpace(raw))
-                    {
-                        var toStr = respObj.ToString();
-                        raw = !string.IsNullOrWhiteSpace(toStr) ? toStr : JsonSerializer.Serialize(respObj);
-                    }
-
-                    _logger.LogDebug("Raw GraphQL response (first 500 chars): {Response}", raw?.Length > 500 ? raw.Substring(0, 500) : raw);
+                    _logger.LogInformation("Raw GraphQL response (first 1000 chars): {Response}",
+                        raw.Length > 1000 ? raw.Substring(0, 1000) : raw);
 
                     if (string.IsNullOrWhiteSpace(raw))
                     {
@@ -121,10 +101,45 @@ namespace Algora.Infrastructure.Services
                         break;
                     }
 
-                    var result = JsonSerializer.Deserialize<ProductsQueryResult>(raw, new JsonSerializerOptions
+                    // Parse the raw JSON to standard JsonDocument for inspection
+                    ProductsQueryResult? result = null;
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                    using (var doc = JsonDocument.Parse(raw))
                     {
-                        PropertyNameCaseInsensitive = true
-                    });
+                        var root = doc.RootElement;
+                        _logger.LogInformation("Response root ValueKind: {Kind}", root.ValueKind);
+
+                        if (root.ValueKind == JsonValueKind.Object)
+                        {
+                            var props = root.EnumerateObject().Select(p => p.Name).ToList();
+                            _logger.LogInformation("Response root properties: {Props}", string.Join(", ", props));
+
+                            // Case 1: Response has "data" wrapper - {"data": {"products": {...}}}
+                            if (root.TryGetProperty("data", out var dataEl))
+                            {
+                                _logger.LogInformation("Found 'data' property");
+                                result = JsonSerializer.Deserialize<ProductsQueryResult>(raw, options);
+                            }
+                            // Case 2: Response is already the "data" content - {"products": {...}}
+                            else if (root.TryGetProperty("products", out _))
+                            {
+                                _logger.LogInformation("Found 'products' directly at root");
+                                result = new ProductsQueryResult
+                                {
+                                    Data = JsonSerializer.Deserialize<ProductsData>(raw, options)
+                                };
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Unexpected response structure. Root properties: {Props}", string.Join(", ", props));
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Response is not an object. ValueKind: {Kind}", root.ValueKind);
+                        }
+                    }
 
                     if (result?.Data?.Products?.Edges == null || result.Data.Products.Edges.Count == 0)
                     {
