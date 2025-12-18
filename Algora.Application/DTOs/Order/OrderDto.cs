@@ -16,6 +16,8 @@ namespace Algora.Application.DTOs
         public string? FulfillmentStatus { get; init; }
         public decimal TotalPrice { get; init; }
         public DateTime CreatedAt { get; init; }
+        public string? Note { get; init; }
+        public string? Tags { get; init; }
         public CustomerDto? Customer { get; init; }
         public AddressDto? BillingAddress { get; init; }
         public AddressDto? ShippingAddress { get; init; }

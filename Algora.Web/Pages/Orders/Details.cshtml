@@ -4,165 +4,362 @@
     ViewData["Title"] = Model.Order != null ? $"Order {Model.Order.Name}" : "Order Details";
 }
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6>Order Details</h6>
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="/orders">Orders</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">@(Model.Order?.Name ?? "Details")</li>
-                                </ol>
-                            </nav>
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Breadcrumb & Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <nav class="text-sm mb-2">
+                <ol class="flex items-center space-x-2">
+                    <li>
+                        <a href="/orders" class="text-slate-500 hover:text-slate-700 dark:text-gray-400 dark:hover:text-white">
+                            <i class="fas fa-shopping-cart me-1"></i> Orders
+                        </a>
+                    </li>
+                    <li class="text-slate-400 dark:text-gray-500">/</li>
+                    <li class="text-slate-700 font-medium dark:text-white">@(Model.Order?.Name ?? "Details")</li>
+                </ol>
+            </nav>
+            <h5 class="mb-0 font-bold dark:text-white">Order Details</h5>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (Model.Order != null)
+            {
+                <a href="/orders/invoice/@Model.Order.Id" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-file-invoice me-2 text-slate-400"></i>
+                    View Invoice
+                </a>
+                <a href="/orders/invoice/download/@Model.Order.Id" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-download me-2 text-slate-400"></i>
+                    Download PDF
+                </a>
+            }
+            <a href="/orders" class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-gradient-to-tl from-gray-600 to-gray-400 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Orders
+            </a>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+    else if (Model.Order != null)
+    {
+        var statusClass = Model.Order.FinancialStatus?.ToLower() switch
+        {
+            "paid" => "from-green-600 to-lime-400",
+            "pending" => "from-yellow-500 to-yellow-300",
+            "refunded" => "from-red-600 to-rose-400",
+            "cancelled" or "canceled" => "from-slate-600 to-slate-400",
+            "voided" => "from-slate-600 to-slate-400",
+            _ => "from-blue-600 to-cyan-400"
+        };
+
+        var fulfillClass = Model.Order.FulfillmentStatus?.ToLower() switch
+        {
+            "fulfilled" => "from-green-600 to-lime-400",
+            "partial" => "from-yellow-500 to-yellow-300",
+            null or "" => "from-slate-600 to-slate-400",
+            _ => "from-blue-600 to-cyan-400"
+        };
+
+        var customerName = Model.Order.Customer != null
+            ? $"{Model.Order.Customer.FirstName} {Model.Order.Customer.LastName}".Trim()
+            : (Model.Order.Email ?? "Guest");
+
+        var initials = customerName.Length > 0
+            ? string.Join("", customerName.Split(' ').Where(w => w.Length > 0).Take(2).Select(w => w[0].ToString().ToUpper()))
+            : "?";
+
+        var bgColors = new[] { "from-purple-700 to-pink-500", "from-gray-400 to-gray-600", "from-green-600 to-lime-400", "from-blue-600 to-cyan-400", "from-red-600 to-rose-400", "from-orange-500 to-yellow-300" };
+        var colorIndex = Math.Abs(customerName.GetHashCode()) % bgColors.Length;
+
+        <!-- Order Summary Card -->
+        <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <div class="flex flex-wrap items-start justify-between">
+                            <div class="flex items-center">
+                                <div class="flex items-center justify-center w-16 h-16 mr-4 text-xl text-white rounded-xl bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-1 font-bold dark:text-white">@Model.Order.Name</h4>
+                                    <p class="mb-0 text-sm text-slate-500 dark:text-gray-400">
+                                        Order ID: #@Model.Order.Id
+                                    </p>
+                                    <p class="mb-0 text-sm text-slate-500 dark:text-gray-400">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        @Model.Order.CreatedAt.ToString("MMMM dd, yyyy") at @Model.Order.CreatedAt.ToString("h:mm tt")
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="bg-gradient-to-tl @statusClass px-3 py-1.5 text-xs rounded-lg inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                        @(Model.Order.FinancialStatus ?? "Unknown")
+                                    </span>
+                                    <span class="bg-gradient-to-tl @fulfillClass px-3 py-1.5 text-xs rounded-lg inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                        @(string.IsNullOrEmpty(Model.Order.FulfillmentStatus) ? "Unfulfilled" : Model.Order.FulfillmentStatus)
+                                    </span>
+                                </div>
+                                <p class="text-2xl font-bold text-slate-700 dark:text-white">@Model.Order.TotalPrice.ToString("C")</p>
+                            </div>
                         </div>
-                        <a href="/orders" class="btn btn-sm btn-secondary">Back to Orders</a>
                     </div>
                 </div>
-                <div class="card-body">
-                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @Model.ErrorMessage
-                        </div>
-                    }
-                    else if (Model.Order != null)
-                    {
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Order Information</h6>
-                                <ul class="list-group">
-                                    <li class="list-group-item border-0 ps-0 pt-0 text-sm">
-                                        <strong class="text-dark">Order Number:</strong> &nbsp; @Model.Order.Name
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm">
-                                        <strong class="text-dark">Order ID:</strong> &nbsp; #@Model.Order.Id
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm">
-                                        <strong class="text-dark">Date:</strong> &nbsp; @Model.Order.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm">
-                                        <strong class="text-dark">Financial Status:</strong> &nbsp;
-                                        @{
-                                            var statusClass = Model.Order.FinancialStatus?.ToLower() switch
-                                            {
-                                                "paid" => "bg-gradient-success",
-                                                "pending" => "bg-gradient-warning",
-                                                "refunded" => "bg-gradient-secondary",
-                                                _ => "bg-gradient-info"
-                                            };
-                                        }
-                                        <span class="badge badge-sm @statusClass">@(Model.Order.FinancialStatus ?? "Unknown")</span>
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 text-sm">
-                                        <strong class="text-dark">Fulfillment Status:</strong> &nbsp;
-                                        @{
-                                            var fulfillClass = Model.Order.FulfillmentStatus?.ToLower() switch
-                                            {
-                                                "fulfilled" => "bg-gradient-success",
-                                                "partial" => "bg-gradient-warning",
-                                                null or "" => "bg-gradient-secondary",
-                                                _ => "bg-gradient-info"
-                                            };
-                                        }
-                                        <span class="badge badge-sm @fulfillClass">@(Model.Order.FulfillmentStatus ?? "Unfulfilled")</span>
-                                    </li>
-                                    <li class="list-group-item border-0 ps-0 pb-0 text-sm">
-                                        <strong class="text-dark">Total:</strong> &nbsp; @Model.Order.TotalPrice.ToString("C")
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Customer Information</h6>
-                                <ul class="list-group">
-                                    @if (Model.Order.Customer != null)
-                                    {
-                                        <li class="list-group-item border-0 ps-0 pt-0 text-sm">
-                                            <strong class="text-dark">Name:</strong> &nbsp; @Model.Order.Customer.FirstName @Model.Order.Customer.LastName
-                                        </li>
-                                        <li class="list-group-item border-0 ps-0 text-sm">
-                                            <strong class="text-dark">Email:</strong> &nbsp; @Model.Order.Customer.Email
-                                        </li>
-                                        @if (!string.IsNullOrEmpty(Model.Order.Customer.Phone))
-                                        {
-                                            <li class="list-group-item border-0 ps-0 text-sm">
-                                                <strong class="text-dark">Phone:</strong> &nbsp; @Model.Order.Customer.Phone
-                                            </li>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <li class="list-group-item border-0 ps-0 pt-0 text-sm">
-                                            <strong class="text-dark">Email:</strong> &nbsp; @(Model.Order.Email ?? "N/A")
-                                        </li>
-                                    }
-                                </ul>
+            </div>
+        </div>
 
-                                @if (Model.Order.ShippingAddress != null)
+        <div class="flex flex-wrap -mx-3">
+            <!-- Customer Information -->
+            <div class="w-full max-w-full px-3 mb-6 lg:w-4/12">
+                <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">
+                            <i class="fas fa-user me-2 text-cyan-500"></i>
+                            Customer Information
+                        </h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="flex items-center justify-center w-12 h-12 mr-4 text-sm text-white rounded-xl bg-gradient-to-tl @bgColors[colorIndex]">
+                                @initials
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-sm leading-normal dark:text-white">@customerName</h6>
+                                <p class="mb-0 text-xs text-slate-500 dark:text-gray-400">
+                                    @(Model.Order.Email ?? Model.Order.Customer?.Email ?? "No email")
+                                </p>
+                            </div>
+                        </div>
+
+                        @if (Model.Order.Customer != null)
+                        {
+                            <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                                @if (!string.IsNullOrEmpty(Model.Order.Customer.Phone))
                                 {
-                                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3 mt-4">Shipping Address</h6>
-                                    <address class="text-sm mb-0">
-                                        @Model.Order.ShippingAddress.Name<br />
-                                        @Model.Order.ShippingAddress.Address1<br />
-                                        @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Address2))
-                                        {
-                                            @Model.Order.ShippingAddress.Address2<br />
-                                        }
-                                        @Model.Order.ShippingAddress.City, @Model.Order.ShippingAddress.Province @Model.Order.ShippingAddress.Zip<br />
-                                        @Model.Order.ShippingAddress.Country
-                                    </address>
+                                    <li class="relative flex py-2 border-0">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs text-slate-500 dark:text-gray-400">Phone</span>
+                                            <span class="text-sm font-semibold text-slate-700 dark:text-white">@Model.Order.Customer.Phone</span>
+                                        </div>
+                                    </li>
+                                }
+                                <li class="relative flex py-2 border-0">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs text-slate-500 dark:text-gray-400">Customer Since</span>
+                                        <span class="text-sm font-semibold text-slate-700 dark:text-white">@Model.Order.Customer.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                </li>
+                                @if (Model.Order.Customer.VerifiedEmail)
+                                {
+                                    <li class="relative flex py-2 border-0">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                            <i class="fas fa-check-circle me-1"></i> Email Verified
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="w-full max-w-full px-3 mb-6 lg:w-4/12">
+                <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">
+                            <i class="fas fa-truck me-2 text-orange-500"></i>
+                            Shipping Address
+                        </h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        @if (Model.Order.ShippingAddress != null)
+                        {
+                            <div class="text-sm text-slate-700 dark:text-white">
+                                @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Name))
+                                {
+                                    <p class="font-semibold mb-1">@Model.Order.ShippingAddress.Name</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Address1))
+                                {
+                                    <p class="mb-1">@Model.Order.ShippingAddress.Address1</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Address2))
+                                {
+                                    <p class="mb-1">@Model.Order.ShippingAddress.Address2</p>
+                                }
+                                <p class="mb-1">
+                                    @Model.Order.ShippingAddress.City@(string.IsNullOrEmpty(Model.Order.ShippingAddress.Province) ? "" : $", {Model.Order.ShippingAddress.Province}") @Model.Order.ShippingAddress.Zip
+                                </p>
+                                @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Country))
+                                {
+                                    <p class="mb-1">@Model.Order.ShippingAddress.Country</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.ShippingAddress.Phone))
+                                {
+                                    <p class="mt-3 text-slate-500 dark:text-gray-400">
+                                        <i class="fas fa-phone me-1"></i> @Model.Order.ShippingAddress.Phone
+                                    </p>
                                 }
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-6">
+                                <i class="fas fa-map-marker-alt fa-2x text-slate-300 mb-2"></i>
+                                <p class="text-sm text-slate-500 dark:text-gray-400">No shipping address provided</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
 
+            <!-- Billing Address -->
+            <div class="w-full max-w-full px-3 mb-6 lg:w-4/12">
+                <div class="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">
+                            <i class="fas fa-credit-card me-2 text-green-500"></i>
+                            Billing Address
+                        </h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        @if (Model.Order.BillingAddress != null)
+                        {
+                            <div class="text-sm text-slate-700 dark:text-white">
+                                @if (!string.IsNullOrEmpty(Model.Order.BillingAddress.Name))
+                                {
+                                    <p class="font-semibold mb-1">@Model.Order.BillingAddress.Name</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.BillingAddress.Address1))
+                                {
+                                    <p class="mb-1">@Model.Order.BillingAddress.Address1</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.BillingAddress.Address2))
+                                {
+                                    <p class="mb-1">@Model.Order.BillingAddress.Address2</p>
+                                }
+                                <p class="mb-1">
+                                    @Model.Order.BillingAddress.City@(string.IsNullOrEmpty(Model.Order.BillingAddress.Province) ? "" : $", {Model.Order.BillingAddress.Province}") @Model.Order.BillingAddress.Zip
+                                </p>
+                                @if (!string.IsNullOrEmpty(Model.Order.BillingAddress.Country))
+                                {
+                                    <p class="mb-1">@Model.Order.BillingAddress.Country</p>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Order.BillingAddress.Phone))
+                                {
+                                    <p class="mt-3 text-slate-500 dark:text-gray-400">
+                                        <i class="fas fa-phone me-1"></i> @Model.Order.BillingAddress.Phone
+                                    </p>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-6">
+                                <i class="fas fa-file-invoice fa-2x text-slate-300 mb-2"></i>
+                                <p class="text-sm text-slate-500 dark:text-gray-400">No billing address provided</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="flex flex-wrap -mx-3">
+            <div class="w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <h6 class="mb-0 dark:text-white">
+                                <i class="fas fa-box me-2 text-purple-500"></i>
+                                Order Items
+                            </h6>
+                            <span class="text-sm text-slate-500 dark:text-gray-400">
+                                @Model.Order.LineItems.Count() item(s)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6 px-0 pb-0">
                         @if (Model.Order.LineItems.Any())
                         {
-                            <hr class="horizontal dark my-4" />
-                            <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Line Items</h6>
-                            <div class="table-responsive">
-                                <table class="table align-items-center mb-0">
-                                    <thead>
+                            <div class="overflow-x-auto">
+                                <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                    <thead class="align-bottom">
                                         <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Product</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Quantity</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total</th>
+                                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
+                                            <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Quantity</th>
+                                            <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Unit Price</th>
+                                            <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var item in Model.Order.LineItems)
                                         {
+                                            var itemInitials = string.Join("", (item.Title ?? "P").Split(' ').Take(2).Select(w => w.Length > 0 ? w[0].ToString().ToUpper() : ""));
+                                            var itemColorIndex = Math.Abs((item.Title ?? "").GetHashCode()) % bgColors.Length;
+
                                             <tr>
-                                                <td>
-                                                    <p class="text-sm font-weight-bold mb-0">@item.Title</p>
+                                                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <div class="flex px-2 py-1">
+                                                        <div class="flex items-center justify-center w-10 h-10 mr-4 text-xs text-white rounded-xl bg-gradient-to-tl @bgColors[itemColorIndex]">
+                                                            @itemInitials
+                                                        </div>
+                                                        <div class="flex flex-col justify-center">
+                                                            <h6 class="mb-0 text-sm leading-normal dark:text-white">@item.Title</h6>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-sm">@item.Quantity</span>
+                                                <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-sm font-semibold text-slate-700 dark:text-white">@item.Quantity</span>
                                                 </td>
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-sm">@item.Price.ToString("C")</span>
+                                                <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-sm text-slate-500 dark:text-gray-400">@item.Price.ToString("C")</span>
                                                 </td>
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-sm font-weight-bold">@((item.Price * item.Quantity).ToString("C"))</span>
+                                                <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-sm font-bold text-slate-700 dark:text-white">@((item.Price * item.Quantity).ToString("C"))</span>
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                            <td class="text-center"><strong>@Model.Order.TotalPrice.ToString("C")</strong></td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
+
+                            <!-- Order Summary -->
+                            <div class="p-6 border-t border-gray-200 dark:border-white/40">
+                                <div class="flex justify-end">
+                                    <div class="w-full max-w-xs">
+                                        <div class="flex justify-between py-2">
+                                            <span class="text-sm text-slate-500 dark:text-gray-400">Subtotal</span>
+                                            <span class="text-sm font-semibold text-slate-700 dark:text-white">@Model.Order.LineItems.Sum(i => i.Price * i.Quantity).ToString("C")</span>
+                                        </div>
+                                        <div class="flex justify-between py-2 border-t border-gray-200 dark:border-white/40">
+                                            <span class="text-base font-bold text-slate-700 dark:text-white">Total</span>
+                                            <span class="text-base font-bold text-slate-700 dark:text-white">@Model.Order.TotalPrice.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         }
-                    }
+                        else
+                        {
+                            <div class="text-center py-12">
+                                <i class="fas fa-box-open fa-3x text-slate-300 mb-4"></i>
+                                <p class="text-slate-500 dark:text-gray-400">No items in this order</p>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>

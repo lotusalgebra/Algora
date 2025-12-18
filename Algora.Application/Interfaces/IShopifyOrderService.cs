@@ -63,5 +63,38 @@ namespace Algora.Application.Interfaces
         /// ensure the appropriate Shopify API calls are performed and update any local state if needed.
         /// </returns>
         Task SendInvoiceAsync(long orderId);
+
+        /// <summary>
+        /// Updates an existing order's editable fields (note, tags, email, etc.).
+        /// </summary>
+        /// <param name="input">The order update input containing the order ID and fields to update.</param>
+        /// <returns>A task that resolves to the updated <see cref="OrderDto"/>.</returns>
+        Task<OrderDto?> UpdateAsync(UpdateOrderInput input);
+
+        /// <summary>
+        /// Closes an order. Note: Shopify does not allow true deletion of orders.
+        /// </summary>
+        /// <param name="id">Numeric Shopify order id to close.</param>
+        /// <returns>A task that completes when the order is closed.</returns>
+        Task CloseAsync(long id);
+    }
+
+    /// <summary>
+    /// Input model for updating an existing order.
+    /// </summary>
+    public class UpdateOrderInput
+    {
+        public long OrderId { get; set; }
+        public string? Email { get; set; }
+        public string? Note { get; set; }
+        public string? Tags { get; set; }
+        public string? ShippingName { get; set; }
+        public string? ShippingAddress1 { get; set; }
+        public string? ShippingAddress2 { get; set; }
+        public string? ShippingCity { get; set; }
+        public string? ShippingProvince { get; set; }
+        public string? ShippingCountry { get; set; }
+        public string? ShippingZip { get; set; }
+        public string? ShippingPhone { get; set; }
     }
 }

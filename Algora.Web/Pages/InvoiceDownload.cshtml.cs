@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Algora.Application.DTOs;
 using Algora.Application.Interfaces;
+using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,34 +9,34 @@ namespace Algora.Web.Pages
 {
     public class InvoiceDownloadModel : PageModel
     {
-        private readonly IInvoiceTemplateService _templateService;
-        private readonly IPdfGeneratorService _pdfGenerator;
+        private readonly QuestPdfInvoiceGeneratorService _pdfGenerator;
 
-        public InvoiceDownloadModel(IInvoiceTemplateService templateService, IPdfGeneratorService pdfGenerator)
+        public InvoiceDownloadModel(QuestPdfInvoiceGeneratorService pdfGenerator)
         {
-            _templateService = templateService;
             _pdfGenerator = pdfGenerator;
         }
 
         // GET /InvoiceDownload?invoiceNumber=INV-001
         public async Task<IActionResult> OnGetAsync(string invoiceNumber)
         {
-            // TODO: Replace with real lookup for invoiceNumber (DB/service)
+            // Create a sample invoice for testing
             var invoice = new InvoicePdfDto
             {
                 InvoiceNumber = invoiceNumber ?? "INV-000",
-                CustomerName = "Acme Co.",
-                CustomerEmail = "billing@acme.example",
-                BillingAddress = "123 Main St, City",
+                CustomerName = "Sample Customer",
+                CustomerEmail = "customer@example.com",
+                BillingAddress = "123 Main St\nCity, State 12345\nCountry",
                 InvoiceDate = System.DateTime.UtcNow,
-                Lines = System.Array.Empty<Algora.Application.DTOs.InvoiceLineDto>(),
-                Subtotal = 0m,
+                Lines = new[]
+                {
+                    new InvoiceLineDto { ProductName = "Sample Product", Quantity = 1, Price = 99.99m }
+                },
+                Subtotal = 99.99m,
                 Tax = 0m,
-                Total = 0m
+                Total = 99.99m
             };
 
-            var html = await _templateService.RenderInvoiceHtmlAsync(invoice);
-            var pdf = await _pdfGenerator.GeneratePdfAsync(html);
+            var pdf = await _pdfGenerator.GenerateInvoicePdfAsync(invoice);
 
             return File(pdf, "application/pdf", $"{invoice.InvoiceNumber}.pdf");
         }

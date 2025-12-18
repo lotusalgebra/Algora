@@ -6,8 +6,6 @@ using Algora.Infrastructure.Services;
 using Algora.Infrastructure.Services.Communication;
 using Algora.Infrastructure.Shopify;
 using Algora.Infrastructure.Shopify.Billing;
-using DinkToPdf;
-using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -64,9 +62,8 @@ public static class DependencyInjection
 
         // ----- Template and PDF generation -----
         services.AddScoped<IInvoiceTemplateService, InvoiceTemplateService>();
-        var pdfConverter = new SynchronizedConverter(new PdfTools());
-        services.AddSingleton<IConverter>(pdfConverter);
-        services.AddSingleton<IPdfGeneratorService, WkHtmlToPdfGeneratorService>();
+        services.AddSingleton<IPdfGeneratorService, QuestPdfInvoiceGeneratorService>();
+        services.AddSingleton<QuestPdfInvoiceGeneratorService>(); // Also register concrete type for direct use
 
         // ----- Billing & Licensing -----
         services.AddScoped<IShopifyBillingService, ShopifyBillingService>();

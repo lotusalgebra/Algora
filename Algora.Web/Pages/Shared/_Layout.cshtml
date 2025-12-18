@@ -948,6 +948,10 @@
         @RenderBody()
 
     </main>
+
+    <!-- Modal container - rendered outside main to avoid stacking context issues -->
+    @await RenderSectionAsync("Modals", required: false)
+
     <!-- plugin for charts  -->
     <script src="~/js/plugins/chartjs.min.js" asp-append-version="true"></script>
 

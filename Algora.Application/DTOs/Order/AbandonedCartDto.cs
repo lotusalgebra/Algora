@@ -13,6 +13,7 @@ namespace Algora.Application.DTOs
         public string? Phone { get; init; }
         public decimal TotalPrice { get; init; }
         public DateTime? AbandonedAt { get; init; }
+        public string? RecoveryUrl { get; init; }
         // Fixed default initializer: use Enumerable.Empty<T>() rather than invalid "[]"
         public IEnumerable<CartItemDto> Items { get; init; } = Enumerable.Empty<CartItemDto>();
     }

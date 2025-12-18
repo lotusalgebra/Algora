@@ -281,32 +281,55 @@ namespace Algora.Infrastructure.Services
 
         public async Task<IReadOnlyList<ProductDto>> GetProductsAsync(ProductSearchFilter filter, int first = 25)
         {
+            _logger.LogInformation("GetProductsAsync called with first={First}", first);
             var query = BuildSearchQuery(filter);
-            var gql = @"query GetProducts($first:Int!, $query:String) {
-              products(first: $first, query: $query) {
-                edges {
-                  node {
-                    id
-                    title
-                    handle
-                    tags
-                    variants(first: 50) {
-                      nodes {
+            _logger.LogInformation("Search query: {Query}", query ?? "(null)");
+
+            // Use same approach as GetAllProductsAsync which works
+            var request = new GraphRequest
+            {
+                Query = @"query ($first: Int!, $query: String) {
+                  products(first: $first, query: $query) {
+                    edges {
+                      node {
                         id
                         title
-                        sku
-                        price
-                        option1
-                        option2
-                        option3
+                        handle
+                        tags
+                        variants(first: 50) {
+                          nodes {
+                            id
+                            title
+                            sku
+                            price
+                            selectedOptions {
+                              name
+                              value
+                            }
+                          }
+                        }
                       }
                     }
                   }
+                }",
+                Variables = new Dictionary<string, object>
+                {
+                    { "first", first },
+                    { "query", query! }
                 }
-              }
-            }";
+            };
 
-            var raw = await SendGraphQueryRawAsync(gql, new { first, query });
+            // Remove null query from variables
+            if (query == null)
+                request.Variables.Remove("query");
+
+            var graphResult = await _graphService.PostAsync(request);
+            var raw = NormalizeResponseToJson(graphResult);
+
+            _logger.LogInformation("Raw response length: {Length}", raw?.Length ?? 0);
+            if (!string.IsNullOrWhiteSpace(raw) && raw.Length < 2000)
+                _logger.LogInformation("Raw response: {Raw}", raw);
+
             if (string.IsNullOrWhiteSpace(raw)) return Array.Empty<ProductDto>();
 
             using var doc = JsonDocument.Parse(raw);
@@ -318,10 +341,11 @@ namespace Algora.Infrastructure.Services
 
             if (!dataEl.TryGetProperty("products", out var productsEl))
             {
-                // No products
+                _logger.LogWarning("No 'products' property found in response");
                 return Array.Empty<ProductDto>();
             }
 
+            _logger.LogInformation("Found 'products' property in response");
             var list = new List<ProductDto>();
             if (productsEl.TryGetProperty("edges", out var edges) && edges.ValueKind == JsonValueKind.Array)
             {
@@ -356,9 +380,15 @@ namespace Algora.Infrastructure.Services
                                     if (vp.ValueKind == JsonValueKind.Number && vp.TryGetDecimal(out var pd)) price = pd;
                                     else if (vp.ValueKind == JsonValueKind.String && decimal.TryParse(vp.GetString(), out var pd2)) price = pd2;
                                 }
-                                var option1 = v.TryGetProperty("option1", out var o1) && o1.ValueKind != JsonValueKind.Null ? o1.GetString() : null;
-                                var option2 = v.TryGetProperty("option2", out var o2) && o2.ValueKind != JsonValueKind.Null ? o2.GetString() : null;
-                                var option3 = v.TryGetProperty("option3", out var o3) && o3.ValueKind != JsonValueKind.Null ? o3.GetString() : null;
+                                // Parse selectedOptions array
+                                string? option1 = null, option2 = null, option3 = null;
+                                if (v.TryGetProperty("selectedOptions", out var selOpts) && selOpts.ValueKind == JsonValueKind.Array)
+                                {
+                                    var optList = selOpts.EnumerateArray().ToList();
+                                    if (optList.Count > 0) option1 = optList[0].TryGetProperty("value", out var v1) ? v1.GetString() : null;
+                                    if (optList.Count > 1) option2 = optList[1].TryGetProperty("value", out var v2) ? v2.GetString() : null;
+                                    if (optList.Count > 2) option3 = optList[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
+                                }
                                 variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
                             }
                         }
@@ -377,9 +407,15 @@ namespace Algora.Infrastructure.Services
                                     if (vp.ValueKind == JsonValueKind.Number && vp.TryGetDecimal(out var pd)) price = pd;
                                     else if (vp.ValueKind == JsonValueKind.String && decimal.TryParse(vp.GetString(), out var pd2)) price = pd2;
                                 }
-                                var option1 = vnode.TryGetProperty("option1", out var o1) && o1.ValueKind != JsonValueKind.Null ? o1.GetString() : null;
-                                var option2 = vnode.TryGetProperty("option2", out var o2) && o2.ValueKind != JsonValueKind.Null ? o2.GetString() : null;
-                                var option3 = vnode.TryGetProperty("option3", out var o3) && o3.ValueKind != JsonValueKind.Null ? o3.GetString() : null;
+                                // Parse selectedOptions array
+                                string? option1 = null, option2 = null, option3 = null;
+                                if (vnode.TryGetProperty("selectedOptions", out var selOpts) && selOpts.ValueKind == JsonValueKind.Array)
+                                {
+                                    var optList = selOpts.EnumerateArray().ToList();
+                                    if (optList.Count > 0) option1 = optList[0].TryGetProperty("value", out var v1) ? v1.GetString() : null;
+                                    if (optList.Count > 1) option2 = optList[1].TryGetProperty("value", out var v2) ? v2.GetString() : null;
+                                    if (optList.Count > 2) option3 = optList[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
+                                }
                                 variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
                             }
                         }
@@ -387,9 +423,11 @@ namespace Algora.Infrastructure.Services
 
                     var dto = new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants);
                     list.Add(dto);
+                    _logger.LogInformation("Added product: {Title} with {VariantCount} variants", title, variants.Count);
                 }
             }
 
+            _logger.LogInformation("GetProductsAsync returning {Count} products", list.Count);
             return list;
         }
 
@@ -517,6 +555,387 @@ namespace Algora.Infrastructure.Services
             return new VariantDto(id, vtitle, vsku, vprice, o1, o2, o3);
         }
 
-        // Similar for CreateProduct (mutation) / UpdateProduct (mutation)
+        public async Task<ProductDto> CreateProductAsync(CreateProductInput input)
+        {
+            // Build variants array for the mutation - only if variants are provided
+            var variantsJson = new List<object>();
+
+            if (input.Variants.Any())
+            {
+                foreach (var v in input.Variants)
+                {
+                    var optionValues = new List<object>();
+                    if (!string.IsNullOrEmpty(v.Option1)) optionValues.Add(new { optionName = "Size", name = v.Option1 });
+                    if (!string.IsNullOrEmpty(v.Option2)) optionValues.Add(new { optionName = "Color", name = v.Option2 });
+                    if (!string.IsNullOrEmpty(v.Option3)) optionValues.Add(new { optionName = "Material", name = v.Option3 });
+
+                    variantsJson.Add(new
+                    {
+                        price = v.Price.ToString("F2"),
+                        sku = v.Sku,
+                        optionValues = optionValues.Count > 0 ? optionValues : null
+                    });
+                }
+            }
+
+            // Build images array if provided
+            var imagesJson = input.ImageUrls?
+                .Where(url => !string.IsNullOrWhiteSpace(url))
+                .Select(url => new { src = url })
+                .ToList();
+
+            var gql = @"mutation CreateProduct($input: ProductInput!) {
+              productCreate(input: $input) {
+                product {
+                  id
+                  title
+                  handle
+                  tags
+                  variants(first: 50) {
+                    nodes {
+                      id
+                      title
+                      sku
+                      price
+                    }
+                  }
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            // Build the input object dynamically
+            var inputObj = new Dictionary<string, object?>
+            {
+                { "title", input.Title },
+                { "descriptionHtml", input.Description },
+                { "vendor", input.Vendor },
+                { "productType", input.ProductType },
+                { "tags", input.Tags }
+            };
+
+            // Only add variants if there are any
+            if (variantsJson.Count > 0)
+            {
+                inputObj["variants"] = variantsJson;
+            }
+
+            // Only add images if there are any
+            if (imagesJson != null && imagesJson.Count > 0)
+            {
+                inputObj["images"] = imagesJson;
+            }
+
+            var variables = new { input = inputObj };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var createEl = dataEl.GetProperty("productCreate");
+
+            // Check for user errors
+            var userErrors = createEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Product create failed: " + string.Join("; ", msgs));
+            }
+
+            var productEl = createEl.GetProperty("product");
+            var gid = productEl.GetProperty("id").GetString() ?? string.Empty;
+            var title = productEl.TryGetProperty("title", out var t) ? t.GetString() ?? string.Empty : string.Empty;
+            var handle = productEl.TryGetProperty("handle", out var h) ? h.GetString() : null;
+
+            var tags = new List<string>();
+            if (productEl.TryGetProperty("tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var ti in tagsEl.EnumerateArray())
+                    if (ti.ValueKind == JsonValueKind.String) tags.Add(ti.GetString()!);
+            }
+
+            var variants = new List<VariantDto>();
+            if (productEl.TryGetProperty("variants", out var variantsEl) &&
+                variantsEl.TryGetProperty("nodes", out var nodesEl) &&
+                nodesEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var v in nodesEl.EnumerateArray())
+                {
+                    var vid = v.TryGetProperty("id", out var pid) ? pid.GetString() ?? string.Empty : string.Empty;
+                    var vtitle = v.TryGetProperty("title", out var vt) ? vt.GetString() ?? string.Empty : string.Empty;
+                    var sku = v.TryGetProperty("sku", out var vs) && vs.ValueKind != JsonValueKind.Null ? vs.GetString() : null;
+                    decimal? price = null;
+                    if (v.TryGetProperty("price", out var vp) && vp.ValueKind != JsonValueKind.Null)
+                    {
+                        if (vp.ValueKind == JsonValueKind.Number && vp.TryGetDecimal(out var pd)) price = pd;
+                        else if (vp.ValueKind == JsonValueKind.String && decimal.TryParse(vp.GetString(), out var pd2)) price = pd2;
+                    }
+                    variants.Add(new VariantDto(vid, vtitle, sku, price, null, null, null));
+                }
+            }
+
+            return new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants);
+        }
+
+        public async Task<ProductDto?> GetProductByIdAsync(long productId)
+        {
+            var gql = @"query GetProduct($id: ID!) {
+              product(id: $id) {
+                id
+                title
+                descriptionHtml
+                handle
+                vendor
+                productType
+                tags
+                variants(first: 50) {
+                  nodes {
+                    id
+                    title
+                    sku
+                    price
+                    selectedOptions {
+                      name
+                      value
+                    }
+                  }
+                }
+              }
+            }";
+
+            var productGid = $"gid://shopify/Product/{productId}";
+            var raw = await SendGraphQueryRawAsync(gql, new { id = productGid });
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            if (!dataEl.TryGetProperty("product", out var productEl) || productEl.ValueKind == JsonValueKind.Null)
+                return null;
+
+            var gid = productEl.GetProperty("id").GetString() ?? string.Empty;
+            var title = productEl.TryGetProperty("title", out var t) ? t.GetString() ?? string.Empty : string.Empty;
+            var handle = productEl.TryGetProperty("handle", out var h) ? h.GetString() : null;
+
+            var tags = new List<string>();
+            if (productEl.TryGetProperty("tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var ti in tagsEl.EnumerateArray())
+                    if (ti.ValueKind == JsonValueKind.String) tags.Add(ti.GetString()!);
+            }
+
+            var variants = new List<VariantDto>();
+            if (productEl.TryGetProperty("variants", out var variantsEl) &&
+                variantsEl.TryGetProperty("nodes", out var nodesEl) &&
+                nodesEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var v in nodesEl.EnumerateArray())
+                {
+                    var vid = v.TryGetProperty("id", out var pid) ? pid.GetString() ?? string.Empty : string.Empty;
+                    var vtitle = v.TryGetProperty("title", out var vt) ? vt.GetString() ?? string.Empty : string.Empty;
+                    var sku = v.TryGetProperty("sku", out var vs) && vs.ValueKind != JsonValueKind.Null ? vs.GetString() : null;
+                    decimal? price = null;
+                    if (v.TryGetProperty("price", out var vp) && vp.ValueKind != JsonValueKind.Null)
+                    {
+                        if (vp.ValueKind == JsonValueKind.Number && vp.TryGetDecimal(out var pd)) price = pd;
+                        else if (vp.ValueKind == JsonValueKind.String && decimal.TryParse(vp.GetString(), out var pd2)) price = pd2;
+                    }
+
+                    // Extract options from selectedOptions
+                    string? option1 = null, option2 = null, option3 = null;
+                    if (v.TryGetProperty("selectedOptions", out var optionsEl) && optionsEl.ValueKind == JsonValueKind.Array)
+                    {
+                        var options = optionsEl.EnumerateArray().ToList();
+                        if (options.Count > 0) option1 = options[0].TryGetProperty("value", out var v1) ? v1.GetString() : null;
+                        if (options.Count > 1) option2 = options[1].TryGetProperty("value", out var v2) ? v2.GetString() : null;
+                        if (options.Count > 2) option3 = options[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
+                    }
+
+                    variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
+                }
+            }
+
+            return new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants);
+        }
+
+        public async Task<ProductDto> UpdateProductAsync(UpdateProductInput input)
+        {
+            var productGid = $"gid://shopify/Product/{input.ProductId}";
+
+            var gql = @"mutation UpdateProduct($input: ProductInput!) {
+              productUpdate(input: $input) {
+                product {
+                  id
+                  title
+                  handle
+                  tags
+                  variants(first: 50) {
+                    nodes {
+                      id
+                      title
+                      sku
+                      price
+                    }
+                  }
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var variables = new
+            {
+                input = new
+                {
+                    id = productGid,
+                    title = input.Title,
+                    descriptionHtml = input.Description,
+                    vendor = input.Vendor,
+                    productType = input.ProductType,
+                    tags = input.Tags
+                }
+            };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var updateEl = dataEl.GetProperty("productUpdate");
+
+            // Check for user errors
+            var userErrors = updateEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Product update failed: " + string.Join("; ", msgs));
+            }
+
+            var productEl = updateEl.GetProperty("product");
+            var gid = productEl.GetProperty("id").GetString() ?? string.Empty;
+            var title = productEl.TryGetProperty("title", out var t) ? t.GetString() ?? string.Empty : string.Empty;
+            var handle = productEl.TryGetProperty("handle", out var h) ? h.GetString() : null;
+
+            var tags = new List<string>();
+            if (productEl.TryGetProperty("tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var ti in tagsEl.EnumerateArray())
+                    if (ti.ValueKind == JsonValueKind.String) tags.Add(ti.GetString()!);
+            }
+
+            var variants = new List<VariantDto>();
+            if (productEl.TryGetProperty("variants", out var variantsEl) &&
+                variantsEl.TryGetProperty("nodes", out var nodesEl) &&
+                nodesEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var v in nodesEl.EnumerateArray())
+                {
+                    var vid = v.TryGetProperty("id", out var pid) ? pid.GetString() ?? string.Empty : string.Empty;
+                    var vtitle = v.TryGetProperty("title", out var vt) ? vt.GetString() ?? string.Empty : string.Empty;
+                    var sku = v.TryGetProperty("sku", out var vs) && vs.ValueKind != JsonValueKind.Null ? vs.GetString() : null;
+                    decimal? price = null;
+                    if (v.TryGetProperty("price", out var vp) && vp.ValueKind != JsonValueKind.Null)
+                    {
+                        if (vp.ValueKind == JsonValueKind.Number && vp.TryGetDecimal(out var pd)) price = pd;
+                        else if (vp.ValueKind == JsonValueKind.String && decimal.TryParse(vp.GetString(), out var pd2)) price = pd2;
+                    }
+                    variants.Add(new VariantDto(vid, vtitle, sku, price, null, null, null));
+                }
+            }
+
+            // Update variants if provided
+            foreach (var variantInput in input.Variants)
+            {
+                if (variantInput.IsNew)
+                {
+                    // Create new variant
+                    await CreateVariantAsync(productGid, variantInput.Title ?? "Default",
+                        variantInput.Price, variantInput.Sku,
+                        variantInput.Option1, variantInput.Option2, variantInput.Option3);
+                }
+                else if (!string.IsNullOrEmpty(variantInput.VariantId))
+                {
+                    // Update existing variant
+                    await UpdateVariantAsync(variantInput.VariantId,
+                        variantInput.Title, variantInput.Price, variantInput.Sku,
+                        variantInput.Option1, variantInput.Option2, variantInput.Option3);
+                }
+            }
+
+            return new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants);
+        }
+
+        public async Task DeleteProductAsync(long productId)
+        {
+            var productGid = $"gid://shopify/Product/{productId}";
+
+            var gql = @"mutation DeleteProduct($input: ProductDeleteInput!) {
+              productDelete(input: $input) {
+                deletedProductId
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var variables = new
+            {
+                input = new
+                {
+                    id = productGid
+                }
+            };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var deleteEl = dataEl.GetProperty("productDelete");
+
+            // Check for user errors
+            var userErrors = deleteEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Product delete failed: " + string.Join("; ", msgs));
+            }
+
+            _logger.LogInformation("Product {ProductId} deleted successfully", productId);
+        }
     }
 }

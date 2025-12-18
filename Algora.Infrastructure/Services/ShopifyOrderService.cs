@@ -26,6 +26,54 @@ public class ShopifyOrderService : IShopifyOrderService
     private DraftOrderService CreateDraftOrderService() =>
         new DraftOrderService(_context.ShopDomain, _context.AccessToken);
 
+    /// <summary>
+    /// Sanitizes phone number to E.164 format for Shopify.
+    /// Returns null if phone is empty/invalid to avoid Shopify validation errors.
+    /// </summary>
+    private static string? SanitizePhone(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return null;
+
+        // Remove all non-digit characters except leading +
+        var sanitized = phone.Trim();
+
+        // Extract just the digits
+        var digits = new string(sanitized.Where(char.IsDigit).ToArray());
+
+        // Return null if no digits or too short
+        if (string.IsNullOrEmpty(digits) || digits.Length < 10) return null;
+
+        // Check if original had a + prefix (international format)
+        if (sanitized.StartsWith("+"))
+        {
+            // Already has country code, just ensure clean format
+            return "+" + digits;
+        }
+
+        // For numbers without + prefix:
+        // - 10 digits: assume US/Canada, add +1
+        // - 11 digits starting with 1: assume US/Canada with country code
+        // - Other lengths: add + and hope for the best
+        if (digits.Length == 10)
+        {
+            // US/Canada format without country code - add +1
+            return "+1" + digits;
+        }
+        else if (digits.Length == 11 && digits.StartsWith("1"))
+        {
+            // US/Canada format with country code included
+            return "+" + digits;
+        }
+        else if (digits.Length >= 11)
+        {
+            // Assume country code is included
+            return "+" + digits;
+        }
+
+        // If we get here, number is invalid
+        return null;
+    }
+
     public async Task<IEnumerable<OrderDto>> GetAllAsync(int limit = 25)
     {
         _logger.LogInformation("Fetching orders for shop: {ShopDomain}", _context.ShopDomain);
@@ -132,6 +180,8 @@ public class ShopifyOrderService : IShopifyOrderService
             FulfillmentStatus = o.FulfillmentStatus,
             TotalPrice = o.TotalPrice ?? 0m,
             CreatedAt = o.CreatedAt?.DateTime ?? DateTime.Now,
+            Note = o.Note,
+            Tags = o.Tags,
             Customer = customer,
             BillingAddress = billing,
             ShippingAddress = shipping,
@@ -143,22 +193,72 @@ public class ShopifyOrderService : IShopifyOrderService
     {
         var service = CreateOrderService();
 
+        // Map line items from DTO
+        var lineItems = (dto.LineItems ?? Enumerable.Empty<LineItemDto>())
+            .Where(li => !string.IsNullOrWhiteSpace(li.Title))
+            .Select(li => new LineItem
+            {
+                Title = li.Title,
+                Quantity = li.Quantity,
+                Price = li.Price
+            }).ToList();
+
+        // If no line items provided, create a default one
+        if (!lineItems.Any())
+        {
+            lineItems.Add(new LineItem
+            {
+                Title = "Manual order item",
+                Quantity = 1,
+                Price = dto.TotalPrice
+            });
+        }
+
         var order = new Order
         {
             Email = dto.Email,
             FinancialStatus = dto.FinancialStatus,
-            LineItems = new List<LineItem>
+            LineItems = lineItems,
+            Customer = dto.Customer == null ? null : new Customer
             {
-                new LineItem
-                {
-                    Title = "Sample product",
-                    Quantity = 1,
-                    Price = dto.TotalPrice
-                }
+                FirstName = dto.Customer.FirstName,
+                LastName = dto.Customer.LastName,
+                Email = dto.Customer.Email,
+                Phone = SanitizePhone(dto.Customer.Phone)
+            },
+            BillingAddress = dto.BillingAddress == null ? null : new Address
+            {
+                Name = dto.BillingAddress.Name,
+                Address1 = dto.BillingAddress.Address1,
+                Address2 = dto.BillingAddress.Address2,
+                City = dto.BillingAddress.City,
+                Province = dto.BillingAddress.Province,
+                Country = dto.BillingAddress.Country,
+                Zip = dto.BillingAddress.Zip,
+                Phone = SanitizePhone(dto.BillingAddress.Phone)
+            },
+            ShippingAddress = dto.ShippingAddress == null ? null : new Address
+            {
+                Name = dto.ShippingAddress.Name,
+                Address1 = dto.ShippingAddress.Address1,
+                Address2 = dto.ShippingAddress.Address2,
+                City = dto.ShippingAddress.City,
+                Province = dto.ShippingAddress.Province,
+                Country = dto.ShippingAddress.Country,
+                Zip = dto.ShippingAddress.Zip,
+                Phone = SanitizePhone(dto.ShippingAddress.Phone)
             }
         };
 
+        _logger.LogInformation("Creating order with {ItemCount} line items for customer: {Email}", lineItems.Count, dto.Email);
+        _logger.LogInformation("Phone numbers - Customer: {CustomerPhone}, Billing: {BillingPhone}, Shipping: {ShippingPhone}",
+            order.Customer?.Phone ?? "(null)",
+            order.BillingAddress?.Phone ?? "(null)",
+            order.ShippingAddress?.Phone ?? "(null)");
+
         var created = await service.CreateAsync(order);
+
+        _logger.LogInformation("Order created successfully: {OrderId} - {OrderName}", created.Id, created.Name);
 
         return new OrderDto
         {
@@ -228,5 +328,69 @@ public class ShopifyOrderService : IShopifyOrderService
             await draftService.SendInvoiceAsync(created.Id.Value);
 
         _logger.LogInformation("Invoice sent for Order #{OrderId} to {Email}", orderId, order.Email);
+    }
+
+    public async Task<OrderDto?> UpdateAsync(UpdateOrderInput input)
+    {
+        var service = CreateOrderService();
+
+        // First get the existing order
+        var existing = await service.GetAsync(input.OrderId);
+        if (existing == null)
+        {
+            _logger.LogWarning("Order not found for update: {OrderId}", input.OrderId);
+            return null;
+        }
+
+        // Build update object - only include fields that are being updated
+        var updateOrder = new Order
+        {
+            Id = input.OrderId,
+            Email = input.Email ?? existing.Email,
+            Note = input.Note ?? existing.Note,
+            Tags = input.Tags ?? existing.Tags
+        };
+
+        // Update shipping address if provided
+        if (!string.IsNullOrEmpty(input.ShippingAddress1) || !string.IsNullOrEmpty(input.ShippingCity))
+        {
+            updateOrder.ShippingAddress = new Address
+            {
+                Name = input.ShippingName ?? existing.ShippingAddress?.Name,
+                Address1 = input.ShippingAddress1 ?? existing.ShippingAddress?.Address1,
+                Address2 = input.ShippingAddress2 ?? existing.ShippingAddress?.Address2,
+                City = input.ShippingCity ?? existing.ShippingAddress?.City,
+                Province = input.ShippingProvince ?? existing.ShippingAddress?.Province,
+                Country = input.ShippingCountry ?? existing.ShippingAddress?.Country,
+                Zip = input.ShippingZip ?? existing.ShippingAddress?.Zip,
+                Phone = SanitizePhone(input.ShippingPhone ?? existing.ShippingAddress?.Phone)
+            };
+        }
+
+        _logger.LogInformation("Updating order {OrderId}", input.OrderId);
+
+        var updated = await service.UpdateAsync(input.OrderId, updateOrder);
+
+        _logger.LogInformation("Order {OrderId} updated successfully", input.OrderId);
+
+        return new OrderDto
+        {
+            Id = updated.Id ?? 0,
+            Name = updated.Name ?? "",
+            Email = updated.Email ?? "",
+            FinancialStatus = updated.FinancialStatus ?? "",
+            FulfillmentStatus = updated.FulfillmentStatus ?? "",
+            TotalPrice = updated.TotalPrice ?? 0m,
+            CreatedAt = updated.CreatedAt?.DateTime ?? DateTime.Now,
+            Note = updated.Note,
+            Tags = updated.Tags
+        };
+    }
+
+    public async Task CloseAsync(long id)
+    {
+        var service = CreateOrderService();
+        await service.CloseAsync(id);
+        _logger.LogInformation("Order {Id} closed successfully.", id);
     }
 }

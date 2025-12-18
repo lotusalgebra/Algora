@@ -11,5 +11,7 @@ namespace Algora.Application.DTOs
         public string? Title { get; init; }
         public int Quantity { get; init; }
         public decimal Price { get; init; }
+        public string? VariantId { get; init; }
+        public long? ProductId { get; init; }
     }
 }

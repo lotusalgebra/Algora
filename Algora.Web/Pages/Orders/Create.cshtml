@@ -1,0 +1,694 @@
+@page "/orders/create"
+@model Algora.Web.Pages.Orders.CreateModel
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="mb-4">
+        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
+            <li class="leading-normal text-sm">
+                <a class="text-slate-500 dark:text-white/60" href="/orders">Orders</a>
+            </li>
+            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
+                New Order
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h5 class="mb-0 font-bold dark:text-white">Create New Order</h5>
+                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Create a manual order for your customer</p>
+                </div>
+                <a href="/orders" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Form -->
+    <form method="post">
+        <div class="flex flex-wrap -mx-3">
+            <!-- Left Column - Order Details -->
+            <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
+                <!-- Customer Information Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center">
+                            <i class="fas fa-user text-cyan-500 me-3"></i>
+                            <h6 class="mb-0 dark:text-white">Customer Information</h6>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    First Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" asp-for="Order.CustomerFirstName"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="John" />
+                                <span asp-validation-for="Order.CustomerFirstName" class="text-red-500 text-xs"></span>
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    Last Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" asp-for="Order.CustomerLastName"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="Doe" />
+                                <span asp-validation-for="Order.CustomerLastName" class="text-red-500 text-xs"></span>
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    Email <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" asp-for="Order.CustomerEmail"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="john.doe@example.com" />
+                                <span asp-validation-for="Order.CustomerEmail" class="text-red-500 text-xs"></span>
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Phone</label>
+                                <div class="flex">
+                                    <select id="phone-country-code" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft appearance-none rounded-l-lg border border-r-0 border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none w-24">
+                                        <option value="+1">+1 US</option>
+                                        <option value="+44">+44 UK</option>
+                                        <option value="+91">+91 IN</option>
+                                        <option value="+61">+61 AU</option>
+                                        <option value="+86">+86 CN</option>
+                                        <option value="+49">+49 DE</option>
+                                        <option value="+33">+33 FR</option>
+                                        <option value="+81">+81 JP</option>
+                                        <option value="+52">+52 MX</option>
+                                        <option value="+55">+55 BR</option>
+                                    </select>
+                                    <input type="tel" id="customer-phone-input"
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-r-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                           placeholder="5551234567" pattern="[0-9]{10,15}" />
+                                </div>
+                                <input type="hidden" asp-for="Order.CustomerPhone" id="customer-phone-hidden" />
+                                <p class="mt-1 text-xs text-slate-400 dark:text-white/60">Enter digits only (e.g., 5551234567)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Items Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-shopping-cart text-cyan-500 me-3"></i>
+                                <h6 class="mb-0 dark:text-white">Order Items</h6>
+                                <span class="ml-2 px-2 py-0.5 text-xs font-medium bg-cyan-100 text-cyan-800 rounded-full dark:bg-cyan-900 dark:text-cyan-200">
+                                    @Model.AvailableProducts.Count products available
+                                </span>
+                            </div>
+                            <button type="button" id="open-product-modal" class="inline-flex items-center px-4 py-2 text-sm font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85 shadow-soft-md">
+                                <i class="fas fa-plus me-2"></i> Add Product
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6" id="items-container">
+                        <div id="line-items-list">
+                            <!-- Line items will be added here -->
+                        </div>
+                        <div id="empty-state" class="text-center py-8 text-slate-400 dark:text-white/40">
+                            <i class="fas fa-box-open text-4xl mb-3"></i>
+                            <p>No products added yet. Click "Add Product" to get started.</p>
+                        </div>
+                    </div>
+
+                    <!-- Order Total -->
+                    <div class="px-6 pb-6">
+                        <div class="flex justify-end border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="text-right">
+                                <span class="text-sm text-slate-500 dark:text-white/60">Total:</span>
+                                <span id="order-total" class="ml-2 text-xl font-bold text-cyan-600 dark:text-cyan-400">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Address Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-cyan-500 me-3"></i>
+                            <h6 class="mb-0 dark:text-white">Billing Address</h6>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Full Name</label>
+                                <input type="text" asp-for="Order.BillingName"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="John Doe" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 1</label>
+                                <input type="text" asp-for="Order.BillingAddress1"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="123 Main Street" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 2</label>
+                                <input type="text" asp-for="Order.BillingAddress2"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="Apt, Suite, etc." />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">City</label>
+                                <input type="text" asp-for="Order.BillingCity"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="New York" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">State/Province</label>
+                                <input type="text" asp-for="Order.BillingProvince"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="NY" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Country</label>
+                                <input type="text" asp-for="Order.BillingCountry"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="United States" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">ZIP/Postal Code</label>
+                                <input type="text" asp-for="Order.BillingZip"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="10001" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-truck text-cyan-500 me-3"></i>
+                                <h6 class="mb-0 dark:text-white">Shipping Address</h6>
+                            </div>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" asp-for="Order.SameAsShipping" id="same-as-billing"
+                                       class="w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" checked />
+                                <span class="ml-2 text-sm text-slate-700 dark:text-white">Same as billing</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6" id="shipping-address-section">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Full Name</label>
+                                <input type="text" asp-for="Order.ShippingName"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="John Doe" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 1</label>
+                                <input type="text" asp-for="Order.ShippingAddress1"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="123 Main Street" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 2</label>
+                                <input type="text" asp-for="Order.ShippingAddress2"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="Apt, Suite, etc." />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">City</label>
+                                <input type="text" asp-for="Order.ShippingCity"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="New York" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">State/Province</label>
+                                <input type="text" asp-for="Order.ShippingProvince"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="NY" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Country</label>
+                                <input type="text" asp-for="Order.ShippingCountry"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="United States" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">ZIP/Postal Code</label>
+                                <input type="text" asp-for="Order.ShippingZip"
+                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="10001" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Actions -->
+            <div class="w-full max-w-full px-3 lg:w-4/12 lg:flex-none">
+                <!-- Order Status Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl sticky top-6">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Order Status</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="mb-4">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Payment Status</label>
+                            <select asp-for="Order.FinancialStatus"
+                                    class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="authorized">Authorized</option>
+                                <option value="partially_paid">Partially Paid</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-3 mt-6">
+                            <button type="submit" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white uppercase transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25">
+                                <i class="fas fa-check me-2"></i> Create Order
+                            </button>
+                            <a href="/orders" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-cyan-500 to-blue-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="flex-auto p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-receipt text-white text-xl me-3"></i>
+                            <h6 class="mb-0 text-white">Order Summary</h6>
+                        </div>
+                        <div class="space-y-2 text-white/80 text-sm">
+                            <div class="flex justify-between">
+                                <span>Items:</span>
+                                <span id="summary-items">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span id="summary-subtotal">$0.00</span>
+                            </div>
+                            <div class="flex justify-between border-t border-white/20 pt-2 mt-2 font-bold text-white">
+                                <span>Total:</span>
+                                <span id="summary-total">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Modals {
+<!-- Product Selection Modal -->
+<div id="product-modal" class="fixed inset-0 z-[9999] hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" id="modal-overlay"></div>
+
+        <div class="relative inline-block w-full max-w-md overflow-hidden text-left align-bottom bg-white rounded-2xl shadow-xl dark:bg-gray-900 sm:my-8 sm:align-middle">
+            <!-- Modal Header -->
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-bold dark:text-white">
+                        <i class="fas fa-box me-2 text-purple-500"></i>
+                        Select Products
+                    </h3>
+                    <button type="button" id="close-modal" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- Search -->
+                <div class="mt-3">
+                    <input type="text" id="product-search"
+                           class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                           placeholder="Search products..." />
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="px-4 py-3" id="products-list" style="min-height: 280px;">
+                <!-- Products will be populated here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-4 py-2 border-t border-gray-100 dark:border-gray-700">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500 dark:text-gray-400" id="pagination-info">Page 1 of 1</span>
+                    <div class="flex gap-1">
+                        <button type="button" id="prev-page" class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button type="button" id="next-page" class="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancel-modal" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirm-selection" class="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102">
+                        Add (<span id="selected-count">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Products data from server
+            const products = @Html.Raw(Model.ProductsJson);
+            let selectedProducts = [];
+            let lineItems = [];
+            let lineItemIndex = 0;
+
+            // Pagination
+            const ITEMS_PER_PAGE = 5;
+            let currentPage = 1;
+            let filteredProducts = products;
+
+            const modal = document.getElementById('product-modal');
+            const openModalBtn = document.getElementById('open-product-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelModalBtn = document.getElementById('cancel-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const confirmBtn = document.getElementById('confirm-selection');
+            const searchInput = document.getElementById('product-search');
+            const productsList = document.getElementById('products-list');
+            const lineItemsList = document.getElementById('line-items-list');
+            const emptyState = document.getElementById('empty-state');
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+            const paginationInfo = document.getElementById('pagination-info');
+
+            // Open modal
+            openModalBtn.addEventListener('click', function() {
+                selectedProducts = [];
+                filteredProducts = products;
+                currentPage = 1;
+                searchInput.value = '';
+                renderProducts();
+                updateSelectedCount();
+                modal.classList.remove('hidden');
+            });
+
+            // Close modal
+            function closeModal() {
+                modal.classList.add('hidden');
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelModalBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', closeModal);
+
+            // Search products
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                filteredProducts = products.filter(p =>
+                    p.title.toLowerCase().includes(query) ||
+                    (p.vendor && p.vendor.toLowerCase().includes(query))
+                );
+                currentPage = 1;
+                renderProducts();
+            });
+
+            // Pagination handlers
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderProducts();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', function() {
+                const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderProducts();
+                }
+            });
+
+            // Render products in modal with pagination
+            function renderProducts() {
+                const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+                const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIdx = startIdx + ITEMS_PER_PAGE;
+                const pageProducts = filteredProducts.slice(startIdx, endIdx);
+
+                // Update pagination UI
+                paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                prevPageBtn.disabled = currentPage <= 1;
+                nextPageBtn.disabled = currentPage >= totalPages;
+
+                if (filteredProducts.length === 0) {
+                    productsList.innerHTML = '<div class="text-center py-8 text-gray-500">No products found</div>';
+                    return;
+                }
+
+                productsList.innerHTML = pageProducts.map(p => `
+                    <div class="product-item flex items-center p-2.5 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                         data-product-id="${p.productId}"
+                         data-title="${p.title}"
+                         data-price="${p.price}"
+                         data-vendor="${p.vendor || ''}">
+                        <input type="checkbox" class="product-checkbox w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500 mr-3"
+                               ${selectedProducts.some(s => s.productId === p.productId) ? 'checked' : ''} />
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-sm dark:text-white truncate">${p.title}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">${p.vendor || 'No vendor'}</div>
+                        </div>
+                        <div class="text-sm font-bold text-purple-600 dark:text-purple-400 ml-2">$${p.price.toFixed(2)}</div>
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                document.querySelectorAll('.product-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        if (e.target.type === 'checkbox') return;
+                        const checkbox = this.querySelector('.product-checkbox');
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    });
+                });
+
+                document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const item = this.closest('.product-item');
+                        const product = {
+                            productId: parseInt(item.dataset.productId),
+                            title: item.dataset.title,
+                            price: parseFloat(item.dataset.price),
+                            vendor: item.dataset.vendor
+                        };
+
+                        if (this.checked) {
+                            if (!selectedProducts.some(p => p.productId === product.productId)) {
+                                selectedProducts.push(product);
+                            }
+                        } else {
+                            selectedProducts = selectedProducts.filter(p => p.productId !== product.productId);
+                        }
+                        updateSelectedCount();
+                    });
+                });
+            }
+
+            function updateSelectedCount() {
+                document.getElementById('selected-count').textContent = selectedProducts.length;
+            }
+
+            // Confirm selection
+            confirmBtn.addEventListener('click', function() {
+                selectedProducts.forEach(product => {
+                    addLineItem(product);
+                });
+                closeModal();
+                updateTotals();
+            });
+
+            // Add line item
+            function addLineItem(product) {
+                const item = {
+                    index: lineItemIndex++,
+                    productId: product.productId,
+                    title: product.title,
+                    price: product.price,
+                    quantity: 1
+                };
+                lineItems.push(item);
+                renderLineItems();
+            }
+
+            // Render line items
+            function renderLineItems() {
+                if (lineItems.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    lineItemsList.innerHTML = '';
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                lineItemsList.innerHTML = lineItems.map((item, idx) => `
+                    <div class="line-item flex items-center p-4 mb-3 bg-gray-50 dark:bg-gray-800 rounded-xl" data-index="${item.index}">
+                        <div class="flex-1">
+                            <div class="font-medium dark:text-white">${item.title}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center">
+                                <button type="button" class="qty-btn minus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-l-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <input type="number" min="1" value="${item.quantity}"
+                                       class="qty-input w-12 h-8 text-center border-y border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+                                <button type="button" class="qty-btn plus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="w-24 text-right font-bold text-cyan-600 dark:text-cyan-400">
+                                $<span class="line-total">${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                            <button type="button" class="remove-item text-red-500 hover:text-red-700 p-2">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" name="LineItems[${idx}].Title" value="${item.title}" />
+                        <input type="hidden" name="LineItems[${idx}].Price" value="${item.price}" />
+                        <input type="hidden" name="LineItems[${idx}].Quantity" value="${item.quantity}" class="hidden-qty" />
+                        <input type="hidden" name="LineItems[${idx}].ProductId" value="${item.productId}" />
+                    </div>
+                `).join('');
+
+                // Add event handlers
+                document.querySelectorAll('.line-item').forEach(el => {
+                    const idx = parseInt(el.dataset.index);
+                    const item = lineItems.find(i => i.index === idx);
+
+                    el.querySelector('.qty-btn.minus').addEventListener('click', () => {
+                        if (item.quantity > 1) {
+                            item.quantity--;
+                            renderLineItems();
+                            updateTotals();
+                        }
+                    });
+
+                    el.querySelector('.qty-btn.plus').addEventListener('click', () => {
+                        item.quantity++;
+                        renderLineItems();
+                        updateTotals();
+                    });
+
+                    el.querySelector('.qty-input').addEventListener('change', function() {
+                        item.quantity = Math.max(1, parseInt(this.value) || 1);
+                        renderLineItems();
+                        updateTotals();
+                    });
+
+                    el.querySelector('.remove-item').addEventListener('click', () => {
+                        lineItems = lineItems.filter(i => i.index !== idx);
+                        renderLineItems();
+                        updateTotals();
+                    });
+                });
+            }
+
+            // Update totals
+            function updateTotals() {
+                let total = 0;
+                let itemCount = 0;
+                lineItems.forEach(item => {
+                    total += item.price * item.quantity;
+                    itemCount += item.quantity;
+                });
+
+                const formatted = '$' + total.toFixed(2);
+                document.getElementById('order-total').textContent = formatted;
+                document.getElementById('summary-items').textContent = itemCount;
+                document.getElementById('summary-subtotal').textContent = formatted;
+                document.getElementById('summary-total').textContent = formatted;
+            }
+
+            // Toggle shipping address
+            const sameAsBillingCheckbox = document.getElementById('same-as-billing');
+            const shippingSection = document.getElementById('shipping-address-section');
+
+            function toggleShippingAddress() {
+                const inputs = shippingSection.querySelectorAll('.shipping-input');
+                if (sameAsBillingCheckbox.checked) {
+                    shippingSection.style.opacity = '0.5';
+                    inputs.forEach(input => input.disabled = true);
+                } else {
+                    shippingSection.style.opacity = '1';
+                    inputs.forEach(input => input.disabled = false);
+                }
+            }
+
+            sameAsBillingCheckbox.addEventListener('change', toggleShippingAddress);
+            toggleShippingAddress();
+
+            // Initialize
+            renderProducts();
+
+            // Phone number formatting (E.164 format)
+            const phoneCountryCode = document.getElementById('phone-country-code');
+            const phoneInput = document.getElementById('customer-phone-input');
+            const phoneHidden = document.getElementById('customer-phone-hidden');
+
+            function formatPhoneNumber() {
+                const countryCode = phoneCountryCode.value;
+                const digits = phoneInput.value.replace(/\D/g, ''); // Remove all non-digits
+                if (digits) {
+                    phoneHidden.value = countryCode + digits;
+                } else {
+                    phoneHidden.value = '';
+                }
+            }
+
+            // Only allow digits in phone input
+            phoneInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                formatPhoneNumber();
+            });
+
+            phoneCountryCode.addEventListener('change', formatPhoneNumber);
+
+            // Format phone before form submit
+            document.querySelector('form').addEventListener('submit', function(e) {
+                formatPhoneNumber();
+            });
+        });
+    </script>
+}

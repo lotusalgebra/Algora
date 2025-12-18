@@ -64,5 +64,94 @@ namespace Algora.Application.Interfaces
         /// Implementations should return the latest state after the update or throw on error.
         /// </returns>
         Task<VariantDto> UpdateVariantAsync(string variantGid, string? title = null, decimal? price = null, string? sku = null, string? option1 = null, string? option2 = null, string? option3 = null);
+
+        /// <summary>
+        /// Creates a new product with optional variants.
+        /// </summary>
+        /// <param name="input">The product creation input containing title, description, variants, etc.</param>
+        /// <returns>A task that resolves to the created <see cref="ProductDto"/>.</returns>
+        Task<ProductDto> CreateProductAsync(CreateProductInput input);
+
+        /// <summary>
+        /// Retrieves a single product by its numeric ID.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID.</param>
+        /// <returns>A task that resolves to the product DTO, or null if not found.</returns>
+        Task<ProductDto?> GetProductByIdAsync(long productId);
+
+        /// <summary>
+        /// Updates an existing product.
+        /// </summary>
+        /// <param name="input">The product update input containing the product ID and fields to update.</param>
+        /// <returns>A task that resolves to the updated <see cref="ProductDto"/>.</returns>
+        Task<ProductDto> UpdateProductAsync(UpdateProductInput input);
+
+        /// <summary>
+        /// Deletes a product by its numeric ID.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID to delete.</param>
+        /// <returns>A task that completes when the product is deleted.</returns>
+        Task DeleteProductAsync(long productId);
+    }
+
+    /// <summary>
+    /// Input model for creating a new product.
+    /// </summary>
+    public class CreateProductInput
+    {
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? Vendor { get; set; }
+        public string? ProductType { get; set; }
+        public List<string> Tags { get; set; } = new();
+        public List<CreateVariantInput> Variants { get; set; } = new();
+        /// <summary>
+        /// List of image URLs to attach to the product.
+        /// </summary>
+        public List<string> ImageUrls { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Input model for creating a product variant.
+    /// </summary>
+    public class CreateVariantInput
+    {
+        public string? Title { get; set; }
+        public decimal Price { get; set; }
+        public string? Sku { get; set; }
+        public string? Option1 { get; set; }
+        public string? Option2 { get; set; }
+        public string? Option3 { get; set; }
+        public int InventoryQuantity { get; set; }
+    }
+
+    /// <summary>
+    /// Input model for updating an existing product.
+    /// </summary>
+    public class UpdateProductInput
+    {
+        public long ProductId { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? Vendor { get; set; }
+        public string? ProductType { get; set; }
+        public List<string> Tags { get; set; } = new();
+        public List<UpdateVariantInput> Variants { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Input model for updating a product variant.
+    /// </summary>
+    public class UpdateVariantInput
+    {
+        public string? VariantId { get; set; }
+        public string? Title { get; set; }
+        public decimal Price { get; set; }
+        public string? Sku { get; set; }
+        public string? Option1 { get; set; }
+        public string? Option2 { get; set; }
+        public string? Option3 { get; set; }
+        public int InventoryQuantity { get; set; }
+        public bool IsNew { get; set; }
     }
 }

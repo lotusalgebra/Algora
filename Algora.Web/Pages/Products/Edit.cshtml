@@ -1,31 +1,340 @@
-﻿@using Algora.Core.Models
-@model ProductViewModel
+@page "/products/edit/{id:long}"
+@model Algora.Web.Pages.Products.EditModel
 @{
     ViewData["Title"] = "Edit Product";
 }
-<h2>Edit Product</h2>
-<form method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label>Title</label>
-        <input asp-for="Title" class="form-control" />
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="mb-4">
+        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
+            <li class="leading-normal text-sm">
+                <a class="text-slate-500 dark:text-white/60" href="/products">Products</a>
+            </li>
+            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
+                Edit Product
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h5 class="mb-0 font-bold dark:text-white">Edit Product</h5>
+                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Update product information and variants</p>
+                </div>
+                <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Products
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label>Description</label>
-        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-    </div>
-    <div class="mb-3">
-        <label>Price (₹)</label>
-        <input asp-for="Price" type="number" step="0.01" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label>Stock</label>
-        <input asp-for="Stock" type="number" class="form-control" />
-    </div>
-    <div class="mb-3">
-        <label>Tags</label>
-        <input asp-for="Tags" class="form-control" />
-    </div>
-    <button class="btn btn-primary">Update</button>
-    <a href="/products" class="btn btn-secondary">Cancel</a>
-</form>
+
+    <!-- Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Form -->
+    <form method="post">
+        <input type="hidden" asp-for="Product.Id" />
+
+        <div class="flex flex-wrap -mx-3">
+            <!-- Left Column - Product Info -->
+            <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
+                <!-- Product Information Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Product Information</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Title">
+                                    Product Title <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" asp-for="Product.Title"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Classic T-Shirt" />
+                                <span asp-validation-for="Product.Title" class="text-red-500 text-xs"></span>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Description">
+                                    Description
+                                </label>
+                                <textarea asp-for="Product.Description" rows="4"
+                                          class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                          placeholder="Describe your product..."></textarea>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Vendor">
+                                    Vendor
+                                </label>
+                                <input type="text" asp-for="Product.Vendor"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Nike" />
+                            </div>
+
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_ProductType">
+                                    Product Type
+                                </label>
+                                <input type="text" asp-for="Product.ProductType"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Clothing" />
+                            </div>
+
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Tags">
+                                    Tags <small class="font-normal text-slate-400">(comma-separated)</small>
+                                </label>
+                                <input type="text" asp-for="Product.Tags"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. summer, sale, new-arrival" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variants Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <h6 class="mb-0 dark:text-white">Variants</h6>
+                            <button type="button" id="add-variant-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-1"></i> Add Variant
+                            </button>
+                        </div>
+                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Manage product variants (sizes, colors, etc.)</p>
+                    </div>
+                    <div class="flex-auto p-6" id="variants-container">
+                        @for (int i = 0; i < Model.Variants.Count; i++)
+                        {
+                            <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4" data-index="@i">
+                                <input type="hidden" name="Variants[@i].VariantId" value="@Model.Variants[i].VariantId" class="variant-id" />
+                                <input type="hidden" name="Variants[@i].IsNew" value="@Model.Variants[i].IsNew.ToString().ToLower()" class="variant-isnew" />
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-sm font-semibold dark:text-white">
+                                        Variant @(i + 1)
+                                        @if (!string.IsNullOrEmpty(Model.Variants[i].VariantId))
+                                        {
+                                            <span class="text-xs text-slate-400 font-normal ml-2">(existing)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-xs text-green-500 font-normal ml-2">(new)</span>
+                                        }
+                                    </span>
+                                    @if (Model.Variants.Count > 1)
+                                    {
+                                        <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    }
+                                </div>
+                                <div class="flex flex-wrap -mx-3">
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Price</label>
+                                        <input type="number" step="0.01" name="Variants[@i].Price" value="@Model.Variants[i].Price"
+                                               class="variant-price focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="0.00" />
+                                    </div>
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">SKU</label>
+                                        <input type="text" name="Variants[@i].Sku" value="@Model.Variants[i].Sku"
+                                               class="variant-sku focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="SKU-001" />
+                                    </div>
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Title</label>
+                                        <input type="text" name="Variants[@i].Title" value="@Model.Variants[i].Title"
+                                               class="variant-title focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="e.g. Large / Blue" />
+                                    </div>
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Size (Option 1)</label>
+                                        <input type="text" name="Variants[@i].Option1" value="@Model.Variants[i].Option1"
+                                               class="variant-opt1 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="e.g. Medium" />
+                                    </div>
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color (Option 2)</label>
+                                        <input type="text" name="Variants[@i].Option2" value="@Model.Variants[i].Option2"
+                                               class="variant-opt2 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="e.g. Blue" />
+                                    </div>
+                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Material (Option 3)</label>
+                                        <input type="text" name="Variants[@i].Option3" value="@Model.Variants[i].Option3"
+                                               class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="e.g. Cotton" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Actions -->
+            <div class="w-full max-w-full px-3 lg:w-4/12 lg:flex-none">
+                <!-- Actions Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl sticky top-6">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Actions</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-col gap-3">
+                            <button type="submit" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white uppercase transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25">
+                                <i class="fas fa-save me-2"></i> Update Product
+                            </button>
+                            <a href="/products/delete/@Model.Product.Id" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                <i class="fas fa-trash me-2"></i> Delete Product
+                            </a>
+                            <a href="/products" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-cyan-500 to-blue-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="flex-auto p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-info-circle text-white text-xl me-3"></i>
+                            <h6 class="mb-0 text-white">Product Info</h6>
+                        </div>
+                        <div class="space-y-2 text-white/80 text-sm">
+                            <div class="flex justify-between">
+                                <span>Product ID:</span>
+                                <span class="font-semibold text-white">@Model.Product.Id</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Variants:</span>
+                                <span id="variant-count" class="font-semibold text-white">@Model.Variants.Count</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('variants-container');
+            const addBtn = document.getElementById('add-variant-btn');
+
+            function updateVariantCount() {
+                const count = container.querySelectorAll('.variant-row').length;
+                document.getElementById('variant-count').textContent = count;
+            }
+
+            // Add variant
+            addBtn.addEventListener('click', function() {
+                const variantRows = container.querySelectorAll('.variant-row');
+                const newIndex = variantRows.length;
+
+                const template = `
+                    <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4" data-index="${newIndex}">
+                        <input type="hidden" name="Variants[${newIndex}].VariantId" value="" class="variant-id" />
+                        <input type="hidden" name="Variants[${newIndex}].IsNew" value="true" class="variant-isnew" />
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-semibold dark:text-white">
+                                Variant ${newIndex + 1}
+                                <span class="text-xs text-green-500 font-normal ml-2">(new)</span>
+                            </span>
+                            <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Price</label>
+                                <input type="number" step="0.01" name="Variants[${newIndex}].Price" value="0"
+                                       class="variant-price focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="0.00" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">SKU</label>
+                                <input type="text" name="Variants[${newIndex}].Sku"
+                                       class="variant-sku focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="SKU-001" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Title</label>
+                                <input type="text" name="Variants[${newIndex}].Title"
+                                       class="variant-title focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Large / Blue" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Size (Option 1)</label>
+                                <input type="text" name="Variants[${newIndex}].Option1"
+                                       class="variant-opt1 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Medium" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color (Option 2)</label>
+                                <input type="text" name="Variants[${newIndex}].Option2"
+                                       class="variant-opt2 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Blue" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Material (Option 3)</label>
+                                <input type="text" name="Variants[${newIndex}].Option3"
+                                       class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Cotton" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.insertAdjacentHTML('beforeend', template);
+                updateRemoveButtons();
+                updateVariantCount();
+            });
+
+            // Remove variant
+            function updateRemoveButtons() {
+                container.querySelectorAll('.remove-variant-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        const rows = container.querySelectorAll('.variant-row');
+                        if (rows.length > 1) {
+                            this.closest('.variant-row').remove();
+                            // Reindex remaining variants
+                            container.querySelectorAll('.variant-row').forEach((row, idx) => {
+                                row.dataset.index = idx;
+                                const titleSpan = row.querySelector('.flex.items-center.justify-between span');
+                                if (titleSpan) {
+                                    const isNewBadge = titleSpan.querySelector('.text-green-500');
+                                    const existingBadge = titleSpan.querySelector('.text-slate-400');
+                                    const badge = isNewBadge ? '<span class="text-xs text-green-500 font-normal ml-2">(new)</span>' :
+                                                  existingBadge ? '<span class="text-xs text-slate-400 font-normal ml-2">(existing)</span>' : '';
+                                    titleSpan.innerHTML = `Variant ${idx + 1} ${badge}`;
+                                }
+                                row.querySelectorAll('input').forEach(input => {
+                                    const name = input.name;
+                                    input.name = name.replace(/Variants\[\d+\]/, `Variants[${idx}]`);
+                                });
+                            });
+                            updateVariantCount();
+                        }
+                    };
+                });
+            }
+
+            updateRemoveButtons();
+        });
+    </script>
+}
