@@ -1,4 +1,5 @@
 using Algora.Application.DTOs;
+using Algora.Application.DTOs.Communication;
 using Algora.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,20 +12,39 @@ namespace Algora.Web.Pages.Orders;
 public class DetailsModel : PageModel
 {
     private readonly IShopifyOrderService _orderService;
+    private readonly IWhatsAppService _whatsAppService;
+    private readonly IShopContext _shopContext;
     private readonly ILogger<DetailsModel> _logger;
 
-    public DetailsModel(IShopifyOrderService orderService, ILogger<DetailsModel> logger)
+    public DetailsModel(
+        IShopifyOrderService orderService,
+        IWhatsAppService whatsAppService,
+        IShopContext shopContext,
+        ILogger<DetailsModel> logger)
     {
         _orderService = orderService;
+        _whatsAppService = whatsAppService;
+        _shopContext = shopContext;
         _logger = logger;
     }
 
     public OrderDto? Order { get; set; }
     public string? ErrorMessage { get; set; }
 
+    // WhatsApp messaging properties
+    [BindProperty]
+    public string? WhatsAppMessage { get; set; }
+    public string? WhatsAppSuccess { get; set; }
+    public string? WhatsAppError { get; set; }
+    public string? CustomerPhone { get; set; }
+
     public async Task<IActionResult> OnGetAsync(long id)
     {
         ViewData["Title"] = $"Order #{id}";
+
+        // Check for WhatsApp feedback from TempData
+        WhatsAppSuccess = TempData["WhatsAppSuccess"]?.ToString();
+        WhatsAppError = TempData["WhatsAppError"]?.ToString();
 
         try
         {
@@ -37,6 +57,10 @@ public class DetailsModel : PageModel
             else
             {
                 _logger.LogInformation("Loaded order {OrderId}", id);
+                // Extract customer phone for WhatsApp
+                CustomerPhone = Order.Customer?.Phone
+                    ?? Order.ShippingAddress?.Phone
+                    ?? Order.BillingAddress?.Phone;
             }
         }
         catch (Exception ex)
@@ -46,5 +70,57 @@ public class DetailsModel : PageModel
         }
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostSendWhatsAppAsync(long id)
+    {
+        if (string.IsNullOrWhiteSpace(WhatsAppMessage))
+        {
+            TempData["WhatsAppError"] = "Message cannot be empty.";
+            return RedirectToPage(new { id });
+        }
+
+        try
+        {
+            Order = await _orderService.GetByIdAsync(id);
+            if (Order == null)
+            {
+                TempData["WhatsAppError"] = "Order not found.";
+                return RedirectToPage(new { id });
+            }
+
+            // Get customer phone
+            var phone = Order.Customer?.Phone
+                ?? Order.ShippingAddress?.Phone
+                ?? Order.BillingAddress?.Phone;
+
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                TempData["WhatsAppError"] = "No phone number available for this customer.";
+                return RedirectToPage(new { id });
+            }
+
+            // Send WhatsApp message
+            var dto = new SendWhatsAppTextMessageDto
+            {
+                PhoneNumber = phone,
+                Content = WhatsAppMessage,
+                CustomerId = (int?)Order.Customer?.Id
+            };
+
+            var result = await _whatsAppService.SendTextMessageAsync(_shopContext.ShopDomain, dto);
+
+            _logger.LogInformation("WhatsApp message sent to {Phone} for order {OrderId}, MessageId: {MessageId}",
+                phone, id, result.Id);
+
+            TempData["WhatsAppSuccess"] = $"WhatsApp message sent successfully to {phone}";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send WhatsApp message for order {OrderId}", id);
+            TempData["WhatsAppError"] = $"Failed to send message: {ex.Message}";
+        }
+
+        return RedirectToPage(new { id });
     }
 }

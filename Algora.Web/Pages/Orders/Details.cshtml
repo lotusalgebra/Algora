@@ -24,6 +24,17 @@
         <div class="flex items-center gap-2">
             @if (Model.Order != null)
             {
+                @if (!string.IsNullOrEmpty(Model.CustomerPhone))
+                {
+                    <button type="button" onclick="openWhatsAppModal()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-green-600 to-green-400 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
+                        <i class="fab fa-whatsapp me-2"></i>
+                        Send WhatsApp
+                    </button>
+                }
+                <a href="/orders/edit-status/@Model.Order.Id" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-edit me-2 text-slate-400"></i>
+                    Update Status
+                </a>
                 <a href="/orders/invoice/@Model.Order.Id" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                     <i class="fas fa-file-invoice me-2 text-slate-400"></i>
                     View Invoice
@@ -47,7 +58,24 @@
             @Model.ErrorMessage
         </div>
     }
-    else if (Model.Order != null)
+
+    @if (!string.IsNullOrEmpty(Model.WhatsAppSuccess))
+    {
+        <div class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+            <i class="fab fa-whatsapp me-2"></i>
+            @Model.WhatsAppSuccess
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.WhatsAppError))
+    {
+        <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @Model.WhatsAppError
+        </div>
+    }
+
+    @if (Model.Order != null)
     {
         var statusClass = Model.Order.FinancialStatus?.ToLower() switch
         {
@@ -363,3 +391,113 @@
         </div>
     }
 </div>
+
+@if (Model.Order != null && !string.IsNullOrEmpty(Model.CustomerPhone))
+{
+    <!-- WhatsApp Modal -->
+    <div id="whatsappModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeWhatsAppModal()"></div>
+
+            <!-- Modal panel -->
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-900">
+                <form method="post" asp-page-handler="SendWhatsApp" asp-route-id="@Model.Order.Id">
+                    <div class="bg-white px-6 pt-6 pb-4 dark:bg-gray-900">
+                        <div class="flex items-center mb-4">
+                            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900">
+                                <i class="fab fa-whatsapp text-2xl text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
+                                    Send WhatsApp Message
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    To: @Model.CustomerPhone
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Templates -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick Templates</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" onclick="setTemplate('order_confirm')" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Order Confirmation
+                                </button>
+                                <button type="button" onclick="setTemplate('shipping')" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Shipping Update
+                                </button>
+                                <button type="button" onclick="setTemplate('delivered')" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                                    Delivered
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Message Input -->
+                        <div>
+                            <label for="whatsappMessage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                            <textarea id="whatsappMessage" name="WhatsAppMessage" rows="5" required
+                                class="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:ring-green-500"
+                                placeholder="Type your message here..."></textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <span id="charCount">0</span> characters
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 dark:bg-gray-800">
+                        <button type="button" onclick="closeWhatsAppModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-green-600 to-green-400 rounded-lg hover:scale-102 hover:shadow-soft-xs transition-all">
+                            <i class="fab fa-whatsapp me-2"></i>
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var customerName = '@(Model.Order.Customer != null ? $"{Model.Order.Customer.FirstName}" : "Customer")';
+        var orderNumber = '@Model.Order.Name';
+
+        var templates = {
+            'order_confirm': `Hi ${customerName}! Thank you for your order ${orderNumber}. We've received it and will process it shortly. We'll notify you once it ships!\n\nThank you for shopping with us!`,
+            'shipping': `Hi ${customerName}! Great news - your order ${orderNumber} has been shipped!\n\nYou can track your package using the tracking information we'll send shortly.\n\nThank you for your patience!`,
+            'delivered': `Hi ${customerName}! Your order ${orderNumber} has been delivered!\n\nWe hope you love your purchase. If you have any questions or concerns, please don't hesitate to reach out.\n\nThank you for shopping with us!`
+        };
+
+        function openWhatsAppModal() {
+            document.getElementById('whatsappModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeWhatsAppModal() {
+            document.getElementById('whatsappModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function setTemplate(templateKey) {
+            var textarea = document.getElementById('whatsappMessage');
+            textarea.value = templates[templateKey];
+            updateCharCount();
+        }
+
+        function updateCharCount() {
+            var textarea = document.getElementById('whatsappMessage');
+            document.getElementById('charCount').textContent = textarea.value.length;
+        }
+
+        document.getElementById('whatsappMessage')?.addEventListener('input', updateCharCount);
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeWhatsAppModal();
+            }
+        });
+    </script>
+}

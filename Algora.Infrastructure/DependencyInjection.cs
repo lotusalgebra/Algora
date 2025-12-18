@@ -52,6 +52,8 @@ public static class DependencyInjection
         services.AddScoped<IShopifyProductService, ShopifyProductGraphService>();
         services.AddScoped<ShopifyProductGraphService>(); // Also register concrete type for direct use
         services.AddScoped<IAbandonedCartService, AbandonedCartService>();
+        services.AddScoped<IWebhookSyncService, WebhookSyncService>();
+        services.AddScoped<IWebhookRegistrationService, WebhookRegistrationService>();
 
         // ----- Communication services (per-shop settings from database) -----
         services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();

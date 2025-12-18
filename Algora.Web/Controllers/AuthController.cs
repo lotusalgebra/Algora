@@ -1,4 +1,5 @@
-﻿using Algora.Infrastructure;
+using Algora.Application.Interfaces;
+using Algora.Infrastructure;
 using Algora.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace Algora.Web.Controllers
     /// - Build install URL (requests scopes and state cookie).
     /// - Validate HMAC and state on callback to protect against tampering/CSRF.
     /// - Exchange temporary code for an offline access token and persist the shop record.
+    /// - Register webhooks for order, customer, and product events.
     /// </summary>
     /// <remarks>
     /// Constructs the controller with required dependencies.
@@ -28,12 +30,21 @@ namespace Algora.Web.Controllers
     /// <param name="opt">Bound Shopify options (ApiKey, ApiSecret, AppUrl, Scopes).</param>
     /// <param name="httpFactory">Http client factory used for token exchange requests.</param>
     /// <param name="db">EF Core DbContext for persisting shop/install information.</param>
+    /// <param name="webhookRegistration">Service for registering Shopify webhooks.</param>
+    /// <param name="logger">Logger for diagnostic output.</param>
     [Route("auth")]
-    public class AuthController(IOptions<ShopifyOptions> opt, IHttpClientFactory httpFactory, AppDbContext db) : Controller
+    public class AuthController(
+        IOptions<ShopifyOptions> opt,
+        IHttpClientFactory httpFactory,
+        AppDbContext db,
+        IWebhookRegistrationService webhookRegistration,
+        ILogger<AuthController> logger) : Controller
     {
         private readonly ShopifyOptions _opt = opt.Value;
         private readonly IHttpClientFactory _httpFactory = httpFactory;
         private readonly AppDbContext _db = db;
+        private readonly IWebhookRegistrationService _webhookRegistration = webhookRegistration;
+        private readonly ILogger<AuthController> _logger = logger;
 
         /// <summary>
         /// Initiates the OAuth install flow by redirecting the merchant to Shopify's authorization page.
@@ -96,6 +107,7 @@ namespace Algora.Web.Controllers
 
             // 4) Persist the shop + token to DB (simplified)
             var dbShop = await _db.Shops.FirstOrDefaultAsync(s => s.Domain == shop);
+            var isNewInstall = dbShop == null;
             if (dbShop == null)
             {
                 dbShop = new Domain.Entities.Shop { Domain = shop, OfflineAccessToken = token, InstalledAt = DateTime.UtcNow };
@@ -107,7 +119,27 @@ namespace Algora.Web.Controllers
             }
             await _db.SaveChangesAsync();
 
-            // 5) Redirect to dashboard after successful OAuth
+            // 5) Register webhooks for the shop (runs for both new installs and re-installs)
+            try
+            {
+                _logger.LogInformation("Registering webhooks for shop {Shop}", shop);
+                var webhooksRegistered = await _webhookRegistration.RegisterAllWebhooksAsync(shop, token);
+                if (webhooksRegistered)
+                {
+                    _logger.LogInformation("Successfully registered all webhooks for shop {Shop}", shop);
+                }
+                else
+                {
+                    _logger.LogWarning("Some webhooks failed to register for shop {Shop}", shop);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail the install - webhooks can be registered later
+                _logger.LogError(ex, "Failed to register webhooks for shop {Shop}", shop);
+            }
+
+            // 6) Redirect to dashboard after successful OAuth
             return Redirect("/Dashboard");
         }
 
@@ -176,6 +208,61 @@ namespace Algora.Web.Controllers
 
             // process webhook (persist log etc)
             return Ok();
+        }
+
+        /// <summary>
+        /// Manually registers webhooks for a shop. Useful for testing or re-registering webhooks.
+        /// </summary>
+        [HttpGet("register-webhooks")]
+        public async Task<IActionResult> RegisterWebhooks([FromQuery] string? shop)
+        {
+            // Use provided shop or default to the dev shop
+            var shopDomain = shop;
+            if (string.IsNullOrWhiteSpace(shopDomain))
+            {
+                shopDomain = "devlotusalgebra.myshopify.com"; // Default dev shop
+            }
+
+            if (string.IsNullOrWhiteSpace(shopDomain))
+            {
+                return BadRequest("Missing shop parameter");
+            }
+
+            // Get the shop's access token from database
+            var dbShop = await _db.Shops.FirstOrDefaultAsync(s => s.Domain == shopDomain);
+            if (dbShop == null || string.IsNullOrWhiteSpace(dbShop.OfflineAccessToken))
+            {
+                return NotFound($"Shop {shopDomain} not found or not installed");
+            }
+
+            _logger.LogInformation("Manually registering webhooks for shop {Shop}", shopDomain);
+
+            try
+            {
+                // Get existing webhooks first
+                var existingWebhooks = await _webhookRegistration.GetRegisteredWebhooksAsync(shopDomain, dbShop.OfflineAccessToken);
+
+                // Register all webhooks
+                var success = await _webhookRegistration.RegisterAllWebhooksAsync(shopDomain, dbShop.OfflineAccessToken);
+
+                // Get updated list
+                var registeredWebhooks = await _webhookRegistration.GetRegisteredWebhooksAsync(shopDomain, dbShop.OfflineAccessToken);
+
+                return Ok(new
+                {
+                    success,
+                    shop = shopDomain,
+                    message = success ? "All webhooks registered successfully" : "Some webhooks failed to register",
+                    existingBefore = existingWebhooks.Count(),
+                    registeredNow = registeredWebhooks.Count(),
+                    webhooks = registeredWebhooks.Select(w => new { w.Id, w.Topic, w.Address })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to register webhooks for shop {Shop}", shopDomain);
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
         /// <summary>
