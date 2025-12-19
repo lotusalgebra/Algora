@@ -75,6 +75,11 @@ namespace Algora.Infrastructure.Data
         public DbSet<SmsTemplate> SmsTemplates { get; set; } = null!;
         public DbSet<SmsMessage> SmsMessages { get; set; } = null!;
 
+        // ----- Inventory Prediction entities -----
+        public DbSet<InventoryPrediction> InventoryPredictions { get; set; } = null!;
+        public DbSet<InventoryAlert> InventoryAlerts { get; set; } = null!;
+        public DbSet<InventoryAlertSettings> InventoryAlertSettings { get; set; } = null!;
+
         // ----- Tagging entities -----
         public DbSet<Tag> Tags { get; set; } = null!;
         public DbSet<EntityTag> EntityTags { get; set; } = null!;
@@ -519,6 +524,54 @@ namespace Algora.Infrastructure.Data
                 b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Template).WithMany().HasForeignKey(x => x.TemplateId).OnDelete(DeleteBehavior.SetNull);
                 b.HasIndex(x => new { x.ShopDomain, x.CreatedAt });
+            });
+
+            // ==================== INVENTORY PREDICTION ENTITIES ====================
+
+            modelBuilder.Entity<InventoryPrediction>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(500);
+                b.Property(x => x.VariantTitle).HasMaxLength(500);
+                b.Property(x => x.Sku).HasMaxLength(100);
+                b.Property(x => x.AverageDailySales).HasPrecision(18, 4);
+                b.Property(x => x.SevenDayAverageSales).HasPrecision(18, 4);
+                b.Property(x => x.ThirtyDayAverageSales).HasPrecision(18, 4);
+                b.Property(x => x.NinetyDayAverageSales).HasPrecision(18, 4);
+                b.Property(x => x.ConfidenceLevel).HasMaxLength(20);
+                b.Property(x => x.Status).HasMaxLength(20);
+                b.HasIndex(x => new { x.ShopDomain, x.PlatformProductId, x.PlatformVariantId }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ProductVariant).WithMany().HasForeignKey(x => x.ProductVariantId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<InventoryAlert>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(500);
+                b.Property(x => x.VariantTitle).HasMaxLength(500);
+                b.Property(x => x.Sku).HasMaxLength(100);
+                b.Property(x => x.AlertType).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Severity).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Message).HasMaxLength(1000);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.DismissReason).HasMaxLength(500);
+                b.HasIndex(x => new { x.ShopDomain, x.Status, x.CreatedAt });
+                b.HasIndex(x => new { x.ShopDomain, x.Severity });
+                b.HasOne(x => x.InventoryPrediction).WithMany().HasForeignKey(x => x.InventoryPredictionId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<InventoryAlertSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.NotificationEmail).HasMaxLength(255);
+                b.Property(x => x.NotificationPhone).HasMaxLength(20);
+                b.Property(x => x.WhatsAppPhone).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
             });
 
             // ==================== TAGGING ENTITIES ====================

@@ -316,6 +316,7 @@ namespace Algora.Infrastructure.Services
                             title
                             sku
                             price
+                            inventoryQuantity
                             selectedOptions {
                               name
                               value
@@ -403,7 +404,11 @@ namespace Algora.Infrastructure.Services
                                     if (optList.Count > 1) option2 = optList[1].TryGetProperty("value", out var v2) ? v2.GetString() : null;
                                     if (optList.Count > 2) option3 = optList[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
                                 }
-                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
+                                // Parse inventoryQuantity
+                                int? inventoryQuantity = null;
+                                if (v.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
+                                    inventoryQuantity = invQty.GetInt32();
+                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
                             }
                         }
                         // fallback: maybe "edges" -> "node"
@@ -430,7 +435,11 @@ namespace Algora.Infrastructure.Services
                                     if (optList.Count > 1) option2 = optList[1].TryGetProperty("value", out var v2) ? v2.GetString() : null;
                                     if (optList.Count > 2) option3 = optList[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
                                 }
-                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
+                                // Parse inventoryQuantity
+                                int? inventoryQuantity = null;
+                                if (vnode.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
+                                    inventoryQuantity = invQty.GetInt32();
+                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
                             }
                         }
                     }
@@ -611,6 +620,7 @@ namespace Algora.Infrastructure.Services
                       title
                       sku
                       price
+                            inventoryQuantity
                     }
                   }
                 }
@@ -722,6 +732,7 @@ namespace Algora.Infrastructure.Services
                     title
                     sku
                     price
+                            inventoryQuantity
                     selectedOptions {
                       name
                       value
@@ -787,7 +798,11 @@ namespace Algora.Infrastructure.Services
                         if (options.Count > 2) option3 = options[2].TryGetProperty("value", out var v3) ? v3.GetString() : null;
                     }
 
-                    variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3));
+                    // Parse inventoryQuantity
+                                int? inventoryQuantity = null;
+                                if (v.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
+                                    inventoryQuantity = invQty.GetInt32();
+                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
                 }
             }
 
@@ -811,6 +826,7 @@ namespace Algora.Infrastructure.Services
                       title
                       sku
                       price
+                            inventoryQuantity
                     }
                   }
                 }

@@ -1,0 +1,169 @@
+@page "/inventory/settings"
+@model Algora.Web.Pages.Inventory.SettingsModel
+@{
+    ViewData["Title"] = "Inventory Alert Settings";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+
+                <!-- Card Header -->
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Inventory Alert Settings</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                Configure your inventory alert thresholds and notification preferences
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="/inventory" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-chart-line me-2"></i> Predictions
+                            </a>
+                            <a href="/inventory/alerts" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-bell me-2"></i> Alerts
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <!-- Card Body -->
+                <div class="flex-auto p-6">
+                    <form method="post">
+                        <!-- Global Settings -->
+                        <div class="mb-8">
+                            <h6 class="mb-4 text-sm font-bold text-slate-700 dark:text-white">Global Settings</h6>
+                            <div class="flex items-center mb-4">
+                                <input type="checkbox" asp-for="Settings.AlertsEnabled" class="w-5 h-5 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-fuchsia-600 dark:ring-offset-gray-800" />
+                                <label asp-for="Settings.AlertsEnabled" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Enable Inventory Alerts</label>
+                            </div>
+                        </div>
+
+                        <!-- Threshold Settings -->
+                        <div class="mb-8">
+                            <h6 class="mb-4 text-sm font-bold text-slate-700 dark:text-white">Stock Level Thresholds</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label asp-for="Settings.LowStockDaysThreshold" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Low Stock Warning (days until stockout)</label>
+                                    <input type="number" asp-for="Settings.LowStockDaysThreshold" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" min="1" max="365" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Warn when stock will last fewer than this many days</p>
+                                </div>
+                                <div>
+                                    <label asp-for="Settings.CriticalStockDaysThreshold" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Critical Stock Warning (days until stockout)</label>
+                                    <input type="number" asp-for="Settings.CriticalStockDaysThreshold" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" min="1" max="365" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Critical alert when stock will last fewer than this many days</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reorder Settings -->
+                        <div class="mb-8">
+                            <h6 class="mb-4 text-sm font-bold text-slate-700 dark:text-white">Reorder Calculation</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label asp-for="Settings.DefaultLeadTimeDays" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Default Lead Time (days)</label>
+                                    <input type="number" asp-for="Settings.DefaultLeadTimeDays" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" min="0" max="365" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Average time from order to delivery from supplier</p>
+                                </div>
+                                <div>
+                                    <label asp-for="Settings.DefaultSafetyStockDays" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Safety Stock Buffer (days)</label>
+                                    <input type="number" asp-for="Settings.DefaultSafetyStockDays" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" min="0" max="365" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Extra buffer days to prevent stockouts</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Settings -->
+                        <div class="mb-8">
+                            <h6 class="mb-4 text-sm font-bold text-slate-700 dark:text-white">Notification Channels</h6>
+
+                            <!-- Email -->
+                            <div class="mb-4 p-4 border border-gray-200 rounded-lg dark:border-gray-700">
+                                <div class="flex items-center mb-3">
+                                    <input type="checkbox" asp-for="Settings.EmailNotificationsEnabled" class="w-5 h-5 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-fuchsia-600 dark:ring-offset-gray-800" />
+                                    <label asp-for="Settings.EmailNotificationsEnabled" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <i class="fas fa-envelope me-1"></i> Email Notifications
+                                    </label>
+                                </div>
+                                <div>
+                                    <label asp-for="Settings.NotificationEmail" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Notification Email</label>
+                                    <input type="email" asp-for="Settings.NotificationEmail" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="alerts@example.com" />
+                                </div>
+                            </div>
+
+                            <!-- SMS -->
+                            <div class="mb-4 p-4 border border-gray-200 rounded-lg dark:border-gray-700">
+                                <div class="flex items-center mb-3">
+                                    <input type="checkbox" asp-for="Settings.SmsNotificationsEnabled" class="w-5 h-5 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-fuchsia-600 dark:ring-offset-gray-800" />
+                                    <label asp-for="Settings.SmsNotificationsEnabled" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <i class="fas fa-sms me-1"></i> SMS Notifications
+                                    </label>
+                                </div>
+                                <div>
+                                    <label asp-for="Settings.NotificationPhone" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+                                    <input type="tel" asp-for="Settings.NotificationPhone" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="+1234567890" />
+                                </div>
+                            </div>
+
+                            <!-- WhatsApp -->
+                            <div class="mb-4 p-4 border border-gray-200 rounded-lg dark:border-gray-700">
+                                <div class="flex items-center mb-3">
+                                    <input type="checkbox" asp-for="Settings.WhatsAppNotificationsEnabled" class="w-5 h-5 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-fuchsia-600 dark:ring-offset-gray-800" />
+                                    <label asp-for="Settings.WhatsAppNotificationsEnabled" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <i class="fab fa-whatsapp me-1"></i> WhatsApp Notifications
+                                    </label>
+                                </div>
+                                <div>
+                                    <label asp-for="Settings.WhatsAppPhone" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">WhatsApp Number</label>
+                                    <input type="tel" asp-for="Settings.WhatsAppPhone" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="+1234567890" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alert Frequency -->
+                        <div class="mb-8">
+                            <h6 class="mb-4 text-sm font-bold text-slate-700 dark:text-white">Alert Frequency</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label asp-for="Settings.MinHoursBetweenAlerts" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Minimum Hours Between Alerts</label>
+                                    <input type="number" asp-for="Settings.MinHoursBetweenAlerts" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-300 focus:border-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" min="1" max="168" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Prevent duplicate alerts for the same product</p>
+                                </div>
+                                <div class="flex items-center pt-8">
+                                    <input type="checkbox" asp-for="Settings.DailyDigestEnabled" class="w-5 h-5 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-fuchsia-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-fuchsia-600 dark:ring-offset-gray-800" />
+                                    <label asp-for="Settings.DailyDigestEnabled" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Send Daily Digest Summary</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-save me-2"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

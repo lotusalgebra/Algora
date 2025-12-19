@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +21,7 @@ namespace Algora.Application.DTOs
     /// <param name="Option1">Optional first option value (for example size).</param>
     /// <param name="Option2">Optional second option value (for example color).</param>
     /// <param name="Option3">Optional third option value.</param>
+    /// <param name="InventoryQuantity">Optional inventory quantity (may be null if not available).</param>
     public record VariantDto
     (
         string Id,
@@ -29,6 +30,7 @@ namespace Algora.Application.DTOs
         decimal? Price,
         string? Option1,
         string? Option2,
-        string? Option3
+        string? Option3,
+        int? InventoryQuantity = null
     );
 }

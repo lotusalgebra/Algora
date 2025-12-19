@@ -85,6 +85,11 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddScoped<IAppConfigurationService, AppConfigurationService>();
 
+        // ----- Inventory Prediction -----
+        services.AddScoped<IInventoryPredictionService, InventoryPredictionService>();
+        services.AddScoped<IInventoryAlertService, InventoryAlertService>();
+        services.AddHostedService<InventoryPredictionBackgroundService>();
+
         // ----- AI Content Generation -----
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
 
