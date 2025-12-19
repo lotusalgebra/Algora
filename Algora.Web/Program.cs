@@ -1,3 +1,4 @@
+using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -59,6 +60,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// Seed default plans on startup
+using (var scope = app.Services.CreateScope())
+{
+    var planService = scope.ServiceProvider.GetRequiredService<IPlanService>();
+    await planService.SeedDefaultPlansAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -66,6 +74,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 

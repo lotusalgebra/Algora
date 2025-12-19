@@ -23,6 +23,10 @@ namespace Algora.Infrastructure.Data
         public DbSet<ApiKey> ApiKeys { get; set; } = null!;
         public DbSet<AppConfiguration> AppConfigurations { get; set; } = null!;
 
+        // ----- Plan entities -----
+        public DbSet<Plan> Plans { get; set; } = null!;
+        public DbSet<PlanChangeRequest> PlanChangeRequests { get; set; } = null!;
+
         // ----- E-commerce entities -----
         public DbSet<Customer> Customers { get; set; } = null!;
         public DbSet<Address> Addresses { get; set; } = null!;
@@ -96,6 +100,28 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ChargeId).HasMaxLength(200);
                 b.Property(x => x.Status).HasMaxLength(50);
                 b.HasIndex(x => x.ShopDomain);
+            });
+
+            modelBuilder.Entity<Plan>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.Property(x => x.MonthlyPrice).HasPrecision(18, 2);
+                b.HasIndex(x => x.Name).IsUnique();
+            });
+
+            modelBuilder.Entity<PlanChangeRequest>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CurrentPlanName).IsRequired().HasMaxLength(50);
+                b.Property(x => x.RequestedPlanName).IsRequired().HasMaxLength(50);
+                b.Property(x => x.RequestType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.AdminNotes).HasMaxLength(1000);
+                b.Property(x => x.ProcessedBy).HasMaxLength(255);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
             });
 
             modelBuilder.Entity<WebhookLog>(b =>

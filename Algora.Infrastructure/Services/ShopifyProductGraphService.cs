@@ -243,12 +243,26 @@ namespace Algora.Infrastructure.Services
                 Variables = variableDict.Count == 0 ? null : variableDict
             };
 
-            var respObj = await _graphService.PostAsync(request);
-            var raw = NormalizeResponseToJson(respObj);
+            var graphResult = await _graphService.PostAsync(request);
+
+            // Extract raw JSON using same approach as GetAllProductsAsync
+            string raw;
+            var jsonInterface = graphResult.Json;
+
+            // Try to get RawText via reflection (IJsonElement may have GetRawText method)
+            var getRawTextMethod = jsonInterface.GetType().GetMethod("GetRawText");
+            if (getRawTextMethod != null)
+            {
+                raw = (string?)getRawTextMethod.Invoke(jsonInterface, null) ?? string.Empty;
+            }
+            else
+            {
+                // Fallback: serialize the object
+                raw = JsonSerializer.Serialize(jsonInterface);
+            }
+
             if (string.IsNullOrWhiteSpace(raw)) return null;
 
-            // Some GraphService implementations return the whole response (including "data"), others may already return the "data".
-            // Ensure we return the whole JSON text so callers can parse "data" as needed.
             return raw;
         }
 
@@ -691,6 +705,8 @@ namespace Algora.Infrastructure.Services
 
         public async Task<ProductDto?> GetProductByIdAsync(long productId)
         {
+            _logger.LogInformation("GetProductByIdAsync called for productId: {ProductId}", productId);
+
             var gql = @"query GetProduct($id: ID!) {
               product(id: $id) {
                 id
@@ -716,7 +732,12 @@ namespace Algora.Infrastructure.Services
             }";
 
             var productGid = $"gid://shopify/Product/{productId}";
+            _logger.LogInformation("Querying Shopify for product GID: {ProductGid}", productGid);
+
             var raw = await SendGraphQueryRawAsync(gql, new { id = productGid });
+            _logger.LogInformation("Raw response from Shopify (first 500 chars): {Response}",
+                string.IsNullOrWhiteSpace(raw) ? "NULL/EMPTY" : (raw.Length > 500 ? raw.Substring(0, 500) : raw));
+
             if (string.IsNullOrWhiteSpace(raw)) return null;
 
             using var doc = JsonDocument.Parse(raw);

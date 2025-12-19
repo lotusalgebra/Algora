@@ -1,0 +1,366 @@
+@page "/plans"
+@model Algora.Web.Pages.Plans.IndexModel
+@{
+    ViewData["Title"] = "Pricing";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header Section -->
+    <div class="relative flex flex-col min-w-0 mt-6 mb-12 break-words bg-transparent border-0 border-solid shadow-none border-black-125 rounded-2xl bg-clip-border">
+        <div class="text-center">
+            <h3 class="text-3xl font-bold dark:text-white">See our pricing</h3>
+            <p class="mt-2 text-lg text-gray-500 dark:text-gray-400">
+                Choose the plan that fits your business needs
+            </p>
+        </div>
+
+        <!-- Monthly/Annual Toggle -->
+        <div class="flex justify-center mt-8">
+            <div class="inline-flex items-center p-1 bg-white dark:bg-gray-800 rounded-lg shadow-soft-md">
+                <button type="button" id="monthlyBtn" onclick="togglePricing('monthly')"
+                    class="px-6 py-2 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg transition-all duration-200">
+                    Monthly
+                </button>
+                <button type="button" id="annualBtn" onclick="togglePricing('annual')"
+                    class="px-6 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 rounded-lg transition-all duration-200">
+                    Annual
+                </button>
+            </div>
+            <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                Save 20%
+            </span>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="max-w-4xl mx-auto mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                @Model.SuccessMessage
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="max-w-4xl mx-auto mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                @Model.ErrorMessage
+            </div>
+        </div>
+    }
+
+    <!-- Pricing Cards -->
+    <div class="flex flex-wrap justify-center -mx-3">
+        @foreach (var plan in Model.Plans)
+        {
+            var isCurrentPlan = plan.IsCurrentPlan;
+            var isPremium = plan.Name == "Premium";
+            var annualPrice = Math.Round(plan.MonthlyPrice * 12 * 0.8m, 0);
+
+            <!-- Card Container -->
+            <div class="w-full max-w-full px-3 mb-6 md:w-6/12 lg:w-4/12 lg:mb-0">
+                <div class="relative flex flex-col h-full min-w-0 break-words bg-white dark:bg-gray-950 border @(isPremium ? "border-purple-500 shadow-xl" : "border-gray-200 dark:border-gray-700 shadow-soft-xl dark:shadow-soft-dark-xl") rounded-2xl bg-clip-border @(isPremium ? "transform lg:scale-105 z-10" : "")">
+
+                    @if (isCurrentPlan)
+                    {
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                            <span class="px-4 py-1 text-xs font-bold text-white bg-gradient-to-tl from-green-600 to-lime-400 rounded-full shadow-lg">
+                                Current Plan
+                            </span>
+                        </div>
+                    }
+                    else if (isPremium)
+                    {
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                            <span class="px-4 py-1 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-full shadow-lg">
+                                Most Popular
+                            </span>
+                        </div>
+                    }
+
+                    <!-- Card Header -->
+                    <div class="p-6 pb-0 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 mb-4 text-center rounded-xl @(isPremium ? "bg-gradient-to-tl from-purple-700 to-pink-500" : "bg-gradient-to-tl from-gray-400 to-gray-600")">
+                            @if (plan.Name == "Free")
+                            {
+                                <i class="fas fa-rocket text-2xl text-white"></i>
+                            }
+                            else if (plan.Name == "Premium")
+                            {
+                                <i class="fas fa-gem text-2xl text-white"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-building text-2xl text-white"></i>
+                            }
+                        </div>
+                        <h5 class="text-xl font-bold dark:text-white">@plan.Name</h5>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">@plan.Description</p>
+                    </div>
+
+                    <!-- Pricing -->
+                    <div class="p-6 text-center">
+                        <div class="monthly-price">
+                            @if (plan.MonthlyPrice > 0)
+                            {
+                                <h1 class="text-5xl font-bold dark:text-white">
+                                    $<span>@plan.MonthlyPrice.ToString("0")</span>
+                                    <small class="text-lg font-normal text-gray-500 dark:text-gray-400">/mo</small>
+                                </h1>
+                            }
+                            else
+                            {
+                                <h1 class="text-5xl font-bold dark:text-white">Free</h1>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Forever</p>
+                            }
+                        </div>
+                        <div class="annual-price hidden">
+                            @if (plan.MonthlyPrice > 0)
+                            {
+                                <h1 class="text-5xl font-bold dark:text-white">
+                                    $<span>@annualPrice.ToString("0")</span>
+                                    <small class="text-lg font-normal text-gray-500 dark:text-gray-400">/yr</small>
+                                </h1>
+                                <p class="text-sm text-green-500">Save $@((plan.MonthlyPrice * 12 - annualPrice).ToString("0"))/year</p>
+                            }
+                            else
+                            {
+                                <h1 class="text-5xl font-bold dark:text-white">Free</h1>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Forever</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Features List -->
+                    <div class="flex-auto p-6 pt-0">
+                        <div class="mb-4">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Includes:</span>
+                        </div>
+                        <ul class="flex flex-col pl-0 mb-0 space-y-3">
+                            <li class="flex items-center">
+                                <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                    <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">
+                                    <strong class="text-gray-800 dark:text-white">@(plan.OrderLimit == -1 ? "Unlimited" : plan.OrderLimit.ToString("N0"))</strong> orders/month
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                    <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">
+                                    <strong class="text-gray-800 dark:text-white">@(plan.ProductLimit == -1 ? "Unlimited" : plan.ProductLimit.ToString("N0"))</strong> products
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                    <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">
+                                    <strong class="text-gray-800 dark:text-white">@(plan.CustomerLimit == -1 ? "Unlimited" : plan.CustomerLimit.ToString("N0"))</strong> customers
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                @if (plan.HasWhatsApp)
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                        <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        <i class="fas fa-minus text-xs text-gray-400"></i>
+                                    </div>
+                                }
+                                <span class="text-sm @(plan.HasWhatsApp ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-500")">
+                                    WhatsApp messaging
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                @if (plan.HasEmailCampaigns)
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                        <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        <i class="fas fa-minus text-xs text-gray-400"></i>
+                                    </div>
+                                }
+                                <span class="text-sm @(plan.HasEmailCampaigns ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-500")">
+                                    Email campaigns
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                @if (plan.HasSms)
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                        <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        <i class="fas fa-minus text-xs text-gray-400"></i>
+                                    </div>
+                                }
+                                <span class="text-sm @(plan.HasSms ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-500")">
+                                    SMS messaging
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                @if (plan.HasAdvancedReports)
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                        <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        <i class="fas fa-minus text-xs text-gray-400"></i>
+                                    </div>
+                                }
+                                <span class="text-sm @(plan.HasAdvancedReports ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-500")">
+                                    Advanced reports
+                                </span>
+                            </li>
+                            <li class="flex items-center">
+                                @if (plan.HasApiAccess)
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-green-100 dark:bg-green-900/30 rounded-full">
+                                        <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="inline-flex items-center justify-center w-6 h-6 mr-3 text-center bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        <i class="fas fa-minus text-xs text-gray-400"></i>
+                                    </div>
+                                }
+                                <span class="text-sm @(plan.HasApiAccess ? "text-gray-600 dark:text-gray-300" : "text-gray-400 dark:text-gray-500")">
+                                    API access
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="p-6 pt-0 mt-auto">
+                        @if (isCurrentPlan)
+                        {
+                            <button disabled class="w-full px-6 py-3.5 text-sm font-bold text-center text-white uppercase align-middle transition-all bg-gray-400 border-0 rounded-lg cursor-not-allowed shadow-soft-md">
+                                Current Plan
+                            </button>
+                        }
+                        else
+                        {
+                            var isUpgrade = Model.CurrentPlan == null || plan.MonthlyPrice > Model.CurrentPlan.MonthlyPrice;
+                            var buttonText = plan.MonthlyPrice == 0 ? "Get Started" : (isUpgrade ? "Upgrade Now" : "Switch Plan");
+
+                            if (isPremium || isUpgrade)
+                            {
+                                <a href="/plans/change?plan=@plan.Name"
+                                   class="w-full inline-block px-6 py-3.5 text-sm font-bold text-center text-white uppercase align-middle transition-all bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg cursor-pointer shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                    @buttonText
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="/plans/change?plan=@plan.Name"
+                                   class="w-full inline-block px-6 py-3.5 text-sm font-bold text-center text-gray-800 dark:text-white uppercase align-middle transition-all bg-gray-100 dark:bg-gray-800 border-0 rounded-lg cursor-pointer shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85">
+                                    @buttonText
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="mt-16 mb-8">
+        <div class="text-center mb-10">
+            <h3 class="text-2xl font-bold dark:text-white">Frequently Asked Questions</h3>
+            <p class="mt-2 text-gray-500 dark:text-gray-400">Everything you need to know about our plans</p>
+        </div>
+
+        <div class="max-w-3xl mx-auto">
+            <div class="grid gap-4">
+                <div class="p-5 bg-white dark:bg-gray-950 rounded-xl shadow-soft-xl dark:shadow-soft-dark-xl border border-gray-100 dark:border-gray-800">
+                    <div class="flex items-start">
+                        <div class="inline-flex items-center justify-center w-8 h-8 mr-4 text-center bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg flex-shrink-0">
+                            <i class="fas fa-sync-alt text-xs text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold dark:text-white">Can I change my plan at any time?</h5>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Yes! Upgrades take effect immediately. Downgrades require admin approval to ensure a smooth transition of your data and features.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-white dark:bg-gray-950 rounded-xl shadow-soft-xl dark:shadow-soft-dark-xl border border-gray-100 dark:border-gray-800">
+                    <div class="flex items-start">
+                        <div class="inline-flex items-center justify-center w-8 h-8 mr-4 text-center bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg flex-shrink-0">
+                            <i class="fas fa-chart-line text-xs text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold dark:text-white">What happens when I reach my limits?</h5>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">You'll receive notifications when approaching your limits. Upgrade anytime to continue using all features without interruption.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-white dark:bg-gray-950 rounded-xl shadow-soft-xl dark:shadow-soft-dark-xl border border-gray-100 dark:border-gray-800">
+                    <div class="flex items-start">
+                        <div class="inline-flex items-center justify-center w-8 h-8 mr-4 text-center bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg flex-shrink-0">
+                            <i class="fas fa-credit-card text-xs text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold dark:text-white">How does billing work?</h5>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Billing is handled securely through Shopify. You can pay monthly or save 20% with annual billing. Cancel anytime.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePricing(type) {
+            const monthlyBtn = document.getElementById('monthlyBtn');
+            const annualBtn = document.getElementById('annualBtn');
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const annualPrices = document.querySelectorAll('.annual-price');
+
+            if (type === 'monthly') {
+                monthlyBtn.classList.add('text-white', 'bg-gradient-to-tl', 'from-purple-700', 'to-pink-500');
+                monthlyBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                annualBtn.classList.remove('text-white', 'bg-gradient-to-tl', 'from-purple-700', 'to-pink-500');
+                annualBtn.classList.add('text-gray-600', 'dark:text-gray-300');
+
+                monthlyPrices.forEach(el => el.classList.remove('hidden'));
+                annualPrices.forEach(el => el.classList.add('hidden'));
+            } else {
+                annualBtn.classList.add('text-white', 'bg-gradient-to-tl', 'from-purple-700', 'to-pink-500');
+                annualBtn.classList.remove('text-gray-600', 'dark:text-gray-300');
+                monthlyBtn.classList.remove('text-white', 'bg-gradient-to-tl', 'from-purple-700', 'to-pink-500');
+                monthlyBtn.classList.add('text-gray-600', 'dark:text-gray-300');
+
+                monthlyPrices.forEach(el => el.classList.add('hidden'));
+                annualPrices.forEach(el => el.classList.remove('hidden'));
+            }
+        }
+    </script>
+}

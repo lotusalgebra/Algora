@@ -1,16 +1,19 @@
 using Algora.Application.Interfaces;
+using Algora.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
 namespace Algora.Web.Pages.Products
 {
+    [Authorize]
     public class EditModel : PageModel
     {
-        private readonly IShopifyProductService _productService;
+        private readonly ShopifyProductGraphService _productService;
         private readonly ILogger<EditModel> _logger;
 
-        public EditModel(IShopifyProductService productService, ILogger<EditModel> logger)
+        public EditModel(ShopifyProductGraphService productService, ILogger<EditModel> logger)
         {
             _productService = productService;
             _logger = logger;
@@ -29,10 +32,13 @@ namespace Algora.Web.Pages.Products
         {
             try
             {
+                _logger.LogInformation("Loading product {ProductId}", id);
                 var product = await _productService.GetProductByIdAsync(id);
                 if (product == null)
                 {
-                    return NotFound();
+                    _logger.LogWarning("Product {ProductId} not found", id);
+                    ErrorMessage = $"Product with ID {id} was not found. Please check if the product exists in Shopify.";
+                    return Page();
                 }
 
                 Product = new ProductEditInput

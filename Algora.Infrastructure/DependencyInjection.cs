@@ -1,4 +1,9 @@
 ﻿using Algora.Application.Interfaces;
+using Algora.Application.Interfaces.AI;
+using Algora.Infrastructure.AI.Configuration;
+using Algora.Infrastructure.AI.Providers.Image;
+using Algora.Infrastructure.AI.Providers.Text;
+using Algora.Infrastructure.AI.Services;
 using Algora.Infrastructure.Data;
 using Algora.Infrastructure.Licensing;
 using Algora.Infrastructure.Persistence;
@@ -70,6 +75,7 @@ public static class DependencyInjection
         // ----- Billing & Licensing -----
         services.AddScoped<IShopifyBillingService, ShopifyBillingService>();
         services.AddScoped<ILicenseService, LicenseService>();
+        services.AddScoped<IPlanService, PlanService>();
 
         // ----- Repository layer -----
         services.AddRepositoryLayer();
@@ -78,6 +84,36 @@ public static class DependencyInjection
         services.AddHttpClient();
         services.AddMemoryCache();
         services.AddScoped<IAppConfigurationService, AppConfigurationService>();
+
+        // ----- AI Content Generation -----
+        services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
+
+        // Text generation providers
+        services.AddScoped<ITextGenerationProvider, OpenAiTextProvider>();
+        services.AddScoped<ITextGenerationProvider, AnthropicTextProvider>();
+        services.AddScoped<ITextGenerationProvider, GeminiTextProvider>();
+
+        // Image generation providers
+        services.AddScoped<IImageGenerationProvider, DallEImageProvider>();
+        services.AddScoped<IImageGenerationProvider, StabilityAiImageProvider>();
+
+        // AI orchestrator service
+        services.AddScoped<IAiContentService, AiContentService>();
+
+        // Named HttpClients for AI providers
+        services.AddHttpClient("OpenAI", client =>
+        {
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddHttpClient("Anthropic", client =>
+        {
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddHttpClient("Gemini");
+        services.AddHttpClient("StabilityAI", client =>
+        {
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
 
         return services;
     }

@@ -1,14 +1,151 @@
-﻿@using Algora.Core.Models
-@model ProductViewModel
+@page "/products/{id:long}"
+@model Algora.Web.Pages.Products.DetailsModel
 @{
     ViewData["Title"] = "Product Details";
 }
-<h2>@Model.Title</h2>
-<p><strong>Price:</strong> ₹@Model.Price</p>
-<p><strong>Stock:</strong> @Model.Stock</p>
-<p><strong>Tags:</strong> @Model.Tags</p>
-<p><strong>Description:</strong></p>
-<p>@Model.Description</p>
 
-<a href="/products/edit/@Model.Id" class="btn btn-warning">Edit</a>
-<a href="/products" class="btn btn-secondary">Back</a>
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="mb-4">
+        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
+            <li class="leading-normal text-sm">
+                <a class="text-slate-500 dark:text-white/60" href="/products">Products</a>
+            </li>
+            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
+                Product Details
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h5 class="mb-0 font-bold dark:text-white">Product Details</h5>
+                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">View product information</p>
+                </div>
+                <div class="flex gap-2">
+                    @if (Model.Product != null)
+                    {
+                        <a href="/products/edit/@Model.Product.NumericId" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg hover:scale-102 transition-all">
+                            <i class="fas fa-pencil-alt me-2"></i> Edit
+                        </a>
+                    }
+                    <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Product != null)
+    {
+        <div class="flex flex-wrap -mx-3">
+            <!-- Product Info Card -->
+            <div class="w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-6">
+                        <h5 class="mb-4 font-bold dark:text-white">@Model.Product.Title</h5>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label class="font-bold text-xs text-slate-700 dark:text-white/80">Handle</label>
+                                <p class="text-sm text-slate-600 dark:text-white/60">@(Model.Product.Handle ?? "N/A")</p>
+                            </div>
+                            <div>
+                                <label class="font-bold text-xs text-slate-700 dark:text-white/80">Product ID</label>
+                                <p class="text-sm text-slate-600 dark:text-white/60">@Model.Product.NumericId</p>
+                            </div>
+                            <div>
+                                <label class="font-bold text-xs text-slate-700 dark:text-white/80">Variants</label>
+                                <p class="text-sm text-slate-600 dark:text-white/60">@Model.Product.Variants.Count variant(s)</p>
+                            </div>
+                        </div>
+
+                        @if (Model.Product.Tags.Any())
+                        {
+                            <div class="mb-6">
+                                <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Tags</label>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach (var tag in Model.Product.Tags)
+                                    {
+                                        <span class="px-3 py-1 text-xs font-semibold text-purple-700 bg-purple-100 rounded-full dark:bg-purple-900/30 dark:text-purple-300">
+                                            @tag
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Variants Card -->
+                @if (Model.Product.Variants.Any())
+                {
+                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                            <h6 class="mb-0 font-bold dark:text-white">Variants (@Model.Product.Variants.Count)</h6>
+                        </div>
+                        <div class="flex-auto p-6">
+                            <div class="overflow-x-auto">
+                                <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                    <thead class="align-bottom">
+                                        <tr>
+                                            <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white/80">Title</th>
+                                            <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white/80">SKU</th>
+                                            <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white/80">Price</th>
+                                            <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white/80">Options</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var variant in Model.Product.Variants)
+                                        {
+                                            <tr>
+                                                <td class="p-4 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-sm font-semibold leading-tight dark:text-white">@(variant.Title ?? "Default")</span>
+                                                </td>
+                                                <td class="p-4 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-xs font-semibold leading-tight text-slate-400 dark:text-white/60">@(variant.Sku ?? "N/A")</span>
+                                                </td>
+                                                <td class="p-4 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <span class="text-sm font-semibold leading-tight dark:text-white">@(variant.Price?.ToString("C") ?? "N/A")</span>
+                                                </td>
+                                                <td class="p-4 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                    <div class="flex flex-wrap gap-1">
+                                                        @if (!string.IsNullOrEmpty(variant.Option1))
+                                                        {
+                                                            <span class="px-2 py-0.5 text-xs bg-slate-100 rounded dark:bg-slate-800 dark:text-white/70">@variant.Option1</span>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(variant.Option2))
+                                                        {
+                                                            <span class="px-2 py-0.5 text-xs bg-slate-100 rounded dark:bg-slate-800 dark:text-white/70">@variant.Option2</span>
+                                                        }
+                                                        @if (!string.IsNullOrEmpty(variant.Option3))
+                                                        {
+                                                            <span class="px-2 py-0.5 text-xs bg-slate-100 rounded dark:bg-slate-800 dark:text-white/70">@variant.Option3</span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
