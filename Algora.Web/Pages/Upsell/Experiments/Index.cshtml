@@ -1,0 +1,184 @@
+@page "/upsell/experiments"
+@model Algora.Web.Pages.Upsell.Experiments.IndexModel
+@{
+    ViewData["Title"] = "A/B Experiments";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">A/B Experiments</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-flask text-blue-500 me-1"></i>
+                                <span class="font-semibold">@Model.Experiments.Count</span> experiments
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="/upsell" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border border-gray-300 rounded-lg cursor-pointer text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </a>
+                            <a href="/upsell/experiments/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-2"></i> New Experiment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <div class="flex-auto p-6 px-0 pb-0">
+                    @if (Model.Experiments.Count == 0)
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-flask fa-4x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">No A/B experiments yet. Create your first experiment to optimize upsell performance.</p>
+                            <a href="/upsell/experiments/create" class="inline-block px-6 py-3 text-sm font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md">
+                                <i class="fas fa-plus me-2"></i> Create First Experiment
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="experiments-list">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Experiment</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Variants</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Impressions</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Conversions</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Significance</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var exp in Model.Experiments)
+                                    {
+                                        var statusColor = exp.Status switch
+                                        {
+                                            "running" => "from-green-600 to-lime-400",
+                                            "paused" => "from-yellow-500 to-amber-300",
+                                            "completed" => "from-blue-600 to-cyan-400",
+                                            _ => "from-gray-400 to-gray-600"
+                                        };
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@exp.Name</h6>
+                                                        @if (!string.IsNullOrEmpty(exp.Description))
+                                                        {
+                                                            <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80 truncate max-w-xs">@exp.Description</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@exp.VariantCount</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@exp.TotalImpressions</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-green-600">@exp.TotalConversions</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@exp.Status</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                @if (exp.IsStatisticallySignificant)
+                                                {
+                                                    <span class="text-sm font-semibold text-green-600">
+                                                        <i class="fas fa-check-circle me-1"></i> Yes
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-sm text-slate-400">Not yet</span>
+                                                }
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="/upsell/experiments/details/@exp.Id" class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 hover:text-blue-600" title="View Details">
+                                                        <i class="fas fa-chart-bar"></i>
+                                                    </a>
+                                                    @if (exp.Status == "draft")
+                                                    {
+                                                        <form method="post" asp-page-handler="Start" asp-route-id="@exp.Id" class="inline">
+                                                            <button type="submit" class="text-xs font-semibold leading-tight text-green-600 hover:text-green-800" title="Start">
+                                                                <i class="fas fa-play"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    @if (exp.Status == "running")
+                                                    {
+                                                        <form method="post" asp-page-handler="Pause" asp-route-id="@exp.Id" class="inline">
+                                                            <button type="submit" class="text-xs font-semibold leading-tight text-yellow-600 hover:text-yellow-800" title="Pause">
+                                                                <i class="fas fa-pause"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    @if (exp.Status == "paused")
+                                                    {
+                                                        <form method="post" asp-page-handler="Start" asp-route-id="@exp.Id" class="inline">
+                                                            <button type="submit" class="text-xs font-semibold leading-tight text-green-600 hover:text-green-800" title="Resume">
+                                                                <i class="fas fa-play"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script>
+        if (document.getElementById('experiments-list')) {
+            new simpleDatatables.DataTable("#experiments-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 25,
+                labels: {
+                    placeholder: "Search experiments...",
+                    perPage: "per page",
+                    noRows: "No experiments found",
+                    info: "Showing {start} to {end} of {rows} experiments"
+                }
+            });
+        }
+    </script>
+}

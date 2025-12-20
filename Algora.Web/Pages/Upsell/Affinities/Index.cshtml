@@ -1,0 +1,276 @@
+@page "/upsell/affinities"
+@model Algora.Web.Pages.Upsell.Affinities.IndexModel
+@{
+    ViewData["Title"] = "Product Affinities";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Affinities</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-indigo-600">@Model.Summary.TotalAffinities</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-indigo-600 to-purple-400">
+                                <i class="fas fa-link text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Strong Affinities</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-green-600">@Model.Summary.StrongAffinities</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                <i class="fas fa-star text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Avg. Confidence</p>
+                                <h5 class="mb-0 font-bold dark:text-white">@Model.Summary.AverageConfidence.ToString("P1")</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                <i class="fas fa-percentage text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Last Calculated</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-sm">
+                                    @(Model.Summary.LastCalculated?.ToString("MMM dd, HH:mm") ?? "Never")
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-gray-400 to-gray-600">
+                                <i class="fas fa-clock text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Affinities Table -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Product Affinities</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-link text-indigo-500 me-1"></i>
+                                Products frequently purchased together
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="/upsell" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border border-gray-300 rounded-lg cursor-pointer text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </a>
+                            <form method="post" asp-page-handler="Recalculate" class="inline">
+                                <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-sync-alt me-2"></i> Recalculate
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <div class="flex-auto p-6 px-0 pb-0">
+                    @if (Model.Affinities.Count == 0)
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-link fa-4x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">No product affinities calculated yet. Click "Recalculate" to analyze your order history.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="affinities-list">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Source Product</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Related Product</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Support</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Confidence</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Lift</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Co-occurrences</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Strength</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var affinity in Model.Affinities)
+                                    {
+                                        var strengthColor = affinity.Lift switch
+                                        {
+                                            >= 2.0m => "from-green-600 to-lime-400",
+                                            >= 1.5m => "from-blue-600 to-cyan-400",
+                                            >= 1.0m => "from-yellow-500 to-amber-300",
+                                            _ => "from-gray-400 to-gray-600"
+                                        };
+
+                                        var strengthText = affinity.Lift switch
+                                        {
+                                            >= 2.0m => "Strong",
+                                            >= 1.5m => "Moderate",
+                                            >= 1.0m => "Weak",
+                                            _ => "Negative"
+                                        };
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@affinity.SourceProductTitle</h6>
+                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: @affinity.SourceProductId</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@affinity.RelatedProductTitle</h6>
+                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: @affinity.RelatedProductId</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@affinity.Support.ToString("P2")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight @(affinity.Confidence >= 0.3m ? "text-green-600" : affinity.Confidence >= 0.15m ? "text-yellow-600" : "text-gray-500")">
+                                                    @affinity.Confidence.ToString("P1")
+                                                </span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight @(affinity.Lift >= 1.5m ? "text-green-600" : affinity.Lift >= 1.0m ? "text-yellow-600" : "text-red-600")">
+                                                    @affinity.Lift.ToString("N2")x
+                                                </span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@affinity.CoOccurrences</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="bg-gradient-to-tl @strengthColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@strengthText</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                <h6 class="mb-4 dark:text-white">Understanding Affinity Metrics</h6>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <h6 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Support</h6>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            The proportion of orders containing both products. Higher support means the pair appears more frequently.
+                        </p>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Confidence</h6>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            Given the source product was purchased, the probability the related product was also purchased. Higher is better.
+                        </p>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Lift</h6>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            How much more likely the pair appears together vs. independently. Lift > 1 indicates positive correlation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script>
+        if (document.getElementById('affinities-list')) {
+            new simpleDatatables.DataTable("#affinities-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 25,
+                perPageSelect: [10, 25, 50, 100],
+                labels: {
+                    placeholder: "Search products...",
+                    perPage: "per page",
+                    noRows: "No affinities found",
+                    info: "Showing {start} to {end} of {rows} affinities"
+                }
+            });
+        }
+    </script>
+}
