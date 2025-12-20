@@ -101,6 +101,14 @@ namespace Algora.Infrastructure.Data
         public DbSet<BundleRuleTier> BundleRuleTiers { get; set; } = null!;
         public DbSet<BundleSettings> BundleSettings { get; set; } = null!;
 
+        // ----- Review entities -----
+        public DbSet<Review> Reviews { get; set; } = null!;
+        public DbSet<ReviewMedia> ReviewMedia { get; set; } = null!;
+        public DbSet<ReviewImportJob> ReviewImportJobs { get; set; } = null!;
+        public DbSet<ReviewEmailAutomation> ReviewEmailAutomations { get; set; } = null!;
+        public DbSet<ReviewEmailLog> ReviewEmailLogs { get; set; } = null!;
+        public DbSet<ReviewSettings> ReviewSettings { get; set; } = null!;
+
         // ----- Tagging entities -----
         public DbSet<Tag> Tags { get; set; } = null!;
         public DbSet<EntityTag> EntityTags { get; set; } = null!;
@@ -859,6 +867,105 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ShopifyProductType).HasMaxLength(100);
                 b.Property(x => x.ShopifyProductTags).HasMaxLength(500);
                 b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            // ==================== REVIEW ENTITIES ====================
+
+            modelBuilder.Entity<Review>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ProductTitle).HasMaxLength(500);
+                b.Property(x => x.ProductSku).HasMaxLength(100);
+                b.Property(x => x.ReviewerName).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ReviewerEmail).HasMaxLength(255);
+                b.Property(x => x.Title).HasMaxLength(500);
+                b.Property(x => x.Body).HasMaxLength(10000);
+                b.Property(x => x.Source).IsRequired().HasMaxLength(20);
+                b.Property(x => x.SourceUrl).HasMaxLength(2000);
+                b.Property(x => x.ExternalReviewId).HasMaxLength(100);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.ModerationNote).HasMaxLength(1000);
+                b.HasIndex(x => new { x.ShopDomain, x.PlatformProductId });
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => new { x.ShopDomain, x.Source });
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ImportJob).WithMany(j => j.Reviews).HasForeignKey(x => x.ImportJobId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReviewMedia>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.MediaType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Url).IsRequired().HasMaxLength(2000);
+                b.Property(x => x.ThumbnailUrl).HasMaxLength(2000);
+                b.Property(x => x.AltText).HasMaxLength(500);
+                b.HasOne(x => x.Review).WithMany(r => r.Media).HasForeignKey(x => x.ReviewId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => x.ReviewId);
+            });
+
+            modelBuilder.Entity<ReviewImportJob>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.SourceType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.SourceUrl).IsRequired().HasMaxLength(2000);
+                b.Property(x => x.SourceProductId).HasMaxLength(100);
+                b.Property(x => x.SourceProductTitle).HasMaxLength(500);
+                b.Property(x => x.TargetProductTitle).HasMaxLength(500);
+                b.Property(x => x.MappingMethod).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.ErrorMessage).HasMaxLength(2000);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => new { x.ShopDomain, x.CreatedAt });
+                b.HasOne(x => x.TargetProduct).WithMany().HasForeignKey(x => x.TargetProductId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReviewEmailAutomation>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.TriggerType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Subject).IsRequired().HasMaxLength(500);
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
+                b.HasOne(x => x.EmailTemplate).WithMany().HasForeignKey(x => x.EmailTemplateId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReviewEmailLog>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(255);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.TrackingToken).HasMaxLength(64);
+                b.Property(x => x.ErrorMessage).HasMaxLength(2000);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => new { x.ShopDomain, x.ScheduledAt });
+                b.HasIndex(x => x.TrackingToken).IsUnique();
+                b.HasOne(x => x.Automation).WithMany(a => a.EmailLogs).HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Review).WithMany().HasForeignKey(x => x.ReviewId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReviewSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.WidgetTheme).HasMaxLength(20);
+                b.Property(x => x.PrimaryColor).HasMaxLength(20);
+                b.Property(x => x.AccentColor).HasMaxLength(20);
+                b.Property(x => x.StarColor).HasMaxLength(20);
+                b.Property(x => x.WidgetLayout).HasMaxLength(20);
+                b.Property(x => x.TranslateToLanguage).HasMaxLength(10);
+                b.Property(x => x.WidgetApiKey).IsRequired().HasMaxLength(64);
+                b.Property(x => x.DefaultEmailFromName).HasMaxLength(100);
+                b.Property(x => x.DefaultEmailFromAddress).HasMaxLength(255);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
+                b.HasIndex(x => x.WidgetApiKey).IsUnique();
             });
 
             modelBuilder.Entity<Tag>(b =>

@@ -9,6 +9,7 @@ using Algora.Infrastructure.Licensing;
 using Algora.Infrastructure.Persistence;
 using Algora.Infrastructure.Services;
 using Algora.Infrastructure.Services.Communication;
+using Algora.Infrastructure.Services.Scrapers;
 using Algora.Infrastructure.Shopify;
 using Algora.Infrastructure.Shopify.Billing;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -108,6 +109,23 @@ public static class DependencyInjection
         // ----- Bundle Builder -----
         services.AddScoped<IBundleService, BundleService>();
         services.AddScoped<IBundleShopifyService, BundleShopifyService>();
+
+        // ----- Review Importer -----
+        services.Configure<ScraperApiOptions>(configuration.GetSection(ScraperApiOptions.SectionName));
+        services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IReviewImportService, ReviewImportService>();
+        services.AddScoped<IReviewEmailService, ReviewEmailService>();
+        services.AddScoped<IReviewScraper, AmazonReviewScraper>();
+        services.AddScoped<IReviewScraper, AliExpressReviewScraper>();
+        services.AddHostedService<ReviewImportBackgroundService>();
+        services.AddHostedService<ReviewEmailBackgroundService>();
+        services.AddHttpClient("ReviewScraper", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            AutomaticDecompression = System.Net.DecompressionMethods.All
+        });
 
         // ----- AI Content Generation -----
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
