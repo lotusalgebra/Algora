@@ -105,6 +105,10 @@ public static class DependencyInjection
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
+        // ----- Bundle Builder -----
+        services.AddScoped<IBundleService, BundleService>();
+        services.AddScoped<IBundleShopifyService, BundleShopifyService>();
+
         // ----- AI Content Generation -----
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
 

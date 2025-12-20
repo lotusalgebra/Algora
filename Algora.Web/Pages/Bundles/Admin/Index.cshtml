@@ -1,0 +1,232 @@
+@page "/bundles/admin"
+@model Algora.Web.Pages.Bundles.Admin.IndexModel
+@{
+    ViewData["Title"] = "Bundle Builder";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Bundle Builder</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Create and manage product bundles</p>
+        </div>
+        <a href="/bundles/admin/create" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            <i class="fas fa-plus mr-2"></i> Create Bundle
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Total Bundles -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Bundles</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-indigo-600">@Model.Summary.TotalBundles</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-indigo-600 to-purple-400">
+                                <i class="fas fa-boxes text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Bundles -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Active Bundles</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-green-600">@Model.Summary.ActiveBundles</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                <i class="fas fa-check-circle text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Sales -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Sales</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-blue-600">@Model.Summary.TotalSales</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                <i class="fas fa-shopping-cart text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Revenue</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-orange-600">$@Model.Summary.TotalRevenue.ToString("N2")</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-400">
+                                <i class="fas fa-dollar-sign text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="w-full px-3">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Quick Actions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="/bundles/admin/list" class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center">
+                        <i class="fas fa-list text-2xl text-indigo-600 mb-2"></i>
+                        <p class="text-sm font-medium dark:text-white">View All Bundles</p>
+                    </a>
+                    <a href="/bundles/admin/create" class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center">
+                        <i class="fas fa-plus-circle text-2xl text-green-600 mb-2"></i>
+                        <p class="text-sm font-medium dark:text-white">Create Bundle</p>
+                    </a>
+                    <a href="/bundles/admin/analytics" class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center">
+                        <i class="fas fa-chart-bar text-2xl text-blue-600 mb-2"></i>
+                        <p class="text-sm font-medium dark:text-white">Analytics</p>
+                    </a>
+                    <a href="/bundles/admin/settings" class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-center">
+                        <i class="fas fa-cog text-2xl text-gray-600 mb-2"></i>
+                        <p class="text-sm font-medium dark:text-white">Settings</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bundles -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full px-3">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold dark:text-white">Recent Bundles</h3>
+                        <a href="/bundles/admin/list" class="text-sm text-indigo-600 hover:text-indigo-800">View all</a>
+                    </div>
+                </div>
+                <div class="overflow-x-auto p-6 pt-0">
+                    @if (Model.RecentBundles.Any())
+                    {
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b dark:border-gray-700">
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Bundle</th>
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Type</th>
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Price</th>
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Status</th>
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Shopify</th>
+                                    <th class="pb-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var bundle in Model.RecentBundles)
+                                {
+                                    <tr class="border-b dark:border-gray-700">
+                                        <td class="py-3">
+                                            <div class="flex items-center gap-3">
+                                                @if (!string.IsNullOrEmpty(bundle.ImageUrl))
+                                                {
+                                                    <img src="@bundle.ImageUrl" alt="@bundle.Name" class="w-10 h-10 rounded object-cover" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
+                                                        <i class="fas fa-boxes text-gray-400"></i>
+                                                    </div>
+                                                }
+                                                <span class="font-medium dark:text-white">@bundle.Name</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3">
+                                            <span class="px-2 py-1 text-xs rounded @(bundle.BundleType == "fixed" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700")">
+                                                @(bundle.BundleType == "fixed" ? "Fixed" : "Mix & Match")
+                                            </span>
+                                        </td>
+                                        <td class="py-3 dark:text-white">$@bundle.BundlePrice.ToString("F2")</td>
+                                        <td class="py-3">
+                                            <span class="px-2 py-1 text-xs rounded @(bundle.IsActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700")">
+                                                @(bundle.IsActive ? "Active" : "Inactive")
+                                            </span>
+                                        </td>
+                                        <td class="py-3">
+                                            @if (bundle.ShopifySyncStatus == "synced")
+                                            {
+                                                <span class="text-green-600"><i class="fas fa-check-circle"></i></span>
+                                            }
+                                            else if (bundle.ShopifySyncStatus == "error")
+                                            {
+                                                <span class="text-red-600"><i class="fas fa-exclamation-circle"></i></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-gray-400"><i class="fas fa-clock"></i></span>
+                                            }
+                                        </td>
+                                        <td class="py-3">
+                                            <a href="/bundles/admin/edit/@bundle.Id" class="text-indigo-600 hover:text-indigo-800 mr-3">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-boxes text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No bundles created yet</p>
+                            <a href="/bundles/admin/create" class="mt-3 inline-flex items-center text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-plus mr-2"></i> Create your first bundle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

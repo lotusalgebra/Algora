@@ -94,6 +94,13 @@ namespace Algora.Infrastructure.Data
         public DbSet<ReturnSettings> ReturnSettings { get; set; } = null!;
         public DbSet<ReturnLabel> ReturnLabels { get; set; } = null!;
 
+        // ----- Bundle entities -----
+        public DbSet<Bundle> Bundles { get; set; } = null!;
+        public DbSet<BundleItem> BundleItems { get; set; } = null!;
+        public DbSet<BundleRule> BundleRules { get; set; } = null!;
+        public DbSet<BundleRuleTier> BundleRuleTiers { get; set; } = null!;
+        public DbSet<BundleSettings> BundleSettings { get; set; } = null!;
+
         // ----- Tagging entities -----
         public DbSet<Tag> Tags { get; set; } = null!;
         public DbSet<EntityTag> EntityTags { get; set; } = null!;
@@ -780,6 +787,78 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.Currency).HasMaxLength(10);
                 b.Property(x => x.Status).HasMaxLength(20);
                 b.HasIndex(x => new { x.ShopDomain, x.TrackingNumber });
+            });
+
+            // ----- Bundle entities -----
+            modelBuilder.Entity<Bundle>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Slug).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Description).HasMaxLength(4000);
+                b.Property(x => x.BundleType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.DiscountType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.DiscountValue).HasPrecision(18, 4);
+                b.Property(x => x.DiscountCode).HasMaxLength(100);
+                b.Property(x => x.ImageUrl).HasMaxLength(1000);
+                b.Property(x => x.ThumbnailUrl).HasMaxLength(1000);
+                b.Property(x => x.ShopifySyncStatus).HasMaxLength(20);
+                b.Property(x => x.ShopifySyncError).HasMaxLength(500);
+                b.Property(x => x.OriginalPrice).HasPrecision(18, 4);
+                b.Property(x => x.BundlePrice).HasPrecision(18, 4);
+                b.Property(x => x.Currency).HasMaxLength(10);
+                b.HasIndex(x => new { x.ShopDomain, x.Slug }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
+            });
+
+            modelBuilder.Entity<BundleItem>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(500);
+                b.Property(x => x.VariantTitle).HasMaxLength(500);
+                b.Property(x => x.Sku).HasMaxLength(100);
+                b.Property(x => x.ImageUrl).HasMaxLength(1000);
+                b.Property(x => x.UnitPrice).HasPrecision(18, 4);
+                b.HasOne(x => x.Bundle).WithMany(b => b.Items).HasForeignKey(x => x.BundleId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => x.BundleId);
+            });
+
+            modelBuilder.Entity<BundleRule>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Name).HasMaxLength(200);
+                b.Property(x => x.DisplayLabel).HasMaxLength(200);
+                b.HasOne(x => x.Bundle).WithMany(b => b.Rules).HasForeignKey(x => x.BundleId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => x.BundleId);
+            });
+
+            modelBuilder.Entity<BundleRuleTier>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.DiscountType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.DiscountValue).HasPrecision(18, 4);
+                b.Property(x => x.DisplayLabel).HasMaxLength(200);
+                b.HasOne(x => x.BundleRule).WithMany(r => r.Tiers).HasForeignKey(x => x.BundleRuleId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => x.BundleRuleId);
+            });
+
+            modelBuilder.Entity<BundleSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.DefaultDiscountType).HasMaxLength(20);
+                b.Property(x => x.DefaultDiscountValue).HasPrecision(18, 4);
+                b.Property(x => x.BundlePageTitle).HasMaxLength(200);
+                b.Property(x => x.BundlePageDescription).HasMaxLength(2000);
+                b.Property(x => x.DisplayLayout).HasMaxLength(20);
+                b.Property(x => x.PrimaryColor).HasMaxLength(20);
+                b.Property(x => x.SecondaryColor).HasMaxLength(20);
+                b.Property(x => x.ShopifyProductType).HasMaxLength(100);
+                b.Property(x => x.ShopifyProductTags).HasMaxLength(500);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
             });
 
             modelBuilder.Entity<Tag>(b =>
