@@ -1,0 +1,339 @@
+@page "/returns/status/{requestNumber}"
+@model Algora.Web.Pages.Returns.StatusModel
+@{
+    Layout = null;
+    var primaryColor = Model.Settings?.PrimaryColor ?? "#4f46e5";
+    var currentStep = Model.ReturnRequest != null ? Model.GetStepNumber(Model.ReturnRequest.Status) : 0;
+    var isTerminal = Model.ReturnRequest?.Status.ToLower() is "refunded" or "rejected" or "cancelled";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Return Status - @(Model.ReturnRequest?.RequestNumber ?? "Track Return")</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: @primaryColor;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .text-primary {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <!-- Logo -->
+        @if (!string.IsNullOrEmpty(Model.Settings?.LogoUrl))
+        {
+            <div class="text-center mb-6">
+                <img src="@Model.Settings.LogoUrl" alt="Logo" class="h-12 mx-auto" />
+            </div>
+        }
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Return Status</h1>
+        </div>
+
+        <!-- Error Message -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                @Model.ErrorMessage
+            </div>
+
+            <div class="text-center">
+                <a href="/returns/request?shop=@Model.ShopDomain"
+                   class="text-primary hover:underline">Start a new return</a>
+            </div>
+        }
+        else if (Model.ReturnRequest != null)
+        {
+            var r = Model.ReturnRequest;
+            var statusColor = Model.GetStatusColor(r.Status);
+
+            <!-- Return Info Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Return Request</p>
+                        <p class="text-xl font-bold font-mono">@r.RequestNumber</p>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-@(statusColor)-100 text-@(statusColor)-800">
+                        @Model.GetStatusLabel(r.Status)
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <p class="text-gray-500">Order Number</p>
+                        <p class="font-medium">#@r.OrderNumber</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Requested On</p>
+                        <p class="font-medium">@r.RequestedAt.ToString("MMM d, yyyy")</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Reason</p>
+                        <p class="font-medium">@(r.ReasonDescription ?? r.ReasonCode)</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Items</p>
+                        <p class="font-medium">@r.Items.Sum(i => i.QuantityReturned) item(s)</p>
+                    </div>
+                </div>
+
+                <p class="mt-4 text-gray-600">@Model.GetStatusDescription(r.Status)</p>
+
+                @if (r.Status.ToLower() == "rejected" && !string.IsNullOrEmpty(r.RejectionReason))
+                {
+                    <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p class="text-sm text-red-800"><strong>Reason:</strong> @r.RejectionReason</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Progress Timeline -->
+            @if (!isTerminal || r.Status.ToLower() == "refunded")
+            {
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Return Progress</h2>
+
+                    <div class="relative">
+                        <!-- Timeline line -->
+                        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+
+                        <!-- Step 1: Submitted -->
+                        <div class="relative flex items-start mb-8">
+                            <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center @(currentStep >= 1 ? "bg-green-500" : "bg-gray-300")">
+                                @if (currentStep >= 1)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <span class="text-white text-sm font-medium">1</span>
+                                }
+                            </div>
+                            <div class="ml-12">
+                                <p class="font-medium text-gray-900">Request Submitted</p>
+                                <p class="text-sm text-gray-500">@r.RequestedAt.ToString("MMM d, yyyy 'at' h:mm tt")</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Approved -->
+                        <div class="relative flex items-start mb-8">
+                            <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center @(currentStep >= 2 ? "bg-green-500" : "bg-gray-300")">
+                                @if (currentStep >= 2)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <span class="text-white text-sm font-medium">2</span>
+                                }
+                            </div>
+                            <div class="ml-12">
+                                <p class="font-medium @(currentStep >= 2 ? "text-gray-900" : "text-gray-400")">Return Approved</p>
+                                @if (r.ApprovedAt.HasValue)
+                                {
+                                    <p class="text-sm text-gray-500">@r.ApprovedAt.Value.ToString("MMM d, yyyy 'at' h:mm tt")</p>
+                                    @if (r.IsAutoApproved)
+                                    {
+                                        <p class="text-xs text-green-600">Auto-approved</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-sm text-gray-400">Pending review</p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Shipped -->
+                        <div class="relative flex items-start mb-8">
+                            <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center @(currentStep >= 3 ? "bg-green-500" : "bg-gray-300")">
+                                @if (currentStep >= 3)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <span class="text-white text-sm font-medium">3</span>
+                                }
+                            </div>
+                            <div class="ml-12">
+                                <p class="font-medium @(currentStep >= 3 ? "text-gray-900" : "text-gray-400")">Package Shipped</p>
+                                @if (r.ShippedAt.HasValue)
+                                {
+                                    <p class="text-sm text-gray-500">@r.ShippedAt.Value.ToString("MMM d, yyyy 'at' h:mm tt")</p>
+                                    @if (!string.IsNullOrEmpty(r.TrackingNumber))
+                                    {
+                                        <p class="text-sm text-gray-600">
+                                            Tracking:
+                                            @if (!string.IsNullOrEmpty(r.TrackingUrl))
+                                            {
+                                                <a href="@r.TrackingUrl" target="_blank" class="text-primary hover:underline">@r.TrackingNumber</a>
+                                            }
+                                            else
+                                            {
+                                                <span>@r.TrackingNumber</span>
+                                            }
+                                        </p>
+                                    }
+                                }
+                                else if (currentStep == 2)
+                                {
+                                    <p class="text-sm text-gray-400">Ship your package</p>
+                                }
+                                else
+                                {
+                                    <p class="text-sm text-gray-400">Awaiting shipment</p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Received -->
+                        <div class="relative flex items-start mb-8">
+                            <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center @(currentStep >= 4 ? "bg-green-500" : "bg-gray-300")">
+                                @if (currentStep >= 4)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <span class="text-white text-sm font-medium">4</span>
+                                }
+                            </div>
+                            <div class="ml-12">
+                                <p class="font-medium @(currentStep >= 4 ? "text-gray-900" : "text-gray-400")">Package Received</p>
+                                @if (r.ReceivedAt.HasValue)
+                                {
+                                    <p class="text-sm text-gray-500">@r.ReceivedAt.Value.ToString("MMM d, yyyy 'at' h:mm tt")</p>
+                                }
+                                else
+                                {
+                                    <p class="text-sm text-gray-400">Waiting to receive</p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Refunded -->
+                        <div class="relative flex items-start">
+                            <div class="absolute left-0 w-8 h-8 rounded-full flex items-center justify-center @(currentStep >= 5 ? "bg-green-500" : "bg-gray-300")">
+                                @if (currentStep >= 5)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <span class="text-white text-sm font-medium">5</span>
+                                }
+                            </div>
+                            <div class="ml-12">
+                                <p class="font-medium @(currentStep >= 5 ? "text-gray-900" : "text-gray-400")">Refund Processed</p>
+                                @if (r.RefundedAt.HasValue)
+                                {
+                                    <p class="text-sm text-gray-500">@r.RefundedAt.Value.ToString("MMM d, yyyy 'at' h:mm tt")</p>
+                                    <p class="text-sm font-medium text-green-600">@r.Currency @r.TotalRefundAmount.ToString("N2")</p>
+                                }
+                                else
+                                {
+                                    <p class="text-sm text-gray-400">Pending refund</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Items Being Returned -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Items Being Returned</h2>
+
+                <div class="divide-y divide-gray-200">
+                    @foreach (var item in r.Items)
+                    {
+                        <div class="py-3 flex items-center gap-4">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.ProductTitle" class="w-12 h-12 object-cover rounded" />
+                            }
+                            else
+                            {
+                                <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            }
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-900 truncate">@item.ProductTitle</p>
+                                @if (!string.IsNullOrEmpty(item.VariantTitle))
+                                {
+                                    <p class="text-sm text-gray-500">@item.VariantTitle</p>
+                                }
+                            </div>
+                            <div class="text-right">
+                                <p class="font-medium text-gray-900">Qty: @item.QuantityReturned</p>
+                                <p class="text-sm text-gray-500">@r.Currency @item.RefundAmount.ToString("N2")</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span>@r.Currency @r.Items.Sum(i => i.RefundAmount).ToString("N2")</span>
+                    </div>
+                    @if (r.ShippingCost > 0)
+                    {
+                        <div class="flex justify-between text-sm mt-2">
+                            <span class="text-gray-600">Shipping (Store Paid)</span>
+                            <span class="text-gray-400">-@r.Currency @r.ShippingCost.ToString("N2")</span>
+                        </div>
+                    }
+                    <div class="flex justify-between font-bold text-lg mt-2">
+                        <span>Total Refund</span>
+                        <span>@r.Currency @r.TotalRefundAmount.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            @if (r.Status.ToLower() == "approved" && r.Label != null)
+            {
+                <a href="/returns/label/@r.RequestNumber?shop=@Model.ShopDomain"
+                   class="block w-full text-center btn-primary text-white py-3 px-4 rounded-md font-medium mb-4">
+                    Print Shipping Label
+                </a>
+            }
+
+            <a href="/returns/request?shop=@Model.ShopDomain"
+               class="block w-full text-center border border-gray-300 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-50">
+                Start Another Return
+            </a>
+        }
+    </div>
+</body>
+</html>

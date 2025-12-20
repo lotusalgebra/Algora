@@ -80,6 +80,20 @@ namespace Algora.Infrastructure.Data
         public DbSet<InventoryAlert> InventoryAlerts { get; set; } = null!;
         public DbSet<InventoryAlertSettings> InventoryAlertSettings { get; set; } = null!;
 
+        // ----- Upsell entities -----
+        public DbSet<ProductAffinity> ProductAffinities { get; set; } = null!;
+        public DbSet<UpsellOffer> UpsellOffers { get; set; } = null!;
+        public DbSet<UpsellExperiment> UpsellExperiments { get; set; } = null!;
+        public DbSet<UpsellConversion> UpsellConversions { get; set; } = null!;
+        public DbSet<UpsellSettings> UpsellSettings { get; set; } = null!;
+
+        // ----- Return entities -----
+        public DbSet<ReturnRequest> ReturnRequests { get; set; } = null!;
+        public DbSet<ReturnItem> ReturnItems { get; set; } = null!;
+        public DbSet<ReturnReason> ReturnReasons { get; set; } = null!;
+        public DbSet<ReturnSettings> ReturnSettings { get; set; } = null!;
+        public DbSet<ReturnLabel> ReturnLabels { get; set; } = null!;
+
         // ----- Tagging entities -----
         public DbSet<Tag> Tags { get; set; } = null!;
         public DbSet<EntityTag> EntityTags { get; set; } = null!;
@@ -575,6 +589,198 @@ namespace Algora.Infrastructure.Data
             });
 
             // ==================== TAGGING ENTITIES ====================
+
+            // ==================== UPSELL ENTITIES ====================
+
+            modelBuilder.Entity<ProductAffinity>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ProductTitleA).IsRequired().HasMaxLength(500);
+                b.Property(x => x.ProductTitleB).IsRequired().HasMaxLength(500);
+                b.Property(x => x.SupportScore).HasPrecision(18, 4);
+                b.Property(x => x.ConfidenceScore).HasPrecision(18, 4);
+                b.Property(x => x.LiftScore).HasPrecision(18, 4);
+                b.HasIndex(x => new { x.ShopDomain, x.PlatformProductIdA });
+                b.HasIndex(x => new { x.ShopDomain, x.PlatformProductIdB });
+            });
+
+            modelBuilder.Entity<UpsellOffer>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Description).HasMaxLength(1000);
+                b.Property(x => x.RecommendedProductTitle).IsRequired().HasMaxLength(500);
+                b.Property(x => x.RecommendedProductImageUrl).HasMaxLength(1000);
+                b.Property(x => x.RecommendedProductPrice).HasPrecision(18, 4);
+                b.Property(x => x.DiscountType).HasMaxLength(20);
+                b.Property(x => x.DiscountValue).HasPrecision(18, 4);
+                b.Property(x => x.DiscountCode).HasMaxLength(100);
+                b.Property(x => x.Headline).HasMaxLength(200);
+                b.Property(x => x.BodyText).HasMaxLength(1000);
+                b.Property(x => x.ButtonText).HasMaxLength(50);
+                b.Property(x => x.RecommendationSource).HasMaxLength(20);
+                b.Property(x => x.ExperimentVariant).HasMaxLength(20);
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
+                b.HasOne(x => x.ProductAffinity).WithMany().HasForeignKey(x => x.ProductAffinityId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Experiment).WithMany(e => e.Offers).HasForeignKey(x => x.ExperimentId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<UpsellExperiment>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Description).HasMaxLength(1000);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.PrimaryMetric).HasMaxLength(50);
+                b.Property(x => x.MinimumDetectableEffect).HasPrecision(18, 4);
+                b.Property(x => x.SignificanceLevel).HasPrecision(18, 4);
+                b.Property(x => x.StatisticalPower).HasPrecision(18, 4);
+                b.Property(x => x.ControlRevenue).HasPrecision(18, 4);
+                b.Property(x => x.VariantARevenue).HasPrecision(18, 4);
+                b.Property(x => x.VariantBRevenue).HasPrecision(18, 4);
+                b.Property(x => x.ControlConversionRate).HasPrecision(18, 6);
+                b.Property(x => x.VariantAConversionRate).HasPrecision(18, 6);
+                b.Property(x => x.VariantBConversionRate).HasPrecision(18, 6);
+                b.Property(x => x.PValueVsControl).HasPrecision(18, 6);
+                b.Property(x => x.WinningLift).HasPrecision(18, 4);
+                b.Property(x => x.WinningVariant).HasMaxLength(20);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+            });
+
+            modelBuilder.Entity<UpsellConversion>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.SessionId).IsRequired().HasMaxLength(64);
+                b.Property(x => x.AssignedVariant).HasMaxLength(20);
+                b.Property(x => x.ConversionRevenue).HasPrecision(18, 4);
+                b.Property(x => x.GeneratedCartUrl).HasMaxLength(2000);
+                b.HasIndex(x => new { x.ShopDomain, x.ImpressionAt });
+                b.HasIndex(x => new { x.ExperimentId, x.AssignedVariant });
+                b.HasOne(x => x.SourceOrder).WithMany().HasForeignKey(x => x.SourceOrderId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.UpsellOffer).WithMany().HasForeignKey(x => x.UpsellOfferId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Experiment).WithMany(e => e.Conversions).HasForeignKey(x => x.ExperimentId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<UpsellSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.DisplayLayout).HasMaxLength(20);
+                b.Property(x => x.MinimumConfidenceScore).HasPrecision(18, 4);
+                b.Property(x => x.PageTitle).HasMaxLength(200);
+                b.Property(x => x.ThankYouMessage).HasMaxLength(500);
+                b.Property(x => x.UpsellSectionTitle).HasMaxLength(200);
+                b.Property(x => x.LogoUrl).HasMaxLength(1000);
+                b.Property(x => x.PrimaryColor).HasMaxLength(20);
+                b.Property(x => x.SecondaryColor).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            // ==================== RETURN ENTITIES ====================
+
+            modelBuilder.Entity<ReturnRequest>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.RequestNumber).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.CustomerEmail).HasMaxLength(255);
+                b.Property(x => x.CustomerName).HasMaxLength(255);
+                b.Property(x => x.ReasonCode).HasMaxLength(50);
+                b.Property(x => x.CustomerNote).HasMaxLength(2000);
+                b.Property(x => x.ApprovalNote).HasMaxLength(500);
+                b.Property(x => x.RejectionReason).HasMaxLength(500);
+                b.Property(x => x.TrackingNumber).HasMaxLength(100);
+                b.Property(x => x.TrackingUrl).HasMaxLength(1000);
+                b.Property(x => x.TrackingCarrier).HasMaxLength(50);
+                b.Property(x => x.TotalRefundAmount).HasPrecision(18, 4);
+                b.Property(x => x.ShippingCost).HasPrecision(18, 4);
+                b.Property(x => x.Currency).HasMaxLength(10);
+                b.HasIndex(x => new { x.ShopDomain, x.RequestNumber }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ReturnReason).WithMany().HasForeignKey(x => x.ReturnReasonId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ReturnLabel).WithMany().HasForeignKey(x => x.ReturnLabelId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Refund).WithMany().HasForeignKey(x => x.RefundId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReturnItem>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(500);
+                b.Property(x => x.VariantTitle).HasMaxLength(500);
+                b.Property(x => x.Sku).HasMaxLength(100);
+                b.Property(x => x.ImageUrl).HasMaxLength(1000);
+                b.Property(x => x.UnitPrice).HasPrecision(18, 4);
+                b.Property(x => x.RefundAmount).HasPrecision(18, 4);
+                b.Property(x => x.CustomerNote).HasMaxLength(1000);
+                b.Property(x => x.Condition).HasMaxLength(50);
+                b.Property(x => x.ConditionNote).HasMaxLength(500);
+                b.HasOne(x => x.ReturnRequest).WithMany(r => r.Items).HasForeignKey(x => x.ReturnRequestId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.OrderLine).WithMany().HasForeignKey(x => x.OrderLineId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ReturnReason).WithMany().HasForeignKey(x => x.ReturnReasonId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReturnReason>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Code).IsRequired().HasMaxLength(50);
+                b.Property(x => x.DisplayText).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.HasIndex(x => new { x.ShopDomain, x.Code }).IsUnique();
+            });
+
+            modelBuilder.Entity<ReturnSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.AutoApprovalMaxAmount).HasPrecision(18, 4);
+                b.Property(x => x.ShippoApiKey).HasMaxLength(200);
+                b.Property(x => x.DefaultCarrier).HasMaxLength(50);
+                b.Property(x => x.DefaultServiceLevel).HasMaxLength(50);
+                b.Property(x => x.ReturnAddressName).HasMaxLength(100);
+                b.Property(x => x.ReturnAddressCompany).HasMaxLength(200);
+                b.Property(x => x.ReturnAddressStreet1).HasMaxLength(200);
+                b.Property(x => x.ReturnAddressStreet2).HasMaxLength(200);
+                b.Property(x => x.ReturnAddressCity).HasMaxLength(100);
+                b.Property(x => x.ReturnAddressState).HasMaxLength(100);
+                b.Property(x => x.ReturnAddressZip).HasMaxLength(20);
+                b.Property(x => x.ReturnAddressCountry).HasMaxLength(10);
+                b.Property(x => x.ReturnAddressPhone).HasMaxLength(20);
+                b.Property(x => x.ReturnAddressEmail).HasMaxLength(255);
+                b.Property(x => x.NotificationEmail).HasMaxLength(255);
+                b.Property(x => x.PageTitle).HasMaxLength(200);
+                b.Property(x => x.PolicyText).HasMaxLength(2000);
+                b.Property(x => x.LogoUrl).HasMaxLength(1000);
+                b.Property(x => x.PrimaryColor).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            modelBuilder.Entity<ReturnLabel>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ShippoTransactionId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.ShippoRateId).HasMaxLength(100);
+                b.Property(x => x.ShippoShipmentId).HasMaxLength(100);
+                b.Property(x => x.TrackingNumber).IsRequired().HasMaxLength(100);
+                b.Property(x => x.TrackingUrl).HasMaxLength(1000);
+                b.Property(x => x.Carrier).HasMaxLength(50);
+                b.Property(x => x.ServiceLevel).HasMaxLength(50);
+                b.Property(x => x.LabelUrl).IsRequired().HasMaxLength(1000);
+                b.Property(x => x.LabelFormat).HasMaxLength(10);
+                b.Property(x => x.Cost).HasPrecision(18, 4);
+                b.Property(x => x.Currency).HasMaxLength(10);
+                b.Property(x => x.Status).HasMaxLength(20);
+                b.HasIndex(x => new { x.ShopDomain, x.TrackingNumber });
+            });
 
             modelBuilder.Entity<Tag>(b =>
             {

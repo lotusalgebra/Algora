@@ -1,0 +1,339 @@
+@page "/returns"
+@model Algora.Web.Pages.Returns.IndexModel
+@{
+    ViewData["Title"] = "Returns Manager";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h6 class="mb-0 dark:text-white text-xl font-bold">Returns Manager</h6>
+            <p class="mb-0 text-sm leading-normal text-slate-400 dark:text-white dark:opacity-60">
+                Manage customer returns and refunds
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (Model.Settings?.IsEnabled == true)
+            {
+                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
+                    <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+                    Portal Active
+                </span>
+            }
+            else
+            {
+                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-gray-800 bg-gray-100 rounded-full">
+                    <span class="w-2 h-2 mr-1 bg-gray-500 rounded-full"></span>
+                    Portal Disabled
+                </span>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Pending Returns -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Pending</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-yellow-600">@Model.Summary.PendingCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-yellow-500 to-orange-400">
+                                <i class="fas fa-clock text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- In Transit -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">In Transit</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-purple-600">@Model.Summary.ShippedCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-600 to-indigo-400">
+                                <i class="fas fa-shipping-fast text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Refunds -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Refunds</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-green-600">$@Model.Summary.TotalRefundAmount.ToString("N2")</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                <i class="fas fa-dollar-sign text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Cost -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Shipping Cost</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-blue-600">$@Model.Summary.TotalShippingCost.ToString("N2")</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                <i class="fas fa-truck text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h6 class="mb-1 dark:text-white">Quick Actions</h6>
+                            <p class="mb-0 text-sm leading-normal text-slate-400 dark:text-white dark:opacity-60">
+                                Manage returns, reasons, and settings
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <a href="/returns/list" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-indigo-600 to-purple-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-list me-2"></i> All Returns
+                            </a>
+                            <a href="/returns/reasons" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-tags me-2"></i> Reasons
+                            </a>
+                            <a href="/returns/settings" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-gray-400 to-gray-600 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-cog me-2"></i> Settings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Returns Table -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Recent Returns</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-undo text-indigo-500 me-1"></i>
+                                <span class="font-semibold">@Model.Summary.TotalCount</span> total return requests
+                            </p>
+                        </div>
+                        <a href="/returns/list" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex-auto p-6 px-0 pb-0">
+                    @if (Model.Summary.RecentReturns.Count == 0)
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-undo fa-4x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">No return requests yet.</p>
+                            @if (Model.Settings?.IsEnabled != true)
+                            {
+                                <a href="/returns/settings" class="inline-block px-6 py-3 text-sm font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-indigo-600 to-purple-400 shadow-soft-md">
+                                    <i class="fas fa-cog me-2"></i> Enable Returns Portal
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Request</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Amount</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Reason</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Date</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ret in Model.Summary.RecentReturns)
+                                    {
+                                        var statusClass = ret.Status.ToLower() switch
+                                        {
+                                            "pending" => "from-yellow-500 to-orange-400",
+                                            "approved" => "from-blue-600 to-cyan-400",
+                                            "shipped" => "from-purple-600 to-indigo-400",
+                                            "received" => "from-indigo-600 to-blue-400",
+                                            "refunded" => "from-green-600 to-lime-400",
+                                            "rejected" => "from-red-600 to-pink-400",
+                                            "cancelled" => "from-gray-400 to-gray-600",
+                                            _ => "from-gray-400 to-gray-600"
+                                        };
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="px-2 py-1">
+                                                    <p class="mb-0 text-sm font-semibold dark:text-white">@ret.RequestNumber</p>
+                                                    <p class="mb-0 text-xs text-slate-400">Order #@ret.OrderNumber</p>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="px-2 py-1">
+                                                    <p class="mb-0 text-sm dark:text-white">@ret.CustomerName</p>
+                                                    <p class="mb-0 text-xs text-slate-400">@ret.CustomerEmail</p>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold dark:text-white">@ret.Items.Sum(i => i.QuantityReturned)</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold dark:text-white">@ret.Currency @ret.TotalRefundAmount.ToString("N2")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm dark:text-white">@(ret.ReasonDescription ?? ret.ReasonCode)</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="bg-gradient-to-tl @statusClass px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                    @ret.Status
+                                                </span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm dark:text-white">@ret.RequestedAt.ToString("MMM d, yyyy")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <a href="/returns/details/@ret.Id" class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 hover:text-indigo-600">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    @if (Model.Analytics != null && Model.Analytics.TotalReturns > 0)
+    {
+        <div class="flex flex-wrap -mx-3">
+            <!-- Return Reasons Breakdown -->
+            <div class="w-full max-w-full px-3 mb-6 lg:w-1/2">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Returns by Reason (Last 30 Days)</h6>
+                        @if (Model.Analytics.ReturnsByReason.Any())
+                        {
+                            <div class="space-y-3">
+                                @foreach (var reason in Model.Analytics.ReturnsByReason.OrderByDescending(r => r.Value).Take(5))
+                                {
+                                    var percentage = Model.Analytics.TotalReturns > 0
+                                        ? (decimal)reason.Value / Model.Analytics.TotalReturns * 100
+                                        : 0;
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-sm dark:text-white">@reason.Key</span>
+                                            <span class="text-sm font-semibold dark:text-white">@reason.Value</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div class="bg-indigo-600 h-2 rounded-full" style="width: @percentage%"></div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-sm text-slate-400">No data available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Returned Products -->
+            <div class="w-full max-w-full px-3 mb-6 lg:w-1/2">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Top Returned Products (Last 30 Days)</h6>
+                        @if (Model.Analytics.TopReturnedProducts.Any())
+                        {
+                            <div class="space-y-3">
+                                @foreach (var product in Model.Analytics.TopReturnedProducts.Take(5))
+                                {
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium dark:text-white truncate">@product.ProductTitle</p>
+                                            <p class="text-xs text-slate-400">@product.TotalQuantityReturned units returned</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-semibold text-red-600">$@product.TotalRefundAmount.ToString("N2")</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-sm text-slate-400">No data available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

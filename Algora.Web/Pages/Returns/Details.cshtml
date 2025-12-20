@@ -1,0 +1,428 @@
+@page "/returns/details/{id:int}"
+@model Algora.Web.Pages.Returns.DetailsModel
+@{
+    ViewData["Title"] = Model.Return != null ? $"Return {Model.Return.RequestNumber}" : "Return Details";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <nav class="flex mb-2" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/returns" class="text-sm text-slate-400 hover:text-indigo-600 dark:text-white dark:opacity-60">Returns</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-xs text-slate-400 mx-2"></i>
+                            <a href="/returns/list" class="text-sm text-slate-400 hover:text-indigo-600 dark:text-white dark:opacity-60">All Returns</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-xs text-slate-400 mx-2"></i>
+                            <span class="text-sm text-slate-700 dark:text-white">@(Model.Return?.RequestNumber ?? "Details")</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            <h6 class="mb-0 dark:text-white text-xl font-bold">Return Details</h6>
+        </div>
+        @if (Model.Return != null)
+        {
+            <span class="bg-gradient-to-tl @Model.GetStatusBadgeClass(Model.Return.Status) px-4 py-2 text-sm rounded-lg inline-block whitespace-nowrap text-center font-bold uppercase text-white">
+                @Model.Return.Status
+            </span>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (Model.Return != null)
+    {
+        var r = Model.Return;
+        <div class="flex flex-wrap -mx-3">
+            <!-- Left Column: Details -->
+            <div class="w-full lg:w-2/3 px-3 mb-6">
+                <!-- Return Info -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h6 class="mb-0 dark:text-white">Request Information</h6>
+                            @if (r.IsAutoApproved)
+                            {
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
+                                    <i class="fas fa-bolt me-1"></i> Auto-approved
+                                </span>
+                            }
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Request Number</p>
+                                <p class="text-sm font-semibold dark:text-white">@r.RequestNumber</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Order Number</p>
+                                <p class="text-sm font-semibold dark:text-white">
+                                    <a href="/orders/details/@r.OrderId" class="text-indigo-600 hover:underline">#@r.OrderNumber</a>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Requested</p>
+                                <p class="text-sm font-semibold dark:text-white">@r.RequestedAt.ToString("MMM d, yyyy h:mm tt")</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Return Reason</p>
+                                <p class="text-sm font-semibold dark:text-white">@(r.ReasonDescription ?? r.ReasonCode)</p>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(r.CustomerNote))
+                        {
+                            <div class="mt-4 p-3 bg-gray-50 rounded-lg dark:bg-gray-800">
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60 mb-1">Customer Note</p>
+                                <p class="text-sm dark:text-white">@r.CustomerNote</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(r.RejectionReason))
+                        {
+                            <div class="mt-4 p-3 bg-red-50 rounded-lg dark:bg-red-900/20">
+                                <p class="text-xs text-red-600 dark:text-red-400 mb-1">Rejection Reason</p>
+                                <p class="text-sm text-red-800 dark:text-red-300">@r.RejectionReason</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Customer Information</h6>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Name</p>
+                                <p class="text-sm font-semibold dark:text-white">@r.CustomerName</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Email</p>
+                                <p class="text-sm font-semibold dark:text-white">
+                                    <a href="mailto:@r.CustomerEmail" class="text-indigo-600 hover:underline">@r.CustomerEmail</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Return Items</h6>
+                    </div>
+                    <div class="flex-auto p-6 pt-0">
+                        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach (var item in r.Items)
+                            {
+                                <div class="py-4 flex items-center gap-4">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.ProductTitle" class="w-16 h-16 object-cover rounded-lg" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center dark:bg-gray-700">
+                                            <i class="fas fa-image text-gray-400"></i>
+                                        </div>
+                                    }
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium dark:text-white truncate">@item.ProductTitle</p>
+                                        @if (!string.IsNullOrEmpty(item.VariantTitle))
+                                        {
+                                            <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@item.VariantTitle</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.Sku))
+                                        {
+                                            <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">SKU: @item.Sku</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.Condition))
+                                        {
+                                            <p class="text-xs mt-1">
+                                                <span class="px-2 py-0.5 bg-gray-100 rounded dark:bg-gray-700 dark:text-white">@item.Condition</span>
+                                                @if (!string.IsNullOrEmpty(item.ConditionNote))
+                                                {
+                                                    <span class="text-slate-400 ml-2">@item.ConditionNote</span>
+                                                }
+                                            </p>
+                                        }
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium dark:text-white">Qty: @item.QuantityReturned</p>
+                                        <p class="text-sm text-slate-400">@r.Currency @item.RefundAmount.ToString("N2")</p>
+                                        @if (item.Restocked)
+                                        {
+                                            <span class="text-xs text-green-600"><i class="fas fa-check"></i> Restocked</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Label -->
+                @if (r.Label != null)
+                {
+                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                        <div class="p-6">
+                            <h6 class="mb-4 dark:text-white">Shipping Label</h6>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Tracking Number</p>
+                                    <p class="text-sm font-mono font-semibold dark:text-white">
+                                        @if (!string.IsNullOrEmpty(r.TrackingUrl))
+                                        {
+                                            <a href="@r.TrackingUrl" target="_blank" class="text-indigo-600 hover:underline">@r.TrackingNumber</a>
+                                        }
+                                        else
+                                        {
+                                            @r.TrackingNumber
+                                        }
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Carrier</p>
+                                    <p class="text-sm font-semibold dark:text-white">@r.Label.Carrier.ToUpper()</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Service</p>
+                                    <p class="text-sm font-semibold dark:text-white">@r.Label.ServiceLevel</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">Label Cost</p>
+                                    <p class="text-sm font-semibold dark:text-white">@r.Label.Currency @r.Label.Cost.ToString("N2")</p>
+                                </div>
+                            </div>
+                            <a href="@r.Label.LabelUrl" target="_blank"
+                               class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-indigo-600 to-purple-400 shadow-soft-md">
+                                <i class="fas fa-download me-2"></i> Download Label
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Right Column: Actions & Timeline -->
+            <div class="w-full lg:w-1/3 px-3 mb-6">
+                <!-- Financial Summary -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Financial Summary</h6>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-sm text-slate-400 dark:text-white dark:opacity-60">Items Total</span>
+                                <span class="text-sm font-semibold dark:text-white">@r.Currency @r.Items.Sum(i => i.RefundAmount).ToString("N2")</span>
+                            </div>
+                            @if (r.ShippingCost > 0)
+                            {
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-400 dark:text-white dark:opacity-60">Shipping Cost</span>
+                                    <span class="text-sm font-semibold text-red-600">-@r.Currency @r.ShippingCost.ToString("N2")</span>
+                                </div>
+                            }
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-2 flex justify-between">
+                                <span class="text-sm font-semibold dark:text-white">Total Refund</span>
+                                <span class="text-lg font-bold text-green-600">@r.Currency @r.TotalRefundAmount.ToString("N2")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Actions</h6>
+
+                        @if (r.Status.ToLower() == "pending")
+                        {
+                            <div class="space-y-3">
+                                <form method="post" asp-page-handler="Approve" asp-route-id="@r.Id">
+                                    <div class="mb-2">
+                                        <input type="text" name="note" placeholder="Approval note (optional)"
+                                               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                    </div>
+                                    <button type="submit"
+                                            class="w-full px-4 py-2 text-sm font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md hover:scale-102">
+                                        <i class="fas fa-check me-2"></i> Approve Return
+                                    </button>
+                                </form>
+
+                                <form method="post" asp-page-handler="Reject" asp-route-id="@r.Id" onsubmit="return confirm('Are you sure you want to reject this return?')">
+                                    <div class="mb-2">
+                                        <input type="text" name="reason" placeholder="Rejection reason (required)" required
+                                               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                    </div>
+                                    <button type="submit"
+                                            class="w-full px-4 py-2 text-sm font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-red-600 to-pink-400 shadow-soft-md hover:scale-102">
+                                        <i class="fas fa-times me-2"></i> Reject Return
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                        else if (r.Status.ToLower() == "shipped")
+                        {
+                            <form method="post" asp-page-handler="MarkReceived" asp-route-id="@r.Id">
+                                <button type="submit"
+                                        class="w-full px-4 py-2 text-sm font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-indigo-600 to-purple-400 shadow-soft-md hover:scale-102">
+                                    <i class="fas fa-box me-2"></i> Mark as Received
+                                </button>
+                            </form>
+                        }
+                        else if (r.Status.ToLower() == "received")
+                        {
+                            <form method="post" asp-page-handler="ProcessRefund" asp-route-id="@r.Id" onsubmit="return confirm('Process refund of @r.Currency @r.TotalRefundAmount.ToString("N2")?')">
+                                <button type="submit"
+                                        class="w-full px-4 py-2 text-sm font-bold text-center text-white uppercase transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md hover:scale-102">
+                                    <i class="fas fa-dollar-sign me-2"></i> Process Refund
+                                </button>
+                            </form>
+                        }
+                        else if (r.Status.ToLower() == "refunded")
+                        {
+                            <div class="text-center py-4">
+                                <i class="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
+                                <p class="text-sm text-slate-400 dark:text-white dark:opacity-60">This return has been completed.</p>
+                            </div>
+                        }
+                        else if (r.Status.ToLower() == "rejected" || r.Status.ToLower() == "cancelled")
+                        {
+                            <div class="text-center py-4">
+                                <i class="fas fa-times-circle text-4xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-slate-400 dark:text-white dark:opacity-60">This return has been @r.Status.ToLower().</p>
+                            </div>
+                        }
+
+                        @if (r.Status.ToLower() is "pending" or "approved")
+                        {
+                            <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" onsubmit="return confirm('Are you sure you want to cancel this return?')">
+                                    <div class="mb-2">
+                                        <input type="text" name="reason" placeholder="Cancellation reason (required)" required
+                                               class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                    </div>
+                                    <button type="submit"
+                                            class="w-full px-4 py-2 text-sm font-bold text-center text-gray-700 uppercase transition-all border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 dark:text-white dark:border-gray-600 dark:hover:bg-gray-800">
+                                        <i class="fas fa-ban me-2"></i> Cancel Return
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6">
+                        <h6 class="mb-4 dark:text-white">Timeline</h6>
+                        <div class="relative">
+                            <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+
+                            <div class="relative flex items-start mb-4">
+                                <div class="absolute left-0 w-4 h-4 rounded-full bg-green-500"></div>
+                                <div class="ml-8">
+                                    <p class="text-sm font-medium dark:text-white">Request Submitted</p>
+                                    <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.RequestedAt.ToString("MMM d, yyyy h:mm tt")</p>
+                                </div>
+                            </div>
+
+                            @if (r.ApprovedAt.HasValue)
+                            {
+                                <div class="relative flex items-start mb-4">
+                                    <div class="absolute left-0 w-4 h-4 rounded-full bg-blue-500"></div>
+                                    <div class="ml-8">
+                                        <p class="text-sm font-medium dark:text-white">
+                                            Approved
+                                            @if (r.IsAutoApproved)
+                                            {
+                                                <span class="text-xs text-green-600">(auto)</span>
+                                            }
+                                        </p>
+                                        <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.ApprovedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (r.RejectedAt.HasValue)
+                            {
+                                <div class="relative flex items-start mb-4">
+                                    <div class="absolute left-0 w-4 h-4 rounded-full bg-red-500"></div>
+                                    <div class="ml-8">
+                                        <p class="text-sm font-medium dark:text-white">Rejected</p>
+                                        <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.RejectedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (r.ShippedAt.HasValue)
+                            {
+                                <div class="relative flex items-start mb-4">
+                                    <div class="absolute left-0 w-4 h-4 rounded-full bg-purple-500"></div>
+                                    <div class="ml-8">
+                                        <p class="text-sm font-medium dark:text-white">Shipped</p>
+                                        <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.ShippedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (r.ReceivedAt.HasValue)
+                            {
+                                <div class="relative flex items-start mb-4">
+                                    <div class="absolute left-0 w-4 h-4 rounded-full bg-indigo-500"></div>
+                                    <div class="ml-8">
+                                        <p class="text-sm font-medium dark:text-white">Received</p>
+                                        <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.ReceivedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (r.RefundedAt.HasValue)
+                            {
+                                <div class="relative flex items-start">
+                                    <div class="absolute left-0 w-4 h-4 rounded-full bg-green-500"></div>
+                                    <div class="ml-8">
+                                        <p class="text-sm font-medium dark:text-white">Refunded</p>
+                                        <p class="text-xs text-slate-400 dark:text-white dark:opacity-60">@r.RefundedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="text-center py-12">
+            <i class="fas fa-undo fa-4x text-gray-300 mb-4"></i>
+            <p class="text-gray-500 dark:text-gray-400">Return request not found.</p>
+            <a href="/returns/list" class="mt-4 inline-block text-indigo-600 hover:underline">
+                <i class="fas fa-arrow-left me-1"></i> Back to Returns
+            </a>
+        </div>
+    }
+</div>

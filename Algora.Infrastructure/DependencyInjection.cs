@@ -90,6 +90,21 @@ public static class DependencyInjection
         services.AddScoped<IInventoryAlertService, InventoryAlertService>();
         services.AddHostedService<InventoryPredictionBackgroundService>();
 
+        // ----- Upsell & A/B Testing -----
+        services.AddScoped<IProductAffinityService, ProductAffinityService>();
+        services.AddScoped<IUpsellRecommendationService, UpsellRecommendationService>();
+        services.AddScoped<IUpsellExperimentService, UpsellExperimentService>();
+        services.AddHostedService<ProductAffinityBackgroundService>();
+
+        // ----- Returns & Shippo -----
+        services.Configure<ShippoOptions>(configuration.GetSection(ShippoOptions.SectionName));
+        services.AddScoped<IReturnService, ReturnService>();
+        services.AddScoped<IShippoService, ShippoService>();
+        services.AddHttpClient("Shippo", client =>
+        {
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+
         // ----- AI Content Generation -----
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
 
