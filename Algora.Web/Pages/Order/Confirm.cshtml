@@ -1,0 +1,179 @@
+@page "/order/confirm/{id:long}"
+@model Algora.Web.Pages.Order.ConfirmModel
+@{
+    Layout = null;
+    var primaryColor = Model.Settings?.PrimaryColor ?? "#4f46e5";
+    var secondaryColor = Model.Settings?.SecondaryColor ?? "#6366f1";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(Model.Settings?.PageTitle ?? "Order Confirmed")</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: @primaryColor;
+            --secondary-color: @secondaryColor;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        .text-primary {
+            color: var(--primary-color);
+        }
+        @(Model.Settings?.CustomCss)
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                @Model.ErrorMessage
+            </div>
+        }
+        else if (Model.Order != null)
+        {
+            <!-- Logo -->
+            @if (!string.IsNullOrEmpty(Model.Settings?.LogoUrl))
+            {
+                <div class="text-center mb-6">
+                    <img src="@Model.Settings.LogoUrl" alt="Logo" class="h-12 mx-auto" />
+                </div>
+            }
+
+            <!-- Order Confirmation Header -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">@Model.Settings?.ThankYouMessage</h1>
+                    <p class="text-gray-600">Order #@Model.Order.OrderNumber</p>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+                <div class="divide-y divide-gray-200">
+                    @foreach (var item in Model.Order.Items)
+                    {
+                        <div class="py-3 flex justify-between">
+                            <div>
+                                <p class="text-gray-900">@item.ProductTitle</p>
+                                @if (!string.IsNullOrEmpty(item.VariantTitle))
+                                {
+                                    <p class="text-sm text-gray-500">@item.VariantTitle</p>
+                                }
+                                <p class="text-sm text-gray-500">Qty: @item.Quantity</p>
+                            </div>
+                            <p class="text-gray-900 font-medium">@Model.Order.Currency @item.Price.ToString("N2")</p>
+                        </div>
+                    }
+                </div>
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <div class="flex justify-between text-lg font-bold">
+                        <span>Total</span>
+                        <span>@Model.Order.Currency @Model.Order.TotalPrice.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upsell Offers Section -->
+            @if (Model.Offers.Any())
+            {
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">@Model.Settings?.UpsellSectionTitle</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-@(Math.Min(Model.Offers.Count, 3)) gap-4">
+                        @foreach (var offer in Model.Offers)
+                        {
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                 data-offer-id="@offer.Id">
+                                @if (!string.IsNullOrEmpty(offer.RecommendedProductImageUrl))
+                                {
+                                    <img src="@offer.RecommendedProductImageUrl"
+                                         alt="@offer.RecommendedProductTitle"
+                                         class="w-full h-40 object-cover rounded-md mb-3" />
+                                }
+
+                                @if (!string.IsNullOrEmpty(offer.Headline))
+                                {
+                                    <p class="text-xs uppercase tracking-wide text-primary font-semibold mb-1">
+                                        @offer.Headline
+                                    </p>
+                                }
+
+                                <h3 class="font-medium text-gray-900 mb-2">@offer.RecommendedProductTitle</h3>
+
+                                @if (!string.IsNullOrEmpty(offer.BodyText))
+                                {
+                                    <p class="text-sm text-gray-600 mb-3">@offer.BodyText</p>
+                                }
+
+                                <div class="flex items-center justify-between mb-3">
+                                    @if (offer.DiscountedPrice.HasValue)
+                                    {
+                                        <div>
+                                            <span class="text-gray-400 line-through text-sm">
+                                                $@offer.RecommendedProductPrice.ToString("N2")
+                                            </span>
+                                            <span class="text-lg font-bold text-green-600 ml-2">
+                                                $@offer.DiscountedPrice.Value.ToString("N2")
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-lg font-bold text-gray-900">
+                                            $@offer.RecommendedProductPrice.ToString("N2")
+                                        </span>
+                                    }
+                                </div>
+
+                                <a href="@offer.CartUrl"
+                                   class="block w-full text-center btn-primary text-white py-2 px-4 rounded-md font-medium transition-colors"
+                                   onclick="trackClick(@offer.Id, '@Model.SessionId')">
+                                    @(offer.ButtonText ?? "Add to Cart")
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Continue Shopping Link -->
+            <div class="text-center mt-6">
+                <a href="/" class="text-primary hover:underline">Continue Shopping</a>
+            </div>
+        }
+    </div>
+
+    <script>
+        function trackClick(offerId, sessionId) {
+            // Fire and forget click tracking
+            fetch('/api/upsell/track/click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    conversionId: offerId,
+                    sessionId: sessionId
+                })
+            }).catch(function(err) {
+                console.log('Click tracking failed:', err);
+            });
+            // Don't prevent navigation
+        }
+    </script>
+</body>
+</html>
