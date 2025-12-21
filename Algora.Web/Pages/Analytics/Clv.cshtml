@@ -1,0 +1,423 @@
+@page "/analytics/clv"
+@model Algora.Web.Pages.Analytics.ClvModel
+@{
+    ViewData["Title"] = "Customer Lifetime Value";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h6 class="mb-0 dark:text-white">Customer Lifetime Value Analysis</h6>
+            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                <i class="fa fa-users text-purple-500 me-1"></i>
+                Understand your most valuable customers
+            </p>
+        </div>
+        <a href="/analytics" class="inline-block px-4 py-2 text-xs font-bold text-center text-slate-700 dark:text-white uppercase align-middle transition-all border border-slate-200 dark:border-white/20 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-900">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- CLV Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Average CLV -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Average CLV</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.ClvReport.Summary.AverageClv.ToString("C0")
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    Per customer
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl">
+                                <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total CLV -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Total CLV</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.ClvReport.Summary.TotalClv.ToString("C0")
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    @Model.ClvReport.Summary.TotalCustomers.ToString("N0") customers
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-2xl">
+                                <i class="ni leading-none ni-world text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- High Value Percentage -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">High Value</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.ClvReport.Summary.HighValuePercentage.ToString("F1")%
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    Top customers
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-2xl">
+                                <i class="ni leading-none ni-trophy text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Churn Rate -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Churn Rate</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.ClvReport.Summary.ChurnRate.ToString("F1")%
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    At risk
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-red-600 to-rose-400 shadow-soft-2xl">
+                                <i class="ni leading-none ni-user-run text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Customers & At-Risk Row -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Top Customers -->
+        <div class="w-full max-w-full px-3 mb-6 lg:w-1/2 lg:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="dark:text-white">Top Customers</h6>
+                    <p class="leading-normal text-sm dark:opacity-60">
+                        <i class="fa fa-star text-yellow-500"></i>
+                        <span class="font-semibold">Highest lifetime value</span>
+                    </p>
+                </div>
+                <div class="flex-auto p-0">
+                    @if (Model.ClvReport.TopCustomers.Any())
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Orders</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Total Spent</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Predicted CLV</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var customer in Model.ClvReport.TopCustomers.Take(5))
+                                    {
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="px-2 py-1">
+                                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">@customer.CustomerName</h6>
+                                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@customer.Email</p>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@customer.TotalOrders</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@customer.TotalSpent.ToString("C0")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-green-600">@customer.PredictedLifetimeValue.ToString("C0")</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <p class="text-gray-500 dark:text-gray-400">No customer data available.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- At-Risk Customers -->
+        <div class="w-full max-w-full px-3 mb-6 lg:w-1/2 lg:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="dark:text-white">At-Risk Customers</h6>
+                    <p class="leading-normal text-sm dark:opacity-60">
+                        <i class="fa fa-exclamation-triangle text-red-500"></i>
+                        <span class="font-semibold">Need attention</span>
+                    </p>
+                </div>
+                <div class="flex-auto p-0">
+                    @if (Model.ClvReport.AtRiskCustomers.Any())
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Last Order</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Total Spent</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Days Since</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var customer in Model.ClvReport.AtRiskCustomers.Take(5))
+                                    {
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="px-2 py-1">
+                                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">@customer.CustomerName</h6>
+                                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@customer.Email</p>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-xs text-slate-400 dark:text-white dark:opacity-80">@customer.LastOrderDate.ToString("MMM dd, yyyy")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@customer.TotalSpent.ToString("C0")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                    @customer.DaysSinceLastOrder days
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <p class="text-gray-500 dark:text-gray-400">No at-risk customers identified.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Segments -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 flex-0">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Customer Segments</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-layer-group text-blue-500 me-1"></i>
+                                Distribution by customer value
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-auto p-6">
+                    @if (Model.ClvReport.Segments.Any())
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            @foreach (var segment in Model.ClvReport.Segments)
+                            {
+                                var segmentColor = segment.Segment switch
+                                {
+                                    "High Value" => "from-purple-700 to-pink-500",
+                                    "Medium Value" => "from-blue-600 to-cyan-400",
+                                    "Low Value" => "from-gray-400 to-gray-600",
+                                    _ => "from-slate-600 to-slate-300"
+                                };
+
+                                <div class="flex items-center p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-white/20">
+                                    <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl @segmentColor shadow-soft-2xl mr-4 flex-shrink-0">
+                                        <i class="ni leading-none ni-badge text-lg relative top-3.5 text-white"></i>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h6 class="mb-1 text-sm font-bold dark:text-white">@segment.Segment</h6>
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">@segment.CustomerCount customers</p>
+                                                <p class="mb-0 text-sm font-semibold dark:text-white">@segment.TotalValue.ToString("C0")</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">Avg CLV</p>
+                                                <p class="mb-0 text-sm font-semibold dark:text-white">@segment.AverageValue.ToString("C0")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Segment Breakdown Chart -->
+                        <div class="mt-6">
+                            <canvas id="segment-chart" height="120"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <p class="text-gray-500 dark:text-gray-400">No segment data available.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        @if (Model.ClvReport.Segments.Any())
+        {
+            <text>
+            // Segment Breakdown Chart
+            const segmentCtx = document.getElementById('segment-chart').getContext('2d');
+            const segments = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ClvReport.Segments));
+
+            new Chart(segmentCtx, {
+                type: 'bar',
+                data: {
+                    labels: segments.map(s => s.segment),
+                    datasets: [
+                        {
+                            label: 'Total Value',
+                            data: segments.map(s => s.totalValue),
+                            backgroundColor: [
+                                'rgba(168, 85, 247, 0.8)',
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(156, 163, 175, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgb(168, 85, 247)',
+                                'rgb(59, 130, 246)',
+                                'rgb(156, 163, 175)'
+                            ],
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Customer Count',
+                            data: segments.map(s => s.customerCount),
+                            backgroundColor: [
+                                'rgba(236, 72, 153, 0.6)',
+                                'rgba(6, 182, 212, 0.6)',
+                                'rgba(107, 114, 128, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgb(236, 72, 153)',
+                                'rgb(6, 182, 212)',
+                                'rgb(107, 114, 128)'
+                            ],
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.dataset.yAxisID === 'y1') {
+                                        label += context.parsed.y.toLocaleString();
+                                    } else {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}

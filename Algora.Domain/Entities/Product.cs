@@ -79,5 +79,10 @@ namespace Algora.Domain.Entities
         /// UTC timestamp when the product was last updated.
         /// </summary>
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Cost of goods sold per unit (for profit margin calculations).
+        /// </summary>
+        public decimal? CostOfGoodsSold { get; set; }
     }
 }

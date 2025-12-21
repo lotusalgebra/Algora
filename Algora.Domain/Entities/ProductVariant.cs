@@ -23,5 +23,10 @@ namespace Algora.Domain.Entities
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Cost of goods sold per unit (for profit margin calculations).
+        /// </summary>
+        public decimal? CostOfGoodsSold { get; set; }
     }
 }

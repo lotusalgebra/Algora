@@ -32,7 +32,7 @@ public class BulkGenerateModel : PageModel
         try
         {
             // Load products
-            var products = await _productService.GetProductsAsync(null);
+            var products = await _productService.GetProductsAsync(new ProductSearchFilter(null, null, null, null));
             Products = products.ToList();
 
             // Load available providers

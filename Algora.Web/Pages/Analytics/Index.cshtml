@@ -1,0 +1,458 @@
+@page "/analytics"
+@model Algora.Web.Pages.Analytics.IndexModel
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h6 class="mb-0 dark:text-white">Analytics Dashboard</h6>
+            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                <i class="fa fa-chart-line text-purple-500 me-1"></i>
+                Performance metrics and insights for <span class="font-semibold">@Model.GetPeriodLabel()</span>
+            </p>
+        </div>
+
+        <!-- Time Period Selector -->
+        <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-600 dark:text-white dark:opacity-60 mr-2">Period:</span>
+            <div class="inline-flex rounded-lg border border-gray-200 dark:border-white/20" role="group">
+                <a href="?period=today" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "today" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-l-lg border-r border-gray-200 dark:border-white/20">
+                    Today
+                </a>
+                <a href="?period=7days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "7days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                    7 days
+                </a>
+                <a href="?period=30days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "30days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                    30 days
+                </a>
+                <a href="?period=90days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "90days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                    90 days
+                </a>
+                <a href="?period=12months" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "12months" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-r-lg">
+                    12 months
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Summary Stats Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Revenue Card -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Revenue</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.DashboardSummary.TotalRevenue.ToString("C0")
+                                </h5>
+                                @{
+                                    var revenueChangeClass = Model.DashboardSummary.RevenueChange >= 0 ? "text-lime-500" : "text-red-600";
+                                    var revenueChangeIcon = Model.DashboardSummary.RevenueChange >= 0 ? "fa-arrow-up" : "fa-arrow-down";
+                                }
+                                <span class="leading-normal text-xs font-weight-bolder @revenueChangeClass">
+                                    <i class="fa @revenueChangeIcon me-1"></i>@Model.DashboardSummary.RevenueChange.ToString("F1")%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl">
+                                <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Card -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Orders</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.DashboardSummary.TotalOrders.ToString("N0")
+                                </h5>
+                                @{
+                                    var ordersChangeClass = Model.DashboardSummary.OrdersChange >= 0 ? "text-lime-500" : "text-red-600";
+                                    var ordersChangeIcon = Model.DashboardSummary.OrdersChange >= 0 ? "fa-arrow-up" : "fa-arrow-down";
+                                }
+                                <span class="leading-normal text-xs font-weight-bolder @ordersChangeClass">
+                                    <i class="fa @ordersChangeIcon me-1"></i>@Model.DashboardSummary.OrdersChange.ToString("F1")%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-2xl">
+                                <i class="ni leading-none ni-cart text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Net Profit Card -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Net Profit</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.DashboardSummary.NetProfit.ToString("C0")
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    After costs & ads
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-2xl">
+                                <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profit Margin Card -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-wrap -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Profit Margin</p>
+                                <h5 class="mb-0 font-bold dark:text-white">
+                                    @Model.DashboardSummary.NetProfitMargin.ToString("F1")%
+                                </h5>
+                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                    Net margin
+                                </span>
+                            </div>
+                        </div>
+                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-2xl">
+                                <i class="ni leading-none ni-chart-pie-35 text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Revenue/Profit Trend Chart -->
+        <div class="w-full max-w-full px-3 mb-6 lg:w-8/12 lg:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="dark:text-white">Revenue & Profit Trend</h6>
+                    <p class="leading-normal text-sm dark:opacity-60">
+                        <i class="fa fa-chart-line text-lime-500"></i>
+                        <span class="font-semibold">Performance over time</span>
+                    </p>
+                </div>
+                <div class="flex-auto p-4">
+                    <canvas id="revenue-trend-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Breakdown Chart -->
+        <div class="w-full max-w-full px-3 mb-6 lg:w-4/12 lg:flex-none">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="dark:text-white">Cost Breakdown</h6>
+                    <p class="leading-normal text-sm dark:opacity-60">
+                        <i class="fa fa-chart-pie text-purple-500"></i>
+                        <span class="font-semibold">Where revenue goes</span>
+                    </p>
+                </div>
+                <div class="flex-auto p-4">
+                    <canvas id="cost-breakdown-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products Table -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 flex-0">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl dark:bg-gray-950 dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Top Products</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-star text-yellow-500 me-1"></i>
+                                Best performing products for @Model.GetPeriodLabel().ToLower()
+                            </p>
+                        </div>
+                        <a href="/analytics/products" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-chart-bar me-2"></i> View All Analytics
+                        </a>
+                    </div>
+                </div>
+                <div class="flex-auto p-6 px-0 pb-2">
+                    @if (Model.TopProducts.Any())
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Qty Sold</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Revenue</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Model.TopProducts)
+                                    {
+                                        var initials = string.Join("", product.ProductTitle.Split(' ').Take(2).Select(w => w.Length > 0 ? w[0].ToString().ToUpper() : ""));
+                                        var bgColors = new[] { "from-purple-700 to-pink-500", "from-blue-600 to-cyan-400", "from-green-600 to-lime-400", "from-orange-500 to-yellow-300", "from-red-600 to-rose-400" };
+                                        var colorIndex = Math.Abs(product.ProductTitle.GetHashCode()) % bgColors.Length;
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                                    {
+                                                        <img src="@product.ImageUrl" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-9 w-9 rounded-xl" alt="@product.ProductTitle">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="flex items-center justify-center w-9 h-9 mr-4 text-sm text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl @bgColors[colorIndex]">
+                                                            @initials
+                                                        </div>
+                                                    }
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@product.ProductTitle</h6>
+                                                        @if (!string.IsNullOrEmpty(product.Sku))
+                                                        {
+                                                            <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">SKU: @product.Sku</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.QuantitySold</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.Revenue.ToString("C0")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.Profit.ToString("C0")</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-box-open fa-3x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No product data available for the selected period.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <a href="/analytics/clv" class="block">
+                <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform">
+                    <div class="flex-auto p-4">
+                        <div class="flex items-center">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl mr-4">
+                                <i class="ni leading-none ni-single-02 text-lg relative top-3.5 text-white"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 font-semibold text-sm dark:text-white">Customer Lifetime Value</p>
+                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">Analyze customer segments</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <a href="/analytics/products" class="block">
+                <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform">
+                    <div class="flex-auto p-4">
+                        <div class="flex items-center">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-2xl mr-4">
+                                <i class="ni leading-none ni-box-2 text-lg relative top-3.5 text-white"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 font-semibold text-sm dark:text-white">Product Performance</p>
+                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">View product heatmap</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
+            <a href="/analytics/adsspend" class="block">
+                <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border hover:scale-102 transition-transform">
+                    <div class="flex-auto p-4">
+                        <div class="flex items-center">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-2xl mr-4">
+                                <i class="ni leading-none ni-laptop text-lg relative top-3.5 text-white"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 font-semibold text-sm dark:text-white">Ads Spend & ROAS</p>
+                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">Track ad performance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Revenue & Profit Trend Chart
+        const trendCtx = document.getElementById('revenue-trend-chart').getContext('2d');
+        const trendData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesTrend.DataPoints));
+
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendData.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: trendData.map(d => d.revenue),
+                        borderColor: 'rgb(168, 85, 247)',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Profit',
+                        data: trendData.map(d => d.profit),
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cost Breakdown Pie Chart
+        const costCtx = document.getElementById('cost-breakdown-chart').getContext('2d');
+        const costData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CostBreakdown));
+
+        new Chart(costCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Net Profit', 'COGS', 'Ads Spend', 'Refunds'],
+                datasets: [{
+                    data: [
+                        costData.netProfit,
+                        costData.cogs,
+                        costData.adsSpend,
+                        costData.refunds
+                    ],
+                    backgroundColor: [
+                        'rgb(34, 197, 94)',
+                        'rgb(239, 68, 68)',
+                        'rgb(59, 130, 246)',
+                        'rgb(251, 146, 60)'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed);
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

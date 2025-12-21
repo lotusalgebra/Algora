@@ -60,11 +60,9 @@ namespace Algora.Infrastructure.Services
                       pageInfo { hasNextPage }
                     }
                   }",
-                    Variables = new Dictionary<string, object>
-                    {
-                        { "first", 250 },
-                        { "after", cursor }
-                    }
+                    Variables = cursor != null
+                        ? new Dictionary<string, object> { { "first", 250 }, { "after", cursor } }
+                        : new Dictionary<string, object> { { "first", 250 } }
                 };
 
                 try
@@ -234,7 +232,11 @@ namespace Algora.Infrastructure.Services
             if (variables != null)
             {
                 foreach (var prop in variables.GetType().GetProperties())
-                    variableDict[prop.Name] = prop.GetValue(variables);
+                {
+                    var value = prop.GetValue(variables);
+                    if (value != null)
+                        variableDict[prop.Name] = value;
+                }
             }
 
             var request = new GraphRequest

@@ -72,10 +72,10 @@ public class ReturnService : IReturnService
             PlatformOrderId = order.PlatformOrderId,
             OrderNumber = order.OrderNumber,
             CustomerId = order.CustomerId,
-            CustomerEmail = order.CustomerEmail,
+            CustomerEmail = order.CustomerEmail ?? string.Empty,
             CustomerName = order.Customer != null
                 ? $"{order.Customer.FirstName} {order.Customer.LastName}".Trim()
-                : order.CustomerEmail,
+                : order.CustomerEmail ?? string.Empty,
             RequestNumber = requestNumber,
             Status = "pending",
             ReturnReasonId = reason?.Id,
@@ -466,6 +466,7 @@ public class ReturnService : IReturnService
             .Include(o => o.Lines)
             .FirstOrDefaultAsync(o => o.ShopDomain == shopDomain &&
                                       o.OrderNumber == orderNumber &&
+                                      o.CustomerEmail != null &&
                                       o.CustomerEmail.ToLower() == email.ToLower());
 
         if (order == null)

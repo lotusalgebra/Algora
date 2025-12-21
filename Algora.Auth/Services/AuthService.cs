@@ -98,7 +98,7 @@ public class AuthService : IAuthService
 
         var user = new AppUser
         {
-            ShopDomain = request.ShopDomain,
+            ShopDomain = request.ShopDomain ?? string.Empty,
             Email = request.Email.ToLowerInvariant(),
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             FirstName = request.FirstName,

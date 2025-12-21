@@ -106,6 +106,11 @@ namespace Algora.Infrastructure.Data
         // ----- Tagging entities -----
         public DbSet<Tag> Tags { get; set; } = null!;
         public DbSet<EntityTag> EntityTags { get; set; } = null!;
+        // ----- Analytics entities -----
+        public DbSet<AdsSpend> AdsSpends { get; set; } = null!;
+        public DbSet<AnalyticsSnapshot> AnalyticsSnapshots { get; set; } = null!;
+        public DbSet<CustomerLifetimeValue> CustomerLifetimeValues { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -216,6 +221,8 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Title).IsRequired().HasMaxLength(500);
                 b.Property(x => x.Price).HasPrecision(18, 4);
+                b.Property(x => x.CompareAtPrice).HasPrecision(18, 4);
+                b.Property(x => x.CostOfGoodsSold).HasPrecision(18, 4);
                 b.HasIndex(x => new { x.ShopDomain, x.PlatformProductId }).IsUnique();
             });
 
@@ -223,6 +230,9 @@ namespace Algora.Infrastructure.Data
             {
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Price).HasPrecision(18, 4);
+                b.Property(x => x.CompareAtPrice).HasPrecision(18, 4);
+                b.Property(x => x.Weight).HasPrecision(18, 4);
+                b.Property(x => x.CostOfGoodsSold).HasPrecision(18, 4);
                 b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -255,6 +265,7 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Code).IsRequired().HasMaxLength(100);
                 b.Property(x => x.Value).HasPrecision(18, 4);
+                b.Property(x => x.MinimumOrderAmount).HasPrecision(18, 4);
                 b.HasIndex(x => new { x.ShopDomain, x.Code }).IsUnique();
             });
 
@@ -278,6 +289,8 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(500);
                 b.Property(x => x.UnitPrice).HasPrecision(18, 4);
                 b.Property(x => x.LineTotal).HasPrecision(18, 4);
+                b.Property(x => x.DiscountAmount).HasPrecision(18, 4);
+                b.Property(x => x.TaxAmount).HasPrecision(18, 4);
                 b.HasOne(x => x.Order).WithMany(o => o.Lines).HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -285,6 +298,7 @@ namespace Algora.Infrastructure.Data
             {
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Price).HasPrecision(18, 4);
+                b.Property(x => x.DiscountedPrice).HasPrecision(18, 4);
                 b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -340,6 +354,8 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.Subtotal).HasPrecision(18, 4);
                 b.Property(x => x.Tax).HasPrecision(18, 4);
                 b.Property(x => x.Total).HasPrecision(18, 4);
+                b.Property(x => x.Discount).HasPrecision(18, 4);
+                b.Property(x => x.Shipping).HasPrecision(18, 4);
                 b.HasIndex(x => new { x.ShopDomain, x.InvoiceNumber }).IsUnique();
                 b.HasOne(x => x.Order).WithMany(o => o.Invoices).HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
@@ -350,6 +366,8 @@ namespace Algora.Infrastructure.Data
                 b.HasKey(x => x.Id);
                 b.Property(x => x.UnitPrice).HasPrecision(18, 4);
                 b.Property(x => x.LineTotal).HasPrecision(18, 4);
+                b.Property(x => x.Discount).HasPrecision(18, 4);
+                b.Property(x => x.Tax).HasPrecision(18, 4);
                 b.HasOne(x => x.Invoice).WithMany(i => i.Lines).HasForeignKey(x => x.InvoiceId).OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -877,6 +895,7 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.Name).IsRequired().HasMaxLength(200);
                 b.Property(x => x.TriggerType).IsRequired().HasMaxLength(20);
                 b.Property(x => x.Subject).IsRequired().HasMaxLength(500);
+                b.Property(x => x.MinOrderValue).HasPrecision(18, 4);
                 b.HasIndex(x => new { x.ShopDomain, x.IsActive });
                 b.HasOne(x => x.EmailTemplate).WithMany().HasForeignKey(x => x.EmailTemplateId).OnDelete(DeleteBehavior.SetNull);
             });
@@ -940,6 +959,55 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.Description).HasMaxLength(500);
                 b.HasIndex(x => x.Key).IsUnique();
             });
+            // ==================== ANALYTICS ENTITIES ====================
+
+            modelBuilder.Entity<AdsSpend>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Platform).IsRequired().HasMaxLength(50);
+                b.Property(x => x.CampaignName).HasMaxLength(500);
+                b.Property(x => x.CampaignId).HasMaxLength(100);
+                b.Property(x => x.Amount).HasPrecision(18, 4);
+                b.Property(x => x.Currency).HasMaxLength(10);
+                b.Property(x => x.Revenue).HasPrecision(18, 4);
+                b.Property(x => x.Notes).HasMaxLength(1000);
+                b.HasIndex(x => new { x.ShopDomain, x.SpendDate });
+                b.HasIndex(x => new { x.ShopDomain, x.Platform });
+            });
+
+            modelBuilder.Entity<AnalyticsSnapshot>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.PeriodType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.TotalRevenue).HasPrecision(18, 4);
+                b.Property(x => x.TotalCOGS).HasPrecision(18, 4);
+                b.Property(x => x.TotalAdsSpend).HasPrecision(18, 4);
+                b.Property(x => x.GrossProfit).HasPrecision(18, 4);
+                b.Property(x => x.NetProfit).HasPrecision(18, 4);
+                b.Property(x => x.TotalRefunds).HasPrecision(18, 4);
+                b.Property(x => x.AverageOrderValue).HasPrecision(18, 4);
+                b.Property(x => x.ConversionRate).HasPrecision(18, 6);
+                b.HasIndex(x => new { x.ShopDomain, x.SnapshotDate, x.PeriodType }).IsUnique();
+            });
+
+            modelBuilder.Entity<CustomerLifetimeValue>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.TotalSpent).HasPrecision(18, 4);
+                b.Property(x => x.AverageOrderValue).HasPrecision(18, 4);
+                b.Property(x => x.AverageDaysBetweenOrders).HasPrecision(18, 4);
+                b.Property(x => x.PredictedLifetimeValue).HasPrecision(18, 4);
+                b.Property(x => x.Segment).IsRequired().HasMaxLength(20);
+                b.Property(x => x.AcquisitionSource).HasMaxLength(50);
+                b.Property(x => x.TotalProfit).HasPrecision(18, 4);
+                b.HasIndex(x => new { x.ShopDomain, x.CustomerId }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.Segment });
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Cascade);
+            });
+
         }
     }
 }

@@ -79,7 +79,9 @@ namespace Algora.Infrastructure.Shopify
         {
             try
             {
+#pragma warning disable CS0618 // CheckoutService is obsolete but still functional
                 var service = new CheckoutService(_shopDomain, _accessToken);
+#pragma warning restore CS0618
 
                 var shopifyFilter = new CheckoutListFilter
                 {
@@ -120,7 +122,9 @@ namespace Algora.Infrastructure.Shopify
         {
             try
             {
+#pragma warning disable CS0618 // CheckoutService is obsolete but still functional
                 var service = new CheckoutService(_shopDomain, _accessToken);
+#pragma warning restore CS0618
 
                 _logger?.LogInformation("Fetching abandoned checkout {Id} from Shopify", id);
 
@@ -162,7 +166,9 @@ namespace Algora.Infrastructure.Shopify
         {
             try
             {
+#pragma warning disable CS0618 // CheckoutService is obsolete but still functional
                 var service = new CheckoutService(_shopDomain, _accessToken);
+#pragma warning restore CS0618
 
                 var shopifyFilter = new CheckoutCountFilter
                 {

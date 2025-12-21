@@ -189,7 +189,7 @@
                                                 @if (productCount > 0 && firstProduct != null)
                                                 {
                                                     <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">
-                                                        Qty: @firstProduct.Quantity @(productCount > 1 ? $"(+{order.LineItems.Skip(1).Sum(l => l.Quantity)} more)" : "")
+                                                        Qty: @firstProduct.Quantity @(productCount > 1 ? $"(+{(order.LineItems ?? new List<LineItemDto>()).Skip(1).Sum(l => l.Quantity)} more)" : "")
                                                     </p>
                                                 }
                                             </td>

@@ -156,6 +156,11 @@ public static class DependencyInjection
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
+        
+        // ----- Analytics Dashboard -----
+        services.AddScoped<IAnalyticsService, AnalyticsService>();
+        services.AddHostedService<AnalyticsBackgroundService>();
+
         return services;
     }
 }
