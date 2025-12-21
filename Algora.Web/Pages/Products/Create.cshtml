@@ -1,0 +1,369 @@
+@page "/products/create"
+@model Algora.Web.Pages.Products.CreateModel
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="mb-4">
+        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
+            <li class="leading-normal text-sm">
+                <a class="text-slate-500 dark:text-white/60" href="/products">Products</a>
+            </li>
+            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
+                New Product
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h5 class="mb-0 font-bold dark:text-white">Create New Product</h5>
+                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Add a new product to your store</p>
+                </div>
+                <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Products
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Form -->
+    <form method="post">
+        <div class="flex flex-wrap -mx-3">
+            <!-- Left Column - Product Info -->
+            <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
+                <!-- Product Information Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Product Information</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Title">
+                                    Product Title <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" asp-for="Product.Title"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Classic T-Shirt" />
+                                <span asp-validation-for="Product.Title" class="text-red-500 text-xs"></span>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Description">
+                                    Description
+                                </label>
+                                <textarea asp-for="Product.Description" rows="4"
+                                          class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                          placeholder="Describe your product..."></textarea>
+                            </div>
+
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Vendor">
+                                    Vendor
+                                </label>
+                                <input type="text" asp-for="Product.Vendor"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Nike" />
+                            </div>
+
+                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_ProductType">
+                                    Product Type
+                                </label>
+                                <input type="text" asp-for="Product.ProductType"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Clothing" />
+                            </div>
+
+                            <div class="w-full max-w-full px-3 mb-4">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Tags">
+                                    Tags <small class="font-normal text-slate-400">(comma-separated)</small>
+                                </label>
+                                <input type="text" asp-for="Product.Tags"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. summer, sale, new-arrival" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Images Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <h6 class="mb-0 dark:text-white"><i class="fas fa-images me-2 text-fuchsia-500"></i>Product Images</h6>
+                            <button type="button" id="add-image-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-1"></i> Add Image URL
+                            </button>
+                        </div>
+                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Add image URLs for your product</p>
+                    </div>
+                    <div class="flex-auto p-6" id="images-container">
+                        <div class="image-row flex items-center gap-3 mb-3" data-index="0">
+                            <div class="flex-1">
+                                <input type="url" name="ImageUrls[0]"
+                                       class="image-url focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="https://example.com/image.jpg" />
+                            </div>
+                            <button type="button" class="remove-image-btn hidden text-red-500 hover:text-red-700 p-2" title="Remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-400 dark:text-white/50 mt-2">
+                            <i class="fas fa-info-circle me-1"></i> Enter direct URLs to product images. Images will be uploaded to Shopify.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Variants Card (Optional) -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h6 class="mb-0 dark:text-white"><i class="fas fa-layer-group me-2 text-purple-500"></i>Variants <span class="text-xs font-normal text-slate-400">(Optional)</span></h6>
+                                <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Add variants if your product has different options like sizes or colors</p>
+                            </div>
+                            <button type="button" id="toggle-variants-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-1" id="toggle-icon"></i> <span id="toggle-text">Add Variants</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6 hidden" id="variants-section">
+                        <div class="flex justify-end mb-4">
+                            <button type="button" id="add-variant-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                                <i class="fas fa-plus me-1"></i> Add Another Variant
+                            </button>
+                        </div>
+                        <div id="variants-container">
+                            <!-- Variants will be added here dynamically -->
+                        </div>
+                        <p class="text-xs text-slate-400 dark:text-white/50 mt-2">
+                            <i class="fas fa-info-circle me-1"></i> Leave variants empty if your product doesn't have different options.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Actions -->
+            <div class="w-full max-w-full px-3 lg:w-4/12 lg:flex-none">
+                <!-- Actions Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl sticky top-6">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Actions</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-col gap-3">
+                            <button type="submit" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white uppercase transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25">
+                                <i class="fas fa-save me-2"></i> Create Product
+                            </button>
+                            <a href="/products" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="flex-auto p-6">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-lightbulb text-white text-xl me-3"></i>
+                            <h6 class="mb-0 text-white">Tips</h6>
+                        </div>
+                        <ul class="text-sm text-white/80 space-y-2">
+                            <li><i class="fas fa-check me-2 text-white/60"></i> Use descriptive product titles</li>
+                            <li><i class="fas fa-check me-2 text-white/60"></i> Add high-quality images</li>
+                            <li><i class="fas fa-check me-2 text-white/60"></i> Variants are optional - add them only if needed</li>
+                            <li><i class="fas fa-check me-2 text-white/60"></i> Use tags to organize products</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imagesContainer = document.getElementById('images-container');
+            const addImageBtn = document.getElementById('add-image-btn');
+            const variantsContainer = document.getElementById('variants-container');
+            const variantsSection = document.getElementById('variants-section');
+            const toggleVariantsBtn = document.getElementById('toggle-variants-btn');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const toggleText = document.getElementById('toggle-text');
+            const addVariantBtn = document.getElementById('add-variant-btn');
+
+            let variantsVisible = false;
+
+            // Toggle variants section
+            toggleVariantsBtn.addEventListener('click', function() {
+                variantsVisible = !variantsVisible;
+                variantsSection.classList.toggle('hidden', !variantsVisible);
+
+                if (variantsVisible) {
+                    toggleIcon.className = 'fas fa-minus me-1';
+                    toggleText.textContent = 'Hide Variants';
+                    toggleVariantsBtn.className = 'inline-flex items-center px-3 py-1.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700';
+
+                    // Add first variant if none exist
+                    if (variantsContainer.querySelectorAll('.variant-row').length === 0) {
+                        addVariant();
+                    }
+                } else {
+                    toggleIcon.className = 'fas fa-plus me-1';
+                    toggleText.textContent = 'Add Variants';
+                    toggleVariantsBtn.className = 'inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85';
+                }
+            });
+
+            // Add variant
+            function addVariant() {
+                const variantRows = variantsContainer.querySelectorAll('.variant-row');
+                const newIndex = variantRows.length;
+
+                const template = `
+                    <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4" data-index="${newIndex}">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-semibold dark:text-white">Variant ${newIndex + 1}</span>
+                            <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap -mx-3">
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Price <span class="text-red-500">*</span></label>
+                                <input type="number" step="0.01" name="Variants[${newIndex}].Price" value="0"
+                                       class="variant-price focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="0.00" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">SKU</label>
+                                <input type="text" name="Variants[${newIndex}].Sku"
+                                       class="variant-sku focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="SKU-001" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Quantity</label>
+                                <input type="number" name="Variants[${newIndex}].InventoryQuantity" value="0"
+                                       class="variant-qty focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="0" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Size (Option 1)</label>
+                                <input type="text" name="Variants[${newIndex}].Option1"
+                                       class="variant-opt1 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Medium" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color (Option 2)</label>
+                                <input type="text" name="Variants[${newIndex}].Option2"
+                                       class="variant-opt2 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Blue" />
+                            </div>
+                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Material (Option 3)</label>
+                                <input type="text" name="Variants[${newIndex}].Option3"
+                                       class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       placeholder="e.g. Cotton" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                variantsContainer.insertAdjacentHTML('beforeend', template);
+                updateVariantRemoveButtons();
+            }
+
+            addVariantBtn.addEventListener('click', addVariant);
+
+            // Remove variant
+            function updateVariantRemoveButtons() {
+                variantsContainer.querySelectorAll('.remove-variant-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        this.closest('.variant-row').remove();
+                        // Reindex remaining variants
+                        variantsContainer.querySelectorAll('.variant-row').forEach((row, idx) => {
+                            row.dataset.index = idx;
+                            row.querySelector('span').textContent = `Variant ${idx + 1}`;
+                            row.querySelectorAll('input').forEach(input => {
+                                const name = input.name;
+                                input.name = name.replace(/Variants\[\d+\]/, `Variants[${idx}]`);
+                            });
+                        });
+                    };
+                });
+            }
+
+            // Add image URL
+            addImageBtn.addEventListener('click', function() {
+                const imageRows = imagesContainer.querySelectorAll('.image-row');
+                const newIndex = imageRows.length;
+
+                const template = `
+                    <div class="image-row flex items-center gap-3 mb-3" data-index="${newIndex}">
+                        <div class="flex-1">
+                            <input type="url" name="ImageUrls[${newIndex}]"
+                                   class="image-url focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                   placeholder="https://example.com/image.jpg" />
+                        </div>
+                        <button type="button" class="remove-image-btn text-red-500 hover:text-red-700 p-2" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Find the info paragraph and insert before it
+                const infoParagraph = imagesContainer.querySelector('p.text-xs');
+                if (infoParagraph) {
+                    infoParagraph.insertAdjacentHTML('beforebegin', template);
+                } else {
+                    imagesContainer.insertAdjacentHTML('beforeend', template);
+                }
+
+                updateImageRemoveButtons();
+            });
+
+            // Remove image URL
+            function updateImageRemoveButtons() {
+                const imageRows = imagesContainer.querySelectorAll('.image-row');
+                imageRows.forEach((row, idx) => {
+                    const removeBtn = row.querySelector('.remove-image-btn');
+                    // Show remove button only if there's more than one image row
+                    if (imageRows.length > 1) {
+                        removeBtn.classList.remove('hidden');
+                        removeBtn.onclick = function() {
+                            row.remove();
+                            // Reindex remaining image inputs
+                            imagesContainer.querySelectorAll('.image-row').forEach((r, i) => {
+                                r.dataset.index = i;
+                                r.querySelector('input').name = `ImageUrls[${i}]`;
+                            });
+                            updateImageRemoveButtons();
+                        };
+                    } else {
+                        removeBtn.classList.add('hidden');
+                    }
+                });
+            }
+
+            updateImageRemoveButtons();
+        });
+    </script>
+}

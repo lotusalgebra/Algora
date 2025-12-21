@@ -1,0 +1,248 @@
+@page "/abandoned-checkouts"
+@model Algora.Web.Pages.AbandonedCheckouts.IndexModel
+@{
+    ViewData["Title"] = "Abandoned Checkouts";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+
+                <!-- Card Header -->
+                <div class="p-6 pb-4 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Abandoned Checkouts</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fas fa-shopping-cart text-orange-500 me-1"></i>
+                                <span class="font-semibold">@(Model.AbandonedCarts?.Count() ?? 0)</span> abandoned carts in the last 30 days
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="refresh-btn" onclick="location.reload()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                                <i class="fas fa-sync-alt me-2 text-slate-400"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert Messages -->
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <!-- Card Body -->
+                <div class="flex-auto px-0 pb-0">
+                    @if (Model.AbandonedCarts == null || !Model.AbandonedCarts.Any())
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-cart-arrow-down fa-4x text-gray-300 mb-4"></i>
+                            <h5 class="text-gray-500 dark:text-gray-400 mb-2">No Abandoned Checkouts</h5>
+                            <p class="text-gray-400 dark:text-gray-500 mb-4">Great news! There are no abandoned checkouts in the last 30 days.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="abandoned-checkouts-list">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Contact</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
+                                        <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Cart Value</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Abandoned</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var cart in Model.AbandonedCarts)
+                                    {
+                                        var customerDisplay = !string.IsNullOrEmpty(cart.Email)
+                                            ? cart.Email.Split('@')[0]
+                                            : (!string.IsNullOrEmpty(cart.Phone) ? cart.Phone : "Unknown");
+
+                                        var initials = customerDisplay.Length >= 2
+                                            ? customerDisplay.Substring(0, 2).ToUpper()
+                                            : customerDisplay.ToUpper();
+
+                                        var bgColors = new[] { "from-purple-700 to-pink-500", "from-orange-500 to-yellow-300", "from-green-600 to-lime-400", "from-blue-600 to-cyan-400", "from-red-600 to-rose-400" };
+                                        var colorIndex = Math.Abs(customerDisplay.GetHashCode()) % bgColors.Length;
+
+                                        var firstItem = cart.Items?.FirstOrDefault();
+                                        var itemCount = cart.Items?.Count() ?? 0;
+                                        var itemDisplay = firstItem != null
+                                            ? (itemCount > 1 ? $"{firstItem.Title} (+{itemCount - 1})" : firstItem.Title)
+                                            : "No items";
+
+                                        var timeSinceAbandoned = cart.AbandonedAt.HasValue
+                                            ? GetTimeAgo(cart.AbandonedAt.Value)
+                                            : "Unknown";
+
+                                        var hasContact = !string.IsNullOrEmpty(cart.Email) || !string.IsNullOrEmpty(cart.Phone);
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    <div class="flex items-center justify-center w-10 h-10 mr-4 text-xs text-white rounded-xl bg-gradient-to-tl @bgColors[colorIndex]">
+                                                        @initials
+                                                    </div>
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@customerDisplay</h6>
+                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">#@cart.Id</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex flex-col">
+                                                    @if (!string.IsNullOrEmpty(cart.Email))
+                                                    {
+                                                        <span class="text-xs text-slate-600 dark:text-gray-300">
+                                                            <i class="fas fa-envelope me-1 text-slate-400"></i>
+                                                            @cart.Email
+                                                        </span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(cart.Phone))
+                                                    {
+                                                        <span class="text-xs text-slate-600 dark:text-gray-300 mt-1">
+                                                            <i class="fas fa-phone me-1 text-slate-400"></i>
+                                                            @cart.Phone
+                                                        </span>
+                                                    }
+                                                    @if (string.IsNullOrEmpty(cart.Email) && string.IsNullOrEmpty(cart.Phone))
+                                                    {
+                                                        <span class="text-xs text-slate-400">No contact info</span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <p class="mb-0 text-sm leading-normal dark:text-white" title="@(firstItem?.Title ?? "")">
+                                                    @(itemDisplay?.Length > 25 ? itemDisplay.Substring(0, 25) + "..." : itemDisplay)
+                                                </p>
+                                                @if (itemCount > 0 && firstItem != null)
+                                                {
+                                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">
+                                                        @itemCount item(s)
+                                                    </p>
+                                                }
+                                            </td>
+                                            <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-bold leading-tight text-orange-600 dark:text-orange-400">@cart.TotalPrice.ToString("C")</span>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <p class="mb-0 text-sm leading-normal dark:text-white">@timeSinceAbandoned</p>
+                                                @if (cart.AbandonedAt.HasValue)
+                                                {
+                                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">
+                                                        @cart.AbandonedAt.Value.ToString("MMM dd, h:mm tt")
+                                                    </p>
+                                                }
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="/abandoned-checkouts/@cart.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
+                                                        <i class="fas fa-eye me-1"></i> View
+                                                    </a>
+                                                    @if (hasContact)
+                                                    {
+                                                        <form method="post" asp-page-handler="SendReminder" asp-route-checkoutId="@cart.Id" class="inline">
+                                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Send Reminder">
+                                                                <i class="fas fa-bell me-1"></i> Remind
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(cart.RecoveryUrl))
+                                                    {
+                                                        <a href="@cart.RecoveryUrl" target="_blank" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Recovery Link">
+                                                            <i class="fas fa-link me-1"></i> Recover
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Summary Stats -->
+                        <div class="p-6 border-t border-gray-200 dark:border-white/10">
+                            <div class="flex flex-wrap justify-around text-center">
+                                <div class="px-4 py-2">
+                                    <p class="text-2xl font-bold text-slate-700 dark:text-white">@Model.AbandonedCarts.Count()</p>
+                                    <p class="text-xs text-slate-500 dark:text-gray-400">Total Carts</p>
+                                </div>
+                                <div class="px-4 py-2">
+                                    <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">@Model.AbandonedCarts.Sum(c => c.TotalPrice).ToString("C")</p>
+                                    <p class="text-xs text-slate-500 dark:text-gray-400">Potential Revenue</p>
+                                </div>
+                                <div class="px-4 py-2">
+                                    <p class="text-2xl font-bold text-slate-700 dark:text-white">@Model.AbandonedCarts.Count(c => !string.IsNullOrEmpty(c.Email) || !string.IsNullOrEmpty(c.Phone))</p>
+                                    <p class="text-xs text-slate-500 dark:text-gray-400">Recoverable</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes}m ago";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours}h ago";
+        if (timeSpan.TotalDays < 7)
+            return $"{(int)timeSpan.TotalDays}d ago";
+        if (timeSpan.TotalDays < 30)
+            return $"{(int)(timeSpan.TotalDays / 7)}w ago";
+
+        return dateTime.ToString("MMM dd");
+    }
+}
+
+@section Scripts {
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script>
+        // Initialize DataTable
+        if (document.getElementById('abandoned-checkouts-list')) {
+            new simpleDatatables.DataTable("#abandoned-checkouts-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 10,
+                perPageSelect: [5, 10, 25, 50],
+                labels: {
+                    placeholder: "Search abandoned carts...",
+                    perPage: "carts per page",
+                    noRows: "No abandoned carts found",
+                    info: "Showing {start} to {end} of {rows} carts"
+                }
+            });
+        }
+    </script>
+}

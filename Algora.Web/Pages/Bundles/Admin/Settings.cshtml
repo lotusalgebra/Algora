@@ -1,0 +1,145 @@
+@page "/bundles/admin/settings"
+@model Algora.Web.Pages.Bundles.Admin.SettingsModel
+@{
+    ViewData["Title"] = "Bundle Settings";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <a href="/bundles/admin" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+            <i class="fas fa-arrow-left dark:text-white"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Bundle Settings</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Configure bundle feature settings</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    <form method="post">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- General Settings -->
+            <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">General Settings</h3>
+
+                <div class="space-y-4">
+                    <label class="flex items-center gap-3">
+                        <input type="checkbox" asp-for="Input.IsEnabled" class="rounded" />
+                        <div>
+                            <span class="font-medium dark:text-white">Enable Bundle Builder</span>
+                            <p class="text-sm text-gray-500">Allow creating and managing bundles</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center gap-3">
+                        <input type="checkbox" asp-for="Input.ShowOnStorefront" class="rounded" />
+                        <div>
+                            <span class="font-medium dark:text-white">Show on Storefront</span>
+                            <p class="text-sm text-gray-500">Display bundles on public pages</p>
+                        </div>
+                    </label>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Layout</label>
+                        <select asp-for="Input.DisplayLayout"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                            <option value="grid">Grid</option>
+                            <option value="list">List</option>
+                            <option value="carousel">Carousel</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Default Pricing -->
+            <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Default Pricing</h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Default Discount Type</label>
+                        <select asp-for="Input.DefaultDiscountType"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed_amount">Fixed Amount ($)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Default Discount Value</label>
+                        <input type="number" asp-for="Input.DefaultDiscountValue" step="0.01" min="0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                        <p class="text-xs text-gray-500 mt-1">Applied to new bundles by default</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Settings -->
+            <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Inventory Settings</h3>
+
+                <div class="space-y-4">
+                    <label class="flex items-center gap-3">
+                        <input type="checkbox" asp-for="Input.ShowInventoryWarnings" class="rounded" />
+                        <div>
+                            <span class="font-medium dark:text-white">Show Inventory Warnings</span>
+                            <p class="text-sm text-gray-500">Display low stock warnings to customers</p>
+                        </div>
+                    </label>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Low Inventory Threshold</label>
+                        <input type="number" asp-for="Input.LowInventoryThreshold" min="1"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                        <p class="text-xs text-gray-500 mt-1">Show warning when stock falls below this level</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Customization -->
+            <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Page Customization</h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bundle Page Title</label>
+                        <input type="text" asp-for="Input.BundlePageTitle"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                               placeholder="e.g., Product Bundles" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bundle Page Description</label>
+                        <textarea asp-for="Input.BundlePageDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                  placeholder="Description shown on the bundles page..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="mt-6 flex justify-end gap-4">
+            <a href="/bundles/admin" class="px-6 py-3 text-gray-600 hover:text-gray-800 dark:text-gray-400">
+                Cancel
+            </a>
+            <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                <i class="fas fa-save mr-2"></i> Save Settings
+            </button>
+        </div>
+    </form>
+</div>

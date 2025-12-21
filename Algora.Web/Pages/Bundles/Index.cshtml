@@ -1,0 +1,135 @@
+@page "/bundles"
+@model Algora.Web.Pages.Bundles.IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(Model.Settings?.BundlePageTitle ?? "Product Bundles")</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900">@(Model.Settings?.BundlePageTitle ?? "Product Bundles")</h1>
+            @if (!string.IsNullOrEmpty(Model.Settings?.BundlePageDescription))
+            {
+                <p class="text-gray-600 mt-3 max-w-2xl mx-auto">@Model.Settings.BundlePageDescription</p>
+            }
+        </div>
+
+        <!-- Error Message -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Bundle Grid -->
+        @if (Model.Bundles.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach (var bundle in Model.Bundles)
+                {
+                    <a href="/bundles/@bundle.Slug" class="group">
+                        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+                            <!-- Image -->
+                            <div class="aspect-w-16 aspect-h-9 bg-gray-100">
+                                @if (!string.IsNullOrEmpty(bundle.ImageUrl))
+                                {
+                                    <img src="@bundle.ImageUrl" alt="@bundle.Name" class="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                                }
+                                else
+                                {
+                                    <div class="w-full h-48 flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
+                                        <svg class="w-16 h-16 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                        </svg>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Content -->
+                            <div class="p-5">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">@bundle.Name</h3>
+                                    @if (bundle.BundleType == "mix_and_match")
+                                    {
+                                        <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">Build Your Own</span>
+                                    }
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(bundle.Description))
+                                {
+                                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">@bundle.Description</p>
+                                }
+
+                                <!-- Pricing -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-xl font-bold text-gray-900">$@bundle.BundlePrice.ToString("F2")</span>
+                                        @if (bundle.OriginalPrice > bundle.BundlePrice)
+                                        {
+                                            <span class="text-sm text-gray-400 line-through">$@bundle.OriginalPrice.ToString("F2")</span>
+                                        }
+                                    </div>
+                                    @if (bundle.DiscountValue > 0)
+                                    {
+                                        <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded">
+                                            @if (bundle.DiscountType == "percentage")
+                                            {
+                                                @:Save @bundle.DiscountValue%
+                                            }
+                                            else
+                                            {
+                                                @:Save $@bundle.DiscountValue.ToString("F2")
+                                            }
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- Items count for fixed bundles -->
+                                @if (bundle.BundleType == "fixed" && bundle.Items.Any())
+                                {
+                                    <p class="text-xs text-gray-500 mt-3">Includes @bundle.Items.Count items</p>
+                                }
+                                @if (bundle.BundleType == "mix_and_match" && bundle.MinItems.HasValue)
+                                {
+                                    <p class="text-xs text-gray-500 mt-3">
+                                        Pick @bundle.MinItems@(bundle.MaxItems.HasValue && bundle.MaxItems != bundle.MinItems ? $"-{bundle.MaxItems}" : "") items
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No bundles available</h3>
+                <p class="text-gray-500">Check back soon for special bundle offers!</p>
+            </div>
+        }
+    </div>
+
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</body>
+</html>

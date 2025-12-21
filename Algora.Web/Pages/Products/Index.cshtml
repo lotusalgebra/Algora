@@ -1,0 +1,293 @@
+@page "/products"
+@using Algora.Web.Pages.Products
+@model IndexModel
+@{
+    ViewData["Title"] = "Products";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+
+                <!-- Card Header -->
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Products List</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-shopping-bag text-fuchsia-500 me-1"></i>
+                                <span class="font-semibold">@Model.Products.Count</span> products from your store
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="export-csv" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-file-csv me-2"></i> CSV
+                            </button>
+                            <button type="button" id="export-excel" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-file-excel me-2"></i> Excel
+                            </button>
+                            <a href="/products/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-2"></i> New Product
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="flex-auto p-6 px-0 pb-0">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="mx-6 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @Model.ErrorMessage
+                        </div>
+                    }
+                    else if (Model.Products == null || !Model.Products.Any())
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-box-open fa-4x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">No products found in your store.</p>
+                            <a href="/products/create" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-2"></i> Add Your First Product
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="products-list">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Category</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Price</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">SKU</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Quantity</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                        <th class="px-6 py-3 font-semibold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        var initials = string.Join("", product.Title.Split(' ').Take(2).Select(w => w.Length > 0 ? w[0].ToString().ToUpper() : ""));
+                                        var bgColors = new[] { "from-purple-700 to-pink-500", "from-gray-400 to-gray-600", "from-green-600 to-lime-400", "from-blue-600 to-cyan-400", "from-red-600 to-rose-400", "from-orange-500 to-yellow-300" };
+                                        var colorIndex = Math.Abs(product.Title.GetHashCode()) % bgColors.Length;
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex px-2 py-1">
+                                                    <div class="flex items-center justify-center w-10 h-10 mr-4 text-sm text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl @bgColors[colorIndex]">
+                                                        @initials
+                                                    </div>
+                                                    <div class="flex flex-col justify-center">
+                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@product.Title</h6>
+                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@(product.Vendor ?? "No vendor")</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                @if (!string.IsNullOrEmpty(product.Tags))
+                                                {
+                                                    var tags = product.Tags.Split(',').Take(2);
+                                                    foreach (var tag in tags)
+                                                    {
+                                                        <span class="bg-gradient-to-tl from-slate-600 to-slate-300 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white mr-1">@tag.Trim()</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-xs text-slate-400 dark:text-white/60">Uncategorized</span>
+                                                }
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.Price.ToString("C")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-60">@product.Id</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.Stock</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                @if (product.Stock > 10)
+                                                {
+                                                    <span class="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">In Stock</span>
+                                                }
+                                                else if (product.Stock > 0)
+                                                {
+                                                    <span class="bg-gradient-to-tl from-orange-500 to-yellow-300 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Low Stock</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="bg-gradient-to-tl from-red-600 to-rose-400 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Out of Stock</span>
+                                                }
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="/products/@product.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
+                                                        <i class="fas fa-eye me-1"></i> View
+                                                    </a>
+                                                    <a href="/products/edit/@product.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Edit Product">
+                                                        <i class="fas fa-pencil-alt me-1"></i> Edit
+                                                    </a>
+                                                    <a href="/products/delete/@product.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-red-600 to-rose-400 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Delete Product">
+                                                        <i class="fas fa-trash me-1"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/js/plugins/xlsx.min.js" asp-append-version="true"></script>
+    <script>
+        // Initialize DataTable
+        let productsTable = null;
+
+        if (document.getElementById('products-list')) {
+            productsTable = new simpleDatatables.DataTable("#products-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 10,
+                perPageSelect: [5, 10, 25, 50, 100],
+                labels: {
+                    placeholder: "Search products...",
+                    perPage: "products per page",
+                    noRows: "No products found",
+                    info: "Showing {start} to {end} of {rows} products"
+                }
+            });
+        }
+
+        // Get table data for export
+        function getTableData() {
+            const table = document.getElementById('products-list');
+            const headers = [];
+            const data = [];
+
+            // Get headers (skip Action column)
+            const headerCells = table.querySelectorAll('thead th');
+            headerCells.forEach((th, index) => {
+                if (index < headerCells.length - 1) { // Skip last column (Action)
+                    headers.push(th.textContent.trim());
+                }
+            });
+
+            // Get data rows
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll('td');
+                cells.forEach((td, index) => {
+                    if (index < cells.length - 1) { // Skip last column (Action)
+                        // Handle product column specially (extract title and vendor)
+                        if (index === 0) {
+                            const title = td.querySelector('h6')?.textContent?.trim() || '';
+                            rowData.push(title);
+                        } else if (index === 1) {
+                            // Category - get badge texts
+                            const badges = td.querySelectorAll('span');
+                            const tags = Array.from(badges).map(b => b.textContent.trim()).join(', ');
+                            rowData.push(tags || 'Uncategorized');
+                        } else {
+                            // Clean text content
+                            let text = td.textContent.trim();
+                            rowData.push(text);
+                        }
+                    }
+                });
+                if (rowData.length > 0) {
+                    data.push(rowData);
+                }
+            });
+
+            return { headers, data };
+        }
+
+        // Export to CSV
+        document.getElementById('export-csv')?.addEventListener('click', function() {
+            const { headers, data } = getTableData();
+
+            let csv = headers.join(',') + '\n';
+            data.forEach(row => {
+                csv += row.map(cell => {
+                    // Escape quotes and wrap in quotes if contains comma
+                    let escaped = String(cell).replace(/"/g, '""');
+                    if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+                        escaped = '"' + escaped + '"';
+                    }
+                    return escaped;
+                }).join(',') + '\n';
+            });
+
+            // Download
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'products_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+
+        // Export to Excel
+        document.getElementById('export-excel')?.addEventListener('click', function() {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    alert('Excel library not loaded. Please refresh the page and try again.');
+                    return;
+                }
+
+                const { headers, data } = getTableData();
+
+                // Create workbook and worksheet
+                const wb = XLSX.utils.book_new();
+                const wsData = [headers, ...data];
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+                // Set column widths
+                const colWidths = headers.map((h, i) => {
+                    let maxLen = h.length;
+                    data.forEach(row => {
+                        if (row[i] && String(row[i]).length > maxLen) {
+                            maxLen = String(row[i]).length;
+                        }
+                    });
+                    return { wch: Math.min(maxLen + 2, 50) };
+                });
+                ws['!cols'] = colWidths;
+
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+                // Generate and download
+                XLSX.writeFile(wb, 'products_' + new Date().toISOString().split('T')[0] + '.xlsx');
+            } catch (error) {
+                console.error('Excel export error:', error);
+                alert('Error exporting to Excel: ' + error.message);
+            }
+        });
+
+        // Debug: Log when scripts are loaded
+        console.log('Products page scripts loaded. XLSX available:', typeof XLSX !== 'undefined');
+    </script>
+}

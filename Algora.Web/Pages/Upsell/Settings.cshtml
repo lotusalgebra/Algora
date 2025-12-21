@@ -1,0 +1,188 @@
+@page "/upsell/settings"
+@model Algora.Web.Pages.Upsell.SettingsModel
+@{
+    ViewData["Title"] = "Upsell Settings";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Upsell Settings</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                Configure your post-purchase upsell page appearance and behavior
+                            </p>
+                        </div>
+                        <a href="/upsell" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border border-gray-300 rounded-lg cursor-pointer text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <div class="flex-auto p-6">
+                    <form method="post">
+                        <!-- Page Settings -->
+                        <div class="mb-8">
+                            <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-file-alt me-2 text-indigo-500"></i> Page Settings
+                            </h5>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Page Title</label>
+                                    <input type="text" asp-for="Settings.PageTitle" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="Order Confirmed" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Browser tab title</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Thank You Message</label>
+                                    <input type="text" asp-for="Settings.ThankYouMessage" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="Thank you for your order!" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Upsell Section Title</label>
+                                    <input type="text" asp-for="Settings.UpsellSectionTitle" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="You might also like" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Display Layout</label>
+                                    <select asp-for="Settings.DisplayLayout" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                        <option value="grid">Grid</option>
+                                        <option value="carousel">Carousel</option>
+                                        <option value="list">List</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Branding -->
+                        <div class="mb-8">
+                            <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-palette me-2 text-purple-500"></i> Branding
+                            </h5>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Logo URL</label>
+                                    <input type="url" asp-for="Settings.LogoUrl" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="https://..." />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">URL to your logo image</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Primary Color</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="color" asp-for="Settings.PrimaryColor" class="w-10 h-10 rounded border border-gray-300 cursor-pointer" />
+                                            <input type="text" asp-for="Settings.PrimaryColor" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="#4f46e5" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Secondary Color</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="color" asp-for="Settings.SecondaryColor" class="w-10 h-10 rounded border border-gray-300 cursor-pointer" />
+                                            <input type="text" asp-for="Settings.SecondaryColor" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="#6366f1" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Offer Settings -->
+                        <div class="mb-8">
+                            <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-gift me-2 text-green-500"></i> Offer Settings
+                            </h5>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Max Offers to Show</label>
+                                    <input type="number" asp-for="Settings.MaxOffersToShow" min="1" max="10" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maximum number of offers per order</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Affinity Lookback (Days)</label>
+                                    <input type="number" asp-for="Settings.AffinityLookbackDays" min="30" max="365" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Days of order history to analyze</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Min. Affinity Confidence</label>
+                                    <input type="number" step="0.01" asp-for="Settings.MinAffinityConfidence" min="0" max="1" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Min. confidence for auto-recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings -->
+                        <div class="mb-8">
+                            <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-cogs me-2 text-gray-500"></i> Advanced Settings
+                            </h5>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <input type="checkbox" asp-for="Settings.EnableAutoRecommendations" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Enable Automatic Recommendations</label>
+                                    <p class="ml-6 text-xs text-gray-500 dark:text-gray-400">Use product affinities when no manual offers match</p>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input type="checkbox" asp-for="Settings.EnableAbTesting" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Enable A/B Testing</label>
+                                    <p class="ml-6 text-xs text-gray-500 dark:text-gray-400">Allow running experiments on upsell offers</p>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input type="checkbox" asp-for="Settings.TrackImpressions" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Track Impressions</label>
+                                    <p class="ml-6 text-xs text-gray-500 dark:text-gray-400">Record when offers are displayed</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom CSS -->
+                        <div class="mb-8">
+                            <h5 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <i class="fas fa-code me-2 text-orange-500"></i> Custom CSS
+                            </h5>
+
+                            <div>
+                                <textarea asp-for="Settings.CustomCss" rows="6" class="block w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="/* Add custom CSS here */"></textarea>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Custom CSS to inject into the confirmation page</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <a href="/upsell" class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                                Cancel
+                            </a>
+                            <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-gradient-to-tl from-indigo-600 to-purple-400 rounded-lg shadow-soft-md hover:scale-102 active:opacity-85">
+                                <i class="fas fa-save me-2"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

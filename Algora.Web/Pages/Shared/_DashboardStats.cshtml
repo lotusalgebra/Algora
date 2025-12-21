@@ -1,0 +1,57 @@
+@model Algora.Core.Models.DashboardViewModel
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- row 1: top stat cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:mb-0 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl p-4">
+                <p class="mb-0 text-sm font-semibold leading-normal">Today's Money</p>
+                <h5 class="mb-0 font-bold">$@Model.TodaysMoney.ToString("0,0.00") <span class="text-sm text-lime-500">+55%</span></h5>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:mb-0 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl p-4">
+                <p class="mb-0 text-sm font-semibold leading-normal">Today's Users</p>
+                <h5 class="mb-0 font-bold">@Model.TodaysUsers <span class="text-sm text-lime-500">+3%</span></h5>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:mb-0 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl p-4">
+                <p class="mb-0 text-sm font-semibold leading-normal">New Clients</p>
+                <h5 class="mb-0 font-bold">@Model.NewClients <span class="text-sm text-red-600">-2%</span></h5>
+            </div>
+        </div>
+
+        <div class="w-full max-w-full px-3 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl p-4">
+                <p class="mb-0 text-sm font-semibold leading-normal">Sales</p>
+                <h5 class="mb-0 font-bold">$@Model.Sales.ToString("0,0.00") <span class="text-sm text-lime-500">+5%</span></h5>
+            </div>
+        </div>
+    </div>
+
+    <!-- row 2: overview + chart placeholder -->
+    <div class="flex flex-wrap mt-6 -mx-3 mb-6">
+        <div class="w-full px-3 lg:w-7/12">
+            <div class="relative flex flex-col bg-white shadow-soft-xl rounded-2xl p-4">
+                <p class="pt-2 mb-1 font-semibold">Built by developers</p>
+                <h5 class="font-bold">Soft UI Dashboard</h5>
+                <p class="mb-12">From colors, cards, typography to complex elements, you will find the full documentation.</p>
+                <a class="text-sm font-semibold text-slate-500" href="javascript:;">Read More</a>
+            </div>
+        </div>
+
+        <div class="w-full px-3 lg:w-5/12">
+            <div class="relative flex flex-col bg-white shadow-soft-xl rounded-2xl p-4">
+                <div class="relative h-40 overflow-hidden rounded-xl bg-center bg-cover" style="background-image: url('/img/ivancik.jpg')">
+                    <div class="relative z-10 p-4 text-white">
+                        <h5 class="pt-2 mb-6 font-bold">Work with the rockets</h5>
+                        <p>Wealth creation is an evolutionarily recent positive-sum game.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,405 @@
+@model Algora.Application.DTOs.InvoicePdfDto
+@using Algora.Application.DTOs
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Invoice @Model?.InvoiceNumber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #344767;
+            background: #fff;
+            padding: 40px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+        }
+
+        /* Header */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #7928ca;
+            margin-bottom: 10px;
+            background: linear-gradient(310deg, #7928ca, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .company-details {
+            color: #67748e;
+            font-size: 13px;
+        }
+
+        .invoice-info {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #344767;
+            margin-bottom: 10px;
+        }
+
+        .invoice-number {
+            font-size: 16px;
+            color: #7928ca;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .invoice-date {
+            color: #67748e;
+            font-size: 13px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .status-paid {
+            background: linear-gradient(310deg, #17ad37, #98ec2d);
+            color: white;
+        }
+
+        .status-pending {
+            background: linear-gradient(310deg, #f5365c, #f56036);
+            color: white;
+        }
+
+        /* Billing Section */
+        .billing-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .billing-box {
+            flex: 1;
+            max-width: 45%;
+        }
+
+        .billing-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #67748e;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .billing-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #344767;
+            margin-bottom: 5px;
+        }
+
+        .billing-address {
+            color: #67748e;
+            font-size: 13px;
+            white-space: pre-line;
+        }
+
+        /* Items Table */
+        .items-section {
+            margin-bottom: 30px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table thead th {
+            background: linear-gradient(310deg, #7928ca, #ff0080);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .items-table thead th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .items-table thead th:last-child {
+            border-radius: 0 10px 0 0;
+            text-align: right;
+        }
+
+        .items-table tbody td {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            color: #344767;
+        }
+
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .items-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .product-name {
+            font-weight: 600;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* Totals */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .totals-box {
+            width: 300px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #67748e;
+        }
+
+        .total-row.subtotal {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+        }
+
+        .total-row.grand-total {
+            border-top: 2px solid #344767;
+            padding-top: 12px;
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #344767;
+        }
+
+        .total-label {
+            font-weight: 500;
+        }
+
+        .total-value {
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .invoice-footer {
+            border-top: 2px solid #e9ecef;
+            padding-top: 30px;
+            text-align: center;
+        }
+
+        .thank-you {
+            font-size: 20px;
+            font-weight: 700;
+            color: #344767;
+            margin-bottom: 10px;
+        }
+
+        .footer-note {
+            color: #67748e;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            color: #67748e;
+            font-size: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Print Styles */
+        @@media print {
+            body {
+                padding: 20px;
+            }
+
+            .invoice-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <div class="company-logo">Algora</div>
+                <div class="company-details">
+                    E-Commerce Solutions<br />
+                    Your trusted business partner
+                </div>
+            </div>
+            <div class="invoice-info">
+                <div class="invoice-title">INVOICE</div>
+                <div class="invoice-number">@Model?.InvoiceNumber</div>
+                <div class="invoice-date">
+                    Date: @(Model?.InvoiceDate.ToString("MMMM dd, yyyy") ?? string.Empty)
+                </div>
+                @if (Model?.Total > 0)
+                {
+                    <span class="status-badge status-paid">PAID</span>
+                }
+            </div>
+        </div>
+
+        <!-- Billing Section -->
+        <div class="billing-section">
+            <div class="billing-box">
+                <div class="billing-label">Bill To</div>
+                <div class="billing-name">@Model?.CustomerName</div>
+                <div class="billing-address">
+                    @Model?.CustomerEmail
+                    @if (!string.IsNullOrEmpty(Model?.BillingAddress))
+                    {
+                        <br />@Model.BillingAddress
+                    }
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model?.ShippingAddress))
+            {
+                <div class="billing-box">
+                    <div class="billing-label">Ship To</div>
+                    <div class="billing-address">@Model.ShippingAddress</div>
+                </div>
+            }
+        </div>
+
+        <!-- Items Table -->
+        <div class="items-section">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Product</th>
+                        <th class="text-center" style="width: 15%;">Qty</th>
+                        <th class="text-right" style="width: 17.5%;">Unit Price</th>
+                        <th class="text-right" style="width: 17.5%;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Lines != null && Model.Lines.Any())
+                    {
+                        foreach (var item in Model.Lines)
+                        {
+                            <tr>
+                                <td class="product-name">@item.ProductName</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-right">@item.Price.ToString("C")</td>
+                                <td class="text-right">@item.Total.ToString("C")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center" style="color: #67748e; padding: 30px;">No items</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Totals -->
+        <div class="totals-section">
+            <div class="totals-box">
+                <div class="total-row subtotal">
+                    <span class="total-label">Subtotal</span>
+                    <span class="total-value">@(Model?.Subtotal.ToString("C") ?? "$0.00")</span>
+                </div>
+                @if (Model?.Tax > 0)
+                {
+                    <div class="total-row">
+                        <span class="total-label">Tax</span>
+                        <span class="total-value">@Model.Tax.ToString("C")</span>
+                    </div>
+                }
+                <div class="total-row grand-total">
+                    <span class="total-label">Total</span>
+                    <span class="total-value">@(Model?.Total.ToString("C") ?? "$0.00")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <div class="thank-you">Thank You For Your Business!</div>
+            <div class="footer-note">
+                If you have any questions about this invoice, please contact us.
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    Email: support@algora.com
+                </div>
+                <div class="contact-item">
+                    Web: www.algora.com
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

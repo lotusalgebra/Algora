@@ -1,0 +1,383 @@
+@page "/ai/bulk-generate"
+@model Algora.Web.Pages.AI.BulkGenerateModel
+@{
+    ViewData["Title"] = "AI Content Generation";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h5 class="mb-0 font-bold dark:text-white">
+                        <i class="fas fa-wand-magic-sparkles me-2 text-purple-500"></i>
+                        AI Content Generation
+                    </h5>
+                    <p class="mb-0 text-sm leading-normal dark:text-white/60">
+                        Generate SEO-friendly titles, descriptions, and images for multiple products
+                    </p>
+                </div>
+                <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Products
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap -mx-3">
+        <!-- Configuration Panel -->
+        <div class="w-full max-w-full px-3 lg:w-4/12">
+            <!-- Settings Card -->
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6">
+                    <h6 class="mb-4 dark:text-white">Generation Settings</h6>
+
+                    <!-- Content Type Selection -->
+                    <div class="mb-4">
+                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Generate</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="gen-titles" checked class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                                <span class="ml-2 text-sm dark:text-white/80">Product Titles</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="gen-descriptions" checked class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                                <span class="ml-2 text-sm dark:text-white/80">Product Descriptions</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="gen-alt-text" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                                <span class="ml-2 text-sm dark:text-white/80">Image Alt Text</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="gen-images" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                                <span class="ml-2 text-sm dark:text-white/80">Product Images (AI Generated)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Provider Selection -->
+                    <div class="mb-4">
+                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Text Provider</label>
+                        <select id="text-provider" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                            @foreach (var provider in Model.TextProviders)
+                            {
+                                if (provider.IsConfigured)
+                                {
+                                    <option value="@provider.Name">@provider.DisplayName</option>
+                                }
+                                else
+                                {
+                                    <option value="@provider.Name" disabled>@provider.DisplayName (Not configured)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Image Provider</label>
+                        <select id="image-provider" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                            @foreach (var provider in Model.ImageProviders)
+                            {
+                                if (provider.IsConfigured)
+                                {
+                                    <option value="@provider.Name">@provider.DisplayName</option>
+                                }
+                                else
+                                {
+                                    <option value="@provider.Name" disabled>@provider.DisplayName (Not configured)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Tone Selection -->
+                    <div class="mb-6">
+                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Content Tone</label>
+                        <select id="content-tone" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                            <option value="professional, persuasive">Professional & Persuasive</option>
+                            <option value="friendly, conversational">Friendly & Conversational</option>
+                            <option value="luxury, premium">Luxury & Premium</option>
+                            <option value="casual, fun">Casual & Fun</option>
+                            <option value="technical, informative">Technical & Informative</option>
+                        </select>
+                    </div>
+
+                    <!-- Start Button -->
+                    <button type="button" id="start-generation" class="w-full px-6 py-3 text-sm font-bold text-white uppercase bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 transition-all shadow-soft-md">
+                        <i class="fas fa-play me-2"></i> Start Generation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Card (hidden initially) -->
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl hidden" id="progress-card">
+                <div class="p-6">
+                    <h6 class="mb-4 dark:text-white">Progress</h6>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm dark:text-white/80" id="progress-text">0 of 0</span>
+                            <span class="text-sm font-bold dark:text-white" id="progress-percent">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-300" id="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div id="progress-stats" class="text-xs text-slate-500 dark:text-white/60 space-y-1">
+                        <div class="flex justify-between"><span>Success:</span><span id="success-count" class="text-green-500 font-semibold">0</span></div>
+                        <div class="flex justify-between"><span>Failed:</span><span id="fail-count" class="text-red-500 font-semibold">0</span></div>
+                        <div class="flex justify-between"><span>Est. Cost:</span><span id="est-cost" class="font-semibold">$0.00</span></div>
+                    </div>
+
+                    <button type="button" id="stop-generation" class="w-full mt-4 px-4 py-2 text-sm font-bold text-red-500 border border-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hidden">
+                        <i class="fas fa-stop me-2"></i> Stop Generation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+                <div class="flex-auto p-6">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-lightbulb text-white text-xl me-3"></i>
+                        <h6 class="mb-0 text-white">Tips</h6>
+                    </div>
+                    <ul class="text-xs text-white/80 space-y-2">
+                        <li><i class="fas fa-check me-2"></i>Select products with good existing data for best results</li>
+                        <li><i class="fas fa-check me-2"></i>OpenAI GPT-4 provides the highest quality output</li>
+                        <li><i class="fas fa-check me-2"></i>Image generation may take 10-20 seconds per image</li>
+                        <li><i class="fas fa-check me-2"></i>Review generated content before publishing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Selection Panel -->
+        <div class="w-full max-w-full px-3 lg:w-8/12">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0">
+                    <div class="flex justify-between items-center mb-4">
+                        <h6 class="dark:text-white">Select Products <span class="text-sm font-normal text-slate-400" id="selected-count">(0 selected)</span></h6>
+                        <div class="flex gap-2">
+                            <button type="button" id="select-all" class="px-3 py-1.5 text-xs font-bold text-purple-500 border border-purple-500 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20">
+                                Select All
+                            </button>
+                            <button type="button" id="deselect-all" class="px-3 py-1.5 text-xs font-bold text-slate-500 border border-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-800">
+                                Deselect All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    @if (Model.Products.Any())
+                    {
+                        <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+                            <table class="w-full text-sm">
+                                <thead class="sticky top-0 bg-white dark:bg-gray-950">
+                                    <tr class="border-b dark:border-gray-700">
+                                        <th class="p-3 text-left">
+                                            <input type="checkbox" id="check-all" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                                        </th>
+                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Product</th>
+                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Status</th>
+                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table">
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900" data-product-id="@product.NumericId">
+                                            <td class="p-3">
+                                                <input type="checkbox" class="product-check rounded text-purple-500 focus:ring-purple-500 border-gray-300" value="@product.NumericId">
+                                            </td>
+                                            <td class="p-3">
+                                                <div class="dark:text-white font-medium">@product.Title</div>
+                                                <div class="text-xs text-slate-400">ID: @product.NumericId</div>
+                                            </td>
+                                            <td class="p-3">
+                                                <span class="status-badge text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                                    Pending
+                                                </span>
+                                            </td>
+                                            <td class="p-3 result-cell text-xs text-slate-500 dark:text-white/60">-</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-box-open text-4xl text-slate-300 mb-4"></i>
+                            <p class="text-slate-500 dark:text-white/60">No products found. Add some products first.</p>
+                            <a href="/products/create" class="inline-flex items-center mt-4 px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600">
+                                <i class="fas fa-plus me-2"></i> Add Product
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let isGenerating = false;
+            let shouldStop = false;
+
+            // Update selected count
+            function updateSelectedCount() {
+                const count = document.querySelectorAll('.product-check:checked').length;
+                document.getElementById('selected-count').textContent = `(${count} selected)`;
+            }
+
+            // Select all / deselect all
+            document.getElementById('select-all')?.addEventListener('click', () => {
+                document.querySelectorAll('.product-check').forEach(cb => cb.checked = true);
+                updateSelectedCount();
+            });
+
+            document.getElementById('deselect-all')?.addEventListener('click', () => {
+                document.querySelectorAll('.product-check').forEach(cb => cb.checked = false);
+                updateSelectedCount();
+            });
+
+            document.getElementById('check-all')?.addEventListener('change', function() {
+                document.querySelectorAll('.product-check').forEach(cb => cb.checked = this.checked);
+                updateSelectedCount();
+            });
+
+            document.querySelectorAll('.product-check').forEach(cb => {
+                cb.addEventListener('change', updateSelectedCount);
+            });
+
+            // Start generation
+            document.getElementById('start-generation')?.addEventListener('click', async function() {
+                const selectedProducts = Array.from(document.querySelectorAll('.product-check:checked'))
+                    .map(cb => parseInt(cb.value));
+
+                if (selectedProducts.length === 0) {
+                    alert('Please select at least one product');
+                    return;
+                }
+
+                isGenerating = true;
+                shouldStop = false;
+
+                // Show progress card
+                document.getElementById('progress-card').classList.remove('hidden');
+                document.getElementById('stop-generation').classList.remove('hidden');
+                this.disabled = true;
+                this.classList.add('opacity-50');
+
+                const generateTitles = document.getElementById('gen-titles').checked;
+                const generateDescriptions = document.getElementById('gen-descriptions').checked;
+                const generateAltText = document.getElementById('gen-alt-text').checked;
+                const generateImages = document.getElementById('gen-images').checked;
+                const textProvider = document.getElementById('text-provider').value;
+                const imageProvider = document.getElementById('image-provider').value;
+                const tone = document.getElementById('content-tone').value;
+
+                let successCount = 0;
+                let failCount = 0;
+                let totalCost = 0;
+
+                for (let i = 0; i < selectedProducts.length; i++) {
+                    if (shouldStop) break;
+
+                    const productId = selectedProducts[i];
+                    const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+                    const statusBadge = row?.querySelector('.status-badge');
+                    const resultCell = row?.querySelector('.result-cell');
+
+                    // Update progress
+                    const progress = ((i + 1) / selectedProducts.length * 100).toFixed(0);
+                    document.getElementById('progress-bar').style.width = progress + '%';
+                    document.getElementById('progress-percent').textContent = progress + '%';
+                    document.getElementById('progress-text').textContent = `${i + 1} of ${selectedProducts.length}`;
+
+                    // Mark as processing
+                    if (statusBadge) {
+                        statusBadge.textContent = 'Processing...';
+                        statusBadge.className = 'status-badge text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800';
+                    }
+
+                    try {
+                        const results = [];
+
+                        // Generate title
+                        if (generateTitles) {
+                            const response = await fetch('/api/ai/generate/title', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ productId, provider: textProvider })
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                results.push('Title');
+                                totalCost += result.estimatedCost || 0;
+                            }
+                        }
+
+                        // Generate description
+                        if (generateDescriptions) {
+                            const response = await fetch('/api/ai/generate/description', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ productId, provider: textProvider, tone })
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                results.push('Description');
+                                totalCost += result.estimatedCost || 0;
+                            }
+                        }
+
+                        // Mark as success
+                        if (statusBadge) {
+                            statusBadge.textContent = 'Complete';
+                            statusBadge.className = 'status-badge text-xs px-2 py-1 rounded-full bg-green-100 text-green-800';
+                        }
+                        if (resultCell) {
+                            resultCell.textContent = results.length > 0 ? results.join(', ') : 'No changes';
+                        }
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error generating content:', error);
+                        if (statusBadge) {
+                            statusBadge.textContent = 'Failed';
+                            statusBadge.className = 'status-badge text-xs px-2 py-1 rounded-full bg-red-100 text-red-800';
+                        }
+                        if (resultCell) {
+                            resultCell.textContent = 'Error';
+                        }
+                        failCount++;
+                    }
+
+                    // Update stats
+                    document.getElementById('success-count').textContent = successCount;
+                    document.getElementById('fail-count').textContent = failCount;
+                    document.getElementById('est-cost').textContent = '$' + totalCost.toFixed(4);
+
+                    // Small delay between requests
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+
+                isGenerating = false;
+                document.getElementById('stop-generation').classList.add('hidden');
+                document.getElementById('start-generation').disabled = false;
+                document.getElementById('start-generation').classList.remove('opacity-50');
+            });
+
+            // Stop generation
+            document.getElementById('stop-generation')?.addEventListener('click', function() {
+                shouldStop = true;
+                this.textContent = 'Stopping...';
+                this.disabled = true;
+            });
+        });
+    </script>
+}

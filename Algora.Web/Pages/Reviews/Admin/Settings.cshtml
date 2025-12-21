@@ -1,0 +1,278 @@
+@page "/reviews/admin/settings"
+@model Algora.Web.Pages.Reviews.Admin.SettingsModel
+@{
+    ViewData["Title"] = "Review Settings";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Review Settings</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Configure widget display, moderation, and email settings</p>
+        </div>
+        <a href="/reviews/admin" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    <form method="post">
+        <div class="flex flex-wrap -mx-3">
+            <!-- Widget Settings -->
+            <div class="w-full xl:w-1/2 px-3 mb-6">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">
+                        <i class="fas fa-palette text-indigo-500 mr-2"></i> Widget Appearance
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Theme</label>
+                                <select name="WidgetTheme" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                    <option value="light" selected="@(Model.Settings.WidgetTheme == "light")">Light</option>
+                                    <option value="dark" selected="@(Model.Settings.WidgetTheme == "dark")">Dark</option>
+                                    <option value="auto" selected="@(Model.Settings.WidgetTheme == "auto")">Auto (System)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Layout</label>
+                                <select name="WidgetLayout" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                    <option value="list" selected="@(Model.Settings.WidgetLayout == "list")">List</option>
+                                    <option value="grid" selected="@(Model.Settings.WidgetLayout == "grid")">Grid</option>
+                                    <option value="carousel" selected="@(Model.Settings.WidgetLayout == "carousel")">Carousel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary Color</label>
+                                <input type="color" name="PrimaryColor" value="@Model.Settings.PrimaryColor" class="w-full h-10 rounded-lg border-gray-300 dark:border-gray-600" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Accent Color</label>
+                                <input type="color" name="AccentColor" value="@Model.Settings.AccentColor" class="w-full h-10 rounded-lg border-gray-300 dark:border-gray-600" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Star Color</label>
+                                <input type="color" name="StarColor" value="@Model.Settings.StarColor" class="w-full h-10 rounded-lg border-gray-300 dark:border-gray-600" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reviews Per Page</label>
+                            <input type="number" name="ReviewsPerPage" value="@Model.Settings.ReviewsPerPage" min="5" max="50" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="ShowReviewerName" value="true" checked="@Model.Settings.ShowReviewerName" class="rounded" />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Show reviewer name</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="ShowReviewDate" value="true" checked="@Model.Settings.ShowReviewDate" class="rounded" />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Show review date</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="ShowVerifiedBadge" value="true" checked="@Model.Settings.ShowVerifiedBadge" class="rounded" />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Show verified purchase badge</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="ShowPhotoGallery" value="true" checked="@Model.Settings.ShowPhotoGallery" class="rounded" />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Show photo gallery</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="AllowCustomerReviews" value="true" checked="@Model.Settings.AllowCustomerReviews" class="rounded" />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">Allow customers to submit reviews</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moderation Settings -->
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">
+                        <i class="fas fa-gavel text-yellow-500 mr-2"></i> Moderation
+                    </h3>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="RequireApproval" value="true" checked="@Model.Settings.RequireApproval" class="rounded" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Require approval for new reviews</span>
+                        </label>
+
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="autoApprove" name="AutoApproveReviews" value="true" checked="@Model.Settings.AutoApproveReviews" class="rounded" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Auto-approve reviews matching criteria</span>
+                        </label>
+
+                        <div id="autoApproveOptions" class="ml-6 space-y-3 @(Model.Settings.AutoApproveReviews ? "" : "hidden")">
+                            <div>
+                                <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Minimum rating to auto-approve</label>
+                                <select name="AutoApproveMinRating" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                    <option value="5" selected="@(Model.Settings.AutoApproveMinRating == 5)">5 Stars Only</option>
+                                    <option value="4" selected="@(Model.Settings.AutoApproveMinRating == 4)">4+ Stars</option>
+                                    <option value="3" selected="@(Model.Settings.AutoApproveMinRating == 3)">3+ Stars</option>
+                                </select>
+                            </div>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="AutoApproveVerifiedOnly" value="true" checked="@Model.Settings.AutoApproveVerifiedOnly" class="rounded" />
+                                <span class="text-sm text-gray-600 dark:text-gray-400">Only auto-approve verified purchases</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget Embed & API Key -->
+            <div class="w-full xl:w-1/2 px-3 mb-6">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">
+                        <i class="fas fa-code text-green-500 mr-2"></i> Widget Embed Code
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your API Key</label>
+                            <div class="flex gap-2">
+                                <input type="text" readonly value="@Model.Settings.WidgetApiKey" class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white font-mono text-sm" />
+                                <button type="button" onclick="copyApiKey()" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button type="button" onclick="regenerateApiKey()" class="px-3 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50" title="Regenerate API Key">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Embed Code</label>
+                            <p class="text-xs text-gray-500 mb-2">Add this code to your Shopify theme where you want reviews to appear:</p>
+                            <pre class="p-4 bg-gray-900 text-green-400 rounded-lg text-xs overflow-x-auto"><code>&lt;script src="https://yourapp.com/js/algora-reviews-widget.min.js"
+        data-api-key="@Model.Settings.WidgetApiKey"
+        data-product-id="&#123;&#123;product.id&#125;&#125;"
+        async&gt;&lt;/script&gt;
+&lt;div id="algora-reviews"&gt;&lt;/div&gt;</code></pre>
+                            <button type="button" onclick="copyEmbedCode()" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-copy mr-1"></i> Copy Embed Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Settings -->
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">
+                        <i class="fas fa-download text-blue-500 mr-2"></i> Import Settings
+                    </h3>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="ImportPhotos" value="true" checked="@Model.Settings.ImportPhotos" class="rounded" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Import review photos</span>
+                        </label>
+
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="RemoveSourceBranding" value="true" checked="@Model.Settings.RemoveSourceBranding" class="rounded" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Remove Amazon/AliExpress branding from reviews</span>
+                        </label>
+
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="translateReviews" name="TranslateImportedReviews" value="true" checked="@Model.Settings.TranslateImportedReviews" class="rounded" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Translate imported reviews</span>
+                        </label>
+
+                        <div id="translateOptions" class="ml-6 @(Model.Settings.TranslateImportedReviews ? "" : "hidden")">
+                            <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Translate to</label>
+                            <select name="TranslateToLanguage" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                <option value="en" selected="@(Model.Settings.TranslateToLanguage == "en")">English</option>
+                                <option value="es" selected="@(Model.Settings.TranslateToLanguage == "es")">Spanish</option>
+                                <option value="fr" selected="@(Model.Settings.TranslateToLanguage == "fr")">French</option>
+                                <option value="de" selected="@(Model.Settings.TranslateToLanguage == "de")">German</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Settings -->
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">
+                        <i class="fas fa-envelope text-purple-500 mr-2"></i> Email Settings
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From Name</label>
+                            <input type="text" name="DefaultEmailFromName" value="@Model.Settings.DefaultEmailFromName" placeholder="Your Store Name" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">From Email</label>
+                            <input type="email" name="DefaultEmailFromAddress" value="@Model.Settings.DefaultEmailFromAddress" placeholder="reviews@yourstore.com" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end px-3">
+            <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                <i class="fas fa-save mr-2"></i> Save Settings
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('autoApprove').addEventListener('change', function() {
+            document.getElementById('autoApproveOptions').classList.toggle('hidden', !this.checked);
+        });
+
+        document.getElementById('translateReviews').addEventListener('change', function() {
+            document.getElementById('translateOptions').classList.toggle('hidden', !this.checked);
+        });
+
+        function copyApiKey() {
+            navigator.clipboard.writeText('@Model.Settings.WidgetApiKey');
+            alert('API Key copied to clipboard!');
+        }
+
+        function copyEmbedCode() {
+            const code = `<script src="https://yourapp.com/js/algora-reviews-widget.min.js"
+        data-api-key="@Model.Settings.WidgetApiKey"
+        data-product-id="{{product.id}}"
+        async><\/script>
+<div id="algora-reviews"></div>`;
+            navigator.clipboard.writeText(code);
+            alert('Embed code copied to clipboard!');
+        }
+
+        async function regenerateApiKey() {
+            if (confirm('Are you sure you want to regenerate your API key? Your existing widget embeds will stop working until you update them.')) {
+                try {
+                    const response = await fetch('/api/reviews/settings/regenerate-api-key', { method: 'POST' });
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    alert('Failed to regenerate API key');
+                }
+            }
+        }
+    </script>
+}

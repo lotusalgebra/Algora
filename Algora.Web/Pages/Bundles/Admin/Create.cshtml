@@ -1,0 +1,182 @@
+@page "/bundles/admin/create"
+@model Algora.Web.Pages.Bundles.Admin.CreateModel
+@{
+    ViewData["Title"] = "Create Bundle";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <a href="/bundles/admin/list" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+            <i class="fas fa-arrow-left dark:text-white"></i>
+        </a>
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Create Bundle</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Set up a new product bundle</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <form method="post">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Basic Info -->
+                <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Basic Information</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bundle Name *</label>
+                            <input type="text" asp-for="Bundle.Name" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                   placeholder="e.g., Summer Essentials Bundle" />
+                            <span asp-validation-for="Bundle.Name" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                            <textarea asp-for="Bundle.Description" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                      placeholder="Describe what's included in this bundle..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bundle Type *</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="relative flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <input type="radio" asp-for="Bundle.BundleType" value="fixed" class="mt-1" checked />
+                                    <div class="ml-3">
+                                        <span class="block font-medium dark:text-white">Fixed Bundle</span>
+                                        <span class="text-sm text-gray-500">Pre-defined product combination</span>
+                                    </div>
+                                </label>
+                                <label class="relative flex items-start p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <input type="radio" asp-for="Bundle.BundleType" value="mix_and_match" class="mt-1" />
+                                    <div class="ml-3">
+                                        <span class="block font-medium dark:text-white">Mix & Match</span>
+                                        <span class="text-sm text-gray-500">Customer picks from eligible items</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Pricing & Discount</h3>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Type</label>
+                            <select asp-for="Bundle.DiscountType"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                <option value="percentage">Percentage (%)</option>
+                                <option value="fixed_amount">Fixed Amount ($)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Value</label>
+                            <input type="number" asp-for="Bundle.DiscountValue" step="0.01" min="0"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                   placeholder="10" />
+                        </div>
+
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Discount Code (Optional)</label>
+                            <input type="text" asp-for="Bundle.DiscountCode"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                   placeholder="e.g., BUNDLE10" />
+                            <p class="text-xs text-gray-500 mt-1">Create this code in Shopify and enter it here to show customers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mix & Match Options (shown via JS) -->
+                <div id="mix-match-options" class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6" style="display: none;">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Mix & Match Settings</h3>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Minimum Items</label>
+                            <input type="number" asp-for="Bundle.MinItems" min="1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                   placeholder="3" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Maximum Items</label>
+                            <input type="number" asp-for="Bundle.MaxItems" min="1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                   placeholder="5" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Status -->
+                <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Status</h3>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" asp-for="Bundle.IsActive" class="rounded" />
+                            <span class="text-sm dark:text-white">Active on storefront</span>
+                        </label>
+                        <p class="text-xs text-gray-500">Bundle will be created as draft. Edit to change status after adding items.</p>
+                    </div>
+                </div>
+
+                <!-- Image -->
+                <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                    <h3 class="text-lg font-bold mb-4 dark:text-white">Bundle Image</h3>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
+                        <input type="url" asp-for="Bundle.ImageUrl"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                               placeholder="https://..." />
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="bg-white shadow-soft-xl rounded-2xl dark:bg-gray-950 p-6">
+                    <button type="submit" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+                        <i class="fas fa-plus mr-2"></i> Create Bundle
+                    </button>
+                    <a href="/bundles/admin/list" class="block w-full text-center py-3 px-4 mt-3 text-gray-600 hover:text-gray-800 dark:text-gray-400">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bundleTypeInputs = document.querySelectorAll('input[name="Bundle.BundleType"]');
+        const mixMatchOptions = document.getElementById('mix-match-options');
+
+        function updateVisibility() {
+            const selectedType = document.querySelector('input[name="Bundle.BundleType"]:checked')?.value;
+            mixMatchOptions.style.display = selectedType === 'mix_and_match' ? 'block' : 'none';
+        }
+
+        bundleTypeInputs.forEach(input => {
+            input.addEventListener('change', updateVisibility);
+        });
+
+        updateVisibility();
+    });
+</script>

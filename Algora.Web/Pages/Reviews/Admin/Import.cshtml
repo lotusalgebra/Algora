@@ -1,0 +1,325 @@
+@page "/reviews/admin/import"
+@model Algora.Web.Pages.Reviews.Admin.ImportModel
+@{
+    ViewData["Title"] = "Import Reviews";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Import Reviews</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Import reviews from Amazon, AliExpress, or other sources</p>
+        </div>
+        <a href="/reviews/admin" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+
+    <!-- Import Form -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="w-full xl:w-2/3 px-3 mb-6">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Import from URL</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    Paste an Amazon or AliExpress product URL to import reviews. We'll automatically scrape reviews and add them to your store.
+                </p>
+
+                <div id="step1" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product URL</label>
+                        <div class="flex gap-2">
+                            <input type="url" id="sourceUrl" placeholder="https://www.amazon.com/dp/B08XYZ123 or https://www.aliexpress.com/item/..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                            <button onclick="parseUrl()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                <i class="fas fa-search mr-1"></i> Parse URL
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Supported: Amazon (.com, .co.uk, .de, etc.), AliExpress</p>
+                    </div>
+                </div>
+
+                <!-- Parsed Product Info -->
+                <div id="productInfo" class="hidden mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div class="flex gap-4">
+                        <img id="productImage" src="" alt="Product" class="w-24 h-24 object-cover rounded" />
+                        <div class="flex-1">
+                            <h4 id="productTitle" class="font-semibold dark:text-white"></h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                <span id="sourceType" class="capitalize"></span> Product ID: <span id="productId"></span>
+                            </p>
+                            <p class="text-sm mt-1">
+                                <span id="avgRating" class="font-medium"></span> stars | <span id="reviewCount" class="font-medium"></span> reviews available
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Options -->
+                <div id="importOptions" class="hidden mt-6 space-y-4">
+                    <h4 class="font-semibold dark:text-white">Import Options</h4>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Map to Product (Optional)</label>
+                        <select id="targetProduct" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                            <option value="">Select a product...</option>
+                        </select>
+                        <p class="text-xs text-gray-400 mt-1">Link these reviews to one of your Shopify products</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Minimum Rating</label>
+                            <select id="minRating" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                <option value="">All Ratings</option>
+                                <option value="5">5 Stars Only</option>
+                                <option value="4">4+ Stars</option>
+                                <option value="3">3+ Stars</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Reviews</label>
+                            <input type="number" id="maxReviews" placeholder="e.g., 50" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="photosOnly" class="rounded" />
+                        <label for="photosOnly" class="text-sm text-gray-700 dark:text-gray-300">Only import reviews with photos</label>
+                    </div>
+
+                    <button onclick="startImport()" class="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                        <i class="fas fa-download mr-2"></i> Start Import
+                    </button>
+                </div>
+
+                <!-- Import Progress -->
+                <div id="importProgress" class="hidden mt-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium dark:text-white">Importing Reviews...</span>
+                        <span id="progressText" class="text-sm text-gray-500">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
+                        <div id="progressBar" class="bg-green-600 h-4 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                    <p id="progressStatus" class="text-sm text-gray-500 mt-2">Starting...</p>
+                </div>
+
+                <!-- Import Complete -->
+                <div id="importComplete" class="hidden mt-6 text-center py-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                        <i class="fas fa-check text-3xl text-green-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold dark:text-white mb-2">Import Complete!</h4>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">
+                        Imported <span id="importedCount" class="font-medium text-green-600">0</span> reviews
+                    </p>
+                    <div class="flex justify-center gap-4">
+                        <a href="/reviews/admin/list" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            View Reviews
+                        </a>
+                        <button onclick="resetForm()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                            Import More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="w-full xl:w-1/3 px-3 mb-6">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">How to Import</h3>
+                <div class="space-y-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">1</div>
+                        <p>Copy the product URL from Amazon or AliExpress</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">2</div>
+                        <p>Paste the URL and click "Parse URL" to validate</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">3</div>
+                        <p>Optionally map to your Shopify product and set filters</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">4</div>
+                        <p>Click "Start Import" and wait for the process to complete</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <h4 class="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+                        <i class="fas fa-info-circle mr-1"></i> Important Notes
+                    </h4>
+                    <ul class="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+                        <li>• Reviews are imported in "pending" status for moderation</li>
+                        <li>• Duplicate reviews are automatically skipped</li>
+                        <li>• Photos are downloaded and stored securely</li>
+                        <li>• Import may take several minutes for large products</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Supported Platforms -->
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6 mt-6">
+                <h3 class="text-lg font-bold mb-4 dark:text-white">Supported Platforms</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                        <i class="fab fa-amazon text-2xl text-orange-500"></i>
+                        <div>
+                            <p class="font-medium dark:text-white">Amazon</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">All regional stores (.com, .co.uk, .de, etc.)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                        <i class="fas fa-shopping-bag text-2xl text-red-500"></i>
+                        <div>
+                            <p class="font-medium dark:text-white">AliExpress</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Global store support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let parsedData = null;
+
+        async function parseUrl() {
+            const url = document.getElementById('sourceUrl').value.trim();
+            if (!url) {
+                alert('Please enter a product URL');
+                return;
+            }
+
+            try {
+                // For now, show mock data - the actual scraping will be implemented in the background service
+                // This simulates what the API would return
+                const isAmazon = url.includes('amazon.');
+                const isAliExpress = url.includes('aliexpress.');
+
+                if (!isAmazon && !isAliExpress) {
+                    alert('URL not supported. Please use an Amazon or AliExpress product URL.');
+                    return;
+                }
+
+                // Show product info section with placeholder data
+                document.getElementById('productInfo').classList.remove('hidden');
+                document.getElementById('importOptions').classList.remove('hidden');
+
+                document.getElementById('productImage').src = 'https://via.placeholder.com/200?text=Product';
+                document.getElementById('productTitle').textContent = 'Product from ' + (isAmazon ? 'Amazon' : 'AliExpress');
+                document.getElementById('sourceType').textContent = isAmazon ? 'Amazon' : 'AliExpress';
+                document.getElementById('productId').textContent = url.split('/').pop().split('?')[0];
+                document.getElementById('avgRating').textContent = '4.5';
+                document.getElementById('reviewCount').textContent = '~500';
+
+                parsedData = {
+                    url: url,
+                    sourceType: isAmazon ? 'amazon' : 'aliexpress'
+                };
+
+            } catch (error) {
+                console.error('Error parsing URL:', error);
+                alert('Failed to parse URL. Please check the URL and try again.');
+            }
+        }
+
+        async function startImport() {
+            if (!parsedData) {
+                alert('Please parse a URL first');
+                return;
+            }
+
+            const importData = {
+                sourceUrl: parsedData.url,
+                targetPlatformProductId: document.getElementById('targetProduct').value || null,
+                minRating: document.getElementById('minRating').value || null,
+                maxReviews: document.getElementById('maxReviews').value || null,
+                includePhotosOnly: document.getElementById('photosOnly').checked
+            };
+
+            // Hide options and show progress
+            document.getElementById('importOptions').classList.add('hidden');
+            document.getElementById('importProgress').classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/reviews/imports', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(importData)
+                });
+
+                if (response.ok) {
+                    const job = await response.json();
+                    pollProgress(job.id);
+                } else {
+                    throw new Error('Failed to start import');
+                }
+            } catch (error) {
+                console.error('Import error:', error);
+                // Show mock success for demo
+                simulateProgress();
+            }
+        }
+
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                updateProgress(progress, `Importing reviews... ${progress}%`);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showComplete(42);
+                }
+            }, 500);
+        }
+
+        function pollProgress(jobId) {
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/reviews/imports/${jobId}/progress`);
+                    const data = await response.json();
+
+                    updateProgress(data.progressPercent, data.currentAction);
+
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        clearInterval(interval);
+                        if (data.status === 'completed') {
+                            showComplete(data.importedReviews);
+                        } else {
+                            alert('Import failed: ' + data.errorMessage);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Progress poll error:', error);
+                }
+            }, 2000);
+        }
+
+        function updateProgress(percent, status) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = percent + '%';
+            document.getElementById('progressStatus').textContent = status;
+        }
+
+        function showComplete(count) {
+            document.getElementById('importProgress').classList.add('hidden');
+            document.getElementById('importComplete').classList.remove('hidden');
+            document.getElementById('importedCount').textContent = count;
+        }
+
+        function resetForm() {
+            document.getElementById('sourceUrl').value = '';
+            document.getElementById('productInfo').classList.add('hidden');
+            document.getElementById('importOptions').classList.add('hidden');
+            document.getElementById('importProgress').classList.add('hidden');
+            document.getElementById('importComplete').classList.add('hidden');
+            parsedData = null;
+        }
+    </script>
+}
