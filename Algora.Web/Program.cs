@@ -1,5 +1,6 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
+using Algora.WhatsApp;
 using Algora.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register all infrastructure services (DB, Shopify, PDF, etc.)
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Register WhatsApp module (Facebook WhatsApp Business API)
+builder.Services.AddWhatsAppModule(builder.Configuration);
 
 // ----- Auth Microservice Client -----
 builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>();
