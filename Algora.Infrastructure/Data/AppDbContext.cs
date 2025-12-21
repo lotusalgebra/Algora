@@ -65,12 +65,6 @@ namespace Algora.Infrastructure.Data
         public DbSet<EmailAutomationStep> EmailAutomationSteps { get; set; } = null!;
         public DbSet<EmailAutomationEnrollment> EmailAutomationEnrollments { get; set; } = null!;
 
-        // ----- WhatsApp entities -----
-        public DbSet<WhatsAppTemplate> WhatsAppTemplates { get; set; } = null!;
-        public DbSet<WhatsAppMessage> WhatsAppMessages { get; set; } = null!;
-        public DbSet<WhatsAppConversation> WhatsAppConversations { get; set; } = null!;
-        public DbSet<WhatsAppCampaign> WhatsAppCampaigns { get; set; } = null!;
-
         // ----- SMS entities -----
         public DbSet<SmsTemplate> SmsTemplates { get; set; } = null!;
         public DbSet<SmsMessage> SmsMessages { get; set; } = null!;
@@ -482,53 +476,6 @@ namespace Algora.Infrastructure.Data
                 b.HasOne(x => x.Automation).WithMany(a => a.Enrollments).HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Subscriber).WithMany().HasForeignKey(x => x.SubscriberId).OnDelete(DeleteBehavior.SetNull);
-            });
-
-            // ==================== WHATSAPP ENTITIES ====================
-
-            modelBuilder.Entity<WhatsAppTemplate>(b =>
-            {
-                b.HasKey(x => x.Id);
-                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
-                b.Property(x => x.Name).IsRequired().HasMaxLength(100);
-                b.Property(x => x.Language).HasMaxLength(10);
-                b.Property(x => x.Category).HasMaxLength(20);
-                b.Property(x => x.Status).HasMaxLength(20);
-                b.HasIndex(x => new { x.ShopDomain, x.Name, x.Language }).IsUnique();
-            });
-
-            modelBuilder.Entity<WhatsAppMessage>(b =>
-            {
-                b.HasKey(x => x.Id);
-                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
-                b.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(20);
-                b.Property(x => x.Direction).HasMaxLength(10);
-                b.Property(x => x.MessageType).HasMaxLength(20);
-                b.Property(x => x.Status).HasMaxLength(20);
-                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
-                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
-                b.HasOne(x => x.Template).WithMany().HasForeignKey(x => x.TemplateId).OnDelete(DeleteBehavior.SetNull);
-                b.HasIndex(x => new { x.ShopDomain, x.CreatedAt });
-            });
-
-            modelBuilder.Entity<WhatsAppConversation>(b =>
-            {
-                b.HasKey(x => x.Id);
-                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
-                b.Property(x => x.PhoneNumber).IsRequired().HasMaxLength(20);
-                b.Property(x => x.Status).HasMaxLength(20);
-                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
-                b.HasIndex(x => new { x.ShopDomain, x.PhoneNumber }).IsUnique();
-            });
-
-            modelBuilder.Entity<WhatsAppCampaign>(b =>
-            {
-                b.HasKey(x => x.Id);
-                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
-                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
-                b.Property(x => x.Status).HasMaxLength(20);
-                b.HasOne(x => x.Template).WithMany().HasForeignKey(x => x.TemplateId).OnDelete(DeleteBehavior.Restrict);
-                b.HasOne(x => x.Segment).WithMany().HasForeignKey(x => x.SegmentId).OnDelete(DeleteBehavior.SetNull);
             });
 
             // ==================== SMS ENTITIES ====================

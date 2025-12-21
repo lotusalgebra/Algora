@@ -65,7 +65,6 @@ public static class DependencyInjection
         services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();
         services.AddScoped<IEmailMarketingService, EmailMarketingService>();
         services.AddScoped<ISmsService, SmsService>();
-        services.AddScoped<IWhatsAppService, WhatsAppService>();
         services.AddScoped<INotificationService, NotificationService>();
 
         // ----- Template and PDF generation -----

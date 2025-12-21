@@ -2,6 +2,8 @@ using Algora.Application.DTOs;
 using Algora.Application.DTOs.Communication;
 using Algora.Application.Interfaces;
 using Algora.Infrastructure.Shopify;
+using Algora.WhatsApp.DTOs;
+using Algora.WhatsApp.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Algora.Infrastructure.Services;

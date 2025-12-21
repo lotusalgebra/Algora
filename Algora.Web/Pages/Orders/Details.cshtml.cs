@@ -1,6 +1,7 @@
 using Algora.Application.DTOs;
-using Algora.Application.DTOs.Communication;
 using Algora.Application.Interfaces;
+using Algora.WhatsApp.DTOs;
+using Algora.WhatsApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
