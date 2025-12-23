@@ -1,0 +1,232 @@
+@page "/customer-hub/loyalty"
+@model Algora.Web.Pages.CustomerHub.Loyalty.IndexModel
+@{
+    ViewData["Title"] = "Loyalty Program";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h5 class="font-bold dark:text-white">Loyalty Program</h5>
+            <p class="text-sm text-slate-400">Manage your customer loyalty program</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="/customer-hub/loyalty/settings" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-gray-700 to-gray-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                <i class="fas fa-cog me-2"></i> Settings
+            </a>
+            <a href="/customer-hub/loyalty/rewards" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                <i class="fas fa-gift me-2"></i> Rewards
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Program == null)
+    {
+        <!-- No Program -->
+        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+            <div class="flex-auto p-6 text-center">
+                <i class="fas fa-crown fa-4x text-gray-300 mb-4"></i>
+                <h5 class="mb-2 dark:text-white">No Loyalty Program Configured</h5>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Create a loyalty program to reward your customers and increase retention.</p>
+                <a href="/customer-hub/loyalty/settings" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                    <i class="fas fa-plus me-2"></i> Create Loyalty Program
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Program Overview -->
+        <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-4">
+                        <div class="flex flex-row -mx-3">
+                            <div class="flex-none w-2/3 max-w-full px-3">
+                                <div>
+                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Members</p>
+                                    <h5 class="mb-0 font-bold dark:text-white">@Model.Analytics.TotalMembers.ToString("N0")</h5>
+                                </div>
+                            </div>
+                            <div class="px-3 text-right basis-1/3">
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500">
+                                    <i class="fas fa-users text-lg relative top-3.5 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-4">
+                        <div class="flex flex-row -mx-3">
+                            <div class="flex-none w-2/3 max-w-full px-3">
+                                <div>
+                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Active Members</p>
+                                    <h5 class="mb-0 font-bold dark:text-white text-green-600">@Model.Analytics.ActiveMembers.ToString("N0")</h5>
+                                </div>
+                            </div>
+                            <div class="px-3 text-right basis-1/3">
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                    <i class="fas fa-user-check text-lg relative top-3.5 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-4">
+                        <div class="flex flex-row -mx-3">
+                            <div class="flex-none w-2/3 max-w-full px-3">
+                                <div>
+                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Points Issued</p>
+                                    <h5 class="mb-0 font-bold dark:text-white">@Model.Analytics.TotalPointsIssued.ToString("N0")</h5>
+                                </div>
+                            </div>
+                            <div class="px-3 text-right basis-1/3">
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                    <i class="fas fa-star text-lg relative top-3.5 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-4">
+                        <div class="flex flex-row -mx-3">
+                            <div class="flex-none w-2/3 max-w-full px-3">
+                                <div>
+                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Points Redeemed</p>
+                                    <h5 class="mb-0 font-bold dark:text-white text-orange-600">@Model.Analytics.TotalPointsRedeemed.ToString("N0")</h5>
+                                </div>
+                            </div>
+                            <div class="px-3 text-right basis-1/3">
+                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-300">
+                                    <i class="fas fa-gift text-lg relative top-3.5 text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tiers & Members -->
+        <div class="flex flex-wrap -mx-3">
+            <!-- Tiers -->
+            <div class="flex-none w-full max-w-full px-3 lg:w-1/3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white">Loyalty Tiers</h6>
+                    </div>
+                    <div class="flex-auto p-6">
+                        @if (Model.Tiers.Count == 0)
+                        {
+                            <div class="text-center py-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No tiers configured.</p>
+                                <a href="/customer-hub/loyalty/settings" class="text-fuchsia-500 hover:text-fuchsia-700 text-sm">Add tiers</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="flex flex-col gap-4">
+                                @foreach (var tier in Model.Tiers.OrderBy(t => t.DisplayOrder))
+                                {
+                                    Model.Analytics.MembersByTier.TryGetValue(tier.Name, out var memberCount);
+
+                                    <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                                        <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: @(tier.Color ?? "#6b7280")">
+                                            <i class="@(tier.Icon ?? "fas fa-medal") text-lg text-white"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@tier.Name</p>
+                                            <p class="text-xs text-slate-400 mb-0">@tier.MinimumPoints.ToString("N0")+ @Model.Program.PointsName</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-lg font-bold text-fuchsia-500 mb-0">@memberCount</p>
+                                            <p class="text-xs text-slate-400 mb-0">members</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Members -->
+            <div class="flex-none w-full max-w-full px-3 lg:w-2/3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <h6 class="mb-0 dark:text-white">Top Members</h6>
+                            <a href="/customer-hub/loyalty/members" class="text-sm text-fuchsia-500 hover:text-fuchsia-700">View All</a>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6">
+                        @if (Model.TopMembers.Count == 0)
+                        {
+                            <div class="text-center py-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No members yet.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="overflow-x-auto">
+                                <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
+                                    <thead class="align-bottom">
+                                        <tr>
+                                            <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Customer</th>
+                                            <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Tier</th>
+                                            <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Balance</th>
+                                            <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Lifetime</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var member in Model.TopMembers)
+                                        {
+                                            <tr>
+                                                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap">
+                                                    <div>
+                                                        <p class="mb-0 text-sm font-semibold leading-normal dark:text-white">@(member.CustomerName ?? "Customer")</p>
+                                                        <p class="mb-0 text-xs leading-tight text-slate-400">@member.CustomerEmail</p>
+                                                    </div>
+                                                </td>
+                                                <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
+                                                    @if (member.CurrentTierName != null)
+                                                    {
+                                                        var tierColor = Model.Tiers.FirstOrDefault(t => t.Name == member.CurrentTierName)?.Color ?? "#6b7280";
+                                                        <span class="px-2.5 py-1 text-xs font-semibold rounded-full" style="background-color: @tierColor; color: white;">@member.CurrentTierName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-xs text-slate-400">No tier</span>
+                                                    }
+                                                </td>
+                                                <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
+                                                    <span class="text-sm font-bold text-fuchsia-500">@member.PointsBalance.ToString("N0")</span>
+                                                </td>
+                                                <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
+                                                    <span class="text-sm text-slate-700 dark:text-white">@member.LifetimePoints.ToString("N0")</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
