@@ -20,5 +20,16 @@ namespace Algora.Domain.Entities
         public DateTime? CompletedAt { get; set; }
         public DateTime? ExitedAt { get; set; }
         public string? ExitReason { get; set; }
+
+        // Marketing automation fields
+        public long? AbandonedCheckoutId { get; set; } // Shopify checkout ID for abandoned cart
+        public int? OrderId { get; set; } // Order that triggered post-purchase automation
+        public Order? Order { get; set; }
+        public int? ABTestVariantId { get; set; }
+        public ABTestVariant? ABTestVariant { get; set; }
+        public string? Metadata { get; set; } // JSON for additional context data
+
+        public ICollection<AutomationStepLog> StepLogs { get; set; } = new List<AutomationStepLog>();
+        public ICollection<ABTestResult> ABTestResults { get; set; } = new List<ABTestResult>();
     }
 }

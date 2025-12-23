@@ -161,6 +161,12 @@ public static class DependencyInjection
         services.AddScoped<IAnalyticsService, AnalyticsService>();
         services.AddHostedService<AnalyticsBackgroundService>();
 
+        // ----- Marketing Automation -----
+        services.AddScoped<IMarketingAutomationService, MarketingAutomationService>();
+        services.AddScoped<IPersonalizationService, PersonalizationService>();
+        services.AddScoped<IABTestService, ABTestService>();
+        services.AddHostedService<MarketingAutomationBackgroundService>();
+
         return services;
     }
 }

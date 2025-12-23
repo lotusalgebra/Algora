@@ -65,6 +65,12 @@ namespace Algora.Infrastructure.Data
         public DbSet<EmailAutomationStep> EmailAutomationSteps { get; set; } = null!;
         public DbSet<EmailAutomationEnrollment> EmailAutomationEnrollments { get; set; } = null!;
 
+        // ----- Marketing Automation entities -----
+        public DbSet<ABTestVariant> ABTestVariants { get; set; } = null!;
+        public DbSet<ABTestResult> ABTestResults { get; set; } = null!;
+        public DbSet<AutomationStepLog> AutomationStepLogs { get; set; } = null!;
+        public DbSet<WinbackRule> WinbackRules { get; set; } = null!;
+
         // ----- SMS entities -----
         public DbSet<SmsTemplate> SmsTemplates { get; set; } = null!;
         public DbSet<SmsMessage> SmsMessages { get; set; } = null!;
@@ -491,9 +497,62 @@ namespace Algora.Infrastructure.Data
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Email).IsRequired().HasMaxLength(255);
                 b.Property(x => x.Status).HasMaxLength(20);
+                b.Property(x => x.ExitReason).HasMaxLength(500);
+                b.Property(x => x.Metadata).HasMaxLength(4000);
                 b.HasOne(x => x.Automation).WithMany(a => a.Enrollments).HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Subscriber).WithMany().HasForeignKey(x => x.SubscriberId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ABTestVariant).WithMany().HasForeignKey(x => x.ABTestVariantId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.AutomationId, x.Email });
+                b.HasIndex(x => new { x.AutomationId, x.Status });
+            });
+
+            // ==================== MARKETING AUTOMATION ENTITIES ====================
+
+            modelBuilder.Entity<ABTestVariant>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.VariantName).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Subject).HasMaxLength(500);
+                b.Property(x => x.Revenue).HasPrecision(18, 4);
+                b.HasOne(x => x.Automation).WithMany().HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Step).WithMany(s => s.ABTestVariants).HasForeignKey(x => x.StepId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.AutomationId, x.StepId });
+            });
+
+            modelBuilder.Entity<ABTestResult>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ConversionValue).HasPrecision(18, 4);
+                b.HasOne(x => x.Enrollment).WithMany(e => e.ABTestResults).HasForeignKey(x => x.EnrollmentId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Variant).WithMany(v => v.Results).HasForeignKey(x => x.VariantId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.EnrollmentId, x.VariantId });
+            });
+
+            modelBuilder.Entity<AutomationStepLog>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Channel).HasMaxLength(20);
+                b.Property(x => x.ExternalMessageId).HasMaxLength(200);
+                b.Property(x => x.ErrorMessage).HasMaxLength(2000);
+                b.HasOne(x => x.Enrollment).WithMany(e => e.StepLogs).HasForeignKey(x => x.EnrollmentId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Step).WithMany(s => s.StepLogs).HasForeignKey(x => x.StepId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.EnrollmentId, x.StepId });
+                b.HasIndex(x => new { x.Status, x.ScheduledAt });
+            });
+
+            modelBuilder.Entity<WinbackRule>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.MinimumLifetimeValue).HasPrecision(18, 4);
+                b.Property(x => x.CustomerTags).HasMaxLength(1000);
+                b.Property(x => x.ExcludeTags).HasMaxLength(1000);
+                b.HasOne(x => x.Automation).WithMany().HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
             });
 
             // ==================== SMS ENTITIES ====================
