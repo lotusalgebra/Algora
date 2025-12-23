@@ -1,0 +1,361 @@
+@page
+@model Algora.Web.Pages.AI.SeoModel
+@{
+    ViewData["Title"] = "SEO Meta Tag Optimizer";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
+                    <li class="breadcrumb-item active">SEO Optimizer</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">SEO Meta Tag Optimizer</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Product Selection -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..." />
+                    </div>
+                    <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                        @foreach (var product in Model.Products)
+                        {
+                            <a href="#" class="list-group-item list-group-item-action product-item"
+                               data-id="@product.Id"
+                               data-title="@product.Title"
+                               data-description="@product.Description"
+                               data-type="@product.ProductType"
+                               data-vendor="@product.Vendor"
+                               data-tags="@product.Tags"
+                               data-seo-score="@product.SeoScore">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 text-truncate" style="max-width: 200px;">@product.Title</h6>
+                                        <small class="text-muted">@(product.Vendor ?? "No vendor")</small>
+                                    </div>
+                                    @if (product.SeoScore > 0)
+                                    {
+                                        var scoreClass = product.SeoScore >= 80 ? "bg-success" : product.SeoScore >= 50 ? "bg-warning" : "bg-danger";
+                                        <span class="badge @scoreClass">@product.SeoScore</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">No SEO</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO Optimization Panel -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO Optimization</h5>
+                    <button type="button" id="optimizeBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-magic me-2"></i>Optimize with AI
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="noProductSelected" class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Select a product to optimize its SEO</p>
+                    </div>
+
+                    <div id="seoPanel" class="d-none">
+                        <!-- Product Info -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <h5 id="selectedProductTitle" class="mb-1"></h5>
+                            <p class="text-muted mb-0" id="selectedProductMeta"></p>
+                        </div>
+
+                        <!-- SEO Score -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">SEO Score</h6>
+                                <span id="seoScoreBadge" class="badge bg-secondary fs-5">--</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div id="seoScoreBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small id="seoScoreExplanation" class="text-muted"></small>
+                        </div>
+
+                        <!-- Loading -->
+                        <div id="loadingPanel" class="text-center py-4 d-none">
+                            <div class="spinner-border text-success" role="status"></div>
+                            <p class="text-muted mt-2">Analyzing and optimizing SEO...</p>
+                        </div>
+
+                        <!-- Meta Title -->
+                        <div class="mb-4" id="metaTitleSection">
+                            <label class="form-label d-flex justify-content-between">
+                                <span><i class="fas fa-heading me-2"></i>Meta Title</span>
+                                <small class="text-muted"><span id="metaTitleCount">0</span>/60 characters</small>
+                            </label>
+                            <input type="text" id="metaTitle" class="form-control" maxlength="60" placeholder="Enter meta title..." />
+                            <small class="text-muted">The title that appears in search engine results</small>
+                        </div>
+
+                        <!-- Meta Description -->
+                        <div class="mb-4" id="metaDescSection">
+                            <label class="form-label d-flex justify-content-between">
+                                <span><i class="fas fa-align-left me-2"></i>Meta Description</span>
+                                <small class="text-muted"><span id="metaDescCount">0</span>/155 characters</small>
+                            </label>
+                            <textarea id="metaDescription" class="form-control" rows="3" maxlength="155" placeholder="Enter meta description..."></textarea>
+                            <small class="text-muted">A compelling description shown in search results</small>
+                        </div>
+
+                        <!-- Focus Keyword -->
+                        <div class="mb-4" id="focusKeywordSection">
+                            <label class="form-label"><i class="fas fa-key me-2"></i>Focus Keyword</label>
+                            <input type="text" id="focusKeyword" class="form-control" placeholder="Primary keyword phrase..." />
+                        </div>
+
+                        <!-- Keywords -->
+                        <div class="mb-4" id="keywordsSection">
+                            <label class="form-label"><i class="fas fa-tags me-2"></i>Related Keywords</label>
+                            <div id="keywordTags" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            <input type="text" id="keywordsInput" class="form-control" placeholder="Comma-separated keywords..." />
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div id="actionButtons" class="d-flex gap-2 d-none">
+                            <button type="button" id="applyBtn" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Save SEO Data
+                            </button>
+                            <button type="button" id="reoptimizeBtn" class="btn btn-outline-success">
+                                <i class="fas fa-redo me-2"></i>Re-optimize
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="alertContainer" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedProductId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const productSearch = document.getElementById('productSearch');
+            const productItems = document.querySelectorAll('.product-item');
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            const reoptimizeBtn = document.getElementById('reoptimizeBtn');
+            const applyBtn = document.getElementById('applyBtn');
+            const metaTitle = document.getElementById('metaTitle');
+            const metaDescription = document.getElementById('metaDescription');
+
+            // Character counters
+            metaTitle.addEventListener('input', () => {
+                document.getElementById('metaTitleCount').textContent = metaTitle.value.length;
+            });
+            metaDescription.addEventListener('input', () => {
+                document.getElementById('metaDescCount').textContent = metaDescription.value.length;
+            });
+
+            // Search filter
+            productSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                productItems.forEach(item => {
+                    const title = item.dataset.title.toLowerCase();
+                    item.style.display = title.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Product selection
+            productItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    productItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    selectedProductId = this.dataset.id;
+                    document.getElementById('noProductSelected').classList.add('d-none');
+                    document.getElementById('seoPanel').classList.remove('d-none');
+
+                    document.getElementById('selectedProductTitle').textContent = this.dataset.title;
+                    document.getElementById('selectedProductMeta').textContent =
+                        `${this.dataset.vendor || 'No vendor'} • ${this.dataset.type || 'No type'}`;
+
+                    // Update SEO score
+                    const seoScore = parseInt(this.dataset.seoScore) || 0;
+                    updateSeoScore(seoScore);
+
+                    // Clear fields
+                    metaTitle.value = '';
+                    metaDescription.value = '';
+                    document.getElementById('focusKeyword').value = '';
+                    document.getElementById('keywordTags').innerHTML = '';
+                    document.getElementById('keywordsInput').value = '';
+                    document.getElementById('metaTitleCount').textContent = '0';
+                    document.getElementById('metaDescCount').textContent = '0';
+
+                    optimizeBtn.disabled = false;
+                    document.getElementById('actionButtons').classList.add('d-none');
+
+                    // Load existing SEO data if available
+                    loadExistingSeoData(selectedProductId);
+                });
+            });
+
+            async function loadExistingSeoData(productId) {
+                try {
+                    const response = await fetch(`/AI/Seo?handler=GetSeoData&productId=${productId}`);
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        metaTitle.value = data.data.metaTitle || '';
+                        metaDescription.value = data.data.metaDescription || '';
+                        document.getElementById('focusKeyword').value = data.data.focusKeyword || '';
+                        document.getElementById('keywordsInput').value = (data.data.keywords || []).join(', ');
+                        updateKeywordTags(data.data.keywords || []);
+                        updateSeoScore(data.data.seoScore || 0, data.data.seoScoreExplanation);
+                        document.getElementById('metaTitleCount').textContent = metaTitle.value.length;
+                        document.getElementById('metaDescCount').textContent = metaDescription.value.length;
+                        document.getElementById('actionButtons').classList.remove('d-none');
+                    }
+                } catch (error) {
+                    console.error('Error loading SEO data:', error);
+                }
+            }
+
+            async function optimizeSeo() {
+                if (!selectedProductId) return;
+
+                document.getElementById('loadingPanel').classList.remove('d-none');
+                document.getElementById('actionButtons').classList.add('d-none');
+                optimizeBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/AI/Seo?handler=Optimize', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({ productId: parseInt(selectedProductId) })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        metaTitle.value = result.data.metaTitle || '';
+                        metaDescription.value = result.data.metaDescription || '';
+                        document.getElementById('focusKeyword').value = result.data.focusKeyword || '';
+                        document.getElementById('keywordsInput').value = (result.data.keywords || []).join(', ');
+                        updateKeywordTags(result.data.keywords || []);
+                        updateSeoScore(result.data.seoScore || 0, result.data.seoScoreExplanation);
+                        document.getElementById('metaTitleCount').textContent = metaTitle.value.length;
+                        document.getElementById('metaDescCount').textContent = metaDescription.value.length;
+                        document.getElementById('actionButtons').classList.remove('d-none');
+                        showAlert('SEO optimized successfully!', 'success');
+                    } else {
+                        showAlert(result.error || 'Failed to optimize SEO', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error: ' + error.message, 'danger');
+                } finally {
+                    document.getElementById('loadingPanel').classList.add('d-none');
+                    optimizeBtn.disabled = false;
+                }
+            }
+
+            optimizeBtn.addEventListener('click', optimizeSeo);
+            reoptimizeBtn.addEventListener('click', optimizeSeo);
+
+            applyBtn.addEventListener('click', async function() {
+                if (!selectedProductId) return;
+
+                try {
+                    const response = await fetch('/AI/Seo?handler=Apply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({ productId: parseInt(selectedProductId) })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showAlert('SEO data saved successfully!', 'success');
+                        // Update the product item badge
+                        const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
+                        if (productItem) {
+                            const score = parseInt(document.getElementById('seoScoreBadge').textContent) || 0;
+                            productItem.dataset.seoScore = score;
+                            const badge = productItem.querySelector('.badge');
+                            if (badge) {
+                                badge.className = `badge ${score >= 80 ? 'bg-success' : score >= 50 ? 'bg-warning' : 'bg-danger'}`;
+                                badge.textContent = score;
+                            }
+                        }
+                    } else {
+                        showAlert(result.error || 'Failed to save SEO data', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error: ' + error.message, 'danger');
+                }
+            });
+
+            function updateSeoScore(score, explanation = '') {
+                const scoreBadge = document.getElementById('seoScoreBadge');
+                const scoreBar = document.getElementById('seoScoreBar');
+                const scoreExpl = document.getElementById('seoScoreExplanation');
+
+                scoreBadge.textContent = score;
+                scoreBar.style.width = `${score}%`;
+
+                if (score >= 80) {
+                    scoreBadge.className = 'badge bg-success fs-5';
+                    scoreBar.className = 'progress-bar bg-success';
+                } else if (score >= 50) {
+                    scoreBadge.className = 'badge bg-warning fs-5';
+                    scoreBar.className = 'progress-bar bg-warning';
+                } else {
+                    scoreBadge.className = 'badge bg-danger fs-5';
+                    scoreBar.className = 'progress-bar bg-danger';
+                }
+
+                scoreExpl.textContent = explanation;
+            }
+
+            function updateKeywordTags(keywords) {
+                const container = document.getElementById('keywordTags');
+                container.innerHTML = keywords.map(k =>
+                    `<span class="badge bg-secondary">${k}</span>`
+                ).join('');
+            }
+        });
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+    </script>
+}

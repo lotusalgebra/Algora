@@ -142,6 +142,12 @@ namespace Algora.Infrastructure.Data
         public DbSet<LoyaltyReward> LoyaltyRewards { get; set; } = null!;
         public DbSet<CustomerLoyalty> CustomerLoyalties { get; set; } = null!;
 
+        // ----- AI Assistant entities -----
+        public DbSet<ChatbotConversation> ChatbotConversations { get; set; } = null!;
+        public DbSet<ChatbotMessage> ChatbotMessages { get; set; } = null!;
+        public DbSet<ProductSeoData> ProductSeoData { get; set; } = null!;
+        public DbSet<PricingSuggestion> PricingSuggestions { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1400,6 +1406,62 @@ namespace Algora.Infrastructure.Data
                 b.HasOne(x => x.LoyaltyProgram).WithMany(p => p.Members).HasForeignKey(x => x.LoyaltyProgramId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.CurrentTier).WithMany().HasForeignKey(x => x.CurrentTierId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.ReferredBy).WithMany(cl => cl.Referrals).HasForeignKey(x => x.ReferredById).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            // ==================== AI ASSISTANT ENTITIES ====================
+
+            modelBuilder.Entity<ChatbotConversation>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.SessionId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.CustomerEmail).HasMaxLength(200);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Topic).HasMaxLength(100);
+                b.HasIndex(x => x.ShopDomain);
+                b.HasIndex(x => x.SessionId);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.RelatedOrder).WithMany().HasForeignKey(x => x.RelatedOrderId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ChatbotMessage>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Role).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Intent).HasMaxLength(50);
+                b.Property(x => x.Confidence).HasPrecision(5, 2);
+                b.Property(x => x.SuggestedActions).HasMaxLength(500);
+                b.HasIndex(x => x.ConversationId);
+                b.HasOne(x => x.Conversation).WithMany(c => c.Messages).HasForeignKey(x => x.ConversationId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ProductSeoData>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.MetaTitle).HasMaxLength(70);
+                b.Property(x => x.MetaDescription).HasMaxLength(160);
+                b.Property(x => x.Keywords).HasMaxLength(500);
+                b.Property(x => x.FocusKeyword).HasMaxLength(100);
+                b.Property(x => x.Provider).HasMaxLength(50);
+                b.HasIndex(x => x.ProductId).IsUnique();
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PricingSuggestion>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CurrentPrice).HasPrecision(18, 4);
+                b.Property(x => x.SuggestedPrice).HasPrecision(18, 4);
+                b.Property(x => x.MinPrice).HasPrecision(18, 4);
+                b.Property(x => x.MaxPrice).HasPrecision(18, 4);
+                b.Property(x => x.PriceChange).HasPrecision(18, 4);
+                b.Property(x => x.ChangePercent).HasPrecision(5, 2);
+                b.Property(x => x.Reasoning).HasMaxLength(1000);
+                b.Property(x => x.Confidence).HasPrecision(5, 2);
+                b.Property(x => x.Provider).IsRequired().HasMaxLength(50);
+                b.HasIndex(x => x.ProductId);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
             });
 
         }

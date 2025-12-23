@@ -187,6 +187,11 @@ public static class DependencyInjection
         // AI text provider for response suggestions (uses OpenAI)
         services.AddScoped<IAiTextProvider, OpenAiTextSimpleProvider>();
 
+        // ----- AI Assistant Features -----
+        services.AddScoped<ISeoOptimizerService, SeoOptimizerService>();
+        services.AddScoped<IChatbotService, ChatbotService>();
+        services.AddScoped<IPricingOptimizerService, PricingOptimizerService>();
+
         // HttpClient for Meta Graph API (Facebook/Instagram)
         services.AddHttpClient("MetaGraphAPI", client =>
         {

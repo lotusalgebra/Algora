@@ -1,0 +1,349 @@
+@page
+@model Algora.Web.Pages.AI.PricingModel
+@{
+    ViewData["Title"] = "Pricing Optimizer";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
+                    <li class="breadcrumb-item active">Pricing Optimizer</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">Pricing Optimizer</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Product Selection -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..." />
+                    </div>
+                    <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                        @foreach (var product in Model.Products)
+                        {
+                            <a href="#" class="list-group-item list-group-item-action product-item"
+                               data-id="@product.Id"
+                               data-title="@product.Title"
+                               data-price="@product.Price"
+                               data-cost="@product.CostOfGoodsSold"
+                               data-inventory="@product.InventoryQuantity">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1 text-truncate" style="max-width: 180px;">@product.Title</h6>
+                                        <small class="text-muted">@product.Price.ToString("C")</small>
+                                    </div>
+                                    @if (product.CostOfGoodsSold.HasValue && product.CostOfGoodsSold > 0)
+                                    {
+                                        var margin = (product.Price - product.CostOfGoodsSold.Value) / product.Price * 100;
+                                        var marginClass = margin >= 40 ? "bg-success" : margin >= 20 ? "bg-warning" : "bg-danger";
+                                        <span class="badge @marginClass">@margin.ToString("F0")%</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Panel -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Pricing Analysis</h5>
+                    <button type="button" id="analyzeBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-magic me-2"></i>Analyze Pricing
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="noProductSelected" class="text-center py-5">
+                        <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Select a product to analyze its pricing</p>
+                    </div>
+
+                    <div id="pricingPanel" class="d-none">
+                        <!-- Product Info -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <h5 id="selectedProductTitle" class="mb-1"></h5>
+                            <div class="d-flex gap-4 text-muted">
+                                <span><i class="fas fa-tag me-1"></i>Current: <strong id="currentPrice"></strong></span>
+                                <span><i class="fas fa-box me-1"></i>Stock: <span id="inventory"></span></span>
+                                <span><i class="fas fa-percent me-1"></i>Margin: <span id="currentMargin"></span></span>
+                            </div>
+                        </div>
+
+                        <!-- Loading -->
+                        <div id="loadingPanel" class="text-center py-4 d-none">
+                            <div class="spinner-border text-danger" role="status"></div>
+                            <p class="text-muted mt-2">Analyzing pricing...</p>
+                        </div>
+
+                        <!-- Suggestion Panel -->
+                        <div id="suggestionPanel" class="d-none">
+                            <!-- Price Comparison -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body text-center">
+                                            <small class="text-muted">Current Price</small>
+                                            <h3 id="displayCurrentPrice" class="mb-0"></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-success text-white border-0">
+                                        <div class="card-body text-center">
+                                            <small class="text-white-50">Suggested Price</small>
+                                            <h3 id="suggestedPrice" class="mb-0"></h3>
+                                            <small id="priceChange" class="text-white-50"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        <div class="card-body text-center text-white">
+                                            <small class="text-white-50">New Margin</small>
+                                            <h3 id="suggestedMargin" class="mb-0"></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div class="mb-4">
+                                <label class="form-label">Suggested Price Range</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span id="minPrice" class="badge bg-secondary fs-6"></span>
+                                    <div class="flex-grow-1">
+                                        <div class="progress" style="height: 8px;">
+                                            <div id="priceRangeBar" class="progress-bar bg-success" role="progressbar"></div>
+                                        </div>
+                                    </div>
+                                    <span id="maxPrice" class="badge bg-secondary fs-6"></span>
+                                </div>
+                            </div>
+
+                            <!-- Confidence -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label mb-0">AI Confidence</label>
+                                    <span id="confidenceBadge" class="badge"></span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div id="confidenceBar" class="progress-bar" role="progressbar"></div>
+                                </div>
+                            </div>
+
+                            <!-- Reasoning -->
+                            <div class="mb-4">
+                                <label class="form-label">Analysis</label>
+                                <div id="reasoning" class="p-3 bg-light rounded"></div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2">
+                                <button type="button" id="applyBtn" class="btn btn-success">
+                                    <i class="fas fa-check me-2"></i>Apply Suggested Price
+                                </button>
+                                <button type="button" id="reanalyzeBtn" class="btn btn-outline-danger">
+                                    <i class="fas fa-redo me-2"></i>Re-analyze
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="alertContainer" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedProductId = null;
+        let currentSuggestionId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const productSearch = document.getElementById('productSearch');
+            const productItems = document.querySelectorAll('.product-item');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const reanalyzeBtn = document.getElementById('reanalyzeBtn');
+            const applyBtn = document.getElementById('applyBtn');
+
+            // Search filter
+            productSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                productItems.forEach(item => {
+                    const title = item.dataset.title.toLowerCase();
+                    item.style.display = title.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Product selection
+            productItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    productItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    selectedProductId = this.dataset.id;
+                    document.getElementById('noProductSelected').classList.add('d-none');
+                    document.getElementById('pricingPanel').classList.remove('d-none');
+                    document.getElementById('suggestionPanel').classList.add('d-none');
+
+                    document.getElementById('selectedProductTitle').textContent = this.dataset.title;
+                    document.getElementById('currentPrice').textContent = formatCurrency(parseFloat(this.dataset.price));
+                    document.getElementById('inventory').textContent = this.dataset.inventory + ' units';
+
+                    const cost = parseFloat(this.dataset.cost) || 0;
+                    const price = parseFloat(this.dataset.price);
+                    if (cost > 0) {
+                        const margin = ((price - cost) / price * 100).toFixed(0);
+                        document.getElementById('currentMargin').textContent = margin + '%';
+                    } else {
+                        document.getElementById('currentMargin').textContent = 'N/A';
+                    }
+
+                    analyzeBtn.disabled = false;
+                });
+            });
+
+            async function analyzePricing() {
+                if (!selectedProductId) return;
+
+                document.getElementById('loadingPanel').classList.remove('d-none');
+                document.getElementById('suggestionPanel').classList.add('d-none');
+                analyzeBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/AI/Pricing?handler=Analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({ productId: parseInt(selectedProductId) })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        currentSuggestionId = result.data.suggestionId;
+                        displaySuggestion(result.data);
+                        document.getElementById('suggestionPanel').classList.remove('d-none');
+                        showAlert('Pricing analysis complete!', 'success');
+                    } else {
+                        showAlert(result.error || 'Failed to analyze pricing', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error: ' + error.message, 'danger');
+                } finally {
+                    document.getElementById('loadingPanel').classList.add('d-none');
+                    analyzeBtn.disabled = false;
+                }
+            }
+
+            function displaySuggestion(data) {
+                document.getElementById('displayCurrentPrice').textContent = formatCurrency(data.currentPrice);
+                document.getElementById('suggestedPrice').textContent = formatCurrency(data.suggestedPrice);
+
+                const changeText = data.priceChange >= 0
+                    ? `+${formatCurrency(data.priceChange)} (+${data.changePercent.toFixed(1)}%)`
+                    : `${formatCurrency(data.priceChange)} (${data.changePercent.toFixed(1)}%)`;
+                document.getElementById('priceChange').textContent = changeText;
+
+                document.getElementById('suggestedMargin').textContent = data.suggestedMargin
+                    ? data.suggestedMargin.toFixed(0) + '%'
+                    : 'N/A';
+
+                document.getElementById('minPrice').textContent = data.minPrice ? formatCurrency(data.minPrice) : '-';
+                document.getElementById('maxPrice').textContent = data.maxPrice ? formatCurrency(data.maxPrice) : '-';
+
+                // Price range bar
+                if (data.minPrice && data.maxPrice) {
+                    const range = data.maxPrice - data.minPrice;
+                    const position = ((data.suggestedPrice - data.minPrice) / range * 100);
+                    document.getElementById('priceRangeBar').style.width = position + '%';
+                }
+
+                // Confidence
+                const conf = data.confidence;
+                document.getElementById('confidenceBar').style.width = conf + '%';
+                const confBadge = document.getElementById('confidenceBadge');
+                confBadge.textContent = conf + '%';
+                if (conf >= 80) {
+                    confBadge.className = 'badge bg-success';
+                    document.getElementById('confidenceBar').className = 'progress-bar bg-success';
+                } else if (conf >= 50) {
+                    confBadge.className = 'badge bg-warning';
+                    document.getElementById('confidenceBar').className = 'progress-bar bg-warning';
+                } else {
+                    confBadge.className = 'badge bg-danger';
+                    document.getElementById('confidenceBar').className = 'progress-bar bg-danger';
+                }
+
+                document.getElementById('reasoning').textContent = data.reasoning || 'No detailed reasoning provided.';
+            }
+
+            analyzeBtn.addEventListener('click', analyzePricing);
+            reanalyzeBtn.addEventListener('click', analyzePricing);
+
+            applyBtn.addEventListener('click', async function() {
+                if (!currentSuggestionId) return;
+
+                try {
+                    const response = await fetch('/AI/Pricing?handler=Apply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({ suggestionId: currentSuggestionId })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showAlert('Price updated successfully!', 'success');
+                        // Update the product item
+                        const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
+                        if (productItem) {
+                            const newPrice = document.getElementById('suggestedPrice').textContent;
+                            productItem.dataset.price = newPrice.replace(/[^0-9.]/g, '');
+                            productItem.querySelector('small').textContent = newPrice;
+                        }
+                    } else {
+                        showAlert(result.error || 'Failed to apply price', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error: ' + error.message, 'danger');
+                }
+            });
+
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+            }
+        });
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+    </script>
+}
