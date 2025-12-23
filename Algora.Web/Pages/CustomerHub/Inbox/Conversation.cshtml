@@ -1,0 +1,340 @@
+@page "/customer-hub/inbox/{id:int}"
+@model Algora.Web.Pages.CustomerHub.Inbox.ConversationModel
+@{
+    ViewData["Title"] = Model.Conversation?.Subject ?? "Conversation";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+            <a href="/customer-hub/inbox" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <i class="fas fa-arrow-left text-lg"></i>
+            </a>
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tl @Model.GetChannelColor(Model.Conversation?.Channel ?? "email") flex items-center justify-center">
+                    <i class="@Model.GetChannelIcon(Model.Conversation?.Channel ?? "email") text-xl text-white"></i>
+                </div>
+                <div>
+                    <h5 class="font-bold dark:text-white">@(Model.Conversation?.CustomerName ?? "Unknown Customer")</h5>
+                    <p class="text-sm text-slate-400">@Model.Conversation?.CustomerEmail @(Model.Conversation?.CustomerPhone != null ? $"| {Model.Conversation.CustomerPhone}" : "")</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full @Model.GetStatusColor(Model.Conversation?.Status ?? "open")">
+                @Model.Conversation?.Status?.ToUpper()
+            </span>
+            <span class="px-3 py-1 text-xs font-semibold rounded-full @Model.GetPriorityColor(Model.Conversation?.Priority ?? "normal")">
+                @Model.Conversation?.Priority?.ToUpper()
+            </span>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @Model.SuccessMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Conversation == null)
+    {
+        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+            <div class="flex-auto p-6 text-center">
+                <i class="fas fa-exclamation-triangle fa-3x text-orange-400 mb-4"></i>
+                <h5 class="mb-2 dark:text-white">Conversation Not Found</h5>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-wrap -mx-3">
+            <!-- Messages -->
+            <div class="w-full max-w-full px-3 lg:w-2/3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <!-- Subject -->
+                    @if (!string.IsNullOrEmpty(Model.Conversation.Subject))
+                    {
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                            <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">
+                                <i class="fas fa-tag me-2 text-slate-400"></i>@Model.Conversation.Subject
+                            </p>
+                        </div>
+                    }
+
+                    <!-- Message List -->
+                    <div class="flex-auto p-6 max-h-[500px] overflow-y-auto" id="messageList">
+                        @if (Model.Messages.Count == 0)
+                        {
+                            <div class="text-center py-8">
+                                <i class="fas fa-comments fa-3x text-gray-300 mb-4"></i>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No messages yet.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var message in Model.Messages)
+                            {
+                                var isOutbound = message.Direction == "outbound";
+                                <div class="flex @(isOutbound ? "justify-end" : "justify-start") mb-4">
+                                    <div class="max-w-[75%]">
+                                        <div class="@(isOutbound ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-gray-100 dark:bg-gray-800 text-slate-700 dark:text-white") rounded-2xl px-4 py-3">
+                                            <p class="text-sm mb-0 whitespace-pre-wrap">@message.Content</p>
+                                            @if (!string.IsNullOrEmpty(message.MediaUrl))
+                                            {
+                                                <div class="mt-2">
+                                                    <a href="@message.MediaUrl" target="_blank" class="text-xs @(isOutbound ? "text-white/80" : "text-fuchsia-500") hover:underline">
+                                                        <i class="fas fa-paperclip me-1"></i> Attachment
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1 @(isOutbound ? "justify-end" : "justify-start")">
+                                            <span class="text-xs text-slate-400">
+                                                @message.SentAt.ToString("MMM d, h:mm tt")
+                                            </span>
+                                            @if (isOutbound)
+                                            {
+                                                @if (message.Status == "read")
+                                                {
+                                                    <i class="fas fa-check-double text-xs text-blue-500" title="Read"></i>
+                                                }
+                                                else if (message.Status == "delivered")
+                                                {
+                                                    <i class="fas fa-check-double text-xs text-slate-400" title="Delivered"></i>
+                                                }
+                                                else if (message.Status == "sent")
+                                                {
+                                                    <i class="fas fa-check text-xs text-slate-400" title="Sent"></i>
+                                                }
+                                            }
+                                            @if (message.AiSuggestionUsed)
+                                            {
+                                                <span class="text-xs text-fuchsia-500" title="AI-assisted reply">
+                                                    <i class="fas fa-magic"></i>
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Reply Form -->
+                    <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+                        <form method="post" asp-page-handler="SendReply" asp-route-id="@Model.Conversation.Id">
+                            <div class="mb-3">
+                                <textarea asp-for="ReplyContent" rows="3" class="block w-full px-4 py-3 text-sm text-gray-700 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-fuchsia-300 focus:outline-none dark:bg-gray-800 dark:text-white resize-none" placeholder="Type your reply..."></textarea>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex gap-2">
+                                    <form method="post" asp-page-handler="GenerateSuggestions" asp-route-id="@Model.Conversation.Id" class="inline">
+                                        <button type="submit" class="px-3 py-2 text-xs font-semibold text-fuchsia-500 border border-fuchsia-500 rounded-lg hover:bg-fuchsia-50 dark:hover:bg-gray-700">
+                                            <i class="fas fa-magic me-1"></i> AI Suggest
+                                        </button>
+                                    </form>
+                                    <div class="relative">
+                                        <button type="button" onclick="toggleQuickReplies()" class="px-3 py-2 text-xs font-semibold text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                                            <i class="fas fa-bolt me-1"></i> Quick Reply
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="px-6 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-paper-plane me-2"></i> Send
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions -->
+                @if (Model.AiSuggestions.Count > 0)
+                {
+                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                            <h6 class="mb-0 dark:text-white"><i class="fas fa-magic me-2 text-fuchsia-500"></i>AI Suggestions</h6>
+                        </div>
+                        <div class="flex-auto p-4">
+                            <div class="flex flex-col gap-3">
+                                @foreach (var suggestion in Model.AiSuggestions)
+                                {
+                                    <div class="p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                                        <p class="text-sm text-slate-700 dark:text-white mb-3">@suggestion.SuggestionText</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-slate-400">
+                                                <i class="fas fa-brain me-1"></i> @suggestion.Provider - @((suggestion.Confidence * 100).ToString("0"))% confidence
+                                            </span>
+                                            <form method="post" asp-page-handler="UseSuggestion" asp-route-id="@Model.Conversation.Id" asp-route-suggestionId="@suggestion.Id">
+                                                <button type="submit" class="px-3 py-1 text-xs font-semibold text-fuchsia-500 border border-fuchsia-500 rounded hover:bg-fuchsia-50 dark:hover:bg-gray-700">
+                                                    <i class="fas fa-check me-1"></i> Use
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <div class="w-full max-w-full px-3 lg:w-1/3">
+                <!-- Status & Priority -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <h6 class="mb-0 dark:text-white">Manage</h6>
+                    </div>
+                    <div class="flex-auto p-4">
+                        <div class="mb-4">
+                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Status</label>
+                            <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@Model.Conversation.Id" class="flex gap-2">
+                                <select asp-for="NewStatus" class="flex-grow px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white">
+                                    <option value="open" selected="@(Model.Conversation.Status == "open")">Open</option>
+                                    <option value="pending" selected="@(Model.Conversation.Status == "pending")">Pending</option>
+                                    <option value="resolved" selected="@(Model.Conversation.Status == "resolved")">Resolved</option>
+                                    <option value="closed" selected="@(Model.Conversation.Status == "closed")">Closed</option>
+                                </select>
+                                <button type="submit" class="px-3 py-2 text-xs font-semibold text-white bg-fuchsia-500 rounded-lg hover:bg-fuchsia-600">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Priority</label>
+                            <form method="post" asp-page-handler="UpdatePriority" asp-route-id="@Model.Conversation.Id" class="flex gap-2">
+                                <select asp-for="NewPriority" class="flex-grow px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white">
+                                    <option value="low" selected="@(Model.Conversation.Priority == "low")">Low</option>
+                                    <option value="normal" selected="@(Model.Conversation.Priority == "normal")">Normal</option>
+                                    <option value="high" selected="@(Model.Conversation.Priority == "high")">High</option>
+                                    <option value="urgent" selected="@(Model.Conversation.Priority == "urgent")">Urgent</option>
+                                </select>
+                                <button type="submit" class="px-3 py-2 text-xs font-semibold text-white bg-fuchsia-500 rounded-lg hover:bg-fuchsia-600">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <h6 class="mb-0 dark:text-white">Customer</h6>
+                    </div>
+                    <div class="flex-auto p-4">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center text-white font-bold">
+                                @(Model.Conversation.CustomerName?.FirstOrDefault().ToString().ToUpper() ?? "?")
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@(Model.Conversation.CustomerName ?? "Unknown")</p>
+                                <p class="text-xs text-slate-400 mb-0">Customer</p>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Conversation.CustomerEmail))
+                        {
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-envelope text-slate-400 w-5"></i>
+                                <span class="text-sm text-slate-600 dark:text-gray-400">@Model.Conversation.CustomerEmail</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Conversation.CustomerPhone))
+                        {
+                            <div class="flex items-center gap-2 mb-2">
+                                <i class="fas fa-phone text-slate-400 w-5"></i>
+                                <span class="text-sm text-slate-600 dark:text-gray-400">@Model.Conversation.CustomerPhone</span>
+                            </div>
+                        }
+                        <div class="flex items-center gap-2">
+                            <i class="@Model.GetChannelIcon(Model.Conversation.Channel) text-slate-400 w-5"></i>
+                            <span class="text-sm text-slate-600 dark:text-gray-400 capitalize">@Model.Conversation.Channel</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation Info -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                        <h6 class="mb-0 dark:text-white">Details</h6>
+                    </div>
+                    <div class="flex-auto p-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-xs text-slate-400">Created</span>
+                            <span class="text-sm text-slate-700 dark:text-white">@Model.Conversation.CreatedAt.ToString("MMM d, yyyy h:mm tt")</span>
+                        </div>
+                        @if (Model.Conversation.LastMessageAt.HasValue)
+                        {
+                            <div class="flex justify-between mb-2">
+                                <span class="text-xs text-slate-400">Last Message</span>
+                                <span class="text-sm text-slate-700 dark:text-white">@Model.Conversation.LastMessageAt.Value.ToString("MMM d, h:mm tt")</span>
+                            </div>
+                        }
+                        <div class="flex justify-between mb-2">
+                            <span class="text-xs text-slate-400">Messages</span>
+                            <span class="text-sm text-slate-700 dark:text-white">@Model.Messages.Count</span>
+                        </div>
+                        @if (Model.Conversation.ResolvedAt.HasValue)
+                        {
+                            <div class="flex justify-between">
+                                <span class="text-xs text-slate-400">Resolved</span>
+                                <span class="text-sm text-slate-700 dark:text-white">@Model.Conversation.ResolvedAt.Value.ToString("MMM d, h:mm tt")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Quick Replies -->
+                @if (Model.QuickReplies.Count > 0)
+                {
+                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl" id="quickRepliesPanel">
+                        <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                            <h6 class="mb-0 dark:text-white"><i class="fas fa-bolt me-2 text-yellow-500"></i>Quick Replies</h6>
+                        </div>
+                        <div class="flex-auto p-4 max-h-[300px] overflow-y-auto">
+                            <div class="flex flex-col gap-2">
+                                @foreach (var quickReply in Model.QuickReplies)
+                                {
+                                    <form method="post" asp-page-handler="UseQuickReply" asp-route-id="@Model.Conversation.Id" asp-route-quickReplyId="@quickReply.Id">
+                                        <button type="submit" class="w-full text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            <p class="text-sm font-semibold text-slate-700 dark:text-white mb-1">@quickReply.Title</p>
+                                            <p class="text-xs text-slate-500 dark:text-gray-400 line-clamp-2">@quickReply.Content</p>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    // Scroll to bottom of messages on load
+    document.addEventListener('DOMContentLoaded', function() {
+        var messageList = document.getElementById('messageList');
+        if (messageList) {
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+    });
+
+    function toggleQuickReplies() {
+        var panel = document.getElementById('quickRepliesPanel');
+        if (panel) {
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+}
