@@ -1,0 +1,273 @@
+@page "/operations/suppliers/details/{id:int}"
+@model Algora.Web.Pages.Operations.Suppliers.DetailsModel
+@{
+    ViewData["Title"] = $"Supplier: {Model.Supplier?.Name}";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h5 class="mb-1 dark:text-white">@Model.Supplier?.Name</h5>
+                            <p class="mb-0 text-sm text-slate-400">
+                                @if (!string.IsNullOrEmpty(Model.Supplier?.Code))
+                                {
+                                    <span class="me-3">Code: @Model.Supplier.Code</span>
+                                }
+                                @if (Model.Supplier?.IsActive == true)
+                                {
+                                    <span class="bg-gradient-to-tl from-green-600 to-lime-400 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="bg-gradient-to-tl from-gray-400 to-gray-600 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">Inactive</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="/operations/suppliers/edit/@Model.Supplier?.Id" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-slate-600 to-slate-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-edit me-2"></i> Edit
+                            </a>
+                            <a href="/operations/suppliers" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="mx-0 mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @Model.SuccessMessage
+        </div>
+    }
+
+    <div class="flex flex-wrap -mx-3">
+        <!-- Supplier Info -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Contact Information</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                        @if (!string.IsNullOrEmpty(Model.Supplier?.Email))
+                        {
+                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="flex items-center">
+                                    <div class="inline-block w-8 h-8 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                        <i class="fas fa-envelope text-white text-xs relative top-2"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <span class="text-xs text-slate-400">Email</span>
+                                        <h6 class="mb-0 text-sm dark:text-white">@Model.Supplier.Email</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Supplier?.Phone))
+                        {
+                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="flex items-center">
+                                    <div class="inline-block w-8 h-8 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                        <i class="fas fa-phone text-white text-xs relative top-2"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <span class="text-xs text-slate-400">Phone</span>
+                                        <h6 class="mb-0 text-sm dark:text-white">@Model.Supplier.Phone</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Supplier?.ContactPerson))
+                        {
+                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="flex items-center">
+                                    <div class="inline-block w-8 h-8 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500">
+                                        <i class="fas fa-user text-white text-xs relative top-2"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <span class="text-xs text-slate-400">Contact Person</span>
+                                        <h6 class="mb-0 text-sm dark:text-white">@Model.Supplier.ContactPerson</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Supplier?.Address))
+                        {
+                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="flex items-center">
+                                    <div class="inline-block w-8 h-8 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-300">
+                                        <i class="fas fa-map-marker-alt text-white text-xs relative top-2"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <span class="text-xs text-slate-400">Address</span>
+                                        <h6 class="mb-0 text-sm dark:text-white">@Model.Supplier.Address</h6>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Supplier?.Website))
+                        {
+                            <li class="relative flex p-3 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div class="flex items-center">
+                                    <div class="inline-block w-8 h-8 text-center rounded-lg bg-gradient-to-tl from-gray-700 to-gray-500">
+                                        <i class="fas fa-globe text-white text-xs relative top-2"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <span class="text-xs text-slate-400">Website</span>
+                                        <h6 class="mb-0 text-sm dark:text-white">
+                                            <a href="@Model.Supplier.Website" target="_blank" class="text-fuchsia-500 hover:text-fuchsia-700">@Model.Supplier.Website</a>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Performance</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Total Orders</span>
+                            <h4 class="mb-0 font-bold dark:text-white">@(Model.Analytics?.TotalOrders ?? 0)</h4>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Total Spent</span>
+                            <h4 class="mb-0 font-bold dark:text-white">$@((Model.Analytics?.TotalSpent ?? 0).ToString("N2"))</h4>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Avg Delivery</span>
+                            <h4 class="mb-0 font-bold dark:text-white">@((Model.Analytics?.AverageDeliveryDays ?? Model.Supplier?.DefaultLeadTimeDays ?? 0).ToString("N1")) days</h4>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">On-Time Rate</span>
+                            <h4 class="mb-0 font-bold dark:text-white">@((Model.Analytics?.OnTimeDeliveryRate ?? 100).ToString("N0"))%</h4>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Lead Time</span>
+                            <h4 class="mb-0 font-bold dark:text-white">@(Model.Supplier?.DefaultLeadTimeDays ?? 7) days</h4>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Min Order</span>
+                            <h4 class="mb-0 font-bold dark:text-white">$@((Model.Supplier?.MinimumOrderAmount ?? 0).ToString("N2"))</h4>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Supplier?.PaymentTerms))
+                    {
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Payment Terms</span>
+                            <p class="mb-0 text-sm dark:text-white">@Model.Supplier.PaymentTerms</p>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Supplier?.Notes))
+                    {
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                            <span class="text-xs text-slate-400">Notes</span>
+                            <p class="mb-0 text-sm dark:text-white">@Model.Supplier.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Products -->
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Linked Products (@Model.Products.Count)</h6>
+                    </div>
+                </div>
+                <div class="flex-auto p-6">
+                    @if (Model.Products.Count == 0)
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-box fa-3x text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No products linked to this supplier yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Supplier SKU</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Unit Cost</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">MOQ</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Lead Time</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Preferred</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">@product.ProductTitle</h6>
+                                                @if (!string.IsNullOrEmpty(product.VariantTitle))
+                                                {
+                                                    <p class="mb-0 text-xs leading-tight text-slate-400">@product.VariantTitle</p>
+                                                }
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-xs font-semibold dark:text-white dark:opacity-60">@(product.SupplierSku ?? "-")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold dark:text-white">$@product.UnitCost.ToString("N2")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm dark:text-white">@product.MinimumOrderQuantity</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm dark:text-white">@(product.LeadTimeDays?.ToString() ?? "-") days</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                @if (product.IsPreferred)
+                                                {
+                                                    <i class="fas fa-star text-yellow-500"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-gray-300"></i>
+                                                }
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <form method="post" asp-page-handler="RemoveProduct" asp-route-id="@Model.Supplier?.Id" asp-route-productId="@product.ProductId" class="inline" onsubmit="return confirm('Remove this product from supplier?');">
+                                                    <button type="submit" class="text-xs font-semibold leading-tight text-red-500 hover:text-red-700" title="Remove">
+                                                        <i class="fas fa-unlink"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

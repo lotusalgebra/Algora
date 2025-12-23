@@ -1,0 +1,154 @@
+@page "/operations/barcodes"
+@model Algora.Web.Pages.Operations.Barcodes.IndexModel
+@using Algora.Application.DTOs.Operations
+@using Algora.Application.Interfaces
+@{
+    ViewData["Title"] = "Barcode Generator";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <!-- Generator -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Generate Barcode</h6>
+                        <a href="/operations" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>@Model.ErrorMessage
+                    </div>
+                }
+
+                <div class="flex-auto p-6">
+                    <form method="post" asp-page-handler="Generate">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Format</label>
+                                <select asp-for="Input.Format" asp-items="Html.GetEnumSelectList<BarcodeFormat>()"
+                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Prefix (optional)</label>
+                                <input type="text" asp-for="Input.Prefix" placeholder="e.g., 200"
+                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Value (leave empty to auto-generate)</label>
+                            <input type="text" asp-for="Input.Value" placeholder="Auto-generate if empty"
+                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Width (px)</label>
+                                <input type="number" asp-for="Input.Width" min="100" max="600"
+                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Height (px)</label>
+                                <input type="number" asp-for="Input.Height" min="50" max="300"
+                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="min-h-6 pl-7 mb-0.5 block">
+                                <input type="checkbox" asp-for="Input.IncludeText"
+                                    class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
+                                <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
+                                    Include text below barcode
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="inline-block w-full px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-gray-700 to-gray-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-barcode me-2"></i> Generate Barcode
+                        </button>
+                    </form>
+
+                    @if (Model.GeneratedBarcode != null)
+                    {
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-800 text-center">
+                            <div class="mb-4 p-4 bg-white rounded-lg inline-block">
+                                <img src="data:@Model.GeneratedBarcode.ContentType;base64,@Model.GeneratedBarcode.Base64Image" alt="Barcode" class="max-w-full" />
+                                <p class="mt-2 font-mono text-lg font-bold">@Model.GeneratedBarcode.Value</p>
+                            </div>
+                            <div class="flex justify-center gap-2 mt-4">
+                                <a href="data:@Model.GeneratedBarcode.ContentType;base64,@Model.GeneratedBarcode.Base64Image" download="barcode-@(Model.GeneratedBarcode.Value).png" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-download me-2"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Assign to Product -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Assign Barcode to Product</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <form method="post" asp-page-handler="Assign">
+                        <div class="mb-4">
+                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Product/Variant</label>
+                            <select name="variantId" asp-items="Model.Products"
+                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
+                                <option value="">Select a product</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Barcode</label>
+                            <input type="text" name="barcode" value="@Model.GeneratedBarcode?.Value" required
+                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
+                                placeholder="Enter barcode value" />
+                        </div>
+                        <button type="submit" class="inline-block w-full px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-link me-2"></i> Assign to Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Bulk Actions</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <div class="grid grid-cols-1 gap-4">
+                        <form method="post" asp-page-handler="GenerateLabels">
+                            <button type="submit" class="inline-block w-full px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-file-pdf me-2"></i> Download Labels PDF
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                        <h6 class="text-sm font-bold mb-2 dark:text-white">Supported Formats</h6>
+                        <ul class="text-xs text-slate-500 dark:text-slate-300 space-y-1">
+                            <li><strong>EAN-13:</strong> 13-digit European Article Number (international)</li>
+                            <li><strong>EAN-8:</strong> 8-digit compact version</li>
+                            <li><strong>UPC-A:</strong> 12-digit Universal Product Code (US/Canada)</li>
+                            <li><strong>UPC-E:</strong> 8-digit compressed UPC</li>
+                            <li><strong>Code128:</strong> Variable-length alphanumeric (general purpose)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

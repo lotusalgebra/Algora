@@ -1,0 +1,184 @@
+@page "/operations/purchase-orders"
+@model Algora.Web.Pages.Operations.PurchaseOrders.IndexModel
+@{
+    ViewData["Title"] = "Purchase Orders";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <div class="flex flex-wrap -mx-3">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+
+                <!-- Card Header -->
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex flex-wrap items-center justify-between">
+                        <div>
+                            <h6 class="mb-0 dark:text-white">Purchase Orders</h6>
+                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                <i class="fa fa-file-invoice text-fuchsia-500 me-1"></i>
+                                <span class="font-semibold">@Model.PurchaseOrders.Count</span> orders
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select asp-for="StatusFilter" onchange="this.form.submit()" form="filterForm"
+                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
+                                <option value="">All Status</option>
+                                <option value="draft">Draft</option>
+                                <option value="sent">Sent</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="received">Received</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <a href="/operations/purchase-orders/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-2"></i> New Order
+                            </a>
+                            <a href="/operations" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <form id="filterForm" method="get"></form>
+
+                <!-- Messages -->
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <!-- Card Body -->
+                <div class="flex-auto p-6 px-0 pb-0">
+                    @if (Model.PurchaseOrders.Count == 0)
+                    {
+                        <div class="text-center py-12">
+                            <i class="fas fa-file-invoice fa-4x text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">No purchase orders yet. Create your first order to start tracking inventory replenishment.</p>
+                            <a href="/operations/purchase-orders/create" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                                <i class="fas fa-plus me-2"></i> Create Order
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-list">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Order #</th>
+                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Supplier</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Total</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Expected</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Created</th>
+                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.PurchaseOrders)
+                                    {
+                                        var statusColor = order.Status switch
+                                        {
+                                            "draft" => "from-gray-400 to-gray-600",
+                                            "sent" => "from-blue-600 to-cyan-400",
+                                            "confirmed" => "from-purple-700 to-pink-500",
+                                            "shipped" => "from-orange-500 to-yellow-300",
+                                            "received" => "from-green-600 to-lime-400",
+                                            "cancelled" => "from-red-600 to-rose-400",
+                                            _ => "from-gray-400 to-gray-600"
+                                        };
+
+                                        <tr>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <a href="/operations/purchase-orders/details/@order.Id" class="text-sm font-semibold leading-tight text-fuchsia-500 hover:text-fuchsia-700 dark:text-fuchsia-400">
+                                                    @order.OrderNumber
+                                                </a>
+                                            </td>
+                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">@order.SupplierName</h6>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@order.Lines.Count</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-sm font-semibold leading-tight dark:text-white">@order.Currency @order.Total.ToString("N2")</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@order.Status</span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                                    @(order.ExpectedDeliveryDate?.ToString("MMM dd, yyyy") ?? "-")
+                                                </span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">
+                                                    @order.CreatedAt.ToString("MMM dd, yyyy")
+                                                </span>
+                                            </td>
+                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                                <a href="/operations/purchase-orders/details/@order.Id" class="text-xs font-semibold leading-tight text-blue-500 hover:text-blue-700 me-3" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                @if (order.Status == "draft")
+                                                {
+                                                    <a href="/operations/purchase-orders/edit/@order.Id" class="text-xs font-semibold leading-tight text-slate-500 hover:text-slate-700 me-3" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                }
+                                                @if (order.Status != "received" && order.Status != "cancelled")
+                                                {
+                                                    <form method="post" asp-page-handler="Cancel" asp-route-id="@order.Id" class="inline" onsubmit="return confirm('Cancel this purchase order?');">
+                                                        <button type="submit" class="text-xs font-semibold leading-tight text-red-500 hover:text-red-700" title="Cancel">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
+    <script>
+        if (document.getElementById('orders-list')) {
+            new simpleDatatables.DataTable("#orders-list", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 25,
+                perPageSelect: [10, 25, 50, 100],
+                labels: {
+                    placeholder: "Search orders...",
+                    perPage: "per page",
+                    noRows: "No orders found",
+                    info: "Showing {start} to {end} of {rows} orders"
+                }
+            });
+        }
+    </script>
+}
