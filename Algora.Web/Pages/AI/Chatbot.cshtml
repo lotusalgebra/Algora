@@ -1,0 +1,348 @@
+@page
+@model Algora.Web.Pages.AI.ChatbotModel
+@{
+    ViewData["Title"] = "AI Chatbot";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Customer Support Chatbot</h1>
+            <p class="text-muted mb-0">AI-powered customer support for your store portal</p>
+        </div>
+        <a href="/AI" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to AI Tools
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-comments text-primary fa-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">@Model.TotalConversations</h3>
+                            <small class="text-muted">Total Conversations</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-check-circle text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">@Model.ResolutionRate.ToString("F1")%</h3>
+                            <small class="text-muted">Resolution Rate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-user-friends text-warning fa-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">@Model.EscalatedConversations</h3>
+                            <small class="text-muted">Escalated to Agent</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-thumbs-up text-info fa-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">@Model.HelpfulRate.ToString("F1")%</h3>
+                            <small class="text-muted">Helpful Rate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Conversations -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Conversations</h5>
+                    <span class="badge bg-primary">@Model.ActiveConversations Active</span>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.RecentConversations.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Topic</th>
+                                        <th>Messages</th>
+                                        <th>Status</th>
+                                        <th>Started</th>
+                                        <th>Feedback</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var conv in Model.RecentConversations)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(conv.CustomerEmail))
+                                                {
+                                                    <span>@conv.CustomerEmail</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Guest</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(conv.Topic))
+                                                {
+                                                    <span class="badge bg-secondary">@conv.Topic</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>@conv.MessageCount</td>
+                                            <td>
+                                                @switch (conv.Status)
+                                                {
+                                                    case "active":
+                                                        <span class="badge bg-success">Active</span>
+                                                        break;
+                                                    case "resolved":
+                                                        <span class="badge bg-primary">Resolved</span>
+                                                        break;
+                                                    case "escalated":
+                                                        <span class="badge bg-warning text-dark">Escalated</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@conv.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>@conv.CreatedAt.ToString("MMM d, h:mm tt")</small>
+                                            </td>
+                                            <td>
+                                                @if (conv.WasHelpful == true)
+                                                {
+                                                    <i class="fas fa-thumbs-up text-success"></i>
+                                                }
+                                                else if (conv.WasHelpful == false)
+                                                {
+                                                    <i class="fas fa-thumbs-down text-danger"></i>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="viewConversation(@conv.Id)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">No conversations yet</p>
+                            <small class="text-muted">Chatbot conversations will appear here when customers use the portal chat</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Top Intents -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-brain me-2"></i>Top Customer Intents</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopIntents.Any())
+                    {
+                        @foreach (var intent in Model.TopIntents)
+                        {
+                            var percentage = Model.TotalMessages > 0 ? (double)intent.Value / Model.TotalMessages * 100 : 0;
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-capitalize">@intent.Key.Replace("_", " ")</span>
+                                    <span class="text-muted">@intent.Value</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar" role="progressbar" style="width: @percentage%"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">No intent data yet</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span>Total Messages</span>
+                        <strong>@Model.TotalMessages</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span>Avg Messages/Conversation</span>
+                        <strong>@Model.AvgMessagesPerConversation.ToString("F1")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span>Active Conversations</span>
+                        <strong class="text-success">@Model.ActiveConversations</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span>Resolved Conversations</span>
+                        <strong class="text-primary">@Model.ResolvedConversations</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Setup Instructions -->
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h6><i class="fas fa-info-circle me-2 text-primary"></i>How It Works</h6>
+                    <p class="small text-muted mb-2">
+                        The AI chatbot is automatically available in your Customer Portal at:
+                    </p>
+                    <code class="d-block mb-3 p-2 bg-white rounded">/portal/chat</code>
+                    <p class="small text-muted mb-0">
+                        Customers can access it to get instant help with orders, returns, shipping, and general questions.
+                        Complex issues are escalated to human agents.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Conversation Modal -->
+<div class="modal fade" id="conversationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Conversation Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="conversationContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function viewConversation(id) {
+            const modal = new bootstrap.Modal(document.getElementById('conversationModal'));
+            modal.show();
+
+            try {
+                const response = await fetch(`/AI/Chatbot?handler=Conversation&id=${id}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+                    let html = `
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Customer:</strong> ${data.customerEmail || 'Guest'}</span>
+                                <span class="badge bg-${data.status === 'active' ? 'success' : data.status === 'escalated' ? 'warning' : 'primary'}">${data.status}</span>
+                            </div>
+                            <small class="text-muted">Started: ${new Date(data.createdAt).toLocaleString()}</small>
+                            ${data.topic ? `<br><span class="badge bg-secondary mt-1">${data.topic}</span>` : ''}
+                        </div>
+                        <hr>
+                        <div class="chat-messages" style="max-height: 400px; overflow-y: auto;">
+                    `;
+
+                    for (const msg of data.messages) {
+                        const isUser = msg.role === 'user';
+                        html += `
+                            <div class="d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'} mb-3">
+                                <div class="p-3 rounded-3 ${isUser ? 'bg-primary text-white' : 'bg-light'}" style="max-width: 80%;">
+                                    <div class="small ${isUser ? 'text-white-50' : 'text-muted'} mb-1">
+                                        ${isUser ? 'Customer' : 'AI Assistant'} - ${new Date(msg.createdAt).toLocaleTimeString()}
+                                    </div>
+                                    <div>${msg.content}</div>
+                                    ${msg.intent ? `<div class="mt-1"><span class="badge bg-secondary">${msg.intent}</span></div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    html += '</div>';
+
+                    if (data.wasHelpful !== null) {
+                        html += `
+                            <hr>
+                            <div class="text-center">
+                                <span class="me-2">Customer Feedback:</span>
+                                ${data.wasHelpful
+                                    ? '<i class="fas fa-thumbs-up text-success fa-lg"></i> Helpful'
+                                    : '<i class="fas fa-thumbs-down text-danger fa-lg"></i> Not Helpful'}
+                            </div>
+                        `;
+                    }
+
+                    document.getElementById('conversationContent').innerHTML = html;
+                } else {
+                    document.getElementById('conversationContent').innerHTML = `
+                        <div class="alert alert-danger">Error: ${result.error}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('conversationContent').innerHTML = `
+                    <div class="alert alert-danger">Error loading conversation</div>
+                `;
+            }
+        }
+    </script>
+}
