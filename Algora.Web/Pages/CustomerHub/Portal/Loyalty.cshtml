@@ -1,0 +1,281 @@
+@page "/portal/loyalty"
+@model Algora.Web.Pages.CustomerHub.Portal.LoyaltyModel
+@{
+    ViewData["Title"] = "My Rewards";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">My Rewards</h1>
+                    <p class="text-sm text-gray-500">Earn points and redeem rewards</p>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-xl">
+                <i class="fas fa-check-circle mr-2"></i>@Model.SuccessMessage
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
+                <i class="fas fa-exclamation-circle mr-2"></i>@Model.ErrorMessage
+            </div>
+        }
+
+        @if (Model.Program == null || !Model.Program.IsActive)
+        {
+            <div class="bg-white rounded-2xl shadow p-8 text-center">
+                <i class="fas fa-gift text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Rewards Program Coming Soon</h3>
+                <p class="text-gray-500">Stay tuned for our upcoming rewards program!</p>
+            </div>
+        }
+        else if (Model.Membership == null)
+        {
+            <!-- Not Enrolled -->
+            <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl shadow-lg p-8 text-center text-white mb-8">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-crown text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Join @Model.Program.Name</h2>
+                <p class="text-purple-100 mb-6">Earn @Model.Program.PointsPerDollar @Model.Program.PointsName.ToLower() for every $1 you spend!</p>
+
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    @if (Model.Program.SignupBonus > 0)
+                    {
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <p class="text-2xl font-bold">@Model.Program.SignupBonus</p>
+                            <p class="text-sm text-purple-100">Signup Bonus</p>
+                        </div>
+                    }
+                    @if (Model.Program.BirthdayBonus > 0)
+                    {
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <p class="text-2xl font-bold">@Model.Program.BirthdayBonus</p>
+                            <p class="text-sm text-purple-100">Birthday Bonus</p>
+                        </div>
+                    }
+                    @if (Model.Program.ReferralBonus > 0)
+                    {
+                        <div class="bg-white/10 rounded-xl p-4">
+                            <p class="text-2xl font-bold">@Model.Program.ReferralBonus</p>
+                            <p class="text-sm text-purple-100">Referral Bonus</p>
+                        </div>
+                    }
+                </div>
+
+                <form method="post" asp-page-handler="Enroll">
+                    <input type="hidden" name="Email" value="@Model.Email" />
+                    <button type="submit" class="px-8 py-3 bg-white text-purple-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-star mr-2"></i>Join Now
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tiers Preview -->
+            @if (Model.Tiers.Any())
+            {
+                <div class="bg-white rounded-2xl shadow p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">Membership Tiers</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-@Math.Min(4, Model.Tiers.Count) gap-4">
+                        @foreach (var tier in Model.Tiers)
+                        {
+                            <div class="text-center p-4 rounded-xl border border-gray-200">
+                                <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center" style="background-color: @(tier.Color ?? "#6b7280")">
+                                    <i class="@(tier.Icon ?? "fas fa-medal") text-white"></i>
+                                </div>
+                                <p class="font-semibold text-gray-800">@tier.Name</p>
+                                <p class="text-sm text-gray-500">@tier.MinimumPoints.ToString("N0")+ pts</p>
+                                <div class="mt-2 text-xs text-gray-500">
+                                    @if (tier.PointsMultiplier > 1)
+                                    {
+                                        <span class="block">@tier.PointsMultiplier.ToString("0.#")x points</span>
+                                    }
+                                    @if (tier.PercentageDiscount.HasValue)
+                                    {
+                                        <span class="block">@tier.PercentageDiscount.Value.ToString("0")% discount</span>
+                                    }
+                                    @if (tier.FreeShipping)
+                                    {
+                                        <span class="block text-green-600">Free shipping</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- Enrolled Member Dashboard -->
+            <!-- Points Balance Card -->
+            <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl shadow-lg p-6 text-white mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-purple-100 text-sm">Your Balance</p>
+                        <p class="text-4xl font-bold">@Model.Membership.PointsBalance.ToString("N0")</p>
+                        <p class="text-purple-100">@Model.Program.PointsName</p>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Membership.CurrentTierName))
+                    {
+                        <div class="text-center">
+                            <div class="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center" style="background-color: @Model.GetTierColor(Model.Membership.CurrentTierId)">
+                                <i class="fas fa-crown text-2xl text-white"></i>
+                            </div>
+                            <p class="font-semibold">@Model.Membership.CurrentTierName</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Tier Progress -->
+                @if (Model.Membership.NextTierName != null && Model.Membership.PointsToNextTier.HasValue)
+                {
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>@(Model.Membership.CurrentTierName ?? "Member")</span>
+                            <span>@Model.Membership.NextTierName</span>
+                        </div>
+                        <div class="w-full bg-white/20 rounded-full h-2">
+                            <div class="bg-white rounded-full h-2 transition-all" style="width: @Model.GetTierProgress()%"></div>
+                        </div>
+                        <p class="text-center text-sm mt-2 text-purple-100">
+                            @Model.Membership.PointsToNextTier.Value.ToString("N0") more @Model.Program.PointsName.ToLower() to @Model.Membership.NextTierName
+                        </p>
+                    </div>
+                }
+            </div>
+
+            <!-- Stats Row -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-2xl shadow p-4 text-center">
+                    <p class="text-2xl font-bold text-gray-800">@Model.Membership.LifetimePoints.ToString("N0")</p>
+                    <p class="text-sm text-gray-500">Lifetime Earned</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow p-4 text-center">
+                    <p class="text-2xl font-bold text-gray-800">@Model.Membership.LifetimeRedeemed.ToString("N0")</p>
+                    <p class="text-sm text-gray-500">Total Redeemed</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow p-4 text-center">
+                    <p class="text-2xl font-bold text-gray-800">@Model.Membership.LifetimeSpent.ToString("C0")</p>
+                    <p class="text-sm text-gray-500">Total Spent</p>
+                </div>
+            </div>
+
+            <!-- Available Rewards -->
+            <div class="bg-white rounded-2xl shadow mb-6">
+                <div class="p-6 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800">
+                        <i class="fas fa-gift mr-2 text-purple-600"></i>Available Rewards
+                    </h3>
+                </div>
+                <div class="p-6">
+                    @if (!Model.AvailableRewards.Any())
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-star text-3xl text-gray-300 mb-2"></i>
+                            <p class="text-gray-500">Keep earning to unlock rewards!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach (var reward in Model.AvailableRewards.Take(6))
+                            {
+                                var canRedeem = Model.Membership.PointsBalance >= reward.PointsCost;
+                                <div class="p-4 rounded-xl border @(canRedeem ? "border-purple-200 bg-purple-50" : "border-gray-200") relative">
+                                    @if (canRedeem)
+                                    {
+                                        <span class="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full"></span>
+                                    }
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-gift text-white"></i>
+                                        </div>
+                                        <div class="flex-grow">
+                                            <p class="font-semibold text-gray-800">@reward.Name</p>
+                                            @if (!string.IsNullOrEmpty(reward.Description))
+                                            {
+                                                <p class="text-sm text-gray-500">@reward.Description</p>
+                                            }
+                                            <p class="text-sm font-semibold text-purple-600 mt-1">
+                                                @reward.PointsCost.ToString("N0") @Model.Program.PointsName
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Points History -->
+            @if (Model.PointsHistory.Any())
+            {
+                <div class="bg-white rounded-2xl shadow">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800">
+                            <i class="fas fa-history mr-2 text-purple-600"></i>Recent Activity
+                        </h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        @foreach (var entry in Model.PointsHistory)
+                        {
+                            <div class="p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="@Model.GetPointsTypeIcon(entry.Type) text-lg"></i>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">@(entry.Description ?? entry.Source)</p>
+                                        <p class="text-xs text-gray-500">@entry.CreatedAt.ToString("MMM d, yyyy")</p>
+                                    </div>
+                                </div>
+                                <span class="font-semibold @(entry.Points >= 0 ? "text-green-600" : "text-red-600")">
+                                    @(entry.Points >= 0 ? "+" : "")@entry.Points.ToString("N0")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Referral Code -->
+            @if (!string.IsNullOrEmpty(Model.Membership.ReferralCode) && Model.Program.ReferralBonus > 0)
+            {
+                <div class="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl shadow p-6 mt-6 text-center">
+                    <h3 class="font-semibold text-white mb-2">
+                        <i class="fas fa-users mr-2"></i>Refer a Friend
+                    </h3>
+                    <p class="text-white/80 text-sm mb-4">Share your code and you both earn @Model.Program.ReferralBonus @Model.Program.PointsName.ToLower()!</p>
+                    <div class="bg-white rounded-xl p-4 inline-flex items-center gap-3">
+                        <span class="font-mono text-lg font-bold text-gray-800">@Model.Membership.ReferralCode</span>
+                        <button onclick="navigator.clipboard.writeText('@Model.Membership.ReferralCode')" class="text-purple-600 hover:text-purple-700">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

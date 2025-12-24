@@ -1,0 +1,244 @@
+@page "/portal/orders"
+@model Algora.Web.Pages.CustomerHub.Portal.OrdersModel
+@{
+    ViewData["Title"] = "My Orders";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">My Orders</h1>
+                    <p class="text-sm text-gray-500">Track and view your order history</p>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
+                <i class="fas fa-exclamation-circle mr-2"></i>@Model.ErrorMessage
+            </div>
+        }
+
+        @if (Model.Customer == null)
+        {
+            <div class="bg-white rounded-2xl shadow p-8 text-center">
+                <i class="fas fa-user-slash text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">Please access the portal first.</p>
+                <a href="/portal" class="inline-block mt-4 px-6 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700">Go to Portal</a>
+            </div>
+        }
+        else if (Model.Orders.Count == 0)
+        {
+            <div class="bg-white rounded-2xl shadow p-8 text-center">
+                <i class="fas fa-shopping-bag text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">No Orders Yet</h3>
+                <p class="text-gray-500">You haven't placed any orders yet.</p>
+            </div>
+        }
+        else
+        {
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Orders List -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white rounded-2xl shadow">
+                        <div class="p-4 border-b border-gray-100">
+                            <h3 class="font-semibold text-gray-800">Order History (@Model.Orders.Count)</h3>
+                        </div>
+                        <div class="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+                            @foreach (var item in Model.Orders)
+                            {
+                                var isSelected = Model.SelectedOrder?.Order.Id == item.Order.Id;
+                                <a href="/portal/orders?Email=@Model.Email&OrderId=@item.Order.Id" class="block p-4 hover:bg-gray-50 @(isSelected ? "bg-purple-50 border-l-4 border-purple-600" : "")">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <p class="font-medium text-gray-800">@item.Order.OrderNumber</p>
+                                        <span class="text-xs px-2 py-1 rounded-full @Model.GetStatusColor(item.Order.FulfillmentStatus)">
+                                            @(item.Order.FulfillmentStatus ?? "Processing")
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">@item.Order.CreatedAt.ToString("MMM d, yyyy")</span>
+                                        <span class="font-semibold text-gray-800">@item.Order.GrandTotal.ToString("C")</span>
+                                    </div>
+                                    @if (item.Fulfillments.Any(f => !string.IsNullOrEmpty(f.TrackingNumber)))
+                                    {
+                                        <p class="text-xs text-purple-600 mt-1">
+                                            <i class="fas fa-truck mr-1"></i>Has tracking
+                                        </p>
+                                    }
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details -->
+                <div class="lg:w-2/3">
+                    @if (Model.SelectedOrder == null)
+                    {
+                        <div class="bg-white rounded-2xl shadow p-8 text-center">
+                            <i class="fas fa-hand-pointer text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">Select an order to view details</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var order = Model.SelectedOrder;
+                        <!-- Order Header -->
+                        <div class="bg-white rounded-2xl shadow mb-6">
+                            <div class="p-6 border-b border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-800">Order @order.Order.OrderNumber</h2>
+                                        <p class="text-sm text-gray-500">Placed on @order.Order.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-xs px-3 py-1 rounded-full @Model.GetStatusColor(order.Order.FulfillmentStatus)">
+                                            @(order.Order.FulfillmentStatus ?? "Processing")
+                                        </span>
+                                        <span class="text-xs px-3 py-1 rounded-full @Model.GetStatusColor(order.Order.FinancialStatus) ml-2">
+                                            @(order.Order.FinancialStatus ?? "Pending")
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Order Items -->
+                            <div class="p-6">
+                                <h3 class="font-semibold text-gray-800 mb-4">Items (@order.OrderLines.Count)</h3>
+                                <div class="space-y-4">
+                                    @foreach (var line in order.OrderLines)
+                                    {
+                                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                            <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-box text-gray-400"></i>
+                                            </div>
+                                            <div class="flex-grow">
+                                                <p class="font-medium text-gray-800">@line.ProductTitle</p>
+                                                @if (!string.IsNullOrEmpty(line.VariantTitle))
+                                                {
+                                                    <p class="text-sm text-gray-500">@line.VariantTitle</p>
+                                                }
+                                                <p class="text-sm text-gray-500">Qty: @line.Quantity</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-semibold text-gray-800">@((line.UnitPrice * line.Quantity).ToString("C"))</p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Order Totals -->
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-500">Subtotal</span>
+                                            <span class="text-gray-800">@order.Order.Subtotal.ToString("C")</span>
+                                        </div>
+                                        @if (order.Order.DiscountTotal > 0)
+                                        {
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-gray-500">Discount</span>
+                                                <span class="text-green-600">-@order.Order.DiscountTotal.ToString("C")</span>
+                                            </div>
+                                        }
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-500">Shipping</span>
+                                            <span class="text-gray-800">@order.Order.ShippingTotal.ToString("C")</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-gray-500">Tax</span>
+                                            <span class="text-gray-800">@order.Order.TaxTotal.ToString("C")</span>
+                                        </div>
+                                        <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
+                                            <span class="text-gray-800">Total</span>
+                                            <span class="text-gray-800">@order.Order.GrandTotal.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipment Tracking -->
+                        @if (order.Fulfillments.Any())
+                        {
+                            <div class="bg-white rounded-2xl shadow">
+                                <div class="p-6 border-b border-gray-100">
+                                    <h3 class="font-semibold text-gray-800">
+                                        <i class="fas fa-truck mr-2 text-purple-600"></i>Shipment Tracking
+                                    </h3>
+                                </div>
+                                <div class="p-6">
+                                    @foreach (var fulfillment in order.Fulfillments)
+                                    {
+                                        <div class="p-4 bg-gray-50 rounded-xl mb-4 last:mb-0">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 rounded-full @Model.GetStatusColor(fulfillment.ShipmentStatus ?? fulfillment.Status) flex items-center justify-center">
+                                                        <i class="@Model.GetShipmentIcon(fulfillment.ShipmentStatus ?? fulfillment.Status)"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-medium text-gray-800 capitalize">@(fulfillment.ShipmentStatus ?? fulfillment.Status)</p>
+                                                        @if (!string.IsNullOrEmpty(fulfillment.TrackingCompany))
+                                                        {
+                                                            <p class="text-sm text-gray-500">@fulfillment.TrackingCompany</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(fulfillment.TrackingUrl))
+                                                {
+                                                    <a href="@fulfillment.TrackingUrl" target="_blank" class="px-4 py-2 text-sm font-medium text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50">
+                                                        <i class="fas fa-external-link-alt mr-1"></i>Track
+                                                    </a>
+                                                }
+                                            </div>
+
+                                            @if (!string.IsNullOrEmpty(fulfillment.TrackingNumber))
+                                            {
+                                                <div class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                                                    <span class="text-sm text-gray-500">Tracking #:</span>
+                                                    <span class="font-mono text-sm text-gray-800">@fulfillment.TrackingNumber</span>
+                                                    <button onclick="navigator.clipboard.writeText('@fulfillment.TrackingNumber')" class="text-purple-600 hover:text-purple-700" title="Copy">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                </div>
+                                            }
+
+                                            <div class="mt-3 text-xs text-gray-500">
+                                                @if (fulfillment.ShippedAt.HasValue)
+                                                {
+                                                    <span><i class="fas fa-shipping-fast mr-1"></i>Shipped: @fulfillment.ShippedAt.Value.ToString("MMM d, yyyy")</span>
+                                                }
+                                                @if (fulfillment.DeliveredAt.HasValue)
+                                                {
+                                                    <span class="ml-4"><i class="fas fa-check-circle mr-1 text-green-600"></i>Delivered: @fulfillment.DeliveredAt.Value.ToString("MMM d, yyyy")</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

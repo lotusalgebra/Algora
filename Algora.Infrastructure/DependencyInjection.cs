@@ -9,6 +9,8 @@ using Algora.Infrastructure.Licensing;
 using Algora.Infrastructure.Persistence;
 using Algora.Infrastructure.Services;
 using Algora.Infrastructure.Services.Communication;
+using Algora.Infrastructure.Services.Operations;
+using Algora.Infrastructure.Services.CustomerHub;
 using Algora.Infrastructure.Services.Scrapers;
 using Algora.Infrastructure.Shopify;
 using Algora.Infrastructure.Shopify.Billing;
@@ -160,6 +162,42 @@ public static class DependencyInjection
         // ----- Analytics Dashboard -----
         services.AddScoped<IAnalyticsService, AnalyticsService>();
         services.AddHostedService<AnalyticsBackgroundService>();
+
+        // ----- Marketing Automation -----
+        services.AddScoped<IMarketingAutomationService, MarketingAutomationService>();
+        services.AddScoped<IPersonalizationService, PersonalizationService>();
+        services.AddScoped<IABTestService, ABTestService>();
+        services.AddHostedService<MarketingAutomationBackgroundService>();
+
+        // ----- Operations Manager -----
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+        services.AddScoped<ILocationService, LocationService>();
+        services.AddScoped<IBarcodeService, BarcodeService>();
+        services.AddHostedService<PurchaseOrderBackgroundService>();
+
+        // ----- Customer Experience Hub -----
+        services.AddScoped<IUnifiedInboxService, UnifiedInboxService>();
+        services.AddScoped<IAiResponseService, AiResponseService>();
+        services.AddScoped<ISocialMediaService, SocialMediaService>();
+        services.AddScoped<IExchangeService, ExchangeService>();
+        services.AddScoped<ILoyaltyService, LoyaltyService>();
+        services.AddHostedService<LoyaltyBackgroundService>();
+
+        // AI text provider for response suggestions (uses OpenAI)
+        services.AddScoped<IAiTextProvider, OpenAiTextSimpleProvider>();
+
+        // ----- AI Assistant Features -----
+        services.AddScoped<ISeoOptimizerService, SeoOptimizerService>();
+        services.AddScoped<IChatbotService, ChatbotService>();
+        services.AddScoped<IPricingOptimizerService, PricingOptimizerService>();
+
+        // HttpClient for Meta Graph API (Facebook/Instagram)
+        services.AddHttpClient("MetaGraphAPI", client =>
+        {
+            client.BaseAddress = new Uri("https://graph.facebook.com/v18.0/");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
 
         return services;
     }

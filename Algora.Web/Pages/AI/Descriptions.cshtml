@@ -1,0 +1,351 @@
+@page
+@model Algora.Web.Pages.AI.DescriptionsModel
+@{
+    ViewData["Title"] = "Product Description Generator";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
+                    <li class="breadcrumb-item active">Description Generator</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">Product Description Generator</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Product Selection -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..." />
+                    </div>
+                    <div id="productList" class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                        @foreach (var product in Model.Products)
+                        {
+                            <a href="#" class="list-group-item list-group-item-action product-item" data-id="@product.Id" data-title="@product.Title" data-description="@product.Description" data-vendor="@product.Vendor" data-type="@product.ProductType" data-tags="@product.Tags">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@product.Title</h6>
+                                        <small class="text-muted">@(product.Vendor ?? "No vendor")</small>
+                                    </div>
+                                    @if (string.IsNullOrEmpty(product.Description))
+                                    {
+                                        <span class="badge bg-warning">No description</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generation Settings -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tone</label>
+                        <select id="tone" class="form-select">
+                            <option value="professional">Professional</option>
+                            <option value="casual">Casual & Friendly</option>
+                            <option value="luxury">Luxury & Premium</option>
+                            <option value="playful">Playful & Fun</option>
+                            <option value="technical">Technical & Detailed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Maximum Words: <span id="wordCountLabel">150</span></label>
+                        <input type="range" id="maxWords" class="form-range" min="50" max="300" value="150" step="25" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Additional Context (optional)</label>
+                        <textarea id="additionalContext" class="form-control" rows="2" placeholder="E.g., Target audience, key features to highlight..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generation Panel -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-magic me-2"></i>Generated Description</h5>
+                    <div>
+                        <button type="button" id="generateBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-wand-magic-sparkles me-2"></i>Generate
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Selected Product Info -->
+                    <div id="noProductSelected" class="text-center py-5">
+                        <i class="fas fa-hand-pointer fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Select a product from the list to generate a description</p>
+                    </div>
+
+                    <div id="productPanel" class="d-none">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2">Selected Product</h6>
+                                <h4 id="selectedProductTitle"></h4>
+                                <p class="text-muted mb-0">
+                                    <span id="selectedProductVendor"></span> &bull;
+                                    <span id="selectedProductType"></span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2">Tags</h6>
+                                <div id="selectedProductTags"></div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <!-- Current Description -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-muted mb-0">Current Description</h6>
+                                <small class="text-muted" id="currentDescWordCount"></small>
+                            </div>
+                            <div id="currentDescription" class="p-3 bg-light rounded border">
+                                <em class="text-muted">No description</em>
+                            </div>
+                        </div>
+
+                        <!-- Generated Description -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-muted mb-0">AI Generated Description</h6>
+                                <small class="text-muted" id="generatedDescWordCount"></small>
+                            </div>
+                            <div id="generatedDescriptionWrapper">
+                                <div id="generatingPlaceholder" class="text-center py-4 d-none">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Generating...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">Generating description with AI...</p>
+                                </div>
+                                <textarea id="generatedDescription" class="form-control d-none" rows="6"></textarea>
+                                <div id="noGeneratedDescription" class="p-3 bg-light rounded border text-center">
+                                    <em class="text-muted">Click "Generate" to create an AI description</em>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div id="actionButtons" class="d-flex gap-2 d-none">
+                            <button type="button" id="applyBtn" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Apply to Product
+                            </button>
+                            <button type="button" id="copyBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-copy me-2"></i>Copy to Clipboard
+                            </button>
+                            <button type="button" id="regenerateBtn" class="btn btn-outline-primary">
+                                <i class="fas fa-redo me-2"></i>Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="alertContainer" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let selectedProductId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const productSearch = document.getElementById('productSearch');
+            const productItems = document.querySelectorAll('.product-item');
+            const generateBtn = document.getElementById('generateBtn');
+            const regenerateBtn = document.getElementById('regenerateBtn');
+            const applyBtn = document.getElementById('applyBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const maxWordsSlider = document.getElementById('maxWords');
+            const wordCountLabel = document.getElementById('wordCountLabel');
+
+            // Search filter
+            productSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                productItems.forEach(item => {
+                    const title = item.dataset.title.toLowerCase();
+                    item.style.display = title.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Word count slider
+            maxWordsSlider.addEventListener('input', function() {
+                wordCountLabel.textContent = this.value;
+            });
+
+            // Product selection
+            productItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    productItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    selectedProductId = this.dataset.id;
+                    document.getElementById('noProductSelected').classList.add('d-none');
+                    document.getElementById('productPanel').classList.remove('d-none');
+
+                    document.getElementById('selectedProductTitle').textContent = this.dataset.title;
+                    document.getElementById('selectedProductVendor').textContent = this.dataset.vendor || 'No vendor';
+                    document.getElementById('selectedProductType').textContent = this.dataset.type || 'No type';
+
+                    const tags = this.dataset.tags ? this.dataset.tags.split(',') : [];
+                    const tagsHtml = tags.length > 0
+                        ? tags.map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('')
+                        : '<span class="text-muted">No tags</span>';
+                    document.getElementById('selectedProductTags').innerHTML = tagsHtml;
+
+                    const currentDesc = this.dataset.description;
+                    const currentDescEl = document.getElementById('currentDescription');
+                    if (currentDesc && currentDesc.trim()) {
+                        currentDescEl.innerHTML = currentDesc;
+                        document.getElementById('currentDescWordCount').textContent = `${currentDesc.split(/\s+/).length} words`;
+                    } else {
+                        currentDescEl.innerHTML = '<em class="text-muted">No description</em>';
+                        document.getElementById('currentDescWordCount').textContent = '';
+                    }
+
+                    generateBtn.disabled = false;
+                    document.getElementById('actionButtons').classList.add('d-none');
+                    document.getElementById('generatedDescription').classList.add('d-none');
+                    document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                });
+            });
+
+            // Generate description
+            async function generateDescription() {
+                if (!selectedProductId) return;
+
+                const tone = document.getElementById('tone').value;
+                const maxWords = document.getElementById('maxWords').value;
+                const context = document.getElementById('additionalContext').value;
+
+                document.getElementById('generatingPlaceholder').classList.remove('d-none');
+                document.getElementById('noGeneratedDescription').classList.add('d-none');
+                document.getElementById('generatedDescription').classList.add('d-none');
+                document.getElementById('actionButtons').classList.add('d-none');
+                generateBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/AI/Descriptions?handler=Generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({
+                            productId: parseInt(selectedProductId),
+                            tone: tone,
+                            maxWords: parseInt(maxWords),
+                            additionalContext: context
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        document.getElementById('generatedDescription').value = result.description;
+                        document.getElementById('generatedDescription').classList.remove('d-none');
+                        document.getElementById('generatedDescWordCount').textContent = `${result.description.split(/\s+/).length} words`;
+                        document.getElementById('actionButtons').classList.remove('d-none');
+                        showAlert('Description generated successfully!', 'success');
+                    } else {
+                        showAlert(result.error || 'Failed to generate description', 'danger');
+                        document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                    }
+                } catch (error) {
+                    showAlert('Error generating description: ' + error.message, 'danger');
+                    document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                } finally {
+                    document.getElementById('generatingPlaceholder').classList.add('d-none');
+                    generateBtn.disabled = false;
+                }
+            }
+
+            generateBtn.addEventListener('click', generateDescription);
+            regenerateBtn.addEventListener('click', generateDescription);
+
+            // Apply to product
+            applyBtn.addEventListener('click', async function() {
+                if (!selectedProductId) return;
+
+                const description = document.getElementById('generatedDescription').value;
+
+                try {
+                    const response = await fetch('/AI/Descriptions?handler=Apply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify({
+                            productId: parseInt(selectedProductId),
+                            description: description
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showAlert('Description applied to product successfully!', 'success');
+                        // Update the current description display
+                        document.getElementById('currentDescription').innerHTML = description;
+                        document.getElementById('currentDescWordCount').textContent = `${description.split(/\s+/).length} words`;
+                        // Update the product item's data attribute
+                        const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
+                        if (productItem) {
+                            productItem.dataset.description = description;
+                            productItem.querySelector('.badge')?.remove();
+                        }
+                    } else {
+                        showAlert(result.error || 'Failed to apply description', 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error applying description: ' + error.message, 'danger');
+                }
+            });
+
+            // Copy to clipboard
+            copyBtn.addEventListener('click', function() {
+                const description = document.getElementById('generatedDescription').value;
+                navigator.clipboard.writeText(description).then(() => {
+                    showAlert('Description copied to clipboard!', 'success');
+                }).catch(err => {
+                    showAlert('Failed to copy: ' + err, 'danger');
+                });
+            });
+        });
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+    </script>
+}

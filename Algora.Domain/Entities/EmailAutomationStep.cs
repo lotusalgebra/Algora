@@ -19,5 +19,19 @@ namespace Algora.Domain.Entities
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        // SMS fields
+        public int? SmsTemplateId { get; set; }
+        public string? SmsBody { get; set; }
+
+        // WhatsApp fields
+        public string? WhatsAppTemplateId { get; set; }
+        public string? WhatsAppBody { get; set; }
+
+        // A/B testing
+        public bool IsABTestEnabled { get; set; }
+
+        public ICollection<ABTestVariant> ABTestVariants { get; set; } = new List<ABTestVariant>();
+        public ICollection<AutomationStepLog> StepLogs { get; set; } = new List<AutomationStepLog>();
     }
 }

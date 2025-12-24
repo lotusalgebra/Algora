@@ -1,0 +1,160 @@
+@page "/customer-hub/inbox"
+@model Algora.Web.Pages.CustomerHub.Inbox.IndexModel
+@{
+    ViewData["Title"] = "Unified Inbox";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h5 class="font-bold dark:text-white">Unified Inbox</h5>
+            <p class="text-sm text-slate-400">Manage all customer conversations in one place</p>
+        </div>
+        <div class="flex gap-2">
+            <button type="button" onclick="syncMessages()" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                <i class="fas fa-sync me-2"></i> Sync Messages
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+        <div class="p-4">
+            <form method="get" class="flex flex-wrap gap-3 items-center">
+                <div class="flex gap-2">
+                    <a href="?status=" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(string.IsNullOrEmpty(Model.FilterStatus) ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">All</a>
+                    <a href="?status=open" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "open" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Open</a>
+                    <a href="?status=pending" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "pending" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Pending</a>
+                    <a href="?status=resolved" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "resolved" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Resolved</a>
+                </div>
+                <div class="flex gap-2">
+                    <a href="?channel=" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(string.IsNullOrEmpty(Model.FilterChannel) ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">All Channels</a>
+                    <a href="?channel=email" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterChannel == "email" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")"><i class="fas fa-envelope me-1"></i> Email</a>
+                    <a href="?channel=sms" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterChannel == "sms" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")"><i class="fas fa-sms me-1"></i> SMS</a>
+                    <a href="?channel=whatsapp" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterChannel == "whatsapp" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")"><i class="fab fa-whatsapp me-1"></i> WhatsApp</a>
+                    <a href="?channel=facebook" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterChannel == "facebook" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")"><i class="fab fa-facebook-messenger me-1"></i> FB</a>
+                    <a href="?channel=instagram" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterChannel == "instagram" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")"><i class="fab fa-instagram me-1"></i> IG</a>
+                </div>
+                <div class="flex-grow">
+                    <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search conversations..." class="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                </div>
+                <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-fuchsia-500 rounded-lg hover:bg-fuchsia-600">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Conversations List -->
+    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+        @if (Model.Conversations.Count == 0)
+        {
+            <div class="flex-auto p-6 text-center">
+                <i class="fas fa-inbox fa-4x text-gray-300 mb-4"></i>
+                <h6 class="mb-2 dark:text-white">No conversations found</h6>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Conversations will appear here when customers message you.</p>
+            </div>
+        }
+        else
+        {
+            <div class="flex-auto p-0">
+                @foreach (var conversation in Model.Conversations)
+                {
+                    var channelIcon = conversation.Channel switch
+                    {
+                        "email" => "fa-envelope",
+                        "sms" => "fa-sms",
+                        "whatsapp" => "fa-whatsapp",
+                        "facebook" => "fa-facebook-messenger",
+                        "instagram" => "fa-instagram",
+                        _ => "fa-comments"
+                    };
+
+                    var channelColor = conversation.Channel switch
+                    {
+                        "email" => "from-blue-600 to-cyan-400",
+                        "sms" => "from-green-600 to-lime-400",
+                        "whatsapp" => "from-green-500 to-emerald-400",
+                        "facebook" => "from-blue-700 to-blue-500",
+                        "instagram" => "from-purple-600 to-pink-500",
+                        _ => "from-gray-400 to-gray-600"
+                    };
+
+                    var priorityBadge = conversation.Priority switch
+                    {
+                        "urgent" => "bg-red-100 text-red-800",
+                        "high" => "bg-orange-100 text-orange-800",
+                        "normal" => "",
+                        "low" => "bg-gray-100 text-gray-600",
+                        _ => ""
+                    };
+
+                    <a href="/customer-hub/inbox/conversation/@conversation.Id" class="block border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                        <div class="flex items-start p-4">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl @channelColor me-4 flex-shrink-0">
+                                <i class="@(conversation.Channel is "whatsapp" or "facebook" or "instagram" ? "fab" : "fas") @channelIcon text-lg relative top-3.5 text-white"></i>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <h6 class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@(conversation.CustomerName ?? conversation.CustomerEmail ?? conversation.CustomerPhone ?? "Unknown")</h6>
+                                        @if (!string.IsNullOrEmpty(priorityBadge))
+                                        {
+                                            <span class="@priorityBadge text-xs font-medium px-2 py-0.5 rounded-full">@conversation.Priority</span>
+                                        }
+                                    </div>
+                                    <span class="text-xs text-slate-400 whitespace-nowrap">@conversation.LastMessageAt?.ToString("MMM d, h:mm tt")</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(conversation.Subject))
+                                {
+                                    <p class="text-sm text-slate-600 dark:text-gray-300 mb-1 truncate">@conversation.Subject</p>
+                                }
+                                <p class="text-xs text-slate-400 mb-0 line-clamp-1">@conversation.LastMessagePreview</p>
+                            </div>
+                            <div class="flex flex-col items-end ml-4">
+                                @if (conversation.UnreadCount > 0)
+                                {
+                                    <span class="bg-fuchsia-500 text-white text-xs font-bold px-2.5 py-1 rounded-full mb-2">@conversation.UnreadCount</span>
+                                }
+                                <span class="@(conversation.Status == "open" ? "bg-blue-100 text-blue-800" : conversation.Status == "pending" ? "bg-orange-100 text-orange-800" : conversation.Status == "resolved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600") text-xxs font-semibold px-2 py-1 rounded uppercase">@conversation.Status</span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+
+            <!-- Pagination -->
+            @if (Model.TotalPages > 1)
+            {
+                <div class="flex justify-center items-center gap-2 p-4 border-t border-gray-100 dark:border-gray-800">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="?page=@(Model.CurrentPage - 1)&status=@Model.FilterStatus&channel=@Model.FilterChannel&search=@Model.SearchTerm" class="px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">Previous</a>
+                    }
+                    <span class="text-sm text-slate-400">Page @Model.CurrentPage of @Model.TotalPages</span>
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a href="?page=@(Model.CurrentPage + 1)&status=@Model.FilterStatus&channel=@Model.FilterChannel&search=@Model.SearchTerm" class="px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">Next</a>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function syncMessages() {
+            try {
+                const response = await fetch('/api/inbox/sync', { method: 'POST' });
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to sync messages');
+                }
+            } catch (error) {
+                console.error('Error syncing messages:', error);
+                alert('Failed to sync messages');
+            }
+        }
+    </script>
+}

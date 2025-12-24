@@ -65,6 +65,12 @@ namespace Algora.Infrastructure.Data
         public DbSet<EmailAutomationStep> EmailAutomationSteps { get; set; } = null!;
         public DbSet<EmailAutomationEnrollment> EmailAutomationEnrollments { get; set; } = null!;
 
+        // ----- Marketing Automation entities -----
+        public DbSet<ABTestVariant> ABTestVariants { get; set; } = null!;
+        public DbSet<ABTestResult> ABTestResults { get; set; } = null!;
+        public DbSet<AutomationStepLog> AutomationStepLogs { get; set; } = null!;
+        public DbSet<WinbackRule> WinbackRules { get; set; } = null!;
+
         // ----- SMS entities -----
         public DbSet<SmsTemplate> SmsTemplates { get; set; } = null!;
         public DbSet<SmsMessage> SmsMessages { get; set; } = null!;
@@ -110,6 +116,37 @@ namespace Algora.Infrastructure.Data
         public DbSet<AdsSpend> AdsSpends { get; set; } = null!;
         public DbSet<AnalyticsSnapshot> AnalyticsSnapshots { get; set; } = null!;
         public DbSet<CustomerLifetimeValue> CustomerLifetimeValues { get; set; } = null!;
+
+        // ----- Operations Manager entities -----
+        public DbSet<Supplier> Suppliers { get; set; } = null!;
+        public DbSet<SupplierProduct> SupplierProducts { get; set; } = null!;
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; } = null!;
+        public DbSet<PurchaseOrderLine> PurchaseOrderLines { get; set; } = null!;
+        public DbSet<Location> Locations { get; set; } = null!;
+        public DbSet<InventoryLevel> InventoryLevels { get; set; } = null!;
+        public DbSet<ProductInventoryThreshold> ProductInventoryThresholds { get; set; } = null!;
+
+        // ----- Customer Hub entities -----
+        public DbSet<ConversationThread> ConversationThreads { get; set; } = null!;
+        public DbSet<ConversationMessage> ConversationMessages { get; set; } = null!;
+        public DbSet<AiSuggestion> AiSuggestions { get; set; } = null!;
+        public DbSet<QuickReply> QuickReplies { get; set; } = null!;
+        public DbSet<FacebookMessage> FacebookMessages { get; set; } = null!;
+        public DbSet<InstagramMessage> InstagramMessages { get; set; } = null!;
+        public DbSet<SocialMediaSettings> SocialMediaSettings { get; set; } = null!;
+        public DbSet<Exchange> Exchanges { get; set; } = null!;
+        public DbSet<ExchangeItem> ExchangeItems { get; set; } = null!;
+        public DbSet<LoyaltyProgram> LoyaltyPrograms { get; set; } = null!;
+        public DbSet<LoyaltyTier> LoyaltyTiers { get; set; } = null!;
+        public DbSet<LoyaltyPoints> LoyaltyPoints { get; set; } = null!;
+        public DbSet<LoyaltyReward> LoyaltyRewards { get; set; } = null!;
+        public DbSet<CustomerLoyalty> CustomerLoyalties { get; set; } = null!;
+
+        // ----- AI Assistant entities -----
+        public DbSet<ChatbotConversation> ChatbotConversations { get; set; } = null!;
+        public DbSet<ChatbotMessage> ChatbotMessages { get; set; } = null!;
+        public DbSet<ProductSeoData> ProductSeoData { get; set; } = null!;
+        public DbSet<PricingSuggestion> PricingSuggestions { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -491,9 +528,62 @@ namespace Algora.Infrastructure.Data
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Email).IsRequired().HasMaxLength(255);
                 b.Property(x => x.Status).HasMaxLength(20);
+                b.Property(x => x.ExitReason).HasMaxLength(500);
+                b.Property(x => x.Metadata).HasMaxLength(4000);
                 b.HasOne(x => x.Automation).WithMany(a => a.Enrollments).HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Subscriber).WithMany().HasForeignKey(x => x.SubscriberId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ABTestVariant).WithMany().HasForeignKey(x => x.ABTestVariantId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.AutomationId, x.Email });
+                b.HasIndex(x => new { x.AutomationId, x.Status });
+            });
+
+            // ==================== MARKETING AUTOMATION ENTITIES ====================
+
+            modelBuilder.Entity<ABTestVariant>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.VariantName).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Subject).HasMaxLength(500);
+                b.Property(x => x.Revenue).HasPrecision(18, 4);
+                b.HasOne(x => x.Automation).WithMany().HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Step).WithMany(s => s.ABTestVariants).HasForeignKey(x => x.StepId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.AutomationId, x.StepId });
+            });
+
+            modelBuilder.Entity<ABTestResult>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ConversionValue).HasPrecision(18, 4);
+                b.HasOne(x => x.Enrollment).WithMany(e => e.ABTestResults).HasForeignKey(x => x.EnrollmentId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Variant).WithMany(v => v.Results).HasForeignKey(x => x.VariantId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.EnrollmentId, x.VariantId });
+            });
+
+            modelBuilder.Entity<AutomationStepLog>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Channel).HasMaxLength(20);
+                b.Property(x => x.ExternalMessageId).HasMaxLength(200);
+                b.Property(x => x.ErrorMessage).HasMaxLength(2000);
+                b.HasOne(x => x.Enrollment).WithMany(e => e.StepLogs).HasForeignKey(x => x.EnrollmentId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Step).WithMany(s => s.StepLogs).HasForeignKey(x => x.StepId).OnDelete(DeleteBehavior.NoAction);
+                b.HasIndex(x => new { x.EnrollmentId, x.StepId });
+                b.HasIndex(x => new { x.Status, x.ScheduledAt });
+            });
+
+            modelBuilder.Entity<WinbackRule>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.MinimumLifetimeValue).HasPrecision(18, 4);
+                b.Property(x => x.CustomerTags).HasMaxLength(1000);
+                b.Property(x => x.ExcludeTags).HasMaxLength(1000);
+                b.HasOne(x => x.Automation).WithMany().HasForeignKey(x => x.AutomationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
             });
 
             // ==================== SMS ENTITIES ====================
@@ -1006,6 +1096,372 @@ namespace Algora.Infrastructure.Data
                 b.HasIndex(x => new { x.ShopDomain, x.CustomerId }).IsUnique();
                 b.HasIndex(x => new { x.ShopDomain, x.Segment });
                 b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ==================== OPERATIONS MANAGER ENTITIES ====================
+
+            modelBuilder.Entity<Supplier>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Code).HasMaxLength(50);
+                b.Property(x => x.Email).HasMaxLength(200);
+                b.Property(x => x.Phone).HasMaxLength(50);
+                b.Property(x => x.Address).HasMaxLength(500);
+                b.Property(x => x.ContactPerson).HasMaxLength(100);
+                b.Property(x => x.Website).HasMaxLength(500);
+                b.Property(x => x.PaymentTerms).HasMaxLength(100);
+                b.Property(x => x.Notes).HasMaxLength(2000);
+                b.Property(x => x.MinimumOrderAmount).HasPrecision(18, 4);
+                b.Property(x => x.TotalSpent).HasPrecision(18, 4);
+                b.Property(x => x.AverageDeliveryDays).HasPrecision(10, 2);
+                b.Property(x => x.OnTimeDeliveryRate).HasPrecision(5, 2);
+                b.HasIndex(x => new { x.ShopDomain, x.Name });
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
+            });
+
+            modelBuilder.Entity<SupplierProduct>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.SupplierSku).HasMaxLength(100);
+                b.Property(x => x.SupplierProductName).HasMaxLength(200);
+                b.Property(x => x.UnitCost).HasPrecision(18, 4);
+                b.HasOne(x => x.Supplier).WithMany(s => s.SupplierProducts).HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.ProductVariant).WithMany().HasForeignKey(x => x.ProductVariantId).OnDelete(DeleteBehavior.SetNull);
+                b.HasIndex(x => new { x.SupplierId, x.ProductId, x.ProductVariantId });
+            });
+
+            modelBuilder.Entity<PurchaseOrder>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.OrderNumber).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Currency).HasMaxLength(3);
+                b.Property(x => x.Notes).HasMaxLength(2000);
+                b.Property(x => x.SupplierReference).HasMaxLength(100);
+                b.Property(x => x.TrackingNumber).HasMaxLength(100);
+                b.Property(x => x.CancellationReason).HasMaxLength(500);
+                b.Property(x => x.Subtotal).HasPrecision(18, 4);
+                b.Property(x => x.Tax).HasPrecision(18, 4);
+                b.Property(x => x.Shipping).HasPrecision(18, 4);
+                b.Property(x => x.Total).HasPrecision(18, 4);
+                b.HasIndex(x => new { x.ShopDomain, x.OrderNumber }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasOne(x => x.Supplier).WithMany(s => s.PurchaseOrders).HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne(x => x.Location).WithMany(l => l.PurchaseOrders).HasForeignKey(x => x.LocationId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<PurchaseOrderLine>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Sku).HasMaxLength(100);
+                b.Property(x => x.ProductTitle).IsRequired().HasMaxLength(300);
+                b.Property(x => x.VariantTitle).HasMaxLength(200);
+                b.Property(x => x.ReceivingNotes).HasMaxLength(500);
+                b.Property(x => x.UnitCost).HasPrecision(18, 4);
+                b.Property(x => x.TotalCost).HasPrecision(18, 4);
+                b.HasOne(x => x.PurchaseOrder).WithMany(po => po.Lines).HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne(x => x.ProductVariant).WithMany().HasForeignKey(x => x.ProductVariantId).OnDelete(DeleteBehavior.SetNull);
+                b.HasIndex(x => x.PurchaseOrderId);
+            });
+
+            modelBuilder.Entity<Location>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Address1).HasMaxLength(300);
+                b.Property(x => x.Address2).HasMaxLength(300);
+                b.Property(x => x.City).HasMaxLength(100);
+                b.Property(x => x.Province).HasMaxLength(100);
+                b.Property(x => x.ProvinceCode).HasMaxLength(10);
+                b.Property(x => x.Country).HasMaxLength(100);
+                b.Property(x => x.CountryCode).HasMaxLength(2);
+                b.Property(x => x.Zip).HasMaxLength(20);
+                b.Property(x => x.Phone).HasMaxLength(50);
+                b.HasIndex(x => new { x.ShopDomain, x.ShopifyLocationId }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.IsActive });
+            });
+
+            modelBuilder.Entity<InventoryLevel>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.HasOne(x => x.Location).WithMany(l => l.InventoryLevels).HasForeignKey(x => x.LocationId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.ProductVariant).WithMany().HasForeignKey(x => x.ProductVariantId).OnDelete(DeleteBehavior.SetNull);
+                b.HasIndex(x => new { x.LocationId, x.ProductId, x.ProductVariantId }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.ShopifyInventoryItemId });
+            });
+
+            modelBuilder.Entity<ProductInventoryThreshold>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.ProductVariant).WithMany().HasForeignKey(x => x.ProductVariantId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.PreferredSupplier).WithMany().HasForeignKey(x => x.PreferredSupplierId).OnDelete(DeleteBehavior.SetNull);
+                b.HasIndex(x => new { x.ShopDomain, x.ProductId, x.ProductVariantId }).IsUnique();
+            });
+
+            // ==================== CUSTOMER HUB ENTITIES ====================
+
+            modelBuilder.Entity<ConversationThread>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CustomerEmail).HasMaxLength(200);
+                b.Property(x => x.CustomerPhone).HasMaxLength(50);
+                b.Property(x => x.CustomerName).HasMaxLength(200);
+                b.Property(x => x.Subject).HasMaxLength(500);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Priority).IsRequired().HasMaxLength(20);
+                b.Property(x => x.AssignedToUserId).HasMaxLength(100);
+                b.Property(x => x.Channel).IsRequired().HasMaxLength(20);
+                b.Property(x => x.LastMessagePreview).HasMaxLength(500);
+                b.Property(x => x.Tags).HasMaxLength(500);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => x.CustomerId);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ConversationMessage>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Channel).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Direction).IsRequired().HasMaxLength(10);
+                b.Property(x => x.ExternalMessageId).HasMaxLength(200);
+                b.Property(x => x.SenderType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.SenderName).HasMaxLength(200);
+                b.Property(x => x.ContentType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.MediaUrl).HasMaxLength(500);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.HasIndex(x => x.ConversationThreadId);
+                b.HasOne(x => x.ConversationThread).WithMany(t => t.Messages).HasForeignKey(x => x.ConversationThreadId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<AiSuggestion>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Provider).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Model).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Confidence).HasPrecision(5, 2);
+                b.Property(x => x.EstimatedCost).HasPrecision(10, 6);
+                b.HasOne(x => x.ConversationThread).WithMany(t => t.AiSuggestions).HasForeignKey(x => x.ConversationThreadId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.ConversationMessage).WithMany().HasForeignKey(x => x.ConversationMessageId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<QuickReply>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Title).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Category).HasMaxLength(50);
+                b.Property(x => x.Shortcut).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain);
+            });
+
+            modelBuilder.Entity<FacebookMessage>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.FacebookMessageId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.SenderId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.SenderName).HasMaxLength(200);
+                b.Property(x => x.RecipientId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Direction).IsRequired().HasMaxLength(10);
+                b.Property(x => x.MessageType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.MediaUrl).HasMaxLength(500);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain);
+                b.HasIndex(x => x.SenderId);
+            });
+
+            modelBuilder.Entity<InstagramMessage>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.InstagramMessageId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.SenderId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.SenderUsername).HasMaxLength(200);
+                b.Property(x => x.RecipientId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Direction).IsRequired().HasMaxLength(10);
+                b.Property(x => x.MessageType).IsRequired().HasMaxLength(20);
+                b.Property(x => x.MediaUrl).HasMaxLength(500);
+                b.Property(x => x.StoryId).HasMaxLength(100);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain);
+                b.HasIndex(x => x.SenderId);
+            });
+
+            modelBuilder.Entity<SocialMediaSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.FacebookPageId).HasMaxLength(100);
+                b.Property(x => x.FacebookPageAccessToken).HasMaxLength(500);
+                b.Property(x => x.InstagramAccountId).HasMaxLength(100);
+                b.Property(x => x.MetaAppId).HasMaxLength(100);
+                b.Property(x => x.MetaAppSecret).HasMaxLength(200);
+                b.Property(x => x.WebhookVerifyToken).HasMaxLength(100);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            modelBuilder.Entity<Exchange>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.ExchangeNumber).IsRequired().HasMaxLength(50);
+                b.Property(x => x.OrderNumber).IsRequired().HasMaxLength(50);
+                b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CustomerName).HasMaxLength(200);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.PriceDifference).HasPrecision(18, 4);
+                b.Property(x => x.Currency).HasMaxLength(10);
+                b.Property(x => x.Notes).HasMaxLength(2000);
+                b.HasIndex(x => new { x.ShopDomain, x.Status });
+                b.HasIndex(x => new { x.ShopDomain, x.ExchangeNumber }).IsUnique();
+                b.HasOne(x => x.Order).WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ReturnRequest).WithMany().HasForeignKey(x => x.ReturnRequestId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.NewOrder).WithMany().HasForeignKey(x => x.NewOrderId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ExchangeItem>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.OriginalProductTitle).IsRequired().HasMaxLength(300);
+                b.Property(x => x.OriginalVariantTitle).HasMaxLength(200);
+                b.Property(x => x.OriginalSku).HasMaxLength(100);
+                b.Property(x => x.OriginalPrice).HasPrecision(18, 4);
+                b.Property(x => x.NewProductTitle).HasMaxLength(300);
+                b.Property(x => x.NewVariantTitle).HasMaxLength(200);
+                b.Property(x => x.NewSku).HasMaxLength(100);
+                b.Property(x => x.NewPrice).HasPrecision(18, 4);
+                b.Property(x => x.Reason).HasMaxLength(500);
+                b.Property(x => x.CustomerNote).HasMaxLength(1000);
+                b.HasOne(x => x.Exchange).WithMany(e => e.Items).HasForeignKey(x => x.ExchangeId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.NewProduct).WithMany().HasForeignKey(x => x.NewProductId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.NewProductVariant).WithMany().HasForeignKey(x => x.NewProductVariantId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<LoyaltyProgram>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+                b.Property(x => x.PointsName).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Currency).IsRequired().HasMaxLength(3);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            modelBuilder.Entity<LoyaltyTier>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(50);
+                b.Property(x => x.PointsMultiplier).HasPrecision(5, 2);
+                b.Property(x => x.PercentageDiscount).HasPrecision(5, 2);
+                b.Property(x => x.Color).HasMaxLength(20);
+                b.Property(x => x.Icon).HasMaxLength(50);
+                b.HasOne(x => x.LoyaltyProgram).WithMany(p => p.Tiers).HasForeignKey(x => x.LoyaltyProgramId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<LoyaltyPoints>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Type).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Source).IsRequired().HasMaxLength(50);
+                b.Property(x => x.SourceId).HasMaxLength(50);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.HasIndex(x => x.CustomerLoyaltyId);
+                b.HasOne(x => x.CustomerLoyalty).WithMany(cl => cl.PointsHistory).HasForeignKey(x => x.CustomerLoyaltyId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<LoyaltyReward>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.Property(x => x.Type).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Value).HasPrecision(18, 4);
+                b.Property(x => x.MinimumOrderAmount).HasPrecision(18, 4);
+                b.Property(x => x.ImageUrl).HasMaxLength(500);
+                b.HasOne(x => x.LoyaltyProgram).WithMany(p => p.Rewards).HasForeignKey(x => x.LoyaltyProgramId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<CustomerLoyalty>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.LifetimeSpent).HasPrecision(18, 4);
+                b.Property(x => x.ReferralCode).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain);
+                b.HasIndex(x => new { x.CustomerId, x.LoyaltyProgramId }).IsUnique();
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.LoyaltyProgram).WithMany(p => p.Members).HasForeignKey(x => x.LoyaltyProgramId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.CurrentTier).WithMany().HasForeignKey(x => x.CurrentTierId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.ReferredBy).WithMany(cl => cl.Referrals).HasForeignKey(x => x.ReferredById).OnDelete(DeleteBehavior.NoAction);
+            });
+
+            // ==================== AI ASSISTANT ENTITIES ====================
+
+            modelBuilder.Entity<ChatbotConversation>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.SessionId).IsRequired().HasMaxLength(100);
+                b.Property(x => x.CustomerEmail).HasMaxLength(200);
+                b.Property(x => x.Status).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Topic).HasMaxLength(100);
+                b.HasIndex(x => x.ShopDomain);
+                b.HasIndex(x => x.SessionId);
+                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.RelatedOrder).WithMany().HasForeignKey(x => x.RelatedOrderId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ChatbotMessage>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Role).IsRequired().HasMaxLength(20);
+                b.Property(x => x.Intent).HasMaxLength(50);
+                b.Property(x => x.Confidence).HasPrecision(5, 2);
+                b.Property(x => x.SuggestedActions).HasMaxLength(500);
+                b.HasIndex(x => x.ConversationId);
+                b.HasOne(x => x.Conversation).WithMany(c => c.Messages).HasForeignKey(x => x.ConversationId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ProductSeoData>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.MetaTitle).HasMaxLength(70);
+                b.Property(x => x.MetaDescription).HasMaxLength(160);
+                b.Property(x => x.Keywords).HasMaxLength(500);
+                b.Property(x => x.FocusKeyword).HasMaxLength(100);
+                b.Property(x => x.Provider).HasMaxLength(50);
+                b.HasIndex(x => x.ProductId).IsUnique();
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PricingSuggestion>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.CurrentPrice).HasPrecision(18, 4);
+                b.Property(x => x.SuggestedPrice).HasPrecision(18, 4);
+                b.Property(x => x.MinPrice).HasPrecision(18, 4);
+                b.Property(x => x.MaxPrice).HasPrecision(18, 4);
+                b.Property(x => x.PriceChange).HasPrecision(18, 4);
+                b.Property(x => x.ChangePercent).HasPrecision(5, 2);
+                b.Property(x => x.Reasoning).HasMaxLength(1000);
+                b.Property(x => x.Confidence).HasPrecision(5, 2);
+                b.Property(x => x.Provider).IsRequired().HasMaxLength(50);
+                b.HasIndex(x => x.ProductId);
+                b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
             });
 
         }

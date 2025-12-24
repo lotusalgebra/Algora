@@ -1,0 +1,243 @@
+@page "/operations"
+@model Algora.Web.Pages.Operations.IndexModel
+@{
+    ViewData["Title"] = "Operations Manager";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Active Suppliers -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Active Suppliers</p>
+                                <h5 class="mb-0 font-bold dark:text-white">@Model.ActiveSupplierCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500">
+                                <i class="fas fa-truck text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Pending Orders</p>
+                                <h5 class="mb-0 font-bold dark:text-white text-blue-600">@Model.PendingPurchaseOrderCount</h5>
+                                <p class="mb-0 text-xs leading-tight text-slate-400">$@Model.TotalPendingOrderValue.ToString("N2") total</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                <i class="fas fa-file-invoice text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locations -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Locations</p>
+                                <h5 class="mb-0 font-bold dark:text-white">@Model.LocationCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                <i class="fas fa-warehouse text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Products -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Low Stock Products</p>
+                                <h5 class="mb-0 font-bold dark:text-white @(Model.LowStockProductCount > 0 ? "text-orange-600" : "")">@Model.LowStockProductCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-300">
+                                <i class="fas fa-exclamation-triangle text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Quick Actions</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/operations/suppliers" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-truck me-2"></i> Manage Suppliers
+                        </a>
+                        <a href="/operations/purchase-orders" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-file-invoice me-2"></i> Purchase Orders
+                        </a>
+                        <a href="/operations/locations" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-warehouse me-2"></i> Locations
+                        </a>
+                        <a href="/operations/barcodes" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-gray-700 to-gray-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-barcode me-2"></i> Barcode Generator
+                        </a>
+                        <a href="/operations/thresholds" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-sliders-h me-2"></i> Inventory Thresholds
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mx-0 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <div class="flex flex-wrap -mx-3">
+        <!-- Recent Purchase Orders -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Recent Purchase Orders</h6>
+                        <a href="/operations/purchase-orders" class="text-sm text-fuchsia-500 hover:text-fuchsia-700">View All</a>
+                    </div>
+                </div>
+                <div class="flex-auto p-6 pt-4">
+                    @if (Model.RecentPurchaseOrders.Count == 0)
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-file-invoice fa-3x text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No purchase orders yet.</p>
+                            <a href="/operations/purchase-orders/create" class="text-fuchsia-500 hover:text-fuchsia-700">Create your first order</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                            @foreach (var order in Model.RecentPurchaseOrders)
+                            {
+                                var statusColor = order.Status switch
+                                {
+                                    "draft" => "from-gray-400 to-gray-600",
+                                    "sent" => "from-blue-600 to-cyan-400",
+                                    "confirmed" => "from-purple-700 to-pink-500",
+                                    "shipped" => "from-orange-500 to-yellow-300",
+                                    "received" => "from-green-600 to-lime-400",
+                                    "cancelled" => "from-red-600 to-rose-400",
+                                    _ => "from-gray-400 to-gray-600"
+                                };
+
+                                <li class="relative flex justify-between p-4 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <div class="flex flex-col">
+                                        <h6 class="mb-1 text-sm font-semibold leading-normal text-slate-700 dark:text-white">@order.OrderNumber</h6>
+                                        <span class="text-xs leading-tight text-slate-400">@order.SupplierName</span>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white mb-1">@order.Status</span>
+                                        <span class="text-sm font-bold text-slate-700 dark:text-white">$@order.Total.ToString("N2")</span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggested Orders -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Suggested Reorders</h6>
+                        <a href="/operations/purchase-orders/create" class="text-sm text-fuchsia-500 hover:text-fuchsia-700">Create Order</a>
+                    </div>
+                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                        Products that need reordering based on sales velocity
+                    </p>
+                </div>
+                <div class="flex-auto p-6 pt-4">
+                    @if (Model.SuggestedOrders.Count == 0)
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-check-circle fa-3x text-green-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No suggested reorders. Inventory levels are healthy!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                            @foreach (var suggestion in Model.SuggestedOrders)
+                            {
+                                @foreach (var line in suggestion.Lines.Take(3))
+                                {
+                                    var urgencyColor = line.DaysUntilStockout switch
+                                    {
+                                        <= 3 => "text-red-600",
+                                        <= 7 => "text-orange-600",
+                                        <= 14 => "text-yellow-600",
+                                        _ => "text-slate-600"
+                                    };
+
+                                    <li class="relative flex justify-between p-4 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                        <div class="flex flex-col">
+                                            <h6 class="mb-1 text-sm font-semibold leading-normal text-slate-700 dark:text-white">@line.ProductTitle</h6>
+                                            <span class="text-xs leading-tight text-slate-400">
+                                                Current: @line.CurrentStock | Reorder: @line.SuggestedQuantity
+                                            </span>
+                                        </div>
+                                        <div class="flex flex-col items-end">
+                                            <span class="text-sm font-bold @urgencyColor">
+                                                @(line.DaysUntilStockout >= 9999 ? "In Stock" : $"{line.DaysUntilStockout} days")
+                                            </span>
+                                            <span class="text-xs text-slate-400">@suggestion.SupplierName</span>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

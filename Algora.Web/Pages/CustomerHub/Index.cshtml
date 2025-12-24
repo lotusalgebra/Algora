@@ -1,0 +1,313 @@
+@page "/customer-hub"
+@model Algora.Web.Pages.CustomerHub.IndexModel
+@{
+    ViewData["Title"] = "Customer Experience Hub";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Summary Cards -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <!-- Open Conversations -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Open Conversations</p>
+                                <h5 class="mb-0 font-bold dark:text-white @(Model.OpenConversationCount > 0 ? "text-blue-600" : "")">@Model.OpenConversationCount</h5>
+                                <p class="mb-0 text-xs leading-tight text-slate-400">@Model.UnreadMessageCount unread</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
+                                <i class="fas fa-comments text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Exchanges -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Pending Exchanges</p>
+                                <h5 class="mb-0 font-bold dark:text-white @(Model.PendingExchangeCount > 0 ? "text-orange-600" : "")">@Model.PendingExchangeCount</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-orange-500 to-yellow-300">
+                                <i class="fas fa-exchange-alt text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loyalty Members -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Loyalty Members</p>
+                                <h5 class="mb-0 font-bold dark:text-white">@Model.LoyaltyMemberCount</h5>
+                                <p class="mb-0 text-xs leading-tight text-slate-400">@Model.ActiveMemberCount active</p>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500">
+                                <i class="fas fa-crown text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points Issued -->
+        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
+            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="flex-auto p-4">
+                    <div class="flex flex-row -mx-3">
+                        <div class="flex-none w-2/3 max-w-full px-3">
+                            <div>
+                                <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Points Issued (30d)</p>
+                                <h5 class="mb-0 font-bold dark:text-white">@Model.PointsIssuedThisMonth.ToString("N0")</h5>
+                            </div>
+                        </div>
+                        <div class="px-3 text-right basis-1/3">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
+                                <i class="fas fa-star text-lg relative top-3.5 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex flex-wrap -mx-3 mb-6">
+        <div class="flex-none w-full max-w-full px-3">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <h6 class="mb-0 dark:text-white">Quick Actions</h6>
+                </div>
+                <div class="flex-auto p-6">
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/customer-hub/inbox" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-inbox me-2"></i> Unified Inbox
+                        </a>
+                        <a href="/customer-hub/exchanges" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-exchange-alt me-2"></i> Exchanges
+                        </a>
+                        <a href="/customer-hub/loyalty" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-crown me-2"></i> Loyalty Program
+                        </a>
+                        <a href="/customer-hub/loyalty/rewards" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-gift me-2"></i> Rewards Catalog
+                        </a>
+                        <a href="/customer-hub/loyalty/settings" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-gray-700 to-gray-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-cog me-2"></i> Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mx-0 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <div class="flex flex-wrap -mx-3">
+        <!-- Recent Conversations -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Recent Conversations</h6>
+                        <a href="/customer-hub/inbox" class="text-sm text-fuchsia-500 hover:text-fuchsia-700">View All</a>
+                    </div>
+                </div>
+                <div class="flex-auto p-6 pt-4">
+                    @if (Model.RecentConversations.Count == 0)
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-comments fa-3x text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No conversations yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                            @foreach (var conversation in Model.RecentConversations)
+                            {
+                                var channelIcon = conversation.Channel switch
+                                {
+                                    "email" => "fa-envelope",
+                                    "sms" => "fa-sms",
+                                    "whatsapp" => "fa-whatsapp",
+                                    "facebook" => "fa-facebook-messenger",
+                                    "instagram" => "fa-instagram",
+                                    _ => "fa-comments"
+                                };
+
+                                var statusColor = conversation.Status switch
+                                {
+                                    "open" => "from-blue-600 to-cyan-400",
+                                    "pending" => "from-orange-500 to-yellow-300",
+                                    "resolved" => "from-green-600 to-lime-400",
+                                    "closed" => "from-gray-400 to-gray-600",
+                                    _ => "from-gray-400 to-gray-600"
+                                };
+
+                                <li class="relative flex justify-between p-4 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <div class="flex items-start">
+                                        <div class="inline-block w-10 h-10 text-center rounded-lg bg-gradient-to-tl @statusColor me-3">
+                                            <i class="fab @channelIcon text-sm relative top-2.5 text-white"></i>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h6 class="mb-1 text-sm font-semibold leading-normal text-slate-700 dark:text-white">@(conversation.CustomerName ?? conversation.CustomerEmail)</h6>
+                                            <span class="text-xs leading-tight text-slate-400 line-clamp-1">@conversation.LastMessagePreview</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="text-xs text-slate-400">@conversation.LastMessageAt?.ToString("MMM d, h:mm tt")</span>
+                                        @if (conversation.UnreadCount > 0)
+                                        {
+                                            <span class="bg-fuchsia-500 text-white text-xs font-bold px-2 py-0.5 rounded-full mt-1">@conversation.UnreadCount</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Exchanges -->
+        <div class="flex-none w-full max-w-full px-3 lg:w-1/2">
+            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 dark:text-white">Recent Exchanges</h6>
+                        <a href="/customer-hub/exchanges" class="text-sm text-fuchsia-500 hover:text-fuchsia-700">View All</a>
+                    </div>
+                </div>
+                <div class="flex-auto p-6 pt-4">
+                    @if (Model.RecentExchanges.Count == 0)
+                    {
+                        <div class="text-center py-8">
+                            <i class="fas fa-exchange-alt fa-3x text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No exchanges yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
+                            @foreach (var exchange in Model.RecentExchanges)
+                            {
+                                var statusColor = exchange.Status switch
+                                {
+                                    "pending" => "from-orange-500 to-yellow-300",
+                                    "approved" => "from-blue-600 to-cyan-400",
+                                    "shipped" => "from-purple-700 to-pink-500",
+                                    "received" => "from-cyan-500 to-blue-400",
+                                    "completed" => "from-green-600 to-lime-400",
+                                    "cancelled" => "from-red-600 to-rose-400",
+                                    _ => "from-gray-400 to-gray-600"
+                                };
+
+                                <li class="relative flex justify-between p-4 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <div class="flex flex-col">
+                                        <h6 class="mb-1 text-sm font-semibold leading-normal text-slate-700 dark:text-white">@exchange.ExchangeNumber</h6>
+                                        <span class="text-xs leading-tight text-slate-400">@(exchange.CustomerName ?? exchange.CustomerEmail)</span>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white mb-1">@exchange.Status</span>
+                                        <span class="text-xs text-slate-400">@exchange.CreatedAt.ToString("MMM d")</span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loyalty Program Overview -->
+    @if (Model.LoyaltyProgram != null)
+    {
+        <div class="flex flex-wrap -mx-3">
+            <div class="flex-none w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h6 class="mb-0 dark:text-white">@Model.LoyaltyProgram.Name</h6>
+                                <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+                                    @Model.LoyaltyProgram.PointsPerDollar @Model.LoyaltyProgram.PointsName per $1 spent
+                                </p>
+                            </div>
+                            <span class="@(Model.LoyaltyProgram.IsActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800") text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                @(Model.LoyaltyProgram.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <div class="flex flex-wrap gap-6">
+                            @foreach (var tier in Model.LoyaltyTiers)
+                            {
+                                <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: @(tier.Color ?? "#6b7280")">
+                                        <i class="@(tier.Icon ?? "fas fa-medal") text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@tier.Name</p>
+                                        <p class="text-xs text-slate-400 mb-0">@tier.MinimumPoints.ToString("N0")+ @Model.LoyaltyProgram.PointsName</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-lg font-bold text-fuchsia-500 mb-0">@tier.PointsMultiplier.ToString("0.#")x</p>
+                                        <p class="text-xs text-slate-400 mb-0">multiplier</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-wrap -mx-3">
+            <div class="flex-none w-full max-w-full px-3">
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="flex-auto p-6 text-center">
+                        <i class="fas fa-crown fa-3x text-gray-300 mb-4"></i>
+                        <h6 class="mb-2 dark:text-white">No Loyalty Program Configured</h6>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Create a loyalty program to reward your customers and increase retention.</p>
+                        <a href="/customer-hub/loyalty/settings" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-plus me-2"></i> Create Loyalty Program
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,269 @@
+@page "/portal/chat"
+@model Algora.Web.Pages.CustomerHub.Portal.ChatModel
+@{
+    ViewData["Title"] = "Chat Support";
+    Layout = null;
+    var tokenHtml = Html.AntiForgeryToken().ToString() ?? "";
+    var tokenParts = tokenHtml.Split("value=\"");
+    var tokenValue = tokenParts.Length > 1 ? tokenParts[1].Split("\"")[0] : "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .chat-container { height: calc(100vh - 200px); min-height: 400px; }
+        .message-bubble { max-width: 80%; }
+        .typing-indicator span { animation: typing 1.4s infinite both; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @@keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">Chat Support</h1>
+                    <p class="text-sm text-gray-500">We're here to help!</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-sm text-gray-500">Online</span>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Messages -->
+            <div id="messagesContainer" class="chat-container p-4 overflow-y-auto">
+                <!-- Welcome Message -->
+                <div class="flex gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white"></i>
+                    </div>
+                    <div class="message-bubble bg-gray-100 rounded-2xl rounded-tl-none p-4">
+                        <p class="text-gray-800">Hi there! I'm your virtual assistant. How can I help you today?</p>
+                        <p class="text-xs text-gray-400 mt-2">Just now</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div id="quickActions" class="flex flex-wrap gap-2 mb-4">
+                    <button class="quick-action px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" data-message="Where is my order?">
+                        <i class="fas fa-truck mr-1"></i> Track Order
+                    </button>
+                    <button class="quick-action px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" data-message="How do I return an item?">
+                        <i class="fas fa-undo mr-1"></i> Returns
+                    </button>
+                    <button class="quick-action px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" data-message="What are my loyalty points?">
+                        <i class="fas fa-star mr-1"></i> Rewards
+                    </button>
+                    <button class="quick-action px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors" data-message="I need help with shipping">
+                        <i class="fas fa-box mr-1"></i> Shipping
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="border-t border-gray-100 p-4">
+                <div class="flex gap-3">
+                    <input type="text" id="messageInput" class="flex-grow px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Type your message..." />
+                    <button id="sendBtn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="flex justify-between mt-3">
+                    <button id="escalateBtn" class="text-sm text-gray-500 hover:text-purple-600">
+                        <i class="fas fa-headset mr-1"></i> Talk to a human
+                    </button>
+                    <button id="endChatBtn" class="text-sm text-gray-500 hover:text-purple-600">
+                        <i class="fas fa-times-circle mr-1"></i> End chat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div id="feedbackModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-2xl p-6 max-w-sm mx-4">
+                <h3 class="text-lg font-semibold text-center mb-4">Was this helpful?</h3>
+                <div class="flex justify-center gap-4 mb-4">
+                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50" data-helpful="true">
+                        <i class="fas fa-thumbs-up text-2xl text-green-500"></i>
+                    </button>
+                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-red-500 hover:bg-red-50" data-helpful="false">
+                        <i class="fas fa-thumbs-down text-2xl text-red-500"></i>
+                    </button>
+                </div>
+                <button id="skipFeedback" class="w-full text-sm text-gray-500 hover:text-purple-600">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = '@Model.SessionId';
+        const email = '@Model.Email';
+        let conversationId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const quickActions = document.querySelectorAll('.quick-action');
+            const escalateBtn = document.getElementById('escalateBtn');
+            const endChatBtn = document.getElementById('endChatBtn');
+            const feedbackModal = document.getElementById('feedbackModal');
+            const feedbackBtns = document.querySelectorAll('.feedback-btn');
+            const skipFeedback = document.getElementById('skipFeedback');
+
+            async function sendMessage(message) {
+                if (!message.trim()) return;
+
+                // Add user message
+                addMessage(message, 'user');
+                messageInput.value = '';
+
+                // Hide quick actions after first message
+                document.getElementById('quickActions').classList.add('hidden');
+
+                // Show typing indicator
+                showTyping();
+
+                try {
+                    const response = await fetch('/portal/chat?handler=Send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': '@tokenValue'
+                        },
+                        body: JSON.stringify({
+                            sessionId: sessionId,
+                            email: email,
+                            message: message,
+                            conversationId: conversationId
+                        })
+                    });
+
+                    const result = await response.json();
+                    hideTyping();
+
+                    if (result.success) {
+                        conversationId = result.conversationId;
+                        addMessage(result.response, 'assistant', result.suggestedActions);
+                    } else {
+                        addMessage('Sorry, something went wrong. Please try again.', 'assistant');
+                    }
+                } catch (error) {
+                    hideTyping();
+                    addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+            }
+
+            function addMessage(content, role, actions = null) {
+                const isUser = role === 'user';
+                const messageHtml = `
+                    <div class="flex gap-3 mb-4 ${isUser ? 'flex-row-reverse' : ''}">
+                        <div class="w-10 h-10 rounded-full ${isUser ? 'bg-gray-300' : 'bg-gradient-to-br from-purple-500 to-pink-500'} flex items-center justify-center flex-shrink-0">
+                            <i class="${isUser ? 'fas fa-user text-gray-600' : 'fas fa-robot text-white'}"></i>
+                        </div>
+                        <div class="message-bubble ${isUser ? 'bg-purple-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'} rounded-2xl p-4">
+                            <p>${content}</p>
+                            ${actions && actions.length ? `
+                                <div class="flex flex-wrap gap-2 mt-3">
+                                    ${actions.map(a => `
+                                        <a href="${a.value}" class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm hover:bg-opacity-30">
+                                            ${a.label}
+                                        </a>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            <p class="text-xs ${isUser ? 'text-purple-200' : 'text-gray-400'} mt-2">Just now</p>
+                        </div>
+                    </div>
+                `;
+                messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function showTyping() {
+                const typingHtml = `
+                    <div id="typingIndicator" class="flex gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div class="message-bubble bg-gray-100 rounded-2xl rounded-tl-none p-4">
+                            <div class="typing-indicator flex gap-1">
+                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                messagesContainer.insertAdjacentHTML('beforeend', typingHtml);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function hideTyping() {
+                document.getElementById('typingIndicator')?.remove();
+            }
+
+            sendBtn.addEventListener('click', () => sendMessage(messageInput.value));
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(messageInput.value);
+            });
+
+            quickActions.forEach(btn => {
+                btn.addEventListener('click', () => sendMessage(btn.dataset.message));
+            });
+
+            escalateBtn.addEventListener('click', async () => {
+                if (!conversationId) return;
+                addMessage("I'd like to speak with a human agent please.", 'user');
+                addMessage("I'll connect you with a human agent. Please check your email for follow-up, or you can reach us at support@store.com. Thank you for your patience!", 'assistant');
+
+                await fetch('/portal/chat?handler=Escalate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ conversationId })
+                });
+            });
+
+            endChatBtn.addEventListener('click', () => {
+                if (conversationId) {
+                    feedbackModal.classList.remove('hidden');
+                } else {
+                    window.location.href = '/portal?Email=' + email;
+                }
+            });
+
+            feedbackBtns.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    await fetch('/portal/chat?handler=End', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ conversationId, wasHelpful: btn.dataset.helpful === 'true' })
+                    });
+                    window.location.href = '/portal?Email=' + email;
+                });
+            });
+
+            skipFeedback.addEventListener('click', () => {
+                window.location.href = '/portal?Email=' + email;
+            });
+        });
+    </script>
+</body>
+</html>
