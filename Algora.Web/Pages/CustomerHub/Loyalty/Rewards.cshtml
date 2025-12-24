@@ -189,45 +189,45 @@
                 <input type="hidden" asp-for="RewardForm.Id" id="rewardId" />
 
                 <div class="mb-4">
-                    <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Reward Name</label>
-                    <input type="text" asp-for="RewardForm.Name" id="rewardName" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="$5 Off Your Order" required />
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Reward Name</label>
+                    <input type="text" asp-for="RewardForm.Name" id="rewardName" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="$5 Off Your Order" required />
                 </div>
 
                 <div class="mb-4">
-                    <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Description</label>
-                    <textarea asp-for="RewardForm.Description" id="rewardDescription" rows="2" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Get $5 off your next order"></textarea>
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Description</label>
+                    <textarea asp-for="RewardForm.Description" id="rewardDescription" rows="2" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Get $5 off your next order"></textarea>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Reward Type</label>
-                        <select asp-for="RewardForm.Type" id="rewardType" onchange="updateValueLabel()" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white">
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Reward Type</label>
+                        <select asp-for="RewardForm.Type" id="rewardType" onchange="updateValueLabel()" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
                             <option value="discount_fixed">Fixed Discount ($)</option>
                             <option value="discount_percent">Percentage Discount (%)</option>
                             <option value="free_shipping">Free Shipping</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Points Cost</label>
-                        <input type="number" asp-for="RewardForm.PointsCost" id="rewardPoints" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" required />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Points Cost</label>
+                        <input type="number" asp-for="RewardForm.PointsCost" id="rewardPoints" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" required />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div id="valueContainer">
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white" id="valueLabel">Value ($)</label>
-                        <input type="number" asp-for="RewardForm.Value" id="rewardValue" step="0.01" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" id="valueLabel">Value ($)</label>
+                        <input type="number" asp-for="RewardForm.Value" id="rewardValue" step="0.01" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                     </div>
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Min Order Amount</label>
-                        <input type="number" asp-for="RewardForm.MinimumOrderAmount" id="rewardMinOrder" step="0.01" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Optional" />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Min Order Amount</label>
+                        <input type="number" asp-for="RewardForm.MinimumOrderAmount" id="rewardMinOrder" step="0.01" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Optional" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Max Per Customer</label>
-                        <input type="number" asp-for="RewardForm.MaxRedemptions" id="rewardMaxRedemptions" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Unlimited" />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Max Per Customer</label>
+                        <input type="number" asp-for="RewardForm.MaxRedemptions" id="rewardMaxRedemptions" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Unlimited" />
                     </div>
                     <div class="flex items-end">
                         <label class="inline-flex items-center cursor-pointer">
@@ -240,12 +240,12 @@
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Start Date (Optional)</label>
-                        <input type="datetime-local" asp-for="RewardForm.StartsAt" id="rewardStartsAt" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Start Date (Optional)</label>
+                        <input type="datetime-local" asp-for="RewardForm.StartsAt" id="rewardStartsAt" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                     </div>
                     <div>
-                        <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">End Date (Optional)</label>
-                        <input type="datetime-local" asp-for="RewardForm.EndsAt" id="rewardEndsAt" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">End Date (Optional)</label>
+                        <input type="datetime-local" asp-for="RewardForm.EndsAt" id="rewardEndsAt" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                     </div>
                 </div>
 

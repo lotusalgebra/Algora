@@ -61,72 +61,72 @@
                             <!-- Left Column -->
                             <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Recommended Product ID *</label>
-                                    <input type="number" asp-for="Input.RecommendedProductId" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" required />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Recommended Product ID *</label>
+                                    <input type="number" asp-for="Input.RecommendedProductId" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" required />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Recommended Variant ID</label>
-                                    <input type="number" asp-for="Input.RecommendedVariantId" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Recommended Variant ID</label>
+                                    <input type="number" asp-for="Input.RecommendedVariantId" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Trigger Product IDs</label>
-                                    <input type="text" asp-for="TriggerProductIdsText" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="123456, 789012, ..." />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Trigger Product IDs</label>
+                                    <input type="text" asp-for="TriggerProductIdsText" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="123456, 789012, ..." />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Comma-separated product IDs (leave empty for all)</p>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Discount Type</label>
-                                        <select asp-for="Input.DiscountType" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Type</label>
+                                        <select asp-for="Input.DiscountType" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
                                             <option value="">No Discount</option>
                                             <option value="percentage">Percentage</option>
                                             <option value="fixed">Fixed Amount</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Discount Value</label>
-                                        <input type="number" step="0.01" asp-for="Input.DiscountValue" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Value</label>
+                                        <input type="number" step="0.01" asp-for="Input.DiscountValue" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Discount Code</label>
-                                    <input type="text" asp-for="Input.DiscountCode" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Code</label>
+                                    <input type="text" asp-for="Input.DiscountCode" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Priority</label>
-                                    <input type="number" asp-for="Input.Priority" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Priority</label>
+                                    <input type="number" asp-for="Input.Priority" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
                             </div>
 
                             <!-- Right Column -->
                             <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Headline</label>
-                                    <input type="text" asp-for="Input.Headline" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Headline</label>
+                                    <input type="text" asp-for="Input.Headline" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Body Text</label>
-                                    <textarea asp-for="Input.BodyText" rows="3" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"></textarea>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Body Text</label>
+                                    <textarea asp-for="Input.BodyText" rows="3" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"></textarea>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Button Text</label>
-                                    <input type="text" asp-for="Input.ButtonText" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Button Text</label>
+                                    <input type="text" asp-for="Input.ButtonText" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Start Date</label>
-                                        <input type="datetime-local" asp-for="Input.StartDate" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Start Date</label>
+                                        <input type="datetime-local" asp-for="Input.StartDate" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">End Date</label>
-                                        <input type="datetime-local" asp-for="Input.EndDate" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">End Date</label>
+                                        <input type="datetime-local" asp-for="Input.EndDate" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     </div>
                                 </div>
 

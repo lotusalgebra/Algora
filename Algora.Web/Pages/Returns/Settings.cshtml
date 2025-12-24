@@ -78,15 +78,15 @@
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Return Window (Days)</label>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Return Window (Days)</label>
                                     <input type="number" name="Input.ReturnWindowDays" value="@Model.Settings.ReturnWindowDays"
-                                           class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     <p class="text-xs text-slate-400 mt-1">Days after delivery when returns are allowed</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Label Expiration (Days)</label>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Label Expiration (Days)</label>
                                     <input type="number" name="Input.LabelExpirationDays" value="@Model.Settings.LabelExpirationDays"
-                                           class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     <p class="text-xs text-slate-400 mt-1">Days until shipping labels expire</p>
                                 </div>
                             </div>
@@ -112,11 +112,11 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Max Auto-Approval Amount</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Max Auto-Approval Amount</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-2 text-gray-500">$</span>
                                     <input type="number" step="0.01" name="Input.AutoApprovalMaxAmount" value="@Model.Settings.AutoApprovalMaxAmount"
-                                           class="block w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding pl-8 pr-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 </div>
                                 <p class="text-xs text-slate-400 mt-1">Returns above this amount require manual approval</p>
                             </div>
@@ -156,9 +156,9 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Shippo API Key</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Shippo API Key</label>
                                 <input type="password" name="Input.ShippoApiKey" placeholder="@(Model.Settings.HasShippoApiKey ? "••••••••••••" : "Enter your Shippo API key")"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 <p class="text-xs text-slate-400 mt-1">Get your API key from <a href="https://apps.goshippo.com/settings/api" target="_blank" class="text-indigo-600 hover:underline">Shippo Dashboard</a></p>
                             </div>
 
@@ -175,18 +175,18 @@
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Default Carrier</label>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Default Carrier</label>
                                     <select name="Input.DefaultCarrier"
-                                            class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                                            class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
                                         <option value="usps" selected="@(Model.Settings.DefaultCarrier == "usps")">USPS</option>
                                         <option value="ups" selected="@(Model.Settings.DefaultCarrier == "ups")">UPS</option>
                                         <option value="fedex" selected="@(Model.Settings.DefaultCarrier == "fedex")">FedEx</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Default Service</label>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Default Service</label>
                                     <input type="text" name="Input.DefaultServiceLevel" value="@Model.Settings.DefaultServiceLevel"
-                                           class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                            placeholder="e.g., usps_priority" />
                                 </div>
                             </div>
@@ -202,55 +202,55 @@
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Name</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Name</label>
                                 <input type="text" name="Input.ReturnAddress.Name" value="@Model.Settings.ReturnAddress?.Name"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="Returns Department" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Company</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Company</label>
                                 <input type="text" name="Input.ReturnAddress.Company" value="@Model.Settings.ReturnAddress?.Company"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div class="col-span-2">
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Street Address</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Street Address</label>
                                 <input type="text" name="Input.ReturnAddress.Street1" value="@Model.Settings.ReturnAddress?.Street1"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div class="col-span-2">
                                 <input type="text" name="Input.ReturnAddress.Street2" value="@Model.Settings.ReturnAddress?.Street2"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="Apt, suite, unit, etc. (optional)" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">City</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">City</label>
                                 <input type="text" name="Input.ReturnAddress.City" value="@Model.Settings.ReturnAddress?.City"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">State</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">State</label>
                                 <input type="text" name="Input.ReturnAddress.State" value="@Model.Settings.ReturnAddress?.State"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">ZIP Code</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">ZIP Code</label>
                                 <input type="text" name="Input.ReturnAddress.Zip" value="@Model.Settings.ReturnAddress?.Zip"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Country</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Country</label>
                                 <input type="text" name="Input.ReturnAddress.Country" value="@(Model.Settings.ReturnAddress?.Country ?? "US")"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Phone</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Phone</label>
                                 <input type="tel" name="Input.ReturnAddress.Phone" value="@Model.Settings.ReturnAddress?.Phone"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Email</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Email</label>
                                 <input type="email" name="Input.ReturnAddress.Email" value="@Model.Settings.ReturnAddress?.Email"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white" />
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                         </div>
                     </div>
@@ -266,33 +266,33 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Page Title</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Page Title</label>
                                 <input type="text" name="Input.PageTitle" value="@Model.Settings.PageTitle"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="Start a Return" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Policy Text</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Policy Text</label>
                                 <textarea name="Input.PolicyText" rows="3"
-                                          class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                          class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                           placeholder="Brief return policy description">@Model.Settings.PolicyText</textarea>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Logo URL</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Logo URL</label>
                                 <input type="url" name="Input.LogoUrl" value="@Model.Settings.LogoUrl"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="https://..." />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Primary Color</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Primary Color</label>
                                 <div class="flex gap-2">
                                     <input type="color" name="Input.PrimaryColor" value="@(Model.Settings.PrimaryColor ?? "#4f46e5")"
                                            class="h-10 w-14 rounded border border-gray-300" />
                                     <input type="text" value="@(Model.Settings.PrimaryColor ?? "#4f46e5")"
-                                           class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft flex-1 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                            readonly />
                                 </div>
                             </div>
@@ -318,9 +318,9 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-white mb-1">Admin Email</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Admin Email</label>
                                 <input type="email" name="Input.NotificationEmail" value="@Model.Settings.NotificationEmail"
-                                       class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="Notify when new returns are submitted" />
                             </div>
                         </div>

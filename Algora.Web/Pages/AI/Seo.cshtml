@@ -26,7 +26,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..." />
+                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
                     </div>
                     <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
                         @foreach (var product in Model.Products)
@@ -66,7 +66,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO Optimization</h5>
-                    <button type="button" id="optimizeBtn" class="btn btn-success" disabled>
+                    <button type="button" id="optimizeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
                         <i class="fas fa-magic me-2"></i>Optimize with AI
                     </button>
                 </div>
@@ -103,43 +103,43 @@
 
                         <!-- Meta Title -->
                         <div class="mb-4" id="metaTitleSection">
-                            <label class="form-label d-flex justify-content-between">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80 d-flex justify-content-between">
                                 <span><i class="fas fa-heading me-2"></i>Meta Title</span>
                                 <small class="text-muted"><span id="metaTitleCount">0</span>/60 characters</small>
                             </label>
-                            <input type="text" id="metaTitle" class="form-control" maxlength="60" placeholder="Enter meta title..." />
+                            <input type="text" id="metaTitle" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" maxlength="60" placeholder="Enter meta title..." />
                             <small class="text-muted">The title that appears in search engine results</small>
                         </div>
 
                         <!-- Meta Description -->
                         <div class="mb-4" id="metaDescSection">
-                            <label class="form-label d-flex justify-content-between">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80 d-flex justify-content-between">
                                 <span><i class="fas fa-align-left me-2"></i>Meta Description</span>
                                 <small class="text-muted"><span id="metaDescCount">0</span>/155 characters</small>
                             </label>
-                            <textarea id="metaDescription" class="form-control" rows="3" maxlength="155" placeholder="Enter meta description..."></textarea>
+                            <textarea id="metaDescription" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" rows="3" maxlength="155" placeholder="Enter meta description..."></textarea>
                             <small class="text-muted">A compelling description shown in search results</small>
                         </div>
 
                         <!-- Focus Keyword -->
                         <div class="mb-4" id="focusKeywordSection">
-                            <label class="form-label"><i class="fas fa-key me-2"></i>Focus Keyword</label>
-                            <input type="text" id="focusKeyword" class="form-control" placeholder="Primary keyword phrase..." />
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80"><i class="fas fa-key me-2"></i>Focus Keyword</label>
+                            <input type="text" id="focusKeyword" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Primary keyword phrase..." />
                         </div>
 
                         <!-- Keywords -->
                         <div class="mb-4" id="keywordsSection">
-                            <label class="form-label"><i class="fas fa-tags me-2"></i>Related Keywords</label>
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80"><i class="fas fa-tags me-2"></i>Related Keywords</label>
                             <div id="keywordTags" class="d-flex flex-wrap gap-2 mb-2"></div>
-                            <input type="text" id="keywordsInput" class="form-control" placeholder="Comma-separated keywords..." />
+                            <input type="text" id="keywordsInput" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Comma-separated keywords..." />
                         </div>
 
                         <!-- Action Buttons -->
                         <div id="actionButtons" class="d-flex gap-2 d-none">
-                            <button type="button" id="applyBtn" class="btn btn-success">
+                            <button type="button" id="applyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
                                 <i class="fas fa-check me-2"></i>Save SEO Data
                             </button>
-                            <button type="button" id="reoptimizeBtn" class="btn btn-outline-success">
+                            <button type="button" id="reoptimizeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
                                 <i class="fas fa-redo me-2"></i>Re-optimize
                             </button>
                         </div>
