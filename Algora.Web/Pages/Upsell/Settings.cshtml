@@ -48,24 +48,24 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Page Title</label>
-                                    <input type="text" asp-for="Settings.PageTitle" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="Order Confirmed" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Page Title</label>
+                                    <input type="text" asp-for="Settings.PageTitle" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Order Confirmed" />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Browser tab title</p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Thank You Message</label>
-                                    <input type="text" asp-for="Settings.ThankYouMessage" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="Thank you for your order!" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Thank You Message</label>
+                                    <input type="text" asp-for="Settings.ThankYouMessage" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Thank you for your order!" />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Upsell Section Title</label>
-                                    <input type="text" asp-for="Settings.UpsellSectionTitle" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="You might also like" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Upsell Section Title</label>
+                                    <input type="text" asp-for="Settings.UpsellSectionTitle" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="You might also like" />
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Display Layout</label>
-                                    <select asp-for="Settings.DisplayLayout" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Display Layout</label>
+                                    <select asp-for="Settings.DisplayLayout" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
                                         <option value="grid">Grid</option>
                                         <option value="carousel">Carousel</option>
                                         <option value="list">List</option>
@@ -82,24 +82,24 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Logo URL</label>
-                                    <input type="url" asp-for="Settings.LogoUrl" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="https://..." />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Logo URL</label>
+                                    <input type="url" asp-for="Settings.LogoUrl" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="https://..." />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">URL to your logo image</p>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Primary Color</label>
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Primary Color</label>
                                         <div class="flex items-center gap-2">
                                             <input type="color" asp-for="Settings.PrimaryColor" class="w-10 h-10 rounded border border-gray-300 cursor-pointer" />
-                                            <input type="text" asp-for="Settings.PrimaryColor" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="#4f46e5" />
+                                            <input type="text" asp-for="Settings.PrimaryColor" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft flex-1 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="#4f46e5" />
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Secondary Color</label>
+                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Secondary Color</label>
                                         <div class="flex items-center gap-2">
                                             <input type="color" asp-for="Settings.SecondaryColor" class="w-10 h-10 rounded border border-gray-300 cursor-pointer" />
-                                            <input type="text" asp-for="Settings.SecondaryColor" class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="#6366f1" />
+                                            <input type="text" asp-for="Settings.SecondaryColor" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft flex-1 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="#6366f1" />
                                         </div>
                                     </div>
                                 </div>
@@ -114,20 +114,20 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Max Offers to Show</label>
-                                    <input type="number" asp-for="Settings.MaxOffersToShow" min="1" max="10" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Max Offers to Show</label>
+                                    <input type="number" asp-for="Settings.MaxOffersToShow" min="1" max="10" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maximum number of offers per order</p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Affinity Lookback (Days)</label>
-                                    <input type="number" asp-for="Settings.AffinityLookbackDays" min="30" max="365" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Affinity Lookback (Days)</label>
+                                    <input type="number" asp-for="Settings.AffinityLookbackDays" min="30" max="365" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Days of order history to analyze</p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-white mb-2">Min. Affinity Confidence</label>
-                                    <input type="number" step="0.01" asp-for="Settings.MinAffinityConfidence" min="0" max="1" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Min. Affinity Confidence</label>
+                                    <input type="number" step="0.01" asp-for="Settings.MinAffinityConfidence" min="0" max="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Min. confidence for auto-recommendations</p>
                                 </div>
                             </div>
@@ -167,7 +167,7 @@
                             </h5>
 
                             <div>
-                                <textarea asp-for="Settings.CustomCss" rows="6" class="block w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white" placeholder="/* Add custom CSS here */"></textarea>
+                                <textarea asp-for="Settings.CustomCss" rows="6" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-mono font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="/* Add custom CSS here */"></textarea>
                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Custom CSS to inject into the confirmation page</p>
                             </div>
                         </div>

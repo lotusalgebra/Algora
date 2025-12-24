@@ -26,7 +26,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <input type="text" id="productSearch" class="form-control" placeholder="Search products..." />
+                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
                     </div>
                     <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
                         @foreach (var product in Model.Products)
@@ -61,7 +61,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Pricing Analysis</h5>
-                    <button type="button" id="analyzeBtn" class="btn btn-danger" disabled>
+                    <button type="button" id="analyzeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
                         <i class="fas fa-magic me-2"></i>Analyze Pricing
                     </button>
                 </div>
@@ -121,7 +121,7 @@
 
                             <!-- Price Range -->
                             <div class="mb-4">
-                                <label class="form-label">Suggested Price Range</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Suggested Price Range</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <span id="minPrice" class="badge bg-secondary fs-6"></span>
                                     <div class="flex-grow-1">
@@ -136,7 +136,7 @@
                             <!-- Confidence -->
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="form-label mb-0">AI Confidence</label>
+                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">AI Confidence</label>
                                     <span id="confidenceBadge" class="badge"></span>
                                 </div>
                                 <div class="progress" style="height: 10px;">
@@ -146,16 +146,16 @@
 
                             <!-- Reasoning -->
                             <div class="mb-4">
-                                <label class="form-label">Analysis</label>
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Analysis</label>
                                 <div id="reasoning" class="p-3 bg-light rounded"></div>
                             </div>
 
                             <!-- Actions -->
                             <div class="d-flex gap-2">
-                                <button type="button" id="applyBtn" class="btn btn-success">
+                                <button type="button" id="applyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
                                     <i class="fas fa-check me-2"></i>Apply Suggested Price
                                 </button>
-                                <button type="button" id="reanalyzeBtn" class="btn btn-outline-danger">
+                                <button type="button" id="reanalyzeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
                                     <i class="fas fa-redo me-2"></i>Re-analyze
                                 </button>
                             </div>

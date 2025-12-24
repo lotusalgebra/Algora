@@ -69,38 +69,38 @@
                 <div class="flex-auto p-6">
                     <form method="post" asp-page-handler="SaveProgram">
                         <div class="mb-4">
-                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Program Name</label>
-                            <input type="text" asp-for="ProgramForm.Name" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Rewards Program" />
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Program Name</label>
+                            <input type="text" asp-for="ProgramForm.Name" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Rewards Program" />
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Points per Dollar</label>
-                                <input type="number" asp-for="ProgramForm.PointsPerDollar" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Points per Dollar</label>
+                                <input type="number" asp-for="ProgramForm.PointsPerDollar" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 <p class="mt-1 text-xs text-slate-400">Points earned per $1 spent</p>
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Point Value (cents)</label>
-                                <input type="number" asp-for="ProgramForm.PointsValueCents" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Point Value (cents)</label>
+                                <input type="number" asp-for="ProgramForm.PointsValueCents" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 <p class="mt-1 text-xs text-slate-400">Value of 1 point in cents</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Minimum Redemption</label>
-                                <input type="number" asp-for="ProgramForm.MinimumRedemption" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Minimum Redemption</label>
+                                <input type="number" asp-for="ProgramForm.MinimumRedemption" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 <p class="mt-1 text-xs text-slate-400">Min points to redeem</p>
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Points Name</label>
-                                <input type="text" asp-for="ProgramForm.PointsName" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Points" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Points Name</label>
+                                <input type="text" asp-for="ProgramForm.PointsName" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Points" />
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Points Expiration</label>
-                            <select asp-for="ProgramForm.PointsExpireMonths" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Points Expiration</label>
+                            <select asp-for="ProgramForm.PointsExpireMonths" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
                                 <option value="">Never expire</option>
                                 <option value="6">6 months</option>
                                 <option value="12">12 months</option>
@@ -115,23 +115,23 @@
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Signup Bonus</label>
-                                <input type="number" asp-for="ProgramForm.SignupBonus" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Signup Bonus</label>
+                                <input type="number" asp-for="ProgramForm.SignupBonus" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Birthday Bonus</label>
-                                <input type="number" asp-for="ProgramForm.BirthdayBonus" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Birthday Bonus</label>
+                                <input type="number" asp-for="ProgramForm.BirthdayBonus" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Review Bonus</label>
-                                <input type="number" asp-for="ProgramForm.ReviewBonus" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Review Bonus</label>
+                                <input type="number" asp-for="ProgramForm.ReviewBonus" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Referral Bonus</label>
-                                <input type="number" asp-for="ProgramForm.ReferralBonus" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Referral Bonus</label>
+                                <input type="number" asp-for="ProgramForm.ReferralBonus" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                         </div>
 
@@ -156,35 +156,35 @@
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Tier Name</label>
-                                <input type="text" asp-for="TierForm.Name" id="tierName" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" placeholder="Gold" required />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Tier Name</label>
+                                <input type="text" asp-for="TierForm.Name" id="tierName" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Gold" required />
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Minimum Points</label>
-                                <input type="number" asp-for="TierForm.MinimumPoints" id="tierMinPoints" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" required />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Minimum Points</label>
+                                <input type="number" asp-for="TierForm.MinimumPoints" id="tierMinPoints" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" required />
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Points Multiplier</label>
-                                <input type="number" asp-for="TierForm.PointsMultiplier" id="tierMultiplier" step="0.1" min="1" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Points Multiplier</label>
+                                <input type="number" asp-for="TierForm.PointsMultiplier" id="tierMultiplier" step="0.1" min="1" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                                 <p class="mt-1 text-xs text-slate-400">1.5 = 50% bonus points</p>
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Discount %</label>
-                                <input type="number" asp-for="TierForm.PercentageDiscount" id="tierDiscount" step="0.5" min="0" max="100" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount %</label>
+                                <input type="number" asp-for="TierForm.PercentageDiscount" id="tierDiscount" step="0.5" min="0" max="100" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Color</label>
-                                <input type="color" asp-for="TierForm.Color" id="tierColor" class="block w-full h-10 px-1 py-1 text-sm leading-5.6 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color</label>
+                                <input type="color" asp-for="TierForm.Color" id="tierColor" class="focus:shadow-soft-primary-outline dark:bg-gray-950 text-sm leading-5.6 ease-soft block w-full h-10 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-1 py-1 outline-none transition-all focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Display Order</label>
-                                <input type="number" asp-for="TierForm.DisplayOrder" id="tierOrder" min="0" class="block w-full px-3 py-2 text-sm leading-5.6 text-gray-700 bg-white border border-solid border-gray-300 rounded-lg focus:border-fuchsia-300 focus:outline-none dark:bg-gray-900 dark:border-gray-600 dark:text-white" />
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Display Order</label>
+                                <input type="number" asp-for="TierForm.DisplayOrder" id="tierOrder" min="0" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
                             </div>
                         </div>
 
