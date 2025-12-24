@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Algora.Web.Pages.AI;
 
+[IgnoreAntiforgeryToken]
 public class PricingModel : PageModel
 {
     private readonly AppDbContext _db;

@@ -56,6 +56,19 @@ public class PricingOptimizerService : IPricingOptimizerService
             var (providerName, _) = _aiProvider.GetProviderInfo();
 
             var response = await _aiProvider.GenerateTextAsync(prompt, ct);
+
+            // Check if the AI provider returned an error message instead of JSON
+            if (response.StartsWith("Unable to generate") || response.StartsWith("AI suggestions are not available"))
+            {
+                return new PricingOptimizationResponse
+                {
+                    Success = false,
+                    Error = response,
+                    ProductId = productId,
+                    CurrentPrice = product.Price
+                };
+            }
+
             var result = ParsePricingResponse(response, request, providerName);
 
             if (result.Success)
