@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.CustomerHub.Portal;
 
+[IgnoreAntiforgeryToken]
 public class ChatModel : PageModel
 {
     private readonly IChatbotService _chatbotService;

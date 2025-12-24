@@ -32,6 +32,7 @@ public class OpenAiTextSimpleProvider : IAiTextProvider
         {
             _http.BaseAddress = new Uri("https://api.openai.com/v1/");
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+            _http.Timeout = TimeSpan.FromSeconds(60);
         }
     }
 
@@ -74,6 +75,21 @@ public class OpenAiTextSimpleProvider : IAiTextProvider
                 .GetString();
 
             return text?.Trim() ?? string.Empty;
+        }
+        catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+        {
+            _logger.LogWarning("OpenAI API request timed out");
+            return "The AI service is taking too long to respond. Please try again.";
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogWarning("OpenAI API request was cancelled");
+            return "The request was cancelled. Please try again.";
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP error calling OpenAI API");
+            return "Unable to connect to AI service. Please try again later.";
         }
         catch (Exception ex)
         {
