@@ -711,7 +711,7 @@ public class MarketingAutomationService : IMarketingAutomationService
         _db.WinbackRules.Add(rule);
         await _db.SaveChangesAsync();
 
-        rule.Automation = await _db.EmailAutomations.FindAsync(dto.AutomationId);
+        rule.Automation = await _db.EmailAutomations.FindAsync(dto.AutomationId) ?? null!;
         return MapToWinbackRuleDto(rule);
     }
 

@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Chat Support";
     Layout = null;
+    var tokenHtml = Html.AntiForgeryToken().ToString() ?? "";
+    var tokenParts = tokenHtml.Split("value=\"");
+    var tokenValue = tokenParts.Length > 1 ? tokenParts[1].Split("\"")[0] : "";
 }
 
 <!DOCTYPE html>
@@ -143,7 +146,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'RequestVerificationToken': '@Html.AntiForgeryToken().ToString().Split("value=\"")[1]?.Split("\"")[0]' || ''
+                            'RequestVerificationToken': '@tokenValue'
                         },
                         body: JSON.stringify({
                             sessionId: sessionId,
