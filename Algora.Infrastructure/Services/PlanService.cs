@@ -319,16 +319,16 @@ namespace Algora.Infrastructure.Services
                 },
                 new Plan
                 {
-                    Name = "Premium",
-                    Description = "For growing businesses with advanced marketing",
-                    MonthlyPrice = 29,
-                    OrderLimit = 1000,
-                    ProductLimit = 500,
-                    CustomerLimit = 1000,
+                    Name = "Basic",
+                    Description = "Essential tools for small businesses",
+                    MonthlyPrice = 99,
+                    OrderLimit = 500,
+                    ProductLimit = 250,
+                    CustomerLimit = 500,
                     HasWhatsApp = true,
                     HasEmailCampaigns = true,
                     HasSms = false,
-                    HasAdvancedReports = true,
+                    HasAdvancedReports = false,
                     HasApiAccess = false,
                     SortOrder = 2,
                     IsActive = true,
@@ -336,9 +336,26 @@ namespace Algora.Infrastructure.Services
                 },
                 new Plan
                 {
+                    Name = "Premium",
+                    Description = "For growing businesses with advanced marketing",
+                    MonthlyPrice = 199,
+                    OrderLimit = 2000,
+                    ProductLimit = 1000,
+                    CustomerLimit = 2000,
+                    HasWhatsApp = true,
+                    HasEmailCampaigns = true,
+                    HasSms = true,
+                    HasAdvancedReports = true,
+                    HasApiAccess = false,
+                    SortOrder = 3,
+                    IsActive = true,
+                    TrialDays = 14
+                },
+                new Plan
+                {
                     Name = "Enterprise",
                     Description = "Unlimited access for large-scale operations",
-                    MonthlyPrice = 99,
+                    MonthlyPrice = 299,
                     OrderLimit = -1, // Unlimited
                     ProductLimit = -1,
                     CustomerLimit = -1,
@@ -347,7 +364,7 @@ namespace Algora.Infrastructure.Services
                     HasSms = true,
                     HasAdvancedReports = true,
                     HasApiAccess = true,
-                    SortOrder = 3,
+                    SortOrder = 4,
                     IsActive = true,
                     TrialDays = 14
                 }
