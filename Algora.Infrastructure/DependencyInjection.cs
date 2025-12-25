@@ -184,8 +184,10 @@ public static class DependencyInjection
         services.AddScoped<ILoyaltyService, LoyaltyService>();
         services.AddHostedService<LoyaltyBackgroundService>();
 
-        // AI text provider for response suggestions (uses OpenAI)
-        services.AddScoped<IAiTextProvider, OpenAiTextSimpleProvider>();
+        // AI text providers with fallback support (OpenAI -> Anthropic)
+        services.AddScoped<OpenAiTextSimpleProvider>();
+        services.AddScoped<AnthropicTextSimpleProvider>();
+        services.AddScoped<IAiTextProvider, FallbackAiTextProvider>();
 
         // ----- AI Assistant Features -----
         services.AddScoped<ISeoOptimizerService, SeoOptimizerService>();
