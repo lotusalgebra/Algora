@@ -125,6 +125,7 @@ namespace Algora.Infrastructure.Data
         public DbSet<Location> Locations { get; set; } = null!;
         public DbSet<InventoryLevel> InventoryLevels { get; set; } = null!;
         public DbSet<ProductInventoryThreshold> ProductInventoryThresholds { get; set; } = null!;
+        public DbSet<LabelTemplate> LabelTemplates { get; set; } = null!;
 
         // ----- Customer Hub entities -----
         public DbSet<ConversationThread> ConversationThreads { get; set; } = null!;
