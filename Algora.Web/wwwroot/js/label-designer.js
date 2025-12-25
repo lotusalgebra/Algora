@@ -1,5 +1,5 @@
 /**
- * Label Designer - Drag and Drop Implementation
+ * Label Designer - Professional Drag and Drop Implementation
  * Uses interact.js for drag, drop, and resize functionality
  */
 
@@ -11,6 +11,7 @@ class LabelDesigner {
         this.previewData = null;
         this.canvasWidth = 252;
         this.canvasHeight = 96;
+        this.isLoading = false;
 
         this.init();
     }
@@ -22,6 +23,17 @@ class LabelDesigner {
         this.initializeEventListeners();
         this.initializeDragAndDrop();
         this.updateCanvasSize();
+        this.updateSizePresets();
+    }
+
+    // Show loading state
+    showLoading(message = 'Loading...') {
+        this.isLoading = true;
+        // Could add a loading overlay here if needed
+    }
+
+    hideLoading() {
+        this.isLoading = false;
     }
 
     // Canvas size management
@@ -35,10 +47,12 @@ class LabelDesigner {
             widthInches = parseFloat(document.getElementById('customWidth').value) || 2;
             heightInches = parseFloat(document.getElementById('customHeight').value) || 1;
             document.getElementById('customSizeInputs').classList.remove('hidden');
+            document.getElementById('customSizeInputs').classList.add('grid');
         } else {
             widthInches = parseFloat(selected.dataset.width) || 2.625;
             heightInches = parseFloat(selected.dataset.height) || 1;
             document.getElementById('customSizeInputs').classList.add('hidden');
+            document.getElementById('customSizeInputs').classList.remove('grid');
         }
 
         // Scale to fit container (96 DPI base, scaled for visibility)
@@ -49,10 +63,20 @@ class LabelDesigner {
         this.canvas.style.width = `${this.canvasWidth}px`;
         this.canvas.style.height = `${this.canvasHeight}px`;
 
-        document.getElementById('canvasSize').textContent = `${widthInches}" x ${heightInches}"`;
+        document.getElementById('canvasSize').textContent = `${widthInches}" × ${heightInches}"`;
+
+        // Update size presets active state
+        this.updateSizePresets();
 
         // Re-render fields with new canvas size
         this.renderAllFields();
+    }
+
+    updateSizePresets() {
+        const currentType = document.getElementById('labelType').value;
+        document.querySelectorAll('.size-preset').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === currentType);
+        });
     }
 
     // Drag and Drop setup
@@ -65,13 +89,13 @@ class LabelDesigner {
             autoScroll: true,
             listeners: {
                 start(event) {
-                    event.target.classList.add('opacity-50');
+                    event.target.classList.add('dragging');
                 },
                 move(event) {
                     // Visual feedback while dragging
                 },
                 end(event) {
-                    event.target.classList.remove('opacity-50');
+                    event.target.classList.remove('dragging');
 
                     // Check if dropped on canvas
                     const canvasRect = self.canvas.getBoundingClientRect();
@@ -96,13 +120,13 @@ class LabelDesigner {
             accept: '.draggable-source',
             overlap: 0.25,
             ondragenter(event) {
-                event.target.classList.add('ring-2', 'ring-fuchsia-400');
+                self.canvas.classList.add('drop-active');
             },
             ondragleave(event) {
-                event.target.classList.remove('ring-2', 'ring-fuchsia-400');
+                self.canvas.classList.remove('drop-active');
             },
             ondrop(event) {
-                event.target.classList.remove('ring-2', 'ring-fuchsia-400');
+                self.canvas.classList.remove('drop-active');
             }
         });
 
@@ -178,11 +202,11 @@ class LabelDesigner {
             fieldType: fieldType,
             x: Math.max(0, Math.min(x, 70)),
             y: Math.max(0, Math.min(y, 70)),
-            width: 30,
-            height: 20,
+            width: fieldType === 'Barcode' ? 40 : 30,
+            height: fieldType === 'Barcode' ? 35 : 20,
             fontFamily: 'Arial',
-            fontSize: 10,
-            isBold: false,
+            fontSize: fieldType === 'ProductTitle' ? 12 : 10,
+            isBold: fieldType === 'ProductTitle' || fieldType === 'Price',
             isItalic: false,
             textAlign: 'left',
             textColor: '#000000',
@@ -214,7 +238,14 @@ class LabelDesigner {
         const element = document.createElement('div');
         element.id = field.id;
         element.dataset.fieldId = field.id;
-        element.className = 'canvas-field absolute border border-blue-300 bg-blue-50/70 cursor-move rounded p-1 text-xs overflow-hidden flex items-center justify-center touch-none';
+        element.className = 'canvas-field absolute cursor-move rounded-md overflow-hidden flex items-center touch-none';
+
+        // Apply field-specific styling
+        const fieldStyles = this.getFieldStyles(field.fieldType);
+        element.style.cssText = `
+            border: 2px solid ${fieldStyles.borderColor};
+            background: ${fieldStyles.bgColor};
+        `;
 
         const x = (field.x / 100) * this.canvasWidth;
         const y = (field.y / 100) * this.canvasHeight;
@@ -234,8 +265,15 @@ class LabelDesigner {
         element.style.fontStyle = field.isItalic ? 'italic' : 'normal';
         element.style.textAlign = field.textAlign;
         element.style.color = field.textColor;
+        element.style.padding = '4px';
+        element.style.justifyContent = field.textAlign === 'center' ? 'center' : (field.textAlign === 'right' ? 'flex-end' : 'flex-start');
 
         element.innerHTML = this.getFieldPreviewContent(field);
+
+        // Add resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        element.appendChild(resizeHandle);
 
         element.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -245,40 +283,58 @@ class LabelDesigner {
         this.canvas.appendChild(element);
     }
 
+    getFieldStyles(fieldType) {
+        const styles = {
+            'ProductTitle': { borderColor: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.08)' },
+            'SKU': { borderColor: '#22c55e', bgColor: 'rgba(34, 197, 94, 0.08)' },
+            'Barcode': { borderColor: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.08)' },
+            'Price': { borderColor: '#10b981', bgColor: 'rgba(16, 185, 129, 0.08)' },
+            'CompareAtPrice': { borderColor: '#f97316', bgColor: 'rgba(249, 115, 22, 0.08)' },
+            'VariantTitle': { borderColor: '#06b6d4', bgColor: 'rgba(6, 182, 212, 0.08)' },
+            'VariantOption1': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
+            'VariantOption2': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
+            'VariantOption3': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
+            'Vendor': { borderColor: '#64748b', bgColor: 'rgba(100, 116, 139, 0.08)' },
+            'ProductType': { borderColor: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.08)' },
+            'Weight': { borderColor: '#f43f5e', bgColor: 'rgba(244, 63, 94, 0.08)' },
+            'InventoryQuantity': { borderColor: '#14b8a6', bgColor: 'rgba(20, 184, 166, 0.08)' },
+            'CustomText': { borderColor: '#ec4899', bgColor: 'rgba(236, 72, 153, 0.08)' }
+        };
+        return styles[fieldType] || { borderColor: '#94a3b8', bgColor: 'rgba(148, 163, 184, 0.08)' };
+    }
+
     getFieldPreviewContent(field) {
         const preview = this.previewData || {};
 
         const fieldLabels = {
-            'ProductTitle': preview.productTitle || '[Product Title]',
-            'SKU': preview.sku || '[SKU]',
-            'Barcode': '<i class="fas fa-barcode text-lg text-gray-600"></i>',
-            'Price': preview.price ? `$${parseFloat(preview.price).toFixed(2)}` : '[$0.00]',
-            'CompareAtPrice': preview.compareAtPrice ? `$${parseFloat(preview.compareAtPrice).toFixed(2)}` : '[$0.00]',
-            'VariantTitle': preview.variantTitle || '[Variant]',
-            'VariantOption1': preview.option1 || '[Option 1]',
-            'VariantOption2': preview.option2 || '[Option 2]',
-            'VariantOption3': preview.option3 || '[Option 3]',
-            'Vendor': preview.vendor || '[Vendor]',
-            'ProductType': preview.productType || '[Type]',
-            'Weight': preview.weight ? `${preview.weight} ${preview.weightUnit || ''}`.trim() : '[Weight]',
-            'InventoryQuantity': preview.inventoryQuantity?.toString() || '[Qty]',
-            'CustomText': field.customText || '[Custom Text]'
+            'ProductTitle': preview.productTitle || 'Product Title',
+            'SKU': preview.sku || 'SKU-12345',
+            'Barcode': '<i class="fas fa-barcode text-lg text-slate-600"></i>',
+            'Price': preview.price ? `$${parseFloat(preview.price).toFixed(2)}` : '$29.99',
+            'CompareAtPrice': preview.compareAtPrice ? `$${parseFloat(preview.compareAtPrice).toFixed(2)}` : '$39.99',
+            'VariantTitle': preview.variantTitle || 'Large / Blue',
+            'VariantOption1': preview.option1 || 'Size: Large',
+            'VariantOption2': preview.option2 || 'Color: Blue',
+            'VariantOption3': preview.option3 || 'Option 3',
+            'Vendor': preview.vendor || 'Brand Name',
+            'ProductType': preview.productType || 'Category',
+            'Weight': preview.weight ? `${preview.weight} ${preview.weightUnit || ''}`.trim() : '1.5 kg',
+            'InventoryQuantity': preview.inventoryQuantity?.toString() || '42',
+            'CustomText': field.customText || 'Custom Text'
         };
 
-        return `<span class="truncate">${fieldLabels[field.fieldType] || `[${field.fieldType}]`}</span>`;
+        return `<span class="truncate block w-full">${fieldLabels[field.fieldType] || field.fieldType}</span>`;
     }
 
     selectField(fieldId) {
         // Deselect previous
         document.querySelectorAll('.canvas-field').forEach(el => {
-            el.classList.remove('ring-2', 'ring-fuchsia-500', 'border-fuchsia-500');
-            el.classList.add('border-blue-300');
+            el.classList.remove('selected');
         });
 
         const element = document.getElementById(fieldId);
         if (element) {
-            element.classList.remove('border-blue-300');
-            element.classList.add('ring-2', 'ring-fuchsia-500', 'border-fuchsia-500');
+            element.classList.add('selected');
             this.selectedField = this.fields.find(f => f.id === fieldId);
             this.showFieldProperties();
         }
@@ -341,7 +397,7 @@ class LabelDesigner {
         const fieldTypeNames = {
             'ProductTitle': 'Product Title',
             'SKU': 'SKU',
-            'Barcode': 'Barcode Image',
+            'Barcode': 'Barcode',
             'Price': 'Price',
             'CompareAtPrice': 'Compare Price',
             'VariantTitle': 'Variant Title',
@@ -385,13 +441,13 @@ class LabelDesigner {
         const italicBtn = document.getElementById('toggleItalic');
         const alignBtns = ['alignLeft', 'alignCenter', 'alignRight'];
 
-        boldBtn.classList.toggle('bg-fuchsia-100', this.selectedField?.isBold);
-        italicBtn.classList.toggle('bg-fuchsia-100', this.selectedField?.isItalic);
+        boldBtn.classList.toggle('active', this.selectedField?.isBold);
+        italicBtn.classList.toggle('active', this.selectedField?.isItalic);
 
         alignBtns.forEach(id => {
             const btn = document.getElementById(id);
             const align = id.replace('align', '').toLowerCase();
-            btn.classList.toggle('bg-fuchsia-100', this.selectedField?.textAlign === align);
+            btn.classList.toggle('active', this.selectedField?.textAlign === align);
         });
     }
 
@@ -418,12 +474,13 @@ class LabelDesigner {
                 break;
             case 'textAlign':
                 element.style.textAlign = value;
+                element.style.justifyContent = value === 'center' ? 'center' : (value === 'right' ? 'flex-end' : 'flex-start');
                 break;
             case 'textColor':
                 element.style.color = value;
                 break;
             case 'customText':
-                element.innerHTML = `<span class="truncate">${value || '[Custom Text]'}</span>`;
+                element.querySelector('span').textContent = value || 'Custom Text';
                 break;
         }
 
@@ -440,6 +497,7 @@ class LabelDesigner {
         }
 
         try {
+            this.showLoading('Loading template...');
             const response = await fetch(`?handler=Template&id=${templateId}`);
             if (!response.ok) throw new Error('Failed to load template');
 
@@ -469,14 +527,22 @@ class LabelDesigner {
 
         } catch (error) {
             console.error('Error loading template:', error);
-            alert('Failed to load template');
+            this.showNotification('Failed to load template', 'error');
+        } finally {
+            this.hideLoading();
         }
     }
 
     async saveTemplate() {
         const name = document.getElementById('templateName').value.trim();
         if (!name) {
-            alert('Please enter a template name');
+            this.showNotification('Please enter a template name', 'warning');
+            document.getElementById('templateName').focus();
+            return;
+        }
+
+        if (this.fields.length === 0) {
+            this.showNotification('Please add at least one field to the label', 'warning');
             return;
         }
 
@@ -491,7 +557,8 @@ class LabelDesigner {
         };
 
         try {
-            let url, method;
+            this.showLoading('Saving template...');
+            let url;
             if (this.templateId) {
                 dto.id = this.templateId;
                 url = '?handler=UpdateTemplate';
@@ -509,36 +576,43 @@ class LabelDesigner {
 
             const result = await response.json();
             this.templateId = result.id;
-            alert('Template saved successfully');
-            location.reload();
+            this.showNotification('Template saved successfully!', 'success');
+
+            // Reload page to refresh template list
+            setTimeout(() => location.reload(), 1000);
 
         } catch (error) {
             console.error('Error saving template:', error);
-            alert('Failed to save template');
+            this.showNotification('Failed to save template', 'error');
+        } finally {
+            this.hideLoading();
         }
     }
 
     async deleteTemplate() {
         if (!this.templateId) {
-            alert('No template selected');
+            this.showNotification('No template selected', 'warning');
             return;
         }
 
-        if (!confirm('Are you sure you want to delete this template?')) return;
+        if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) return;
 
         try {
+            this.showLoading('Deleting template...');
             const response = await fetch(`?handler=DeleteTemplate&id=${this.templateId}`, {
                 method: 'POST'
             });
 
             if (!response.ok) throw new Error('Failed to delete template');
 
-            alert('Template deleted');
-            location.reload();
+            this.showNotification('Template deleted', 'success');
+            setTimeout(() => location.reload(), 1000);
 
         } catch (error) {
             console.error('Error deleting template:', error);
-            alert('Failed to delete template');
+            this.showNotification('Failed to delete template', 'error');
+        } finally {
+            this.hideLoading();
         }
     }
 
@@ -548,6 +622,7 @@ class LabelDesigner {
         existingFields.forEach(f => f.remove());
         this.showPlaceholder();
         this.hideFieldProperties();
+        this.selectedField = null;
     }
 
     // Preview data
@@ -561,6 +636,17 @@ class LabelDesigner {
 
         } catch (error) {
             console.error('Error loading preview data:', error);
+        }
+    }
+
+    // Notification helper
+    showNotification(message, type = 'info') {
+        // Simple alert for now - could be replaced with toast notifications
+        if (type === 'error' || type === 'warning') {
+            alert(message);
+        } else {
+            // For success, just log it
+            console.log(message);
         }
     }
 
@@ -578,6 +664,27 @@ class LabelDesigner {
 
         // Delete template
         document.getElementById('deleteTemplateBtn').addEventListener('click', () => this.deleteTemplate());
+
+        // Clear canvas
+        const clearBtn = document.getElementById('clearCanvasBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                if (this.fields.length === 0 || confirm('Clear all fields from the canvas?')) {
+                    this.clearCanvas();
+                    document.getElementById('templateName').value = '';
+                    this.templateId = null;
+                }
+            });
+        }
+
+        // Size preset buttons
+        document.querySelectorAll('.size-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const labelType = document.getElementById('labelType');
+                labelType.value = btn.dataset.type;
+                this.updateCanvasSize();
+            });
+        });
 
         // Label type change
         document.getElementById('labelType').addEventListener('change', () => this.updateCanvasSize());
@@ -652,8 +759,7 @@ class LabelDesigner {
             if (e.target === this.canvas || e.target.id === 'canvasPlaceholder') {
                 this.selectedField = null;
                 document.querySelectorAll('.canvas-field').forEach(el => {
-                    el.classList.remove('ring-2', 'ring-fuchsia-500', 'border-fuchsia-500');
-                    el.classList.add('border-blue-300');
+                    el.classList.remove('selected');
                 });
                 this.hideFieldProperties();
             }
@@ -672,6 +778,20 @@ class LabelDesigner {
             document.getElementById('printModal').classList.add('hidden');
         });
 
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('printModal').classList.add('hidden');
+            }
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('printModal').addEventListener('click', (e) => {
+            if (e.target.id === 'printModal') {
+                document.getElementById('printModal').classList.add('hidden');
+            }
+        });
+
         // Select all products
         document.getElementById('selectAllProducts').addEventListener('change', (e) => {
             document.querySelectorAll('.product-checkbox').forEach(cb => {
@@ -681,12 +801,24 @@ class LabelDesigner {
 
         // Generate PDF
         document.getElementById('generatePdfBtn').addEventListener('click', () => this.generatePdf());
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Delete selected field with Delete or Backspace (when not in input)
+            if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedField) {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA' && activeElement.tagName !== 'SELECT') {
+                    e.preventDefault();
+                    this.removeSelectedField();
+                }
+            }
+        });
     }
 
     async generatePdf() {
         const templateId = document.getElementById('printTemplateSelector').value;
         if (!templateId) {
-            alert('Please select a template');
+            this.showNotification('Please select a template', 'warning');
             return;
         }
 
@@ -702,11 +834,16 @@ class LabelDesigner {
         });
 
         if (products.length === 0) {
-            alert('Please select at least one product');
+            this.showNotification('Please select at least one product', 'warning');
             return;
         }
 
         try {
+            this.showLoading('Generating PDF...');
+            const btn = document.getElementById('generatePdfBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
+
             const response = await fetch('?handler=GeneratePdf', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -726,7 +863,7 @@ class LabelDesigner {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `labels-${Date.now()}.pdf`;
+            a.download = `labels-${new Date().toISOString().slice(0,10)}.pdf`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -736,7 +873,12 @@ class LabelDesigner {
 
         } catch (error) {
             console.error('Error generating PDF:', error);
-            alert(error.message || 'Failed to generate PDF');
+            this.showNotification(error.message || 'Failed to generate PDF', 'error');
+        } finally {
+            this.hideLoading();
+            const btn = document.getElementById('generatePdfBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
         }
     }
 }
