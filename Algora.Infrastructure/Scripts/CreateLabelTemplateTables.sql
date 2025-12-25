@@ -1,6 +1,10 @@
 -- Create LabelTemplates table for storing label designer templates
 -- Run this script against the database to add the LabelTemplates table
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'LabelTemplates')
 BEGIN
     CREATE TABLE [dbo].[LabelTemplates] (

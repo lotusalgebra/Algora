@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Chatbot.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algora.Chatbot.Web", "..\Algora.Chatbot.Web\Algora.Chatbot.Web.csproj", "{D4E5F6A7-B8C9-0123-DEF1-234567890123}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chatbot", "Chatbot", "{15122625-6854-4850-B90E-72A9B9AB2ACE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Communication", "Communication", "{DCD9C5ED-9D6C-456D-B5E2-D0A5DEB08F11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -212,6 +216,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{301D0666-CA72-4D31-8640-9F2E5B48D9A7} = {DCD9C5ED-9D6C-456D-B5E2-D0A5DEB08F11}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {15122625-6854-4850-B90E-72A9B9AB2ACE}
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901} = {15122625-6854-4850-B90E-72A9B9AB2ACE}
+		{C3D4E5F6-A7B8-9012-CDEF-123456789012} = {15122625-6854-4850-B90E-72A9B9AB2ACE}
+		{D4E5F6A7-B8C9-0123-DEF1-234567890123} = {15122625-6854-4850-B90E-72A9B9AB2ACE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1C96BF0B-2609-4E0F-AD56-7F779A0B74C4}
