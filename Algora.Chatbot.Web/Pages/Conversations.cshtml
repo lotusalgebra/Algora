@@ -1,0 +1,308 @@
+@page
+@model Algora.Chatbot.Web.Pages.ConversationsModel
+@{
+    ViewData["Title"] = "Conversations";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0">Conversations</h4>
+                <p class="text-muted mb-0">View and manage customer conversations</p>
+            </div>
+            <div class="d-flex gap-2">
+                <select class="form-select form-select-sm" id="status-filter" style="width: auto;">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="escalated">Escalated</option>
+                    <option value="abandoned">Abandoned</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Conversation List -->
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6 class="mb-0">Recent Conversations</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div id="conversation-list" style="max-height: 600px; overflow-y: auto;">
+                        <div class="text-center py-4 text-muted">Loading conversations...</div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span class="text-sm text-muted" id="pagination-info">-</span>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary" id="prev-btn" disabled>Previous</button>
+                        <button class="btn btn-outline-secondary" id="next-btn" disabled>Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversation Detail -->
+        <div class="col-lg-7">
+            <div class="card" id="detail-card" style="display: none;">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0" id="detail-title">Conversation</h6>
+                        <span class="badge" id="detail-status">-</span>
+                    </div>
+                    <div>
+                        <span class="text-sm text-muted" id="detail-time">-</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Customer Info -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Customer</small>
+                                <p class="mb-0" id="detail-customer">-</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Primary Intent</small>
+                                <p class="mb-0" id="detail-intent">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div id="message-container" style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-center text-muted py-4">Select a conversation</div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div class="mt-3 pt-3 border-top" id="feedback-section" style="display: none;">
+                        <div class="row">
+                            <div class="col-4">
+                                <small class="text-muted">Rating</small>
+                                <p class="mb-0" id="detail-rating">-</p>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Helpful</small>
+                                <p class="mb-0" id="detail-helpful">-</p>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Feedback</small>
+                                <p class="mb-0" id="detail-feedback">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="empty-state">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">Select a conversation</h6>
+                    <p class="text-sm text-muted">Click on a conversation to view details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .conversation-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .conversation-item:hover {
+        background: #f8f9fa;
+    }
+    .conversation-item.active {
+        background: #f0ebff;
+        border-left: 3px solid #7c3aed;
+    }
+    .message-bubble {
+        max-width: 80%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+    .message-bubble.user {
+        background: linear-gradient(135deg, #7c3aed, #ec4899);
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+    }
+    .message-bubble.assistant {
+        background: #f1f3f5;
+        color: #333;
+        border-bottom-left-radius: 4px;
+    }
+    .message-bubble.system {
+        background: #fff3cd;
+        color: #856404;
+        font-size: 12px;
+        text-align: center;
+        margin: 8px auto;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        const shop = new URLSearchParams(window.location.search).get('shop') || '@Model.ShopDomain';
+        let currentPage = 1;
+        let totalPages = 1;
+        let selectedConversationId = null;
+
+        async function loadConversations(page = 1, status = '') {
+            try {
+                const statusParam = status ? `&status=${status}` : '';
+                const response = await fetch(`/api/admin/v1/conversations?shop=${encodeURIComponent(shop)}&page=${page}&pageSize=20${statusParam}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    renderConversationList(result.data);
+                    currentPage = result.pagination.page;
+                    totalPages = result.pagination.totalPages;
+                    updatePagination(result.pagination);
+                }
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+            }
+        }
+
+        function renderConversationList(conversations) {
+            const container = document.getElementById('conversation-list');
+
+            if (conversations.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted">No conversations found</div>';
+                return;
+            }
+
+            container.innerHTML = conversations.map(conv => {
+                const time = new Date(conv.createdAt).toLocaleString();
+                const customer = conv.customerEmail || conv.sessionId.substring(0, 8) + '...';
+                const statusClass = getStatusClass(conv.status);
+
+                return `
+                    <div class="conversation-item ${conv.id === selectedConversationId ? 'active' : ''}"
+                         onclick="loadConversation(${conv.id})">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="font-weight-bold">${escapeHtml(customer)}</div>
+                                <div class="text-sm text-muted">${conv.primaryIntent || 'General inquiry'}</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge ${statusClass}">${conv.status}</span>
+                                <div class="text-xs text-muted mt-1">${conv.messageCount} msgs</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'active': 'bg-success',
+                'resolved': 'bg-info',
+                'escalated': 'bg-danger',
+                'abandoned': 'bg-secondary'
+            };
+            return classes[status] || 'bg-secondary';
+        }
+
+        async function loadConversation(id) {
+            selectedConversationId = id;
+
+            // Update list UI
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            try {
+                const response = await fetch(`/api/admin/v1/conversations/${id}?shop=${encodeURIComponent(shop)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    renderConversationDetail(result.data);
+                }
+            } catch (error) {
+                console.error('Failed to load conversation:', error);
+            }
+        }
+
+        function renderConversationDetail(conv) {
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('detail-card').style.display = 'block';
+
+            document.getElementById('detail-title').textContent = `Conversation #${conv.id}`;
+            document.getElementById('detail-status').textContent = conv.status;
+            document.getElementById('detail-status').className = 'badge ' + getStatusClass(conv.status);
+            document.getElementById('detail-time').textContent = new Date(conv.createdAt).toLocaleString();
+            document.getElementById('detail-customer').textContent = conv.customerEmail || conv.customerName || 'Anonymous';
+            document.getElementById('detail-intent').textContent = conv.primaryIntent || '-';
+
+            // Render messages
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = conv.messages.map(msg => {
+                return `
+                    <div class="message-bubble ${msg.role}">
+                        ${escapeHtml(msg.content)}
+                        ${msg.detectedIntent ? `<div class="text-xs mt-1 opacity-75">Intent: ${msg.detectedIntent} (${(msg.intentConfidence * 100).toFixed(0)}%)</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            // Feedback section
+            const feedbackSection = document.getElementById('feedback-section');
+            if (conv.rating !== null || conv.wasHelpful !== null) {
+                feedbackSection.style.display = 'block';
+                document.getElementById('detail-rating').textContent = conv.rating ? `${conv.rating}/5` : '-';
+                document.getElementById('detail-helpful').textContent = conv.wasHelpful !== null ? (conv.wasHelpful ? 'Yes' : 'No') : '-';
+                document.getElementById('detail-feedback').textContent = conv.feedback || '-';
+            } else {
+                feedbackSection.style.display = 'none';
+            }
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('pagination-info').textContent =
+                `Page ${pagination.page} of ${pagination.totalPages} (${pagination.total} total)`;
+
+            document.getElementById('prev-btn').disabled = pagination.page <= 1;
+            document.getElementById('next-btn').disabled = pagination.page >= pagination.totalPages;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        document.getElementById('status-filter').addEventListener('change', function() {
+            loadConversations(1, this.value);
+        });
+
+        document.getElementById('prev-btn').addEventListener('click', function() {
+            if (currentPage > 1) {
+                loadConversations(currentPage - 1, document.getElementById('status-filter').value);
+            }
+        });
+
+        document.getElementById('next-btn').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                loadConversations(currentPage + 1, document.getElementById('status-filter').value);
+            }
+        });
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConversations();
+        });
+    </script>
+}

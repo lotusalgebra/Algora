@@ -1,0 +1,372 @@
+@page
+@model Algora.Chatbot.Web.Pages.SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-0">Chatbot Settings</h4>
+            <p class="text-muted mb-0">Configure your AI chatbot behavior and appearance</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Chatbot Settings -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6>Chatbot Configuration</h6>
+                </div>
+                <div class="card-body">
+                    <form id="settings-form">
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Bot Name</label>
+                            <input type="text" class="form-control" id="botName" placeholder="Support Assistant">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Welcome Message</label>
+                            <textarea class="form-control" id="welcomeMessage" rows="2" placeholder="Hi! How can I help you today?"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Tone</label>
+                            <select class="form-select" id="tone">
+                                <option value="professional">Professional</option>
+                                <option value="friendly">Friendly</option>
+                                <option value="casual">Casual</option>
+                                <option value="formal">Formal</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Primary AI Provider</label>
+                                <select class="form-select" id="preferredAiProvider">
+                                    <option value="openai">OpenAI (GPT-4)</option>
+                                    <option value="anthropic">Anthropic (Claude)</option>
+                                    <option value="gemini">Google (Gemini)</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Fallback Provider</label>
+                                <select class="form-select" id="fallbackAiProvider">
+                                    <option value="">None</option>
+                                    <option value="openai">OpenAI (GPT-4)</option>
+                                    <option value="anthropic">Anthropic (Claude)</option>
+                                    <option value="gemini">Google (Gemini)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h6 class="text-sm mb-3">Features</h6>
+
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="enableOrderTracking" checked>
+                            <label class="form-check-label" for="enableOrderTracking">Order Tracking</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="enableProductRecommendations" checked>
+                            <label class="form-check-label" for="enableProductRecommendations">Product Recommendations</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="enableReturns" checked>
+                            <label class="form-check-label" for="enableReturns">Returns & Refunds</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableHumanEscalation" checked>
+                            <label class="form-check-label" for="enableHumanEscalation">Human Escalation</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Escalation Email</label>
+                            <input type="email" class="form-control" id="escalationEmail" placeholder="support@yourstore.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Confidence Threshold</label>
+                            <input type="range" class="form-range" id="confidenceThreshold" min="0" max="100" value="60">
+                            <div class="text-sm text-muted">Escalate if confidence below: <span id="confidence-value">60%</span></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #7c3aed, #ec4899); border: none;">
+                            Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Widget Customization -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6>Widget Appearance</h6>
+                </div>
+                <div class="card-body">
+                    <form id="widget-form">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Position</label>
+                                <select class="form-select" id="position">
+                                    <option value="bottom-right">Bottom Right</option>
+                                    <option value="bottom-left">Bottom Left</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Trigger Style</label>
+                                <select class="form-select" id="triggerStyle">
+                                    <option value="button">Button</option>
+                                    <option value="icon">Icon Only</option>
+                                    <option value="text">Text Only</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Primary Color</label>
+                                <div class="input-group">
+                                    <input type="color" class="form-control form-control-color" id="primaryColor" value="#7c3aed">
+                                    <input type="text" class="form-control" id="primaryColorText" value="#7c3aed">
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Header Color</label>
+                                <div class="input-group">
+                                    <input type="color" class="form-control form-control-color" id="headerBackgroundColor" value="#7c3aed">
+                                    <input type="text" class="form-control" id="headerBackgroundColorText" value="#7c3aed">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Header Title</label>
+                            <input type="text" class="form-control" id="headerTitle" placeholder="Chat with us">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Trigger Text</label>
+                            <input type="text" class="form-control" id="triggerText" placeholder="Need help?">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Placeholder Text</label>
+                            <input type="text" class="form-control" id="placeholderText" placeholder="Type your message...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Avatar URL</label>
+                            <input type="url" class="form-control" id="avatarUrl" placeholder="https://...">
+                        </div>
+
+                        <hr>
+                        <h6 class="text-sm mb-3">Behavior</h6>
+
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="autoOpenOnFirstVisit">
+                            <label class="form-check-label" for="autoOpenOnFirstVisit">Auto-open on first visit</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-xs font-weight-bold text-slate-700">Auto-open delay (seconds)</label>
+                            <input type="number" class="form-control" id="autoOpenDelaySeconds" min="0" max="60" value="5">
+                        </div>
+
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showTypingIndicator" checked>
+                            <label class="form-check-label" for="showTypingIndicator">Show typing indicator</label>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="showPoweredBy" checked>
+                            <label class="form-check-label" for="showPoweredBy">Show "Powered by Algora"</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #7c3aed, #ec4899); border: none;">
+                            Save Widget Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Installation Code -->
+            <div class="card mt-4">
+                <div class="card-header pb-0">
+                    <h6>Installation Code</h6>
+                    <p class="text-sm text-muted">Add this code to your store's theme</p>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-dark text-light p-3 rounded" style="font-size: 12px; overflow-x: auto;"><code id="install-code">&lt;script&gt;
+  (function(w,d,s,o,f,js,fjs){
+    w['AlgoraChatbot']=o;w[o]=w[o]||function(){
+      (w[o].q=w[o].q||[]).push(arguments)};
+    js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];
+    js.id=o;js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);
+  }(window,document,'script','algChat',
+    'https://chatbot.algora.app/widget/chatbot-widget.js'));
+  algChat('init', { shop: '@Model.ShopDomain' });
+&lt;/script&gt;</code></pre>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="copyCode()">
+                        <i class="fas fa-copy me-1"></i> Copy Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const shop = new URLSearchParams(window.location.search).get('shop') || '@Model.ShopDomain';
+
+        // Color picker sync
+        document.getElementById('primaryColor').addEventListener('input', function() {
+            document.getElementById('primaryColorText').value = this.value;
+        });
+        document.getElementById('primaryColorText').addEventListener('input', function() {
+            document.getElementById('primaryColor').value = this.value;
+        });
+        document.getElementById('headerBackgroundColor').addEventListener('input', function() {
+            document.getElementById('headerBackgroundColorText').value = this.value;
+        });
+        document.getElementById('headerBackgroundColorText').addEventListener('input', function() {
+            document.getElementById('headerBackgroundColor').value = this.value;
+        });
+
+        // Confidence slider
+        document.getElementById('confidenceThreshold').addEventListener('input', function() {
+            document.getElementById('confidence-value').textContent = this.value + '%';
+        });
+
+        async function loadSettings() {
+            try {
+                const response = await fetch(`/api/admin/v1/settings?shop=${encodeURIComponent(shop)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.settings) {
+                        const s = result.settings;
+                        document.getElementById('botName').value = s.botName || '';
+                        document.getElementById('welcomeMessage').value = s.welcomeMessage || '';
+                        document.getElementById('tone').value = s.tone || 'professional';
+                        document.getElementById('preferredAiProvider').value = s.preferredAiProvider || 'openai';
+                        document.getElementById('fallbackAiProvider').value = s.fallbackAiProvider || '';
+                        document.getElementById('enableOrderTracking').checked = s.enableOrderTracking !== false;
+                        document.getElementById('enableProductRecommendations').checked = s.enableProductRecommendations !== false;
+                        document.getElementById('enableReturns').checked = s.enableReturns !== false;
+                        document.getElementById('enableHumanEscalation').checked = s.enableHumanEscalation !== false;
+                        document.getElementById('escalationEmail').value = s.escalationEmail || '';
+                        document.getElementById('confidenceThreshold').value = (s.confidenceThreshold || 0.6) * 100;
+                        document.getElementById('confidence-value').textContent = ((s.confidenceThreshold || 0.6) * 100) + '%';
+                    }
+
+                    if (result.widgetConfig) {
+                        const w = result.widgetConfig;
+                        document.getElementById('position').value = w.position || 'bottom-right';
+                        document.getElementById('triggerStyle').value = w.triggerStyle || 'button';
+                        document.getElementById('primaryColor').value = w.primaryColor || '#7c3aed';
+                        document.getElementById('primaryColorText').value = w.primaryColor || '#7c3aed';
+                        document.getElementById('headerBackgroundColor').value = w.headerBackgroundColor || '#7c3aed';
+                        document.getElementById('headerBackgroundColorText').value = w.headerBackgroundColor || '#7c3aed';
+                        document.getElementById('headerTitle').value = w.headerTitle || '';
+                        document.getElementById('triggerText').value = w.triggerText || '';
+                        document.getElementById('placeholderText').value = w.placeholderText || '';
+                        document.getElementById('avatarUrl').value = w.avatarUrl || '';
+                        document.getElementById('autoOpenOnFirstVisit').checked = w.autoOpenOnFirstVisit === true;
+                        document.getElementById('autoOpenDelaySeconds').value = w.autoOpenDelaySeconds || 5;
+                        document.getElementById('showTypingIndicator').checked = w.showTypingIndicator !== false;
+                        document.getElementById('showPoweredBy').checked = w.showPoweredBy !== false;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+            }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            try {
+                const response = await fetch(`/api/admin/v1/settings?shop=${encodeURIComponent(shop)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        botName: document.getElementById('botName').value,
+                        welcomeMessage: document.getElementById('welcomeMessage').value,
+                        tone: document.getElementById('tone').value,
+                        preferredAiProvider: document.getElementById('preferredAiProvider').value,
+                        fallbackAiProvider: document.getElementById('fallbackAiProvider').value || null,
+                        enableOrderTracking: document.getElementById('enableOrderTracking').checked,
+                        enableProductRecommendations: document.getElementById('enableProductRecommendations').checked,
+                        enableReturns: document.getElementById('enableReturns').checked,
+                        enableHumanEscalation: document.getElementById('enableHumanEscalation').checked,
+                        escalationEmail: document.getElementById('escalationEmail').value || null,
+                        confidenceThreshold: parseInt(document.getElementById('confidenceThreshold').value) / 100
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Settings saved successfully!');
+                } else {
+                    alert('Failed to save settings: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Failed to save settings:', error);
+                alert('Failed to save settings');
+            }
+        });
+
+        document.getElementById('widget-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            try {
+                const response = await fetch(`/api/admin/v1/widget-config?shop=${encodeURIComponent(shop)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        position: document.getElementById('position').value,
+                        triggerStyle: document.getElementById('triggerStyle').value,
+                        primaryColor: document.getElementById('primaryColor').value,
+                        headerBackgroundColor: document.getElementById('headerBackgroundColor').value,
+                        headerTitle: document.getElementById('headerTitle').value || null,
+                        triggerText: document.getElementById('triggerText').value || null,
+                        placeholderText: document.getElementById('placeholderText').value || null,
+                        avatarUrl: document.getElementById('avatarUrl').value || null,
+                        autoOpenOnFirstVisit: document.getElementById('autoOpenOnFirstVisit').checked,
+                        autoOpenDelaySeconds: parseInt(document.getElementById('autoOpenDelaySeconds').value) || 5,
+                        showTypingIndicator: document.getElementById('showTypingIndicator').checked,
+                        showPoweredBy: document.getElementById('showPoweredBy').checked
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Widget settings saved successfully!');
+                } else {
+                    alert('Failed to save widget settings: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Failed to save widget settings:', error);
+                alert('Failed to save widget settings');
+            }
+        });
+
+        function copyCode() {
+            const code = document.getElementById('install-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Code copied to clipboard!');
+            });
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', loadSettings);
+    </script>
+}

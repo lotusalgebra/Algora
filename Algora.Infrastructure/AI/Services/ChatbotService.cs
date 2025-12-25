@@ -271,6 +271,13 @@ Respond in JSON format:
 
     private static ChatbotResponse ParseChatbotResponse(string aiResponse)
     {
+        const string fallbackMessage = "I'm here to help! Could you please rephrase your question?";
+
+        if (string.IsNullOrWhiteSpace(aiResponse))
+        {
+            return new ChatbotResponse { Success = true, Response = fallbackMessage };
+        }
+
         try
         {
             var jsonStart = aiResponse.IndexOf('{');
@@ -284,12 +291,15 @@ Respond in JSON format:
                     PropertyNameCaseInsensitive = true
                 });
 
-                if (parsed != null)
+                if (parsed != null && !string.IsNullOrWhiteSpace(parsed.Response))
                 {
+                    // Sanitize response - remove any JSON artifacts or code blocks
+                    var sanitizedResponse = SanitizeChatResponse(parsed.Response);
+
                     return new ChatbotResponse
                     {
                         Success = true,
-                        Response = parsed.Response ?? "I'm here to help!",
+                        Response = sanitizedResponse,
                         Intent = parsed.Intent,
                         Confidence = parsed.Confidence,
                         SuggestedActions = parsed.SuggestedActions ?? new()
@@ -297,21 +307,60 @@ Respond in JSON format:
                 }
             }
 
-            // Fallback: use raw response
-            return new ChatbotResponse
+            // Try regex extraction as secondary attempt
+            var responseMatch = System.Text.RegularExpressions.Regex.Match(
+                aiResponse,
+                @"""response""\s*:\s*""([^""]+)""",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            if (responseMatch.Success && !string.IsNullOrWhiteSpace(responseMatch.Groups[1].Value))
             {
-                Success = true,
-                Response = aiResponse.Length > 500 ? aiResponse[..500] : aiResponse
-            };
+                return new ChatbotResponse
+                {
+                    Success = true,
+                    Response = SanitizeChatResponse(responseMatch.Groups[1].Value)
+                };
+            }
+
+            // Safe fallback - never expose raw AI output
+            return new ChatbotResponse { Success = true, Response = fallbackMessage };
         }
         catch
         {
-            return new ChatbotResponse
-            {
-                Success = true,
-                Response = aiResponse.Length > 500 ? aiResponse[..500] : aiResponse
-            };
+            return new ChatbotResponse { Success = true, Response = fallbackMessage };
         }
+    }
+
+    private static string SanitizeChatResponse(string response)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return "I'm here to help!";
+
+        // Remove potential JSON artifacts
+        var sanitized = response
+            .Replace("\\n", " ")
+            .Replace("\\\"", "\"")
+            .Trim();
+
+        // Remove markdown code blocks if accidentally included
+        if (sanitized.StartsWith("```"))
+        {
+            var endIndex = sanitized.IndexOf("```", 3);
+            if (endIndex > 0)
+                sanitized = sanitized[(endIndex + 3)..].Trim();
+        }
+
+        // Limit length and ensure it ends cleanly
+        if (sanitized.Length > 500)
+        {
+            sanitized = sanitized[..497];
+            var lastSpace = sanitized.LastIndexOf(' ');
+            if (lastSpace > 400)
+                sanitized = sanitized[..lastSpace];
+            sanitized += "...";
+        }
+
+        return string.IsNullOrWhiteSpace(sanitized) ? "I'm here to help!" : sanitized;
     }
 
     private static ChatbotConversationDto MapToDto(ChatbotConversation c) => new()
