@@ -1,6 +1,6 @@
 /**
- * Label Designer - Professional Drag and Drop Implementation
- * Uses interact.js for drag, drop, and resize functionality
+ * Label Designer - Toolbar-based Implementation
+ * Clean toolbar interface with Add Element dropdown
  */
 
 class LabelDesigner {
@@ -11,29 +11,16 @@ class LabelDesigner {
         this.previewData = null;
         this.canvasWidth = 252;
         this.canvasHeight = 96;
-        this.isLoading = false;
+        this.pendingImageData = null;
 
         this.init();
     }
 
     init() {
         this.canvas = document.getElementById('labelCanvas');
-        this.canvasContainer = document.getElementById('canvasContainer');
-
         this.initializeEventListeners();
-        this.initializeDragAndDrop();
+        this.initializeCanvasInteractions();
         this.updateCanvasSize();
-        this.updateSizePresets();
-    }
-
-    // Show loading state
-    showLoading(message = 'Loading...') {
-        this.isLoading = true;
-        // Could add a loading overlay here if needed
-    }
-
-    hideLoading() {
-        this.isLoading = false;
     }
 
     // Canvas size management
@@ -47,15 +34,12 @@ class LabelDesigner {
             widthInches = parseFloat(document.getElementById('customWidth').value) || 2;
             heightInches = parseFloat(document.getElementById('customHeight').value) || 1;
             document.getElementById('customSizeInputs').classList.remove('hidden');
-            document.getElementById('customSizeInputs').classList.add('grid');
         } else {
             widthInches = parseFloat(selected.dataset.width) || 2.625;
             heightInches = parseFloat(selected.dataset.height) || 1;
             document.getElementById('customSizeInputs').classList.add('hidden');
-            document.getElementById('customSizeInputs').classList.remove('grid');
         }
 
-        // Scale to fit container (96 DPI base, scaled for visibility)
         const scale = 96;
         this.canvasWidth = widthInches * scale;
         this.canvasHeight = heightInches * scale;
@@ -64,76 +48,11 @@ class LabelDesigner {
         this.canvas.style.height = `${this.canvasHeight}px`;
 
         document.getElementById('canvasSize').textContent = `${widthInches}" × ${heightInches}"`;
-
-        // Update size presets active state
-        this.updateSizePresets();
-
-        // Re-render fields with new canvas size
         this.renderAllFields();
     }
 
-    updateSizePresets() {
-        const currentType = document.getElementById('labelType').value;
-        document.querySelectorAll('.size-preset').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.type === currentType);
-        });
-    }
-
-    // Drag and Drop setup
-    initializeDragAndDrop() {
-        const self = this;
-
-        // Palette items - drag to clone onto canvas
-        interact('.draggable-source').draggable({
-            inertia: false,
-            autoScroll: true,
-            listeners: {
-                start(event) {
-                    event.target.classList.add('dragging');
-                },
-                move(event) {
-                    // Visual feedback while dragging
-                },
-                end(event) {
-                    event.target.classList.remove('dragging');
-
-                    // Check if dropped on canvas
-                    const canvasRect = self.canvas.getBoundingClientRect();
-                    const dropX = event.clientX;
-                    const dropY = event.clientY;
-
-                    if (dropX >= canvasRect.left && dropX <= canvasRect.right &&
-                        dropY >= canvasRect.top && dropY <= canvasRect.bottom) {
-
-                        const fieldType = event.target.dataset.fieldType;
-                        const x = ((dropX - canvasRect.left) / self.canvasWidth) * 100;
-                        const y = ((dropY - canvasRect.top) / self.canvasHeight) * 100;
-
-                        self.addFieldToCanvas(fieldType, x, y);
-                    }
-                }
-            }
-        });
-
-        // Make canvas a dropzone
-        interact('#labelCanvas').dropzone({
-            accept: '.draggable-source',
-            overlap: 0.25,
-            ondragenter(event) {
-                self.canvas.classList.add('drop-active');
-            },
-            ondragleave(event) {
-                self.canvas.classList.remove('drop-active');
-            },
-            ondrop(event) {
-                self.canvas.classList.remove('drop-active');
-            }
-        });
-
-        this.setupCanvasFieldInteractions();
-    }
-
-    setupCanvasFieldInteractions() {
+    // Canvas field interactions (drag and resize)
+    initializeCanvasInteractions() {
         const self = this;
 
         interact('.canvas-field')
@@ -161,7 +80,7 @@ class LabelDesigner {
                 }
             })
             .resizable({
-                edges: { right: true, bottom: true },
+                edges: { left: true, right: true, bottom: true, top: true },
                 modifiers: [
                     interact.modifiers.restrictSize({
                         min: { width: 20, height: 15 }
@@ -194,58 +113,61 @@ class LabelDesigner {
             });
     }
 
+    // Add element from dropdown
+    addElement(elementType) {
+        if (elementType === 'image') {
+            this.showImageModal();
+            return;
+        }
+
+        const dataBinding = document.getElementById('dataBinding').value;
+        const fieldType = elementType === 'barcode' ? 'Barcode' :
+                          (dataBinding === 'custom' ? 'CustomText' : dataBinding);
+
+        this.addFieldToCanvas(fieldType);
+    }
+
     // Field management
-    addFieldToCanvas(fieldType, x = 5, y = 5) {
+    addFieldToCanvas(fieldType, options = {}) {
         const fieldId = `field_${Date.now()}`;
         const field = {
             id: fieldId,
             fieldType: fieldType,
-            x: Math.max(0, Math.min(x, 70)),
-            y: Math.max(0, Math.min(y, 70)),
-            width: fieldType === 'Barcode' ? 40 : 30,
-            height: fieldType === 'Barcode' ? 35 : 20,
+            x: options.x ?? 10,
+            y: options.y ?? 10,
+            width: fieldType === 'Barcode' ? 40 : (fieldType === 'Image' ? 25 : 30),
+            height: fieldType === 'Barcode' ? 30 : (fieldType === 'Image' ? 25 : 18),
             fontFamily: 'Arial',
-            fontSize: fieldType === 'ProductTitle' ? 12 : 10,
+            fontSize: fieldType === 'ProductTitle' ? 14 : 12,
             isBold: fieldType === 'ProductTitle' || fieldType === 'Price',
             isItalic: false,
+            isUnderline: false,
             textAlign: 'left',
             textColor: '#000000',
-            customText: fieldType === 'CustomText' ? 'Custom Text' : null,
+            textTransform: 'normal',
+            customText: fieldType === 'CustomText' ? document.getElementById('elementText').value || 'Custom Text' : null,
             barcodeFormat: 'Code128',
-            pricePrefix: '$',
-            showCurrency: true
+            imageData: options.imageData || null
         };
 
         this.fields.push(field);
         this.renderField(field);
         this.selectField(fieldId);
-        this.hidePlaceholder();
     }
 
     renderAllFields() {
-        // Clear existing rendered fields
         const existingFields = this.canvas.querySelectorAll('.canvas-field');
         existingFields.forEach(f => f.remove());
 
-        // Re-render all fields
         this.fields.forEach(field => this.renderField(field));
-
-        // Re-setup interactions
-        this.setupCanvasFieldInteractions();
+        this.initializeCanvasInteractions();
     }
 
     renderField(field) {
         const element = document.createElement('div');
         element.id = field.id;
         element.dataset.fieldId = field.id;
-        element.className = 'canvas-field absolute cursor-move rounded-md overflow-hidden flex items-center touch-none';
-
-        // Apply field-specific styling
-        const fieldStyles = this.getFieldStyles(field.fieldType);
-        element.style.cssText = `
-            border: 2px solid ${fieldStyles.borderColor};
-            background: ${fieldStyles.bgColor};
-        `;
+        element.className = 'canvas-field';
 
         const x = (field.x / 100) * this.canvasWidth;
         const y = (field.y / 100) * this.canvasHeight;
@@ -263,17 +185,24 @@ class LabelDesigner {
         element.style.fontSize = `${field.fontSize}px`;
         element.style.fontWeight = field.isBold ? 'bold' : 'normal';
         element.style.fontStyle = field.isItalic ? 'italic' : 'normal';
+        element.style.textDecoration = field.isUnderline ? 'underline' : 'none';
         element.style.textAlign = field.textAlign;
         element.style.color = field.textColor;
-        element.style.padding = '4px';
+        element.style.textTransform = field.textTransform || 'none';
+        element.style.display = 'flex';
+        element.style.alignItems = 'center';
         element.style.justifyContent = field.textAlign === 'center' ? 'center' : (field.textAlign === 'right' ? 'flex-end' : 'flex-start');
+        element.style.overflow = 'hidden';
 
-        element.innerHTML = this.getFieldPreviewContent(field);
+        element.innerHTML = this.getFieldContent(field);
 
-        // Add resize handle
-        const resizeHandle = document.createElement('div');
-        resizeHandle.className = 'resize-handle';
-        element.appendChild(resizeHandle);
+        // Add 8-point resize handles
+        const handles = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+        handles.forEach(pos => {
+            const handle = document.createElement('div');
+            handle.className = `resize-handle ${pos}`;
+            element.appendChild(handle);
+        });
 
         element.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -283,61 +212,103 @@ class LabelDesigner {
         this.canvas.appendChild(element);
     }
 
-    getFieldStyles(fieldType) {
-        const styles = {
-            'ProductTitle': { borderColor: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.08)' },
-            'SKU': { borderColor: '#22c55e', bgColor: 'rgba(34, 197, 94, 0.08)' },
-            'Barcode': { borderColor: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.08)' },
-            'Price': { borderColor: '#10b981', bgColor: 'rgba(16, 185, 129, 0.08)' },
-            'CompareAtPrice': { borderColor: '#f97316', bgColor: 'rgba(249, 115, 22, 0.08)' },
-            'VariantTitle': { borderColor: '#06b6d4', bgColor: 'rgba(6, 182, 212, 0.08)' },
-            'VariantOption1': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
-            'VariantOption2': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
-            'VariantOption3': { borderColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.08)' },
-            'Vendor': { borderColor: '#64748b', bgColor: 'rgba(100, 116, 139, 0.08)' },
-            'ProductType': { borderColor: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.08)' },
-            'Weight': { borderColor: '#f43f5e', bgColor: 'rgba(244, 63, 94, 0.08)' },
-            'InventoryQuantity': { borderColor: '#14b8a6', bgColor: 'rgba(20, 184, 166, 0.08)' },
-            'CustomText': { borderColor: '#ec4899', bgColor: 'rgba(236, 72, 153, 0.08)' }
-        };
-        return styles[fieldType] || { borderColor: '#94a3b8', bgColor: 'rgba(148, 163, 184, 0.08)' };
-    }
+    getFieldContent(field) {
+        if (field.fieldType === 'Image' && field.imageData) {
+            return `<img src="${field.imageData}" style="max-width:100%;max-height:100%;object-fit:contain;" />`;
+        }
 
-    getFieldPreviewContent(field) {
+        if (field.fieldType === 'Barcode') {
+            return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;">' +
+                   '<i class="fas fa-barcode" style="font-size:1.5em;color:#666;"></i>' +
+                   '<span style="font-size:9px;color:#888;margin-top:2px;">Barcode</span></div>';
+        }
+
         const preview = this.previewData || {};
-
-        const fieldLabels = {
+        const labels = {
             'ProductTitle': preview.productTitle || 'Product Title',
             'SKU': preview.sku || 'SKU-12345',
-            'Barcode': '<i class="fas fa-barcode text-lg text-slate-600"></i>',
             'Price': preview.price ? `$${parseFloat(preview.price).toFixed(2)}` : '$29.99',
             'CompareAtPrice': preview.compareAtPrice ? `$${parseFloat(preview.compareAtPrice).toFixed(2)}` : '$39.99',
-            'VariantTitle': preview.variantTitle || 'Large / Blue',
-            'VariantOption1': preview.option1 || 'Size: Large',
-            'VariantOption2': preview.option2 || 'Color: Blue',
+            'VariantTitle': preview.variantTitle || 'Variant',
+            'VariantOption1': preview.option1 || 'Option 1',
+            'VariantOption2': preview.option2 || 'Option 2',
             'VariantOption3': preview.option3 || 'Option 3',
-            'Vendor': preview.vendor || 'Brand Name',
-            'ProductType': preview.productType || 'Category',
-            'Weight': preview.weight ? `${preview.weight} ${preview.weightUnit || ''}`.trim() : '1.5 kg',
+            'Vendor': preview.vendor || 'Vendor',
+            'ProductType': preview.productType || 'Type',
+            'Weight': preview.weight ? `${preview.weight}` : '1.5 kg',
             'InventoryQuantity': preview.inventoryQuantity?.toString() || '42',
             'CustomText': field.customText || 'Custom Text'
         };
 
-        return `<span class="truncate block w-full">${fieldLabels[field.fieldType] || field.fieldType}</span>`;
+        return `<span style="width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${labels[field.fieldType] || field.fieldType}</span>`;
     }
 
     selectField(fieldId) {
-        // Deselect previous
-        document.querySelectorAll('.canvas-field').forEach(el => {
-            el.classList.remove('selected');
-        });
+        // Deselect all
+        document.querySelectorAll('.canvas-field').forEach(el => el.classList.remove('selected'));
 
         const element = document.getElementById(fieldId);
         if (element) {
             element.classList.add('selected');
             this.selectedField = this.fields.find(f => f.id === fieldId);
-            this.showFieldProperties();
+            this.showFormatToolbar();
+            this.syncToolbarWithField();
         }
+    }
+
+    deselectField() {
+        document.querySelectorAll('.canvas-field').forEach(el => el.classList.remove('selected'));
+        this.selectedField = null;
+        this.hideFormatToolbar();
+    }
+
+    syncToolbarWithField() {
+        if (!this.selectedField) return;
+
+        const field = this.selectedField;
+
+        // Sync data binding dropdown
+        const dataBinding = document.getElementById('dataBinding');
+        if (field.fieldType === 'CustomText') {
+            dataBinding.value = 'custom';
+        } else if (field.fieldType !== 'Barcode' && field.fieldType !== 'Image') {
+            dataBinding.value = field.fieldType;
+        }
+
+        // Sync text input
+        if (field.fieldType === 'CustomText') {
+            document.getElementById('elementText').value = field.customText || '';
+        }
+
+        // Sync color
+        document.getElementById('textColor').value = field.textColor;
+        document.getElementById('colorSwatch').style.background = field.textColor;
+
+        // Sync text transform
+        document.getElementById('textFormat').value = field.textTransform || 'normal';
+
+        // Sync format toolbar
+        document.getElementById('fontFamily').value = field.fontFamily;
+        document.getElementById('fontSize').value = field.fontSize;
+
+        // Style buttons
+        document.getElementById('toggleBold').classList.toggle('active', field.isBold);
+        document.getElementById('toggleUnderline').classList.toggle('active', field.isUnderline);
+        document.getElementById('toggleItalic').classList.toggle('active', field.isItalic);
+
+        // Alignment
+        ['alignLeft', 'alignCenter', 'alignRight'].forEach(id => {
+            const align = id.replace('align', '').toLowerCase();
+            document.getElementById(id).classList.toggle('active', field.textAlign === align);
+        });
+    }
+
+    showFormatToolbar() {
+        document.getElementById('formatToolbar').classList.remove('hidden');
+    }
+
+    hideFormatToolbar() {
+        document.getElementById('formatToolbar').classList.add('hidden');
     }
 
     updateFieldPosition(fieldId) {
@@ -358,104 +329,13 @@ class LabelDesigner {
 
         field.width = (width / this.canvasWidth) * 100;
         field.height = (height / this.canvasHeight) * 100;
-
         this.updateFieldPosition(fieldId);
-    }
-
-    removeSelectedField() {
-        if (!this.selectedField) return;
-
-        const element = document.getElementById(this.selectedField.id);
-        if (element) element.remove();
-
-        this.fields = this.fields.filter(f => f.id !== this.selectedField.id);
-        this.selectedField = null;
-        this.hideFieldProperties();
-
-        if (this.fields.length === 0) {
-            this.showPlaceholder();
-        }
-    }
-
-    hidePlaceholder() {
-        const placeholder = document.getElementById('canvasPlaceholder');
-        if (placeholder) placeholder.classList.add('hidden');
-    }
-
-    showPlaceholder() {
-        const placeholder = document.getElementById('canvasPlaceholder');
-        if (placeholder) placeholder.classList.remove('hidden');
-    }
-
-    // Properties panel
-    showFieldProperties() {
-        document.getElementById('noFieldSelected').classList.add('hidden');
-        document.getElementById('fieldPropertiesForm').classList.remove('hidden');
-
-        if (!this.selectedField) return;
-
-        const fieldTypeNames = {
-            'ProductTitle': 'Product Title',
-            'SKU': 'SKU',
-            'Barcode': 'Barcode',
-            'Price': 'Price',
-            'CompareAtPrice': 'Compare Price',
-            'VariantTitle': 'Variant Title',
-            'VariantOption1': 'Option 1',
-            'VariantOption2': 'Option 2',
-            'VariantOption3': 'Option 3',
-            'Vendor': 'Vendor',
-            'ProductType': 'Product Type',
-            'Weight': 'Weight',
-            'InventoryQuantity': 'Inventory',
-            'CustomText': 'Custom Text'
-        };
-
-        document.getElementById('selectedFieldType').textContent = fieldTypeNames[this.selectedField.fieldType] || this.selectedField.fieldType;
-        document.getElementById('fontFamily').value = this.selectedField.fontFamily;
-        document.getElementById('fontSize').value = this.selectedField.fontSize;
-        document.getElementById('textColor').value = this.selectedField.textColor;
-
-        // Update style buttons
-        this.updateStyleButtons();
-
-        // Show/hide field-specific options
-        document.getElementById('customTextContainer').classList.toggle('hidden', this.selectedField.fieldType !== 'CustomText');
-        document.getElementById('barcodeFormatContainer').classList.toggle('hidden', this.selectedField.fieldType !== 'Barcode');
-
-        if (this.selectedField.fieldType === 'CustomText') {
-            document.getElementById('customText').value = this.selectedField.customText || '';
-        }
-        if (this.selectedField.fieldType === 'Barcode') {
-            document.getElementById('barcodeFormat').value = this.selectedField.barcodeFormat;
-        }
-    }
-
-    hideFieldProperties() {
-        document.getElementById('noFieldSelected').classList.remove('hidden');
-        document.getElementById('fieldPropertiesForm').classList.add('hidden');
-    }
-
-    updateStyleButtons() {
-        const boldBtn = document.getElementById('toggleBold');
-        const italicBtn = document.getElementById('toggleItalic');
-        const alignBtns = ['alignLeft', 'alignCenter', 'alignRight'];
-
-        boldBtn.classList.toggle('active', this.selectedField?.isBold);
-        italicBtn.classList.toggle('active', this.selectedField?.isItalic);
-
-        alignBtns.forEach(id => {
-            const btn = document.getElementById(id);
-            const align = id.replace('align', '').toLowerCase();
-            btn.classList.toggle('active', this.selectedField?.textAlign === align);
-        });
     }
 
     updateSelectedFieldStyle(property, value) {
         if (!this.selectedField) return;
 
         this.selectedField[property] = value;
-
         const element = document.getElementById(this.selectedField.id);
         if (!element) return;
 
@@ -472,19 +352,78 @@ class LabelDesigner {
             case 'isItalic':
                 element.style.fontStyle = value ? 'italic' : 'normal';
                 break;
+            case 'isUnderline':
+                element.style.textDecoration = value ? 'underline' : 'none';
+                break;
             case 'textAlign':
                 element.style.textAlign = value;
                 element.style.justifyContent = value === 'center' ? 'center' : (value === 'right' ? 'flex-end' : 'flex-start');
                 break;
             case 'textColor':
                 element.style.color = value;
+                document.getElementById('colorSwatch').style.background = value;
+                break;
+            case 'textTransform':
+                element.style.textTransform = value;
                 break;
             case 'customText':
-                element.querySelector('span').textContent = value || 'Custom Text';
+                const span = element.querySelector('span');
+                if (span) span.textContent = value || 'Custom Text';
                 break;
         }
 
-        this.updateStyleButtons();
+        this.syncToolbarWithField();
+    }
+
+    removeSelectedField() {
+        if (!this.selectedField) return;
+
+        const element = document.getElementById(this.selectedField.id);
+        if (element) element.remove();
+
+        this.fields = this.fields.filter(f => f.id !== this.selectedField.id);
+        this.selectedField = null;
+        this.hideFormatToolbar();
+    }
+
+    clearCanvas() {
+        this.fields = [];
+        const existingFields = this.canvas.querySelectorAll('.canvas-field');
+        existingFields.forEach(f => f.remove());
+        this.selectedField = null;
+        this.hideFormatToolbar();
+    }
+
+    // Image handling
+    showImageModal() {
+        document.getElementById('imageModal').classList.remove('hidden');
+        document.getElementById('imagePreview').classList.add('hidden');
+        document.getElementById('previewImg').src = '';
+        this.pendingImageData = null;
+    }
+
+    hideImageModal() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    handleImageSelect(file) {
+        if (!file || !file.type.startsWith('image/')) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.pendingImageData = e.target.result;
+            document.getElementById('previewImg').src = this.pendingImageData;
+            document.getElementById('imagePreview').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    addImageToCanvas() {
+        if (!this.pendingImageData) return;
+
+        this.addFieldToCanvas('Image', { imageData: this.pendingImageData });
+        this.hideImageModal();
+        this.pendingImageData = null;
     }
 
     // Template management
@@ -497,7 +436,6 @@ class LabelDesigner {
         }
 
         try {
-            this.showLoading('Loading template...');
             const response = await fetch(`?handler=Template&id=${templateId}`);
             if (!response.ok) throw new Error('Failed to load template');
 
@@ -512,37 +450,28 @@ class LabelDesigner {
             }
 
             this.updateCanvasSize();
-
             this.fields = template.fields || [];
             this.renderAllFields();
 
-            if (this.fields.length > 0) {
-                this.hidePlaceholder();
-            } else {
-                this.showPlaceholder();
-            }
-
             this.selectedField = null;
-            this.hideFieldProperties();
+            this.hideFormatToolbar();
 
         } catch (error) {
             console.error('Error loading template:', error);
-            this.showNotification('Failed to load template', 'error');
-        } finally {
-            this.hideLoading();
+            alert('Failed to load template');
         }
     }
 
     async saveTemplate() {
         const name = document.getElementById('templateName').value.trim();
         if (!name) {
-            this.showNotification('Please enter a template name', 'warning');
+            alert('Please enter a template name');
             document.getElementById('templateName').focus();
             return;
         }
 
         if (this.fields.length === 0) {
-            this.showNotification('Please add at least one field to the label', 'warning');
+            alert('Please add at least one element to the label');
             return;
         }
 
@@ -557,14 +486,8 @@ class LabelDesigner {
         };
 
         try {
-            this.showLoading('Saving template...');
-            let url;
-            if (this.templateId) {
-                dto.id = this.templateId;
-                url = '?handler=UpdateTemplate';
-            } else {
-                url = '?handler=SaveTemplate';
-            }
+            let url = this.templateId ? '?handler=UpdateTemplate' : '?handler=SaveTemplate';
+            if (this.templateId) dto.id = this.templateId;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -576,53 +499,34 @@ class LabelDesigner {
 
             const result = await response.json();
             this.templateId = result.id;
-            this.showNotification('Template saved successfully!', 'success');
-
-            // Reload page to refresh template list
-            setTimeout(() => location.reload(), 1000);
+            alert('Template saved!');
+            setTimeout(() => location.reload(), 500);
 
         } catch (error) {
             console.error('Error saving template:', error);
-            this.showNotification('Failed to save template', 'error');
-        } finally {
-            this.hideLoading();
+            alert('Failed to save template');
         }
     }
 
     async deleteTemplate() {
         if (!this.templateId) {
-            this.showNotification('No template selected', 'warning');
+            alert('No template selected');
             return;
         }
 
-        if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) return;
+        if (!confirm('Delete this template?')) return;
 
         try {
-            this.showLoading('Deleting template...');
-            const response = await fetch(`?handler=DeleteTemplate&id=${this.templateId}`, {
-                method: 'POST'
-            });
-
+            const response = await fetch(`?handler=DeleteTemplate&id=${this.templateId}`, { method: 'POST' });
             if (!response.ok) throw new Error('Failed to delete template');
 
-            this.showNotification('Template deleted', 'success');
-            setTimeout(() => location.reload(), 1000);
+            alert('Template deleted');
+            setTimeout(() => location.reload(), 500);
 
         } catch (error) {
             console.error('Error deleting template:', error);
-            this.showNotification('Failed to delete template', 'error');
-        } finally {
-            this.hideLoading();
+            alert('Failed to delete template');
         }
-    }
-
-    clearCanvas() {
-        this.fields = [];
-        const existingFields = this.canvas.querySelectorAll('.canvas-field');
-        existingFields.forEach(f => f.remove());
-        this.showPlaceholder();
-        this.hideFieldProperties();
-        this.selectedField = null;
     }
 
     // Preview data
@@ -639,186 +543,11 @@ class LabelDesigner {
         }
     }
 
-    // Notification helper
-    showNotification(message, type = 'info') {
-        // Simple alert for now - could be replaced with toast notifications
-        if (type === 'error' || type === 'warning') {
-            alert(message);
-        } else {
-            // For success, just log it
-            console.log(message);
-        }
-    }
-
-    // Event listeners
-    initializeEventListeners() {
-        const self = this;
-
-        // Template selector
-        document.getElementById('templateSelector').addEventListener('change', (e) => {
-            this.loadTemplate(e.target.value);
-        });
-
-        // Save template
-        document.getElementById('saveTemplateBtn').addEventListener('click', () => this.saveTemplate());
-
-        // Delete template
-        document.getElementById('deleteTemplateBtn').addEventListener('click', () => this.deleteTemplate());
-
-        // Clear canvas
-        const clearBtn = document.getElementById('clearCanvasBtn');
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                if (this.fields.length === 0 || confirm('Clear all fields from the canvas?')) {
-                    this.clearCanvas();
-                    document.getElementById('templateName').value = '';
-                    this.templateId = null;
-                }
-            });
-        }
-
-        // Size preset buttons
-        document.querySelectorAll('.size-preset').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const labelType = document.getElementById('labelType');
-                labelType.value = btn.dataset.type;
-                this.updateCanvasSize();
-            });
-        });
-
-        // Label type change
-        document.getElementById('labelType').addEventListener('change', () => this.updateCanvasSize());
-
-        // Custom size inputs
-        ['customWidth', 'customHeight'].forEach(id => {
-            document.getElementById(id).addEventListener('change', () => this.updateCanvasSize());
-        });
-
-        // Property changes
-        document.getElementById('fontFamily').addEventListener('change', (e) => {
-            this.updateSelectedFieldStyle('fontFamily', e.target.value);
-        });
-
-        document.getElementById('fontSize').addEventListener('change', (e) => {
-            this.updateSelectedFieldStyle('fontSize', parseInt(e.target.value));
-        });
-
-        document.getElementById('textColor').addEventListener('input', (e) => {
-            this.updateSelectedFieldStyle('textColor', e.target.value);
-        });
-
-        document.getElementById('toggleBold').addEventListener('click', () => {
-            if (this.selectedField) {
-                this.updateSelectedFieldStyle('isBold', !this.selectedField.isBold);
-            }
-        });
-
-        document.getElementById('toggleItalic').addEventListener('click', () => {
-            if (this.selectedField) {
-                this.updateSelectedFieldStyle('isItalic', !this.selectedField.isItalic);
-            }
-        });
-
-        ['alignLeft', 'alignCenter', 'alignRight'].forEach(id => {
-            document.getElementById(id).addEventListener('click', () => {
-                const align = id.replace('align', '').toLowerCase();
-                this.updateSelectedFieldStyle('textAlign', align);
-            });
-        });
-
-        document.getElementById('customText').addEventListener('input', (e) => {
-            this.updateSelectedFieldStyle('customText', e.target.value);
-        });
-
-        document.getElementById('barcodeFormat').addEventListener('change', (e) => {
-            if (this.selectedField) {
-                this.selectedField.barcodeFormat = e.target.value;
-            }
-        });
-
-        document.getElementById('removeField').addEventListener('click', () => this.removeSelectedField());
-
-        // Preview product
-        document.getElementById('previewProduct').addEventListener('change', (e) => {
-            const [productId, variantId] = e.target.value.split('-');
-            if (productId && variantId) {
-                this.loadPreviewData(productId, variantId);
-            }
-        });
-
-        document.getElementById('refreshPreview').addEventListener('click', () => {
-            const select = document.getElementById('previewProduct');
-            if (select.value) {
-                const [productId, variantId] = select.value.split('-');
-                this.loadPreviewData(productId, variantId);
-            }
-        });
-
-        // Click outside to deselect
-        this.canvas.addEventListener('click', (e) => {
-            if (e.target === this.canvas || e.target.id === 'canvasPlaceholder') {
-                this.selectedField = null;
-                document.querySelectorAll('.canvas-field').forEach(el => {
-                    el.classList.remove('selected');
-                });
-                this.hideFieldProperties();
-            }
-        });
-
-        // Print modal
-        document.getElementById('printLabelsBtn').addEventListener('click', () => {
-            document.getElementById('printModal').classList.remove('hidden');
-        });
-
-        document.getElementById('closePrintModal').addEventListener('click', () => {
-            document.getElementById('printModal').classList.add('hidden');
-        });
-
-        document.getElementById('cancelPrint').addEventListener('click', () => {
-            document.getElementById('printModal').classList.add('hidden');
-        });
-
-        // Close modal on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.getElementById('printModal').classList.add('hidden');
-            }
-        });
-
-        // Close modal on backdrop click
-        document.getElementById('printModal').addEventListener('click', (e) => {
-            if (e.target.id === 'printModal') {
-                document.getElementById('printModal').classList.add('hidden');
-            }
-        });
-
-        // Select all products
-        document.getElementById('selectAllProducts').addEventListener('change', (e) => {
-            document.querySelectorAll('.product-checkbox').forEach(cb => {
-                cb.checked = e.target.checked;
-            });
-        });
-
-        // Generate PDF
-        document.getElementById('generatePdfBtn').addEventListener('click', () => this.generatePdf());
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Delete selected field with Delete or Backspace (when not in input)
-            if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedField) {
-                const activeElement = document.activeElement;
-                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA' && activeElement.tagName !== 'SELECT') {
-                    e.preventDefault();
-                    this.removeSelectedField();
-                }
-            }
-        });
-    }
-
+    // PDF Generation
     async generatePdf() {
         const templateId = document.getElementById('printTemplateSelector').value;
         if (!templateId) {
-            this.showNotification('Please select a template', 'warning');
+            alert('Please select a template');
             return;
         }
 
@@ -834,12 +563,11 @@ class LabelDesigner {
         });
 
         if (products.length === 0) {
-            this.showNotification('Please select at least one product', 'warning');
+            alert('Please select at least one product');
             return;
         }
 
         try {
-            this.showLoading('Generating PDF...');
             const btn = document.getElementById('generatePdfBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
@@ -873,17 +601,223 @@ class LabelDesigner {
 
         } catch (error) {
             console.error('Error generating PDF:', error);
-            this.showNotification(error.message || 'Failed to generate PDF', 'error');
+            alert(error.message || 'Failed to generate PDF');
         } finally {
-            this.hideLoading();
             const btn = document.getElementById('generatePdfBtn');
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
         }
     }
+
+    // Event Listeners
+    initializeEventListeners() {
+        const self = this;
+
+        // Add Element dropdown
+        const addBtn = document.getElementById('addElementBtn');
+        const addMenu = document.getElementById('addElementMenu');
+
+        addBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addMenu.classList.toggle('show');
+        });
+
+        document.querySelectorAll('.add-element-item').forEach(item => {
+            item.addEventListener('click', () => {
+                self.addElement(item.dataset.element);
+                addMenu.classList.remove('show');
+            });
+        });
+
+        // Close menu on outside click
+        document.addEventListener('click', () => {
+            addMenu.classList.remove('show');
+        });
+
+        // Data binding change
+        document.getElementById('dataBinding').addEventListener('change', (e) => {
+            if (this.selectedField && this.selectedField.fieldType !== 'Barcode' && this.selectedField.fieldType !== 'Image') {
+                // Update selected field type
+                const newType = e.target.value === 'custom' ? 'CustomText' : e.target.value;
+                this.selectedField.fieldType = newType;
+
+                const element = document.getElementById(this.selectedField.id);
+                if (element) {
+                    element.innerHTML = this.getFieldContent(this.selectedField);
+                    // Re-add handles
+                    const handles = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+                    handles.forEach(pos => {
+                        const handle = document.createElement('div');
+                        handle.className = `resize-handle ${pos}`;
+                        element.appendChild(handle);
+                    });
+                }
+            }
+        });
+
+        // Text input for custom text
+        document.getElementById('elementText').addEventListener('input', (e) => {
+            if (this.selectedField && this.selectedField.fieldType === 'CustomText') {
+                this.updateSelectedFieldStyle('customText', e.target.value);
+            }
+        });
+
+        // Color picker
+        document.getElementById('textColor').addEventListener('input', (e) => {
+            this.updateSelectedFieldStyle('textColor', e.target.value);
+        });
+
+        // Text format (transform)
+        document.getElementById('textFormat').addEventListener('change', (e) => {
+            this.updateSelectedFieldStyle('textTransform', e.target.value);
+        });
+
+        // Delete element
+        document.getElementById('deleteElement').addEventListener('click', () => {
+            this.removeSelectedField();
+        });
+
+        // Format toolbar
+        document.getElementById('fontFamily').addEventListener('change', (e) => {
+            this.updateSelectedFieldStyle('fontFamily', e.target.value);
+        });
+
+        document.getElementById('fontSize').addEventListener('change', (e) => {
+            this.updateSelectedFieldStyle('fontSize', parseInt(e.target.value));
+        });
+
+        document.getElementById('toggleBold').addEventListener('click', () => {
+            if (this.selectedField) {
+                this.updateSelectedFieldStyle('isBold', !this.selectedField.isBold);
+            }
+        });
+
+        document.getElementById('toggleUnderline').addEventListener('click', () => {
+            if (this.selectedField) {
+                this.updateSelectedFieldStyle('isUnderline', !this.selectedField.isUnderline);
+            }
+        });
+
+        document.getElementById('toggleItalic').addEventListener('click', () => {
+            if (this.selectedField) {
+                this.updateSelectedFieldStyle('isItalic', !this.selectedField.isItalic);
+            }
+        });
+
+        ['alignLeft', 'alignCenter', 'alignRight'].forEach(id => {
+            document.getElementById(id).addEventListener('click', () => {
+                const align = id.replace('align', '').toLowerCase();
+                this.updateSelectedFieldStyle('textAlign', align);
+            });
+        });
+
+        // Canvas click to deselect
+        this.canvas.addEventListener('click', (e) => {
+            if (e.target === this.canvas) {
+                this.deselectField();
+            }
+        });
+
+        // Template selector
+        document.getElementById('templateSelector').addEventListener('change', (e) => {
+            this.loadTemplate(e.target.value);
+        });
+
+        // Save/Delete template
+        document.getElementById('saveTemplateBtn').addEventListener('click', () => this.saveTemplate());
+        document.getElementById('deleteTemplateBtn').addEventListener('click', () => this.deleteTemplate());
+
+        // Label type change
+        document.getElementById('labelType').addEventListener('change', () => this.updateCanvasSize());
+
+        // Custom size inputs
+        ['customWidth', 'customHeight'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => this.updateCanvasSize());
+        });
+
+        // Preview product
+        document.getElementById('previewProduct').addEventListener('change', (e) => {
+            const [productId, variantId] = e.target.value.split('-');
+            if (productId && variantId) {
+                this.loadPreviewData(productId, variantId);
+            }
+        });
+
+        // Print modal
+        document.getElementById('testPrintBtn').addEventListener('click', () => {
+            document.getElementById('printModal').classList.remove('hidden');
+        });
+
+        const closeModal = () => document.getElementById('printModal').classList.add('hidden');
+        document.getElementById('closePrintModal')?.addEventListener('click', closeModal);
+        document.getElementById('cancelPrint')?.addEventListener('click', closeModal);
+
+        document.getElementById('printModal').addEventListener('click', (e) => {
+            if (e.target.id === 'printModal') closeModal();
+        });
+
+        // Select all products
+        document.getElementById('selectAllProducts')?.addEventListener('change', (e) => {
+            document.querySelectorAll('.product-checkbox').forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Generate PDF
+        document.getElementById('generatePdfBtn')?.addEventListener('click', () => this.generatePdf());
+
+        // Image modal
+        const imageDropZone = document.getElementById('imageDropZone');
+        const imageInput = document.getElementById('imageInput');
+
+        imageDropZone?.addEventListener('click', () => imageInput.click());
+
+        imageDropZone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageDropZone.style.borderColor = '#6366f1';
+        });
+
+        imageDropZone?.addEventListener('dragleave', () => {
+            imageDropZone.style.borderColor = '#cbd5e1';
+        });
+
+        imageDropZone?.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageDropZone.style.borderColor = '#cbd5e1';
+            const file = e.dataTransfer.files[0];
+            this.handleImageSelect(file);
+        });
+
+        imageInput?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            this.handleImageSelect(file);
+        });
+
+        document.getElementById('closeImageModal')?.addEventListener('click', () => this.hideImageModal());
+        document.getElementById('cancelImage')?.addEventListener('click', () => this.hideImageModal());
+        document.getElementById('addImageBtn')?.addEventListener('click', () => this.addImageToCanvas());
+
+        document.getElementById('imageModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'imageModal') this.hideImageModal();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('printModal').classList.add('hidden');
+                this.hideImageModal();
+            }
+
+            if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedField) {
+                const active = document.activeElement;
+                if (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA' && active.tagName !== 'SELECT') {
+                    e.preventDefault();
+                    this.removeSelectedField();
+                }
+            }
+        });
+    }
 }
 
-// Initialize when DOM is ready
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     window.labelDesigner = new LabelDesigner();
 });
