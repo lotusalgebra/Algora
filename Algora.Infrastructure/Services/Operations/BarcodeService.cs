@@ -6,7 +6,11 @@ using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using SkiaSharp;
 using System.Text;
+using ZXing;
+using ZXing.Common;
+using AppBarcodeFormat = Algora.Application.Interfaces.BarcodeFormat;
 
 namespace Algora.Infrastructure.Services.Operations;
 
@@ -55,13 +59,13 @@ public class BarcodeService : IBarcodeService
 
             foreach (var variant in variants)
             {
-                var barcode = GenerateUniqueBarcode(BarcodeFormat.EAN13);
+                var barcode = GenerateUniqueBarcode(AppBarcodeFormat.EAN13);
                 variant.Barcode = barcode;
 
-                var imageData = GenerateBarcodeImage(barcode, BarcodeFormat.EAN13, 300, 100, true);
+                var imageData = GenerateBarcodeImage(barcode, AppBarcodeFormat.EAN13, 300, 100, true);
                 results.Add(new BarcodeDto(
                     barcode,
-                    BarcodeFormat.EAN13,
+                    AppBarcodeFormat.EAN13,
                     imageData,
                     Convert.ToBase64String(imageData),
                     "image/png",
@@ -79,15 +83,15 @@ public class BarcodeService : IBarcodeService
         return results;
     }
 
-    public string GenerateUniqueBarcode(BarcodeFormat format, string? prefix = null)
+    public string GenerateUniqueBarcode(AppBarcodeFormat format, string? prefix = null)
     {
         return format switch
         {
-            BarcodeFormat.EAN13 => GenerateEAN13(prefix),
-            BarcodeFormat.EAN8 => GenerateEAN8(),
-            BarcodeFormat.UPCA => GenerateUPCA(prefix),
-            BarcodeFormat.UPCE => GenerateUPCE(),
-            BarcodeFormat.Code128 => GenerateCode128(prefix),
+            AppBarcodeFormat.EAN13 => GenerateEAN13(prefix),
+            AppBarcodeFormat.EAN8 => GenerateEAN8(),
+            AppBarcodeFormat.UPCA => GenerateUPCA(prefix),
+            AppBarcodeFormat.UPCE => GenerateUPCE(),
+            AppBarcodeFormat.Code128 => GenerateCode128(prefix),
             _ => GenerateCode128(prefix)
         };
     }
@@ -147,15 +151,20 @@ public class BarcodeService : IBarcodeService
                                                 .FontSize(6);
                                         }
 
-                                        // Barcode placeholder (would need actual barcode rendering)
-                                        labelCol.Item().AlignCenter().Padding(5)
-                                            .Border(1).BorderColor(Colors.Black)
-                                            .Text(label.Barcode)
-                                            .FontFamily("Courier New").FontSize(10);
+                                        // Generate actual barcode image
+                                        var barcodeImage = GenerateBarcodeImage(
+                                            label.Barcode,
+                                            AppBarcodeFormat.Code128,
+                                            (int)(layout.LabelWidth * 2.5f),
+                                            40,
+                                            false
+                                        );
+                                        labelCol.Item().AlignCenter().Padding(2)
+                                            .Image(barcodeImage);
 
                                         labelCol.Item().AlignCenter()
                                             .Text(label.Barcode)
-                                            .FontSize(8);
+                                            .FontFamily("Courier New").FontSize(8);
 
                                         if (layout.ShowPrice && label.Price.HasValue)
                                         {
@@ -226,26 +235,26 @@ public class BarcodeService : IBarcodeService
         );
     }
 
-    public bool ValidateBarcode(string barcode, BarcodeFormat format)
+    public bool ValidateBarcode(string barcode, AppBarcodeFormat format)
     {
         return format switch
         {
-            BarcodeFormat.EAN13 => barcode.Length == 13 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
-            BarcodeFormat.EAN8 => barcode.Length == 8 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
-            BarcodeFormat.UPCA => barcode.Length == 12 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
-            BarcodeFormat.UPCE => barcode.Length == 8 && barcode.All(char.IsDigit),
-            BarcodeFormat.Code128 => barcode.Length > 0 && barcode.Length <= 48,
+            AppBarcodeFormat.EAN13 => barcode.Length == 13 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
+            AppBarcodeFormat.EAN8 => barcode.Length == 8 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
+            AppBarcodeFormat.UPCA => barcode.Length == 12 && barcode.All(char.IsDigit) && IsValidCheckDigit(barcode, format),
+            AppBarcodeFormat.UPCE => barcode.Length == 8 && barcode.All(char.IsDigit),
+            AppBarcodeFormat.Code128 => barcode.Length > 0 && barcode.Length <= 48,
             _ => false
         };
     }
 
-    public bool IsValidCheckDigit(string barcode, BarcodeFormat format)
+    public bool IsValidCheckDigit(string barcode, AppBarcodeFormat format)
     {
-        if (format == BarcodeFormat.Code128) return true;
+        if (format == AppBarcodeFormat.Code128) return true;
 
         var digits = barcode.Select(c => c - '0').ToArray();
         var sum = 0;
-        var multiplier = format == BarcodeFormat.EAN13 || format == BarcodeFormat.EAN8 ? 1 : 3;
+        var multiplier = format == AppBarcodeFormat.EAN13 || format == AppBarcodeFormat.EAN8 ? 1 : 3;
 
         for (int i = 0; i < digits.Length - 1; i++)
         {
@@ -384,40 +393,166 @@ public class BarcodeService : IBarcodeService
         return sb.ToString();
     }
 
-    private byte[] GenerateBarcodeImage(string value, BarcodeFormat format, int width, int height, bool includeText)
+    private byte[] GenerateBarcodeImage(string value, AppBarcodeFormat format, int width, int height, bool includeText)
     {
-        // Simple placeholder implementation - returns a basic PNG
-        // In production, you would use ZXing.Net or similar library
-        // For now, generate a simple placeholder image
-        using var ms = new MemoryStream();
+        try
+        {
+            // Map our BarcodeFormat to ZXing BarcodeFormat
+            var zxingFormat = MapToZXingFormat(format);
 
-        // Create a simple 1x1 white PNG as placeholder
-        // In a real implementation, this would generate the actual barcode
-        byte[] pngHeader = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        ms.Write(pngHeader, 0, pngHeader.Length);
+            // Use ZXing.Net to generate a BitMatrix
+            var barcodeWriter = new BarcodeWriterGeneric
+            {
+                Format = zxingFormat,
+                Options = new EncodingOptions
+                {
+                    Width = width,
+                    Height = height,
+                    Margin = 5,
+                    PureBarcode = !includeText
+                }
+            };
 
-        // Add minimal PNG chunks for a 1x1 white image
-        // This is a simplified placeholder
-        byte[] ihdr = {
-            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-            0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-            0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE
+            var bitMatrix = barcodeWriter.Encode(value);
+
+            // Convert BitMatrix to SkiaSharp bitmap
+            using var bitmap = BitMatrixToSKBitmap(bitMatrix);
+
+            // If text should be included and it's a 1D barcode, add text below
+            if (includeText && !Is2DBarcode(format))
+            {
+                return RenderBarcodeWithText(bitmap, value, bitMatrix.Width, bitMatrix.Height);
+            }
+
+            // Encode to PNG
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate barcode image for value: {Value}", value);
+            return GenerateFallbackImage(width, height, value);
+        }
+    }
+
+    private static SKBitmap BitMatrixToSKBitmap(BitMatrix matrix)
+    {
+        var width = matrix.Width;
+        var height = matrix.Height;
+        var bitmap = new SKBitmap(width, height);
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                bitmap.SetPixel(x, y, matrix[x, y] ? SKColors.Black : SKColors.White);
+            }
+        }
+
+        return bitmap;
+    }
+
+    private static ZXing.BarcodeFormat MapToZXingFormat(AppBarcodeFormat format)
+    {
+        return format switch
+        {
+            AppBarcodeFormat.Code128 => ZXing.BarcodeFormat.CODE_128,
+            AppBarcodeFormat.EAN13 => ZXing.BarcodeFormat.EAN_13,
+            AppBarcodeFormat.EAN8 => ZXing.BarcodeFormat.EAN_8,
+            AppBarcodeFormat.UPCA => ZXing.BarcodeFormat.UPC_A,
+            AppBarcodeFormat.UPCE => ZXing.BarcodeFormat.UPC_E,
+            AppBarcodeFormat.QRCode => ZXing.BarcodeFormat.QR_CODE,
+            AppBarcodeFormat.Code39 => ZXing.BarcodeFormat.CODE_39,
+            AppBarcodeFormat.DataMatrix => ZXing.BarcodeFormat.DATA_MATRIX,
+            _ => ZXing.BarcodeFormat.CODE_128
         };
-        ms.Write(ihdr, 0, ihdr.Length);
+    }
 
-        byte[] idat = {
-            0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54,
-            0x08, 0xD7, 0x63, 0xF8, 0xFF, 0xFF, 0xFF, 0x00,
-            0x05, 0xFE, 0x02, 0xFE, 0xA3, 0x56, 0x08, 0x64
+    private static bool Is2DBarcode(AppBarcodeFormat format)
+    {
+        return format == AppBarcodeFormat.QRCode || format == AppBarcodeFormat.DataMatrix;
+    }
+
+    private byte[] RenderBarcodeWithText(SKBitmap barcodeBitmap, string text, int width, int height)
+    {
+        const int textHeight = 20;
+        var totalHeight = height + textHeight;
+
+        using var surface = SKSurface.Create(new SKImageInfo(width, totalHeight));
+        var canvas = surface.Canvas;
+
+        // White background
+        canvas.Clear(SKColors.White);
+
+        // Draw barcode
+        canvas.DrawBitmap(barcodeBitmap, 0, 0);
+
+        // Draw text
+        using var paint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextSize = 14,
+            IsAntialias = true,
+            Typeface = SKTypeface.FromFamilyName("Courier New", SKFontStyle.Normal)
         };
-        ms.Write(idat, 0, idat.Length);
 
-        byte[] iend = {
-            0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82
+        var textWidth = paint.MeasureText(text);
+        var x = (width - textWidth) / 2;
+        canvas.DrawText(text, x, height + 15, paint);
+
+        using var image = surface.Snapshot();
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        return data.ToArray();
+    }
+
+    private byte[] GenerateFallbackImage(int width, int height, string text)
+    {
+        using var surface = SKSurface.Create(new SKImageInfo(width, height));
+        var canvas = surface.Canvas;
+
+        canvas.Clear(SKColors.White);
+
+        // Draw a border
+        using var borderPaint = new SKPaint
+        {
+            Color = SKColors.Gray,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 2
         };
-        ms.Write(iend, 0, iend.Length);
+        canvas.DrawRect(new SKRect(1, 1, width - 1, height - 1), borderPaint);
 
-        return ms.ToArray();
+        // Draw text in center
+        using var textPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextSize = 12,
+            IsAntialias = true,
+            TextAlign = SKTextAlign.Center
+        };
+        canvas.DrawText(text, width / 2f, height / 2f + 4, textPaint);
+
+        using var image = surface.Snapshot();
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        return data.ToArray();
+    }
+
+    /// <summary>
+    /// Generates a barcode image with standard label sizing
+    /// </summary>
+    public byte[] GenerateBarcodeForLabel(string value, AppBarcodeFormat format, LabelType labelType)
+    {
+        var config = LabelSizeConfig.GetPreset(labelType);
+
+        // Calculate dimensions in pixels (96 DPI)
+        var width = (int)(config.WidthInches * 96);
+        var height = (int)(config.HeightInches * 96);
+
+        // For very small labels, reduce barcode height to fit
+        var barcodeHeight = Math.Min(height - 20, Is2DBarcode(format) ? width : 60);
+        var barcodeWidth = Is2DBarcode(format) ? barcodeHeight : width - 20;
+
+        return GenerateBarcodeImage(value, format, barcodeWidth, barcodeHeight, true);
     }
 
     private static string TruncateText(string text, int maxLength)

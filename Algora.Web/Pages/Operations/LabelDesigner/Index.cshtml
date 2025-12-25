@@ -1,0 +1,688 @@
+@page "/operations/label-designer"
+@model Algora.Web.Pages.Operations.LabelDesigner.IndexModel
+@{
+    ViewData["Title"] = "Label Designer";
+}
+
+<style>
+    /* Label Designer - Clean Toolbar Style */
+    .designer-toolbar {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-divider {
+        width: 1px;
+        height: 28px;
+        background: #e5e7eb;
+    }
+
+    .toolbar-btn {
+        height: 36px;
+        padding: 0 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .toolbar-btn:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+    }
+    .toolbar-btn.primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+    }
+    .toolbar-btn.primary:hover {
+        opacity: 0.9;
+    }
+
+    .toolbar-select {
+        height: 36px;
+        padding: 0 32px 0 12px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M2.5 4.5L6 8l3.5-3.5'/%3E%3C/svg%3E") right 10px center no-repeat;
+        font-size: 13px;
+        color: #374151;
+        cursor: pointer;
+        appearance: none;
+        min-width: 140px;
+    }
+    .toolbar-select:focus {
+        outline: none;
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+    }
+
+    .toolbar-input {
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-size: 13px;
+        color: #374151;
+        min-width: 150px;
+    }
+    .toolbar-input:focus {
+        outline: none;
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+    }
+
+    .color-picker-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px 4px 4px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+    }
+    .color-picker-wrapper:hover {
+        border-color: #d1d5db;
+    }
+    .color-swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+    }
+    .color-picker-wrapper input[type="color"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .format-toolbar {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .format-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .format-btn:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+    .format-btn.active {
+        background: #eef2ff;
+        color: #6366f1;
+    }
+
+    .format-select {
+        height: 32px;
+        padding: 0 24px 0 10px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236b7280' d='M2 3.5L5 7l3-3.5'/%3E%3C/svg%3E") right 8px center no-repeat;
+        font-size: 12px;
+        color: #374151;
+        cursor: pointer;
+        appearance: none;
+    }
+    .format-select:focus {
+        outline: none;
+        border-color: #818cf8;
+    }
+
+    .format-input {
+        width: 48px;
+        height: 32px;
+        padding: 0 8px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-size: 12px;
+        text-align: center;
+        color: #374151;
+    }
+    .format-input:focus {
+        outline: none;
+        border-color: #818cf8;
+    }
+
+    .canvas-area {
+        background: #f3f4f6;
+        border-radius: 16px;
+        padding: 40px;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .label-canvas {
+        background: white;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        position: relative;
+        overflow: visible;
+    }
+
+    .canvas-field {
+        position: absolute;
+        cursor: move;
+        border: 2px solid transparent;
+        padding: 4px 6px;
+        border-radius: 4px;
+        transition: border-color 0.15s ease;
+        box-sizing: border-box;
+        user-select: none;
+    }
+    .canvas-field:hover {
+        border-color: #93c5fd;
+    }
+    .canvas-field.selected {
+        border-color: #3b82f6;
+    }
+
+    /* Blue resize handles like in reference */
+    .resize-handle {
+        width: 8px;
+        height: 8px;
+        background: #3b82f6;
+        border: 1px solid white;
+        position: absolute;
+        display: none;
+    }
+    .canvas-field.selected .resize-handle {
+        display: block;
+    }
+    .resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+    .resize-handle.n { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+    .resize-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+    .resize-handle.w { top: 50%; left: -4px; transform: translateY(-50%); cursor: w-resize; }
+    .resize-handle.e { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+    .resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+    .resize-handle.s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+    .resize-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+
+    .add-element-dropdown {
+        position: relative;
+    }
+    .add-element-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 4px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        min-width: 160px;
+        z-index: 100;
+        display: none;
+        overflow: hidden;
+    }
+    .add-element-menu.show {
+        display: block;
+    }
+    .add-element-item {
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.15s ease;
+    }
+    .add-element-item:hover {
+        background: #f9fafb;
+    }
+    .add-element-item i {
+        width: 18px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .settings-panel {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .settings-header {
+        padding: 12px 16px;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    .settings-header h6 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .settings-content {
+        padding: 16px;
+    }
+    .settings-content.collapsed {
+        display: none;
+    }
+
+    .template-controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .size-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: #f3f4f6;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280;
+    }
+</style>
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Page Header -->
+    <div class="flex flex-wrap items-center justify-between mb-5">
+        <div>
+            <h4 class="font-bold text-xl text-slate-800 dark:text-white">Label Design</h4>
+        </div>
+        <button id="testPrintBtn" class="toolbar-btn">
+            <i class="fas fa-print"></i> Test Print
+        </button>
+    </div>
+
+    <!-- Main Toolbar -->
+    <div class="designer-toolbar mb-4">
+        <!-- Add Element Dropdown -->
+        <div class="add-element-dropdown">
+            <button id="addElementBtn" class="toolbar-btn">
+                <i class="fas fa-plus"></i> Add Element
+                <i class="fas fa-chevron-down text-xs ml-1"></i>
+            </button>
+            <div id="addElementMenu" class="add-element-menu">
+                <div class="add-element-item" data-element="barcode">
+                    <i class="fas fa-barcode"></i> Barcode
+                </div>
+                <div class="add-element-item" data-element="text">
+                    <i class="fas fa-font"></i> Text
+                </div>
+                <div class="add-element-item" data-element="image">
+                    <i class="fas fa-image"></i> Image
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <!-- Data Binding -->
+        <select id="dataBinding" class="toolbar-select">
+            <option value="custom">Custom text</option>
+            <optgroup label="Product Fields">
+                <option value="ProductTitle">Product Title</option>
+                <option value="SKU">SKU</option>
+                <option value="Price">Price</option>
+                <option value="CompareAtPrice">Compare Price</option>
+                <option value="Vendor">Vendor</option>
+                <option value="ProductType">Product Type</option>
+                <option value="VariantTitle">Variant Title</option>
+                <option value="VariantOption1">Option 1</option>
+                <option value="VariantOption2">Option 2</option>
+                <option value="VariantOption3">Option 3</option>
+                <option value="Weight">Weight</option>
+                <option value="InventoryQuantity">Inventory Qty</option>
+            </optgroup>
+        </select>
+
+        <!-- Text Input -->
+        <input type="text" id="elementText" class="toolbar-input" placeholder="Enter text..." />
+
+        <div class="toolbar-divider"></div>
+
+        <!-- Color Picker -->
+        <div class="color-picker-wrapper">
+            <div id="colorSwatch" class="color-swatch" style="background: #000000;"></div>
+            <span class="text-sm text-slate-600">Color</span>
+            <input type="color" id="textColor" value="#000000" />
+        </div>
+
+        <!-- Text Format -->
+        <select id="textFormat" class="toolbar-select" style="min-width: 120px;">
+            <option value="normal">Normal</option>
+            <option value="uppercase">UPPERCASE</option>
+            <option value="lowercase">lowercase</option>
+            <option value="capitalize">Capitalize</option>
+        </select>
+
+        <div class="toolbar-divider"></div>
+
+        <!-- Delete Button -->
+        <button id="deleteElement" class="toolbar-btn" title="Delete selected element">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+
+    <!-- Format Toolbar (appears when element selected) -->
+    <div id="formatToolbar" class="format-toolbar mb-4 hidden">
+        <select id="fontFamily" class="format-select" style="min-width: 100px;">
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Cursive">Cursive</option>
+        </select>
+
+        <input type="number" id="fontSize" class="format-input" value="14" min="6" max="72" />
+
+        <div class="toolbar-divider" style="height: 24px;"></div>
+
+        <button id="toggleBold" class="format-btn" title="Bold">
+            <i class="fas fa-bold"></i>
+        </button>
+        <button id="toggleUnderline" class="format-btn" title="Underline">
+            <i class="fas fa-underline"></i>
+        </button>
+        <button id="toggleItalic" class="format-btn" title="Italic">
+            <i class="fas fa-italic"></i>
+        </button>
+
+        <div class="toolbar-divider" style="height: 24px;"></div>
+
+        <button id="alignLeft" class="format-btn" title="Align Left">
+            <i class="fas fa-align-left"></i>
+        </button>
+        <button id="alignCenter" class="format-btn" title="Align Center">
+            <i class="fas fa-align-center"></i>
+        </button>
+        <button id="alignRight" class="format-btn" title="Align Right">
+            <i class="fas fa-align-right"></i>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-12 gap-5">
+        <!-- Left Settings Panel -->
+        <div class="col-span-12 lg:col-span-3 space-y-4">
+            <!-- Template Panel -->
+            <div class="settings-panel">
+                <div class="settings-header" onclick="togglePanel('templatePanel')">
+                    <h6><i class="fas fa-file-alt text-indigo-500"></i> Template</h6>
+                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                </div>
+                <div id="templatePanel" class="settings-content">
+                    <div class="space-y-3">
+                        <select id="templateSelector" class="toolbar-select w-full">
+                            <option value="">+ New Template</option>
+                            @foreach (var template in Model.Templates)
+                            {
+                                <option value="@template.Id">
+                                    @template.Name @(template.IsDefault ? "★" : "")
+                                </option>
+                            }
+                        </select>
+                        <input type="text" id="templateName" class="toolbar-input w-full" placeholder="Template name..." />
+                        <div class="template-controls">
+                            <button id="saveTemplateBtn" class="toolbar-btn primary flex-1">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <button id="deleteTemplateBtn" class="toolbar-btn" style="color: #ef4444;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Label Size Panel -->
+            <div class="settings-panel">
+                <div class="settings-header" onclick="togglePanel('sizePanel')">
+                    <h6><i class="fas fa-ruler-combined text-indigo-500"></i> Label Size</h6>
+                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                </div>
+                <div id="sizePanel" class="settings-content">
+                    <div class="space-y-3">
+                        <select id="labelType" class="toolbar-select w-full">
+                            <optgroup label="Avery Labels (Sheet)">
+                                @foreach (var preset in Model.AveryPresets)
+                                {
+                                    <option value="@preset.Type" data-width="@preset.WidthInches" data-height="@preset.HeightInches">
+                                        @preset.Name
+                                    </option>
+                                }
+                            </optgroup>
+                            <optgroup label="Thermal Labels (Roll)">
+                                @foreach (var preset in Model.ThermalPresets)
+                                {
+                                    <option value="@preset.Type" data-width="@preset.WidthInches" data-height="@preset.HeightInches">
+                                        @preset.Name
+                                    </option>
+                                }
+                            </optgroup>
+                            <option value="Custom">Custom Size...</option>
+                        </select>
+                        <div id="customSizeInputs" class="hidden grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 block">Width (in)</label>
+                                <input type="number" id="customWidth" step="0.125" min="0.5" max="10" value="2"
+                                       class="toolbar-input w-full" />
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 mb-1 block">Height (in)</label>
+                                <input type="number" id="customHeight" step="0.125" min="0.5" max="10" value="1"
+                                       class="toolbar-input w-full" />
+                            </div>
+                        </div>
+                        <div class="size-badge">
+                            <i class="fas fa-expand-alt"></i>
+                            <span id="canvasSize">2.625" × 1"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Product Panel -->
+            <div class="settings-panel">
+                <div class="settings-header" onclick="togglePanel('previewPanel')">
+                    <h6><i class="fas fa-eye text-indigo-500"></i> Preview Product</h6>
+                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                </div>
+                <div id="previewPanel" class="settings-content">
+                    <select id="previewProduct" class="toolbar-select w-full">
+                        <option value="">Select product...</option>
+                        @foreach (var product in Model.Products)
+                        {
+                            var displayName = string.IsNullOrEmpty(product.VariantTitle) || product.VariantTitle == "Default Title"
+                                ? product.ProductTitle
+                                : $"{product.ProductTitle} - {product.VariantTitle}";
+                            <option value="@product.ProductId-@product.VariantId">@displayName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="col-span-12 lg:col-span-9">
+            <div class="canvas-area">
+                <div id="labelCanvas" class="label-canvas" style="width: 252px; height: 96px;">
+                    <!-- Elements will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print Labels Modal -->
+<div id="printModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-gray-800 flex items-center justify-between">
+            <h5 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-print text-indigo-500"></i> Print Labels
+            </h5>
+            <button id="closePrintModal" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 overflow-y-auto max-h-[60vh] space-y-5">
+            <!-- Template Selection -->
+            <div>
+                <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Template</label>
+                <select id="printTemplateSelector" class="toolbar-select w-full">
+                    @if (!Model.Templates.Any())
+                    {
+                        <option value="">No templates - create one first</option>
+                    }
+                    @foreach (var template in Model.Templates)
+                    {
+                        <option value="@template.Id">@template.Name (@template.LabelType)</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Product Selection -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Products</label>
+                    <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                        <input type="checkbox" id="selectAllProducts" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                        Select All
+                    </label>
+                </div>
+                <div class="border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-slate-50 dark:bg-gray-900">
+                            <tr>
+                                <th class="w-10 p-3"></th>
+                                <th class="p-3 text-left text-xs font-semibold text-slate-600 uppercase">Product</th>
+                                <th class="p-3 text-left text-xs font-semibold text-slate-600 uppercase">SKU</th>
+                                <th class="p-3 text-center text-xs font-semibold text-slate-600 uppercase w-20">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody id="printProductList" class="divide-y divide-slate-100 dark:divide-gray-800">
+                            @foreach (var product in Model.Products)
+                            {
+                                var displayName = string.IsNullOrEmpty(product.VariantTitle) || product.VariantTitle == "Default Title"
+                                    ? product.ProductTitle
+                                    : $"{product.ProductTitle} - {product.VariantTitle}";
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="p-3 text-center">
+                                        <input type="checkbox" class="product-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                               data-product-id="@product.ProductId"
+                                               data-variant-id="@product.VariantId" />
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="text-sm font-medium text-slate-800 dark:text-white">@displayName</span>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="text-sm font-mono text-slate-500">@(product.SKU ?? "—")</span>
+                                    </td>
+                                    <td class="p-3">
+                                        <input type="number" class="copies-input w-full px-2 py-1.5 text-sm text-center bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                               value="1" min="1" max="999" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button id="cancelPrint" class="toolbar-btn">Cancel</button>
+            <button id="generatePdfBtn" class="toolbar-btn primary">
+                <i class="fas fa-file-pdf"></i> Generate PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div id="imageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-gray-800 flex items-center justify-between">
+            <h5 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-image text-indigo-500"></i> Add Image
+            </h5>
+            <button id="closeImageModal" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <div id="imageDropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer">
+                <i class="fas fa-cloud-upload-alt text-4xl text-slate-300 mb-3"></i>
+                <p class="text-sm text-slate-600 mb-2">Drag & drop an image here</p>
+                <p class="text-xs text-slate-400">or click to browse</p>
+                <input type="file" id="imageInput" accept="image/*" class="hidden" />
+            </div>
+            <div id="imagePreview" class="hidden mt-4">
+                <img id="previewImg" class="max-h-40 mx-auto rounded-lg" />
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button id="cancelImage" class="toolbar-btn">Cancel</button>
+            <button id="addImageBtn" class="toolbar-btn primary">
+                <i class="fas fa-plus"></i> Add to Label
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script>
+        // Toggle settings panels
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+    </script>
+    <script src="~/js/label-designer.js" asp-append-version="true"></script>
+}

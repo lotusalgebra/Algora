@@ -34,5 +34,8 @@ public enum BarcodeFormat
     EAN13,
     EAN8,
     UPCA,
-    UPCE
+    UPCE,
+    QRCode,
+    Code39,
+    DataMatrix
 }

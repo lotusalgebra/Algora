@@ -36,6 +36,8 @@ public class IndexModel : PageModel
     public BarcodeDto? GeneratedBarcode { get; set; }
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
+    public List<LabelSizeConfig> AveryPresets { get; set; } = new();
+    public List<LabelSizeConfig> ThermalPresets { get; set; } = new();
 
     public class GenerateInput
     {
@@ -48,11 +50,21 @@ public class IndexModel : PageModel
 
         // For assigning to product
         public int? ProductVariantId { get; set; }
+
+        // Label printing options
+        public LabelType LabelType { get; set; } = LabelType.Avery5163;
     }
 
     public async Task OnGetAsync()
     {
         await LoadProductsAsync();
+        LoadLabelPresets();
+    }
+
+    private void LoadLabelPresets()
+    {
+        AveryPresets = LabelSizeConfig.GetAveryPresets().ToList();
+        ThermalPresets = LabelSizeConfig.GetThermalPresets().ToList();
     }
 
     public async Task<IActionResult> OnPostGenerateAsync()
@@ -78,6 +90,7 @@ public class IndexModel : PageModel
         }
 
         await LoadProductsAsync();
+        LoadLabelPresets();
         return Page();
     }
 
@@ -120,15 +133,15 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostGenerateLabelsAsync()
+    public async Task<IActionResult> OnPostGenerateLabelsAsync(LabelType labelType = LabelType.Avery5163)
     {
         try
         {
-            // Get products without barcodes and generate labels
+            // Get products with barcodes
             var variants = await _db.ProductVariants
                 .Include(v => v.Product)
                 .Where(v => v.Product!.ShopDomain == _shopContext.ShopDomain && !string.IsNullOrEmpty(v.Barcode))
-                .Take(20)
+                .Take(100)
                 .ToListAsync();
 
             var labels = variants.Select(v => new BarcodeLabelDto(
@@ -146,9 +159,29 @@ public class IndexModel : PageModel
                 return RedirectToPage();
             }
 
-            var pdf = await _barcodeService.GenerateBulkLabelsPdfAsync(labels, null);
+            // Get label configuration
+            var labelConfig = LabelSizeConfig.GetPreset(labelType);
 
-            return File(pdf, "application/pdf", "barcode-labels.pdf");
+            // Create layout from label config
+            var layout = new LabelLayoutDto(
+                LabelSize.Custom,
+                labelConfig.LabelsPerRow,
+                labelConfig.RowsPerPage,
+                labelConfig.MarginTopInches * 25.4f,  // Convert to mm
+                labelConfig.MarginLeftInches * 25.4f,
+                labelConfig.WidthMm,
+                labelConfig.HeightMm,
+                labelConfig.HorizontalGapInches * 25.4f,
+                labelConfig.VerticalGapInches * 25.4f,
+                true,  // ShowPrice
+                true,  // ShowSku
+                true   // ShowProductTitle
+            );
+
+            var pdf = await _barcodeService.GenerateBulkLabelsPdfAsync(labels, layout);
+
+            var fileName = $"barcode-labels-{labelConfig.Type}.pdf";
+            return File(pdf, "application/pdf", fileName);
         }
         catch (Exception ex)
         {
