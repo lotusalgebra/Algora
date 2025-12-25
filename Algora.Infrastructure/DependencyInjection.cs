@@ -26,6 +26,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // ----- QuestPDF License -----
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
         // ----- Database -----
         var connectionString = configuration.GetConnectionString("Default")
             ?? throw new InvalidOperationException("Connection string 'Default' not found.");
