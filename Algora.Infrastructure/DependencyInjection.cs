@@ -174,6 +174,7 @@ public static class DependencyInjection
         services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IBarcodeService, BarcodeService>();
+        services.AddScoped<IPackingSlipService, PackingSlipService>();
         services.AddHostedService<PurchaseOrderBackgroundService>();
 
         // ----- Customer Experience Hub -----
