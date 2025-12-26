@@ -114,6 +114,57 @@ namespace Algora.Web.Pages.Products
                     }
                 }
 
+                // Upload variant-specific images (multiple per variant) and associate first with variant
+                if (product.Variants.Any())
+                {
+                    var variantFilesUploaded = new Dictionary<int, string>(); // Track which variants got new images
+                    var variantImagePattern = new System.Text.RegularExpressions.Regex(@"VariantImageFiles\[(\d+)\]");
+
+                    foreach (var formFile in Request.Form.Files)
+                    {
+                        var match = variantImagePattern.Match(formFile.Name);
+                        if (!match.Success) continue;
+
+                        var variantIndex = int.Parse(match.Groups[1].Value);
+                        if (variantIndex >= product.Variants.Count) continue;
+
+                        var variant = product.Variants[variantIndex];
+                        if (formFile.Length == 0) continue;
+
+                        try
+                        {
+                            // Upload image to product
+                            using var memoryStream = new MemoryStream();
+                            await formFile.CopyToAsync(memoryStream);
+                            var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+                            var uploadInput = new Algora.Application.DTOs.UploadProductImageInput
+                            {
+                                ProductId = product.NumericId,
+                                Base64Data = base64,
+                                FileName = formFile.FileName,
+                                ContentType = formFile.ContentType,
+                                Alt = $"Variant {variantIndex + 1}"
+                            };
+
+                            var uploadedImage = await _productService.UploadProductImageAsync(uploadInput);
+                            _logger.LogInformation("Uploaded variant image {FileName} to product {ProductId}", formFile.FileName, product.NumericId);
+
+                            // Associate FIRST image with variant (if not already done for this variant)
+                            if (!variantFilesUploaded.ContainsKey(variantIndex))
+                            {
+                                await _productService.UpdateVariantImageAsync(product.NumericId, variant.Id, uploadedImage.Id);
+                                _logger.LogInformation("Associated image {ImageId} with variant {VariantId}", uploadedImage.Id, variant.Id);
+                                variantFilesUploaded[variantIndex] = uploadedImage.Id;
+                            }
+                        }
+                        catch (Exception varImgEx)
+                        {
+                            _logger.LogWarning(varImgEx, "Failed to upload/associate image for variant at index {Index}", variantIndex);
+                        }
+                    }
+                }
+
                 TempData["SuccessMessage"] = $"Product '{product.Title}' created successfully!";
                 return RedirectToPage("/Products/Index");
             }

@@ -305,16 +305,15 @@
                                                     </p>
                                                 }
 
-                                                <!-- Upload new image for this variant -->
-                                                <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
-                                                     data-variant-index="@i">
-                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" class="variant-file-input hidden" />
+                                                <!-- Upload new images for this variant -->
+                                                <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
+                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" multiple class="variant-file-input sr-only" data-variant-index="@i" />
                                                     <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                        <i class="fas fa-upload me-1 text-fuchsia-500"></i>
-                                                        Upload new image
+                                                        <i class="fas fa-images me-1 text-fuchsia-500"></i>
+                                                        Click to upload images (multiple)
                                                     </span>
-                                                </div>
-                                                <div class="variant-upload-preview hidden mt-2"></div>
+                                                </label>
+                                                <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -627,76 +626,97 @@
             }
             document.querySelectorAll('.variant-image-select').forEach(initVariantImageSelect);
 
-            // ===== Variant Image Upload =====
-            function initVariantUploadZone(zone) {
-                const fileInput = zone.querySelector('.variant-file-input');
-                const variantRow = zone.closest('.variant-row');
-                const previewContainer = zone.nextElementSibling;
-
-                zone.addEventListener('click', (e) => {
-                    if (e.target !== fileInput) {
-                        fileInput.click();
-                    }
-                });
+            // ===== Variant Image Upload (Multiple) =====
+            function initVariantFileInput(fileInput) {
+                const variantRow = fileInput.closest('.variant-row');
+                const label = fileInput.closest('.variant-upload-label');
+                const previewContainer = label ? label.nextElementSibling : null;
 
                 fileInput.addEventListener('change', function() {
-                    const file = this.files[0];
-                    if (!file) return;
+                    const files = Array.from(this.files);
+                    if (!files.length) return;
 
-                    if (!file.type.startsWith('image/')) {
-                        alert('Please select an image file.');
-                        this.value = '';
-                        return;
+                    // Validate all files
+                    for (const file of files) {
+                        if (!file.type.startsWith('image/')) {
+                            alert(`${file.name} is not an image file.`);
+                            this.value = '';
+                            return;
+                        }
+                        if (file.size > 10 * 1024 * 1024) {
+                            alert(`${file.name} is too large (max 10MB).`);
+                            this.value = '';
+                            return;
+                        }
                     }
 
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert('Image must be less than 10MB.');
-                        this.value = '';
-                        return;
-                    }
+                    // Show previews for all files
+                    if (previewContainer) {
+                        previewContainer.innerHTML = '';
+                        previewContainer.style.display = 'block';
 
-                    // Show preview
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        previewContainer.innerHTML = `
-                            <div class="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                                <img src="${e.target.result}" class="w-10 h-10 object-cover rounded" />
-                                <div class="flex-1">
-                                    <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
-                                    <p class="text-xs text-green-600 dark:text-green-400">Ready to upload on save</p>
-                                </div>
-                                <button type="button" class="remove-variant-image text-red-500 hover:text-red-700 p-1">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `;
-                        previewContainer.classList.remove('hidden');
+                        files.forEach((file, idx) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const previewItem = document.createElement('div');
+                                previewItem.className = 'flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-2';
+                                previewItem.innerHTML = `
+                                    <img src="${e.target.result}" class="w-10 h-10 object-cover rounded" />
+                                    <div class="flex-1">
+                                        <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">${idx === 0 ? 'Primary (will be set as variant image)' : 'Additional image'}</p>
+                                    </div>
+                                `;
+                                previewContainer.appendChild(previewItem);
 
-                        // Remove button handler
-                        previewContainer.querySelector('.remove-variant-image').addEventListener('click', () => {
-                            fileInput.value = '';
-                            previewContainer.innerHTML = '';
-                            previewContainer.classList.add('hidden');
+                                // Update main preview with first image
+                                if (idx === 0 && variantRow) {
+                                    const mainPreview = variantRow.querySelector('.variant-image-preview');
+                                    if (mainPreview) {
+                                        if (mainPreview.tagName === 'IMG') {
+                                            mainPreview.src = e.target.result;
+                                            mainPreview.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
+                                        } else {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.alt = 'New variant image';
+                                            img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
+                                            mainPreview.replaceWith(img);
+                                        }
+                                    }
+                                }
+                            };
+                            reader.readAsDataURL(file);
                         });
 
-                        // Update the main preview
-                        const mainPreview = variantRow.querySelector('.variant-image-preview');
-                        if (mainPreview) {
-                            if (mainPreview.tagName === 'IMG') {
-                                mainPreview.src = e.target.result;
-                            } else {
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-                                img.alt = 'New variant image';
-                                img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
-                                mainPreview.replaceWith(img);
+                        // Add clear all button
+                        const clearBtn = document.createElement('button');
+                        clearBtn.type = 'button';
+                        clearBtn.className = 'text-xs text-red-500 hover:text-red-700 mt-1';
+                        clearBtn.innerHTML = '<i class="fas fa-times me-1"></i>Clear all';
+                        clearBtn.onclick = function(evt) {
+                            evt.preventDefault();
+                            fileInput.value = '';
+                            previewContainer.innerHTML = '';
+                            previewContainer.style.display = 'none';
+
+                            if (variantRow) {
+                                const mainPreview = variantRow.querySelector('.variant-image-preview');
+                                if (mainPreview && mainPreview.tagName === 'IMG') {
+                                    const placeholder = document.createElement('div');
+                                    placeholder.className = 'variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center';
+                                    placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
+                                    mainPreview.replaceWith(placeholder);
+                                }
                             }
-                        }
-                    };
-                    reader.readAsDataURL(file);
+                        };
+                        previewContainer.appendChild(clearBtn);
+                    }
                 });
             }
-            document.querySelectorAll('.variant-upload-zone').forEach(initVariantUploadZone);
+
+            // Initialize all variant file inputs
+            document.querySelectorAll('.variant-file-input').forEach(initVariantFileInput);
 
             // ===== AI Generation Functions =====
             function showAiMessage(message, isSuccess) {
@@ -859,19 +879,14 @@
                                     </div>
                                     <div class="flex-1 space-y-2">
                                         <input type="hidden" name="Variants[${newIndex}].ImageId" value="" />
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Save the product first, then assign images to new variants
-                                        </p>
-                                        <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
-                                             data-variant-index="${newIndex}">
-                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input hidden" />
+                                        <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
+                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input sr-only" data-variant-index="${newIndex}" />
                                             <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                <i class="fas fa-upload me-1 text-fuchsia-500"></i>
-                                                Upload new image
+                                                <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
+                                                Click to upload image
                                             </span>
-                                        </div>
-                                        <div class="variant-upload-preview hidden mt-2"></div>
+                                        </label>
+                                        <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -881,11 +896,11 @@
 
                 container.insertAdjacentHTML('beforeend', template);
 
-                // Initialize the new variant's upload zone
-                const newVariant = container.querySelector(\`.variant-row[data-index="\${newIndex}"]\`);
-                const newUploadZone = newVariant.querySelector('.variant-upload-zone');
-                if (newUploadZone) {
-                    initVariantUploadZone(newUploadZone);
+                // Initialize the new variant's file input
+                const newVariant = container.querySelector(`.variant-row[data-index="${newIndex}"]`);
+                const newFileInput = newVariant.querySelector('.variant-file-input');
+                if (newFileInput) {
+                    initVariantFileInput(newFileInput);
                 }
 
                 updateRemoveButtons();

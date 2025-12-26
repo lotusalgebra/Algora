@@ -390,12 +390,129 @@
                                        class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="e.g. Cotton" />
                             </div>
+                            <div class="w-full max-w-full px-3 mb-3">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    <i class="fas fa-image me-1 text-fuchsia-500"></i> Variant Image
+                                </label>
+                                <div class="flex items-center gap-3">
+                                    <div class="variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
+                                        <i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
+                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" multiple class="variant-file-input sr-only" data-variant-index="${newIndex}" />
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                <i class="fas fa-images me-1 text-fuchsia-500"></i>
+                                                Click to upload images (multiple)
+                                            </span>
+                                        </label>
+                                        <div class="variant-upload-preview mt-2" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 variantsContainer.insertAdjacentHTML('beforeend', template);
+
+                // Initialize variant file input
+                const newVariant = variantsContainer.querySelector(\`.variant-row[data-index="\${newIndex}"]\`);
+                const fileInput = newVariant.querySelector('.variant-file-input');
+                if (fileInput) {
+                    initVariantFileInput(fileInput);
+                }
+
                 updateVariantRemoveButtons();
+            }
+
+            // Variant file input handler (multiple files)
+            function initVariantFileInput(fileInput) {
+                const variantRow = fileInput.closest('.variant-row');
+                const label = fileInput.closest('.variant-upload-label');
+                const previewContainer = label ? label.nextElementSibling : null;
+
+                fileInput.addEventListener('change', function() {
+                    const files = Array.from(this.files);
+                    if (!files.length) return;
+
+                    // Validate all files
+                    for (const file of files) {
+                        if (!file.type.startsWith('image/')) {
+                            alert(\`\${file.name} is not an image file.\`);
+                            this.value = '';
+                            return;
+                        }
+                        if (file.size > 10 * 1024 * 1024) {
+                            alert(\`\${file.name} is too large (max 10MB).\`);
+                            this.value = '';
+                            return;
+                        }
+                    }
+
+                    // Show previews for all files
+                    if (previewContainer) {
+                        previewContainer.innerHTML = '';
+                        previewContainer.style.display = 'block';
+
+                        files.forEach((file, idx) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const previewItem = document.createElement('div');
+                                previewItem.className = 'flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-2';
+                                previewItem.innerHTML = \`
+                                    <img src="\${e.target.result}" class="w-10 h-10 object-cover rounded" />
+                                    <div class="flex-1">
+                                        <p class="text-xs font-medium text-green-700 dark:text-green-300">\${file.name}</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">\${idx === 0 ? 'Primary (will be set as variant image)' : 'Additional image'}</p>
+                                    </div>
+                                \`;
+                                previewContainer.appendChild(previewItem);
+
+                                // Update main preview with first image
+                                if (idx === 0 && variantRow) {
+                                    const mainPreview = variantRow.querySelector('.variant-image-preview');
+                                    if (mainPreview) {
+                                        if (mainPreview.tagName === 'IMG') {
+                                            mainPreview.src = e.target.result;
+                                            mainPreview.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 shadow-sm';
+                                        } else {
+                                            const img = document.createElement('img');
+                                            img.src = e.target.result;
+                                            img.alt = 'Variant image';
+                                            img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 shadow-sm';
+                                            mainPreview.replaceWith(img);
+                                        }
+                                    }
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        });
+
+                        // Add clear all button
+                        const clearBtn = document.createElement('button');
+                        clearBtn.type = 'button';
+                        clearBtn.className = 'text-xs text-red-500 hover:text-red-700 mt-1';
+                        clearBtn.innerHTML = '<i class="fas fa-times me-1"></i>Clear all';
+                        clearBtn.onclick = function(evt) {
+                            evt.preventDefault();
+                            fileInput.value = '';
+                            previewContainer.innerHTML = '';
+                            previewContainer.style.display = 'none';
+
+                            if (variantRow) {
+                                const mainPreview = variantRow.querySelector('.variant-image-preview');
+                                if (mainPreview && mainPreview.tagName === 'IMG') {
+                                    const placeholder = document.createElement('div');
+                                    placeholder.className = 'variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center';
+                                    placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
+                                    mainPreview.replaceWith(placeholder);
+                                }
+                            }
+                        };
+                        previewContainer.appendChild(clearBtn);
+                    }
+                });
             }
 
             addVariantBtn.addEventListener('click', addVariant);
