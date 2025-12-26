@@ -277,9 +277,18 @@
                                                     @foreach (var img in Model.ExistingImages)
                                                     {
                                                         var isSelected = Model.Variants[i].ImageId == img.Id;
-                                                        <option value="@img.Id" data-src="@img.Src" @(isSelected ? "selected" : "")>
-                                                            @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
-                                                        </option>
+                                                        if (isSelected)
+                                                        {
+                                                            <option value="@img.Id" data-src="@img.Src" selected>
+                                                                @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
+                                                            </option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@img.Id" data-src="@img.Src">
+                                                                @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
+                                                            </option>
+                                                        }
                                                     }
                                                 </select>
                                             </div>
