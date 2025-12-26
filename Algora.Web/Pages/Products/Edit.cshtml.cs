@@ -35,6 +35,9 @@ namespace Algora.Web.Pages.Products
         [BindProperty]
         public List<string> DeleteImageIds { get; set; } = new();
 
+        [BindProperty]
+        public Dictionary<int, IFormFile> VariantImageFiles { get; set; } = new();
+
         public List<ProductImageDto> ExistingImages { get; set; } = new();
 
         public string? ErrorMessage { get; set; }
@@ -197,9 +200,60 @@ namespace Algora.Web.Pages.Products
                     }
                 }
 
-                // Update variant images
+                // Upload variant-specific images and associate with variants
+                if (VariantImageFiles != null && VariantImageFiles.Any())
+                {
+                    foreach (var kvp in VariantImageFiles)
+                    {
+                        var variantIndex = kvp.Key;
+                        var file = kvp.Value;
+
+                        if (file == null || file.Length == 0 || variantIndex >= Variants.Count)
+                            continue;
+
+                        var variant = Variants[variantIndex];
+
+                        try
+                        {
+                            // Upload image to product
+                            using var memoryStream = new MemoryStream();
+                            await file.CopyToAsync(memoryStream);
+                            var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+                            var uploadInput = new UploadProductImageInput
+                            {
+                                ProductId = Product.Id,
+                                Base64Data = base64,
+                                FileName = file.FileName,
+                                ContentType = file.ContentType,
+                                Alt = $"{variant.Option1 ?? ""} {variant.Option2 ?? ""} {variant.Option3 ?? ""}".Trim()
+                            };
+
+                            var uploadedImage = await _productService.UploadProductImageAsync(uploadInput);
+                            _logger.LogInformation("Uploaded variant image {FileName} to product {ProductId}", file.FileName, Product.Id);
+
+                            // Associate with variant if it exists
+                            if (!variant.IsNew && !string.IsNullOrEmpty(variant.VariantId))
+                            {
+                                await _productService.UpdateVariantImageAsync(Product.Id, variant.VariantId, uploadedImage.Id);
+                                _logger.LogInformation("Associated image {ImageId} with variant {VariantId}", uploadedImage.Id, variant.VariantId);
+                            }
+                        }
+                        catch (Exception varImgEx)
+                        {
+                            _logger.LogWarning(varImgEx, "Failed to upload/associate image for variant at index {Index}", variantIndex);
+                        }
+                    }
+                }
+
+                // Update variant images from dropdown selection
                 foreach (var variant in Variants.Where(v => !v.IsNew && !string.IsNullOrEmpty(v.VariantId)))
                 {
+                    // Skip if we just uploaded a new image for this variant
+                    var variantIndex = Variants.IndexOf(variant);
+                    if (VariantImageFiles != null && VariantImageFiles.ContainsKey(variantIndex) && VariantImageFiles[variantIndex]?.Length > 0)
+                        continue;
+
                     try
                     {
                         // Only update if ImageId is set (even if empty to remove)
