@@ -35,9 +35,6 @@ namespace Algora.Web.Pages.Products
         [BindProperty]
         public List<string> DeleteImageIds { get; set; } = new();
 
-        [BindProperty]
-        public Dictionary<int, IFormFile> VariantImageFiles { get; set; } = new();
-
         public List<ProductImageDto> ExistingImages { get; set; } = new();
 
         public string? ErrorMessage { get; set; }
@@ -200,58 +197,61 @@ namespace Algora.Web.Pages.Products
                     }
                 }
 
-                // Upload variant-specific images and associate with variants
-                if (VariantImageFiles != null && VariantImageFiles.Any())
+                // Upload variant-specific images (multiple per variant) and associate first with variant
+                var variantFilesUploaded = new Dictionary<int, string>(); // Track which variants got new images
+                var variantImagePattern = new System.Text.RegularExpressions.Regex(@"VariantImageFiles\[(\d+)\]");
+
+                foreach (var formFile in Request.Form.Files)
                 {
-                    foreach (var kvp in VariantImageFiles)
+                    var match = variantImagePattern.Match(formFile.Name);
+                    if (!match.Success) continue;
+
+                    var variantIndex = int.Parse(match.Groups[1].Value);
+                    if (variantIndex >= Variants.Count) continue;
+
+                    var variant = Variants[variantIndex];
+                    if (formFile.Length == 0) continue;
+
+                    try
                     {
-                        var variantIndex = kvp.Key;
-                        var file = kvp.Value;
+                        // Upload image to product
+                        using var memoryStream = new MemoryStream();
+                        await formFile.CopyToAsync(memoryStream);
+                        var base64 = Convert.ToBase64String(memoryStream.ToArray());
 
-                        if (file == null || file.Length == 0 || variantIndex >= Variants.Count)
-                            continue;
-
-                        var variant = Variants[variantIndex];
-
-                        try
+                        var uploadInput = new UploadProductImageInput
                         {
-                            // Upload image to product
-                            using var memoryStream = new MemoryStream();
-                            await file.CopyToAsync(memoryStream);
-                            var base64 = Convert.ToBase64String(memoryStream.ToArray());
+                            ProductId = Product.Id,
+                            Base64Data = base64,
+                            FileName = formFile.FileName,
+                            ContentType = formFile.ContentType,
+                            Alt = $"{variant.Option1 ?? ""} {variant.Option2 ?? ""} {variant.Option3 ?? ""}".Trim()
+                        };
 
-                            var uploadInput = new UploadProductImageInput
-                            {
-                                ProductId = Product.Id,
-                                Base64Data = base64,
-                                FileName = file.FileName,
-                                ContentType = file.ContentType,
-                                Alt = $"{variant.Option1 ?? ""} {variant.Option2 ?? ""} {variant.Option3 ?? ""}".Trim()
-                            };
+                        var uploadedImage = await _productService.UploadProductImageAsync(uploadInput);
+                        _logger.LogInformation("Uploaded variant image {FileName} to product {ProductId}", formFile.FileName, Product.Id);
 
-                            var uploadedImage = await _productService.UploadProductImageAsync(uploadInput);
-                            _logger.LogInformation("Uploaded variant image {FileName} to product {ProductId}", file.FileName, Product.Id);
-
-                            // Associate with variant if it exists
-                            if (!variant.IsNew && !string.IsNullOrEmpty(variant.VariantId))
-                            {
-                                await _productService.UpdateVariantImageAsync(Product.Id, variant.VariantId, uploadedImage.Id);
-                                _logger.LogInformation("Associated image {ImageId} with variant {VariantId}", uploadedImage.Id, variant.VariantId);
-                            }
-                        }
-                        catch (Exception varImgEx)
+                        // Associate FIRST image with variant (if not already done for this variant)
+                        if (!variantFilesUploaded.ContainsKey(variantIndex) && !variant.IsNew && !string.IsNullOrEmpty(variant.VariantId))
                         {
-                            _logger.LogWarning(varImgEx, "Failed to upload/associate image for variant at index {Index}", variantIndex);
+                            await _productService.UpdateVariantImageAsync(Product.Id, variant.VariantId, uploadedImage.Id);
+                            _logger.LogInformation("Associated image {ImageId} with variant {VariantId}", uploadedImage.Id, variant.VariantId);
+                            variantFilesUploaded[variantIndex] = uploadedImage.Id;
                         }
+                    }
+                    catch (Exception varImgEx)
+                    {
+                        _logger.LogWarning(varImgEx, "Failed to upload/associate image for variant at index {Index}", variantIndex);
                     }
                 }
 
-                // Update variant images from dropdown selection
+                // Update variant images from dropdown selection (only if no new images were uploaded)
                 foreach (var variant in Variants.Where(v => !v.IsNew && !string.IsNullOrEmpty(v.VariantId)))
                 {
-                    // Skip if we just uploaded a new image for this variant
                     var variantIndex = Variants.IndexOf(variant);
-                    if (VariantImageFiles != null && VariantImageFiles.ContainsKey(variantIndex) && VariantImageFiles[variantIndex]?.Length > 0)
+
+                    // Skip if we just uploaded new images for this variant
+                    if (variantFilesUploaded.ContainsKey(variantIndex))
                         continue;
 
                     try
