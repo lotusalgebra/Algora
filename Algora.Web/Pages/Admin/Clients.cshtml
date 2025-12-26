@@ -1,0 +1,345 @@
+@page "/admin/clients"
+@model Algora.Web.Pages.Admin.ClientsModel
+@{
+    ViewData["Title"] = "Client Management";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Client Management</h1>
+            <p class="mt-1 text-gray-600 dark:text-gray-400">View and manage all clients and their subscription plans</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div class="p-4 bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center">
+                    <i class="fas fa-users text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Total Clients</p>
+                    <p class="text-xl font-bold dark:text-white">@Model.Stats.TotalClients</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 flex items-center justify-center">
+                    <i class="fas fa-check-circle text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Active</p>
+                    <p class="text-xl font-bold dark:text-white">@Model.Stats.ActiveClients</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tl from-red-600 to-rose-400 flex items-center justify-center">
+                    <i class="fas fa-times-circle text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Inactive</p>
+                    <p class="text-xl font-bold dark:text-white">@Model.Stats.InactiveClients</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-clock text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">On Trial</p>
+                    <p class="text-xl font-bold dark:text-white">@Model.Stats.TrialClients</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-tl from-yellow-500 to-orange-400 flex items-center justify-center">
+                    <i class="fas fa-credit-card text-white"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold">Paid</p>
+                    <p class="text-xl font-bold dark:text-white">@Model.Stats.PaidClients</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                @Model.SuccessMessage
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                @Model.ErrorMessage
+            </div>
+        </div>
+    }
+
+    <!-- Filters -->
+    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl p-4 mb-6">
+        <form method="get" class="flex flex-wrap items-end gap-4">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Search</label>
+                <input type="text" name="search" value="@Model.SearchTerm"
+                       placeholder="Domain, shop name, or email..."
+                       class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+            </div>
+            <div class="w-40">
+                <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Plan</label>
+                <select name="plan" class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500">
+                    <option value="">All Plans</option>
+                    @foreach (var plan in Model.AvailablePlans)
+                    {
+                        <option value="@plan" selected="@(Model.SelectedPlan == plan)">@plan</option>
+                    }
+                </select>
+            </div>
+            <div class="w-36">
+                <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Status</label>
+                <select name="status" class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500">
+                    <option value="">All</option>
+                    <option value="active" selected="@(Model.SelectedStatus == "active")">Active</option>
+                    <option value="inactive" selected="@(Model.SelectedStatus == "inactive")">Inactive</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:shadow-soft-2xl transition-all">
+                    <i class="fas fa-search mr-1"></i> Filter
+                </button>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.SelectedPlan) || !string.IsNullOrEmpty(Model.SelectedStatus))
+            {
+                <div>
+                    <a href="/admin/clients" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 inline-block">
+                        <i class="fas fa-times mr-1"></i> Clear
+                    </a>
+                </div>
+            }
+        </form>
+    </div>
+
+    <!-- Clients Table -->
+    <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+        <div class="p-6">
+            @if (!Model.ClientResult.Clients.Any())
+            {
+                <div class="text-center py-12">
+                    <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
+                    <h3 class="text-lg font-semibold dark:text-white">No Clients Found</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">No clients match the current filters.</p>
+                </div>
+            }
+            else
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Shop</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Plan</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">License</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Installed</th>
+                                <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var client in Model.ClientResult.Clients)
+                            {
+                                <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900">
+                                    <td class="px-4 py-4">
+                                        <div class="font-medium dark:text-white">@(client.ShopName ?? client.Domain)</div>
+                                        <div class="text-xs text-gray-500">@client.Domain</div>
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400">
+                                        @(client.Email ?? "-")
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        @{
+                                            var planColor = client.PlanName switch
+                                            {
+                                                "Free" => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+                                                "Basic" => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+                                                "Premium" => "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+                                                "Enterprise" => "bg-gradient-to-r from-purple-500 to-pink-500 text-white",
+                                                _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                            };
+                                        }
+                                        <span class="px-2 py-1 text-xs font-medium @planColor rounded">
+                                            @client.PlanName
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        @if (client.LicenseStatus != null)
+                                        {
+                                            var statusColor = client.LicenseStatus switch
+                                            {
+                                                "active" => "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+                                                "trial" => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+                                                "expired" => "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+                                                "cancelled" => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+                                                _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                            };
+                                            <span class="px-2 py-1 text-xs font-medium @statusColor rounded capitalize">
+                                                @client.LicenseStatus
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">-</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        @if (client.IsActive)
+                                        {
+                                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1"></span>
+                                                Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 rounded">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1"></span>
+                                                Inactive
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-600 dark:text-gray-400">
+                                        @client.InstalledAt.ToString("MMM dd, yyyy")
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="flex justify-end space-x-2">
+                                            <button type="button"
+                                                    onclick="openChangePlanModal('@client.Domain', '@client.PlanName')"
+                                                    class="px-3 py-1.5 text-xs font-medium text-white bg-purple-500 hover:bg-purple-600 rounded transition-colors">
+                                                <i class="fas fa-exchange-alt mr-1"></i>
+                                                Change Plan
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.ClientResult.TotalPages > 1)
+                {
+                    <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                            Showing @((Model.ClientResult.Page - 1) * Model.ClientResult.PageSize + 1) - @Math.Min(Model.ClientResult.Page * Model.ClientResult.PageSize, Model.ClientResult.TotalCount) of @Model.ClientResult.TotalCount clients
+                        </div>
+                        <div class="flex space-x-2">
+                            @if (Model.ClientResult.Page > 1)
+                            {
+                                <a href="?page=@(Model.ClientResult.Page - 1)&search=@Model.SearchTerm&plan=@Model.SelectedPlan&status=@Model.SelectedStatus"
+                                   class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-left mr-1"></i> Previous
+                                </a>
+                            }
+                            @if (Model.ClientResult.Page < Model.ClientResult.TotalPages)
+                            {
+                                <a href="?page=@(Model.ClientResult.Page + 1)&search=@Model.SearchTerm&plan=@Model.SelectedPlan&status=@Model.SelectedStatus"
+                                   class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                                    Next <i class="fas fa-chevron-right ml-1"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Change Plan Modal -->
+<div id="changePlanModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold dark:text-white mb-4">Change Client Plan</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+                Update the plan for <span id="modalShopDomain" class="font-medium"></span>
+            </p>
+            <form method="post" asp-page-handler="ChangePlan">
+                <input type="hidden" name="shopDomain" id="changePlanShopDomain" />
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-2">Current Plan</label>
+                    <div id="currentPlanDisplay" class="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-300"></div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-2">New Plan</label>
+                    <select name="newPlanName" id="newPlanSelect"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500">
+                        @foreach (var plan in Model.AllPlans)
+                        {
+                            <option value="@plan.Name">@plan.Name - $@plan.MonthlyPrice/mo</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-2">Admin Notes (Optional)</label>
+                    <textarea name="adminNotes"
+                              rows="2"
+                              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500"
+                              placeholder="Reason for plan change..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button"
+                            onclick="closeChangePlanModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:shadow-soft-2xl transition-all">
+                        Update Plan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openChangePlanModal(shopDomain, currentPlan) {
+            document.getElementById('changePlanShopDomain').value = shopDomain;
+            document.getElementById('modalShopDomain').textContent = shopDomain;
+            document.getElementById('currentPlanDisplay').textContent = currentPlan;
+            document.getElementById('newPlanSelect').value = currentPlan;
+            document.getElementById('changePlanModal').classList.remove('hidden');
+            document.getElementById('changePlanModal').classList.add('flex');
+        }
+
+        function closeChangePlanModal() {
+            document.getElementById('changePlanModal').classList.add('hidden');
+            document.getElementById('changePlanModal').classList.remove('flex');
+        }
+
+        document.getElementById('changePlanModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeChangePlanModal();
+            }
+        });
+    </script>
+}

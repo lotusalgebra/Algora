@@ -81,6 +81,8 @@ public static class DependencyInjection
         services.AddScoped<IShopifyBillingService, ShopifyBillingService>();
         services.AddScoped<ILicenseService, LicenseService>();
         services.AddScoped<IPlanService, PlanService>();
+        services.AddScoped<IPlanFeatureService, PlanFeatureService>();
+        services.AddScoped<IClientService, ClientService>();
 
         // ----- Repository layer -----
         services.AddRepositoryLayer();

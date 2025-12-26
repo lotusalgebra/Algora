@@ -26,6 +26,8 @@ namespace Algora.Infrastructure.Data
         // ----- Plan entities -----
         public DbSet<Plan> Plans { get; set; } = null!;
         public DbSet<PlanChangeRequest> PlanChangeRequests { get; set; } = null!;
+        public DbSet<PlanFeature> PlanFeatures { get; set; } = null!;
+        public DbSet<PlanFeatureAssignment> PlanFeatureAssignments { get; set; } = null!;
 
         // ----- E-commerce entities -----
         public DbSet<Customer> Customers { get; set; } = null!;
@@ -193,6 +195,34 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.AdminNotes).HasMaxLength(1000);
                 b.Property(x => x.ProcessedBy).HasMaxLength(255);
                 b.HasIndex(x => new { x.ShopDomain, x.Status });
+            });
+
+            modelBuilder.Entity<PlanFeature>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Code).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.Property(x => x.Category).IsRequired().HasMaxLength(50);
+                b.Property(x => x.IconClass).HasMaxLength(100);
+                b.HasIndex(x => x.Code).IsUnique();
+                b.HasIndex(x => new { x.Category, x.SortOrder });
+            });
+
+            modelBuilder.Entity<PlanFeatureAssignment>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.AssignedBy).HasMaxLength(256);
+                b.HasOne(x => x.Plan)
+                    .WithMany()
+                    .HasForeignKey(x => x.PlanId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.PlanFeature)
+                    .WithMany(f => f.PlanAssignments)
+                    .HasForeignKey(x => x.PlanFeatureId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => new { x.PlanId, x.PlanFeatureId }).IsUnique();
+                b.HasIndex(x => x.PlanId);
             });
 
             modelBuilder.Entity<WebhookLog>(b =>
