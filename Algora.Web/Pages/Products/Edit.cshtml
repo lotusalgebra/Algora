@@ -306,15 +306,15 @@
                                                 }
 
                                                 <!-- Upload new image for this variant -->
-                                                <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
+                                                <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
                                                      data-variant-index="@i">
-                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" class="variant-file-input hidden" />
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                        <i class="fas fa-upload me-1 text-fuchsia-500"></i>
-                                                        Upload new image
+                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" class="variant-file-input" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" />
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400 pointer-events-none">
+                                                        <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
+                                                        Click or drag image here
                                                     </span>
                                                 </div>
-                                                <div class="variant-upload-preview hidden mt-2"></div>
+                                                <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -630,15 +630,53 @@
             // ===== Variant Image Upload =====
             function initVariantUploadZone(zone) {
                 const fileInput = zone.querySelector('.variant-file-input');
+                if (!fileInput) {
+                    console.error('No file input found in zone', zone);
+                    return;
+                }
                 const variantRow = zone.closest('.variant-row');
                 const previewContainer = zone.nextElementSibling;
 
-                zone.addEventListener('click', (e) => {
-                    if (e.target !== fileInput) {
-                        fileInput.click();
+                // Click to upload
+                zone.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fileInput.click();
+                });
+
+                // Prevent file input click from bubbling
+                fileInput.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+
+                // Drag and drop support
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.add('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                });
+
+                zone.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                });
+
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const dt = new DataTransfer();
+                        dt.items.add(files[0]);
+                        fileInput.files = dt.files;
+                        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
                     }
                 });
 
+                // File change handler
                 fileInput.addEventListener('change', function() {
                     const file = this.files[0];
                     if (!file) return;
@@ -657,46 +695,69 @@
 
                     // Show preview
                     const reader = new FileReader();
-                    reader.onload = (e) => {
-                        previewContainer.innerHTML = `
-                            <div class="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                                <img src="${e.target.result}" class="w-10 h-10 object-cover rounded" />
-                                <div class="flex-1">
-                                    <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
-                                    <p class="text-xs text-green-600 dark:text-green-400">Ready to upload on save</p>
+                    reader.onload = function(e) {
+                        if (previewContainer) {
+                            previewContainer.innerHTML = `
+                                <div class="flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                    <img src="${e.target.result}" class="w-10 h-10 object-cover rounded" />
+                                    <div class="flex-1">
+                                        <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">Ready to upload on save</p>
+                                    </div>
+                                    <button type="button" class="remove-variant-image text-red-500 hover:text-red-700 p-1">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
-                                <button type="button" class="remove-variant-image text-red-500 hover:text-red-700 p-1">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `;
-                        previewContainer.classList.remove('hidden');
+                            `;
+                            previewContainer.style.display = 'block';
 
-                        // Remove button handler
-                        previewContainer.querySelector('.remove-variant-image').addEventListener('click', () => {
-                            fileInput.value = '';
-                            previewContainer.innerHTML = '';
-                            previewContainer.classList.add('hidden');
-                        });
+                            // Remove button handler
+                            const removeBtn = previewContainer.querySelector('.remove-variant-image');
+                            if (removeBtn) {
+                                removeBtn.addEventListener('click', function(evt) {
+                                    evt.preventDefault();
+                                    evt.stopPropagation();
+                                    fileInput.value = '';
+                                    previewContainer.innerHTML = '';
+                                    previewContainer.style.display = 'none';
+
+                                    // Reset main preview
+                                    const mainPreview = variantRow.querySelector('.variant-image-preview');
+                                    if (mainPreview && mainPreview.tagName === 'IMG') {
+                                        const placeholder = document.createElement('div');
+                                        placeholder.className = 'variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center';
+                                        placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
+                                        mainPreview.replaceWith(placeholder);
+                                    }
+                                });
+                            }
+                        }
 
                         // Update the main preview
-                        const mainPreview = variantRow.querySelector('.variant-image-preview');
-                        if (mainPreview) {
-                            if (mainPreview.tagName === 'IMG') {
-                                mainPreview.src = e.target.result;
-                            } else {
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-                                img.alt = 'New variant image';
-                                img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
-                                mainPreview.replaceWith(img);
+                        if (variantRow) {
+                            const mainPreview = variantRow.querySelector('.variant-image-preview');
+                            if (mainPreview) {
+                                if (mainPreview.tagName === 'IMG') {
+                                    mainPreview.src = e.target.result;
+                                    mainPreview.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
+                                } else {
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    img.alt = 'New variant image';
+                                    img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
+                                    mainPreview.replaceWith(img);
+                                }
                             }
                         }
                     };
                     reader.readAsDataURL(file);
                 });
             }
-            document.querySelectorAll('.variant-upload-zone').forEach(initVariantUploadZone);
+
+            // Initialize all variant upload zones
+            const variantUploadZones = document.querySelectorAll('.variant-upload-zone');
+            console.log('Found ' + variantUploadZones.length + ' variant upload zones');
+            variantUploadZones.forEach(initVariantUploadZone);
 
             // ===== AI Generation Functions =====
             function showAiMessage(message, isSuccess) {
@@ -863,15 +924,15 @@
                                             <i class="fas fa-info-circle me-1"></i>
                                             Save the product first, then assign images to new variants
                                         </p>
-                                        <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
+                                        <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
                                              data-variant-index="${newIndex}">
-                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input hidden" />
-                                            <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                <i class="fas fa-upload me-1 text-fuchsia-500"></i>
-                                                Upload new image
+                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" />
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 pointer-events-none">
+                                                <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
+                                                Click or drag image here
                                             </span>
                                         </div>
-                                        <div class="variant-upload-preview hidden mt-2"></div>
+                                        <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                     </div>
                                 </div>
                             </div>
