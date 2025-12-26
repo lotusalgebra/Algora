@@ -200,6 +200,23 @@
                     </div>
                 </div>
 
+                <!-- Image Preview Card -->
+                <div id="thumbnail-preview-card" class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl hidden">
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-images text-fuchsia-500"></i>
+                            <h6 class="font-bold text-sm dark:text-white">Image Preview</h6>
+                            <span id="thumbnail-count" class="text-xs bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-600 dark:text-fuchsia-300 px-2 py-0.5 rounded-full">0</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div id="main-thumbnail" class="w-20 h-20 rounded-xl overflow-hidden border-2 border-fuchsia-300 dark:border-fuchsia-600 shadow-soft-md flex-shrink-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                <i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>
+                            </div>
+                            <div id="additional-thumbnails" class="flex flex-wrap gap-1"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tips Card -->
                 <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="flex-auto p-6">
@@ -283,6 +300,21 @@
 
             function renderPreviews() {
                 filePreview.innerHTML = '';
+                const thumbnailCard = document.getElementById('thumbnail-preview-card');
+                const mainThumbnail = document.getElementById('main-thumbnail');
+                const additionalThumbnails = document.getElementById('additional-thumbnails');
+                const thumbnailCount = document.getElementById('thumbnail-count');
+
+                // Show/hide thumbnail card based on file count
+                if (selectedFiles.files.length > 0) {
+                    thumbnailCard.classList.remove('hidden');
+                    thumbnailCount.textContent = selectedFiles.files.length;
+                } else {
+                    thumbnailCard.classList.add('hidden');
+                }
+
+                additionalThumbnails.innerHTML = '';
+
                 for (let i = 0; i < selectedFiles.files.length; i++) {
                     const file = selectedFiles.files[i];
                     const reader = new FileReader();
@@ -304,8 +336,28 @@
                         preview.querySelector('.remove-file-btn').addEventListener('click', () => {
                             removeFile(i);
                         });
+
+                        // Update sidebar thumbnail preview
+                        if (i === 0) {
+                            mainThumbnail.innerHTML = `<img src="${e.target.result}" alt="Main thumbnail" class="w-full h-full object-cover" />`;
+                        } else if (i < 5) {
+                            const thumb = document.createElement('div');
+                            thumb.className = 'w-7 h-7 rounded overflow-hidden border border-slate-200 dark:border-slate-700';
+                            thumb.innerHTML = `<img src="${e.target.result}" alt="" class="w-full h-full object-cover" />`;
+                            additionalThumbnails.appendChild(thumb);
+                        } else if (i === 5 && selectedFiles.files.length > 5) {
+                            const moreThumb = document.createElement('div');
+                            moreThumb.className = 'w-7 h-7 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center';
+                            moreThumb.innerHTML = `<span class="text-xs text-slate-500">+${selectedFiles.files.length - 5}</span>`;
+                            additionalThumbnails.appendChild(moreThumb);
+                        }
                     };
                     reader.readAsDataURL(file);
+                }
+
+                // Reset main thumbnail if no files
+                if (selectedFiles.files.length === 0) {
+                    mainThumbnail.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
                 }
             }
 

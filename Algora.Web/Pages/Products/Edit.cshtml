@@ -346,6 +346,45 @@
                     </div>
                 </div>
 
+                <!-- Product Thumbnail Card -->
+                @if (Model.ExistingImages.Any())
+                {
+                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                        <div class="p-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-24 h-24 rounded-xl overflow-hidden border-2 border-fuchsia-300 dark:border-fuchsia-600 shadow-soft-md flex-shrink-0">
+                                    <img src="@Model.ExistingImages.First().Src"
+                                         alt="@(Model.ExistingImages.First().Alt ?? "Product thumbnail")"
+                                         class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform"
+                                         onclick="openImageModal('@Model.ExistingImages.First().Src', '@(Model.ExistingImages.First().Alt ?? "Product thumbnail")')" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h6 class="font-bold text-sm dark:text-white truncate">@Model.Product.Title</h6>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">@Model.ExistingImages.Count image(s)</p>
+                                    @if (Model.ExistingImages.Count > 1)
+                                    {
+                                        <div class="flex gap-1 mt-2">
+                                            @foreach (var img in Model.ExistingImages.Skip(1).Take(4))
+                                            {
+                                                <div class="w-8 h-8 rounded overflow-hidden border border-slate-200 dark:border-slate-700">
+                                                    <img src="@img.Src" alt="" class="w-full h-full object-cover cursor-pointer"
+                                                         onclick="openImageModal('@img.Src', '@(img.Alt ?? "")')" />
+                                                </div>
+                                            }
+                                            @if (Model.ExistingImages.Count > 5)
+                                            {
+                                                <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                    <span class="text-xs text-slate-500">+@(Model.ExistingImages.Count - 5)</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 <!-- Product Info Card -->
                 <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-cyan-500 to-blue-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                     <div class="flex-auto p-6">
@@ -418,8 +457,43 @@
     </form>
 </div>
 
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="closeImageModal()">
+    <div class="relative max-w-4xl max-h-[90vh] mx-4">
+        <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+        <img id="modalImage" src="" alt="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()" />
+        <p id="modalCaption" class="text-center text-white mt-3 text-sm"></p>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        // Image modal functions
+        function openImageModal(src, alt) {
+            const modal = document.getElementById('imageModal');
+            const image = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            image.src = src;
+            image.alt = alt;
+            caption.textContent = alt;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeImageModal();
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('variants-container');
             const addBtn = document.getElementById('add-variant-btn');
