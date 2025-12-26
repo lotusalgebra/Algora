@@ -4,10 +4,6 @@
     ViewData["Title"] = "Orders";
 }
 
-@section css {
-    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
-}
-
 <div class="w-full px-6 py-6 mx-auto">
     <!-- Header -->
     <div class="flex flex-wrap -mx-3">
@@ -21,19 +17,19 @@
                             <h6 class="mb-0 dark:text-white">Order List</h6>
                             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
                                 <i class="fa fa-shopping-cart text-cyan-500 me-1"></i>
-                                <span class="font-semibold">@(Model.Orders?.Count() ?? 0)</span> orders from your store
+                                <span class="font-semibold" id="total-count">0</span> orders from your store
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
                             <!-- Filters Dropdown -->
                             <div class="relative" id="filters-dropdown-container">
-                                <button type="button" id="filters-dropdown-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                                <button type="button" id="filters-dropdown-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                                     <i class="fas fa-filter me-2 text-slate-400"></i>
                                     Filters
                                     <span id="active-filter-count" class="hidden ml-2 px-1.5 py-0.5 text-xs font-semibold text-white bg-cyan-500 rounded-full">0</span>
                                     <i class="fas fa-chevron-down ml-2 text-xs text-slate-400"></i>
                                 </button>
-                                <div id="filters-dropdown-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-700">
+                                <div id="filters-dropdown-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800 dark:ring-gray-700">
                                     <div class="py-2 px-3">
                                         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 dark:text-gray-400">Status</p>
                                         <label class="flex items-center py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-700 rounded px-2">
@@ -66,7 +62,7 @@
                             </div>
 
                             <!-- Export CSV Button -->
-                            <button type="button" id="export-csv" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                            <button type="button" id="export-csv" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                                 <i class="fas fa-file-export me-2 text-slate-400"></i>
                                 Export CSV
                             </button>
@@ -80,144 +76,86 @@
                     </div>
                 </div>
 
-                <!-- Active Filters Display -->
-                <div id="active-filters-container" class="hidden px-6 pb-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-sm text-slate-500 dark:text-white/60">Active filters:</span>
-                        <div id="active-filters-list" class="flex flex-wrap gap-2"></div>
-                    </div>
-                </div>
-
                 <!-- Card Body -->
-                <div class="flex-auto px-0 pb-0">
+                <div class="flex-auto p-6">
                     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
                     {
-                        <div class="mx-6 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             @Model.ErrorMessage
                         </div>
                     }
-                    else if (Model.Orders == null || !Model.Orders.Any())
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-shopping-cart fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">No orders found in your store.</p>
-                            <a href="/orders/create" class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
-                                <i class="fas fa-plus me-2"></i>
-                                Create Your First Order
-                            </a>
+
+                    <!-- Search and Per Page Controls -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-slate-500 dark:text-white/60">Show</label>
+                            <select id="per-page" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-cyan-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label class="text-sm text-slate-500 dark:text-white/60">entries</label>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-list">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Id</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Date</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
-                                        <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Revenue</th>
-                                        <th class="px-6 py-3 font-semibold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var order in Model.Orders)
-                                    {
-                                        var statusClass = order.FinancialStatus?.ToLower() switch
-                                        {
-                                            "paid" => "from-green-600 to-lime-400",
-                                            "pending" => "from-yellow-500 to-yellow-300",
-                                            "refunded" => "from-red-600 to-rose-400",
-                                            "cancelled" or "canceled" => "from-slate-600 to-slate-400",
-                                            "voided" => "from-slate-600 to-slate-400",
-                                            _ => "from-blue-600 to-cyan-400"
-                                        };
-
-                                        var customerName = order.Customer != null
-                                            ? $"{order.Customer.FirstName} {order.Customer.LastName}".Trim()
-                                            : (order.Email ?? "Guest");
-
-                                        var initials = customerName.Length > 0
-                                            ? string.Join("", customerName.Split(' ').Where(w => w.Length > 0).Take(2).Select(w => w[0].ToString().ToUpper()))
-                                            : "?";
-
-                                        var bgColors = new[] { "from-purple-700 to-pink-500", "from-gray-400 to-gray-600", "from-green-600 to-lime-400", "from-blue-600 to-cyan-400", "from-red-600 to-rose-400", "from-orange-500 to-yellow-300" };
-                                        var colorIndex = Math.Abs(customerName.GetHashCode()) % bgColors.Length;
-
-                                        var firstProduct = order.LineItems?.FirstOrDefault();
-                                        var productCount = order.LineItems?.Count() ?? 0;
-                                        var productDisplay = firstProduct != null
-                                            ? (productCount > 1 ? $"{firstProduct.Title} (+{productCount - 1})" : firstProduct.Title)
-                                            : "No products";
-
-                                        <tr data-status="@(order.FinancialStatus?.ToLower() ?? "unknown")">
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <a href="/orders/@order.Id" class="flex px-2 py-1 group">
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm font-semibold leading-normal dark:text-white group-hover:text-cyan-500 transition-colors">@order.Name</h6>
-                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">#@order.Id</p>
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <p class="mb-0 text-sm font-semibold leading-normal dark:text-white">@order.CreatedAt.ToString("MMM dd, yyyy")</p>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@order.CreatedAt.ToString("h:mm tt")</p>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @statusClass px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
-                                                    @(order.FinancialStatus ?? "Unknown")
-                                                </span>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex px-2 py-1">
-                                                    <div class="flex items-center justify-center w-9 h-9 mr-4 text-xs text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl @bgColors[colorIndex]">
-                                                        @initials
-                                                    </div>
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@customerName</h6>
-                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@(order.Email ?? "No email")</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <p class="mb-0 text-sm leading-normal dark:text-white" title="@(firstProduct?.Title ?? "")">
-                                                    @(productDisplay?.Length > 30 ? productDisplay.Substring(0, 30) + "..." : productDisplay)
-                                                </p>
-                                                @if (productCount > 0 && firstProduct != null)
-                                                {
-                                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">
-                                                        Qty: @firstProduct.Quantity @(productCount > 1 ? $"(+{(order.LineItems ?? new List<LineItemDto>()).Skip(1).Sum(l => l.Quantity)} more)" : "")
-                                                    </p>
-                                                }
-                                            </td>
-                                            <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-bold leading-tight text-slate-700 dark:text-white">@order.TotalPrice.ToString("C")</span>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <a href="/orders/@order.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
-                                                        <i class="fas fa-eye me-1"></i> View
-                                                    </a>
-                                                    <a href="/orders/edit/@order.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Edit Order">
-                                                        <i class="fas fa-pencil-alt me-1"></i> Edit
-                                                    </a>
-                                                    <a href="/orders/invoice/@order.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Invoice">
-                                                        <i class="fas fa-file-invoice me-1"></i> Invoice
-                                                    </a>
-                                                    <a href="/orders/delete/@order.Id" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-red-600 to-rose-400 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Close/Cancel">
-                                                        <i class="fas fa-times-circle me-1"></i> Close
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-slate-500 dark:text-white/60">Search:</label>
+                            <input type="text" id="search-input" placeholder="Search orders..."
+                                   class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-cyan-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white w-64" />
                         </div>
-                    }
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-table">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">
+                                        Order <i class="fas fa-sort ms-1 text-xs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="1">
+                                        Date <i class="fas fa-sort-down ms-1 text-xs text-cyan-500"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
+                                    <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="5">
+                                        Revenue <i class="fas fa-sort ms-1 text-xs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-semibold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <!-- Data loaded via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loading-state" class="text-center py-8">
+                        <i class="fas fa-spinner fa-spin fa-2x text-cyan-500 mb-2"></i>
+                        <p class="text-slate-500 dark:text-white/60">Loading orders...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="text-center py-12 hidden">
+                        <i class="fas fa-shopping-cart fa-4x text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No orders found.</p>
+                        <a href="/orders/create" class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
+                            <i class="fas fa-plus me-2"></i>
+                            Create Your First Order
+                        </a>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="flex flex-wrap items-center justify-between gap-4 mt-4">
+                        <div class="text-sm text-slate-500 dark:text-white/60">
+                            Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="showing-total">0</span> orders
+                        </div>
+                        <div class="flex items-center gap-1" id="pagination-buttons">
+                            <!-- Pagination buttons added by JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,176 +163,268 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
-    <script src="~/js/plugins/xlsx.min.js" asp-append-version="true"></script>
     <script>
-        // Initialize DataTable
-        let ordersTable = null;
+        // State management
+        let currentPage = 0;
+        let pageSize = 10;
+        let searchTerm = '';
+        let sortColumn = 1; // Default sort by date
+        let sortDirection = 'desc';
+        let totalRecords = 0;
+        let filteredRecords = 0;
+        let statusFilters = ['paid', 'pending', 'refunded', 'cancelled'];
 
-        if (document.getElementById('orders-list')) {
-            ordersTable = new simpleDatatables.DataTable("#orders-list", {
-                searchable: true,
-                fixedHeight: false,
-                perPage: 10,
-                perPageSelect: [5, 10, 25, 50, 100],
-                labels: {
-                    placeholder: "Search orders...",
-                    perPage: "orders per page",
-                    noRows: "No orders found",
-                    info: "Showing {start} to {end} of {rows} orders"
-                }
-            });
+        const bgColors = ['from-purple-700 to-pink-500', 'from-gray-400 to-gray-600', 'from-green-600 to-lime-400', 'from-blue-600 to-cyan-400', 'from-red-600 to-rose-400', 'from-orange-500 to-yellow-300'];
+
+        function getInitials(name) {
+            return name.split(' ').filter(w => w.length > 0).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
         }
 
-        // Filters Dropdown Toggle
+        function getColorClass(name) {
+            const hash = Math.abs(name.split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0));
+            return bgColors[hash % bgColors.length];
+        }
+
+        function renderRow(order) {
+            const initials = getInitials(order.customerName);
+            const colorClass = getColorClass(order.customerName);
+            const quantityInfo = order.productCount > 1
+                ? `Qty: ${order.quantity} (+${order.totalQuantity - order.quantity} more)`
+                : `Qty: ${order.quantity}`;
+
+            return `
+                <tr>
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <a href="/orders/${order.id}" class="flex px-2 py-1 group">
+                            <div class="flex flex-col justify-center">
+                                <h6 class="mb-0 text-sm font-semibold leading-normal dark:text-white group-hover:text-cyan-500 transition-colors">${order.name}</h6>
+                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">#${order.id}</p>
+                            </div>
+                        </a>
+                    </td>
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <p class="mb-0 text-sm font-semibold leading-normal dark:text-white">${order.createdAt}</p>
+                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${order.createdAtTime}</p>
+                    </td>
+                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <span class="bg-gradient-to-tl ${order.statusClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                            ${order.status}
+                        </span>
+                    </td>
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <div class="flex px-2 py-1">
+                            <div class="flex items-center justify-center w-9 h-9 mr-4 text-xs text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl ${colorClass}">
+                                ${initials}
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <h6 class="mb-0 text-sm leading-normal dark:text-white">${order.customerName}</h6>
+                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${order.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <p class="mb-0 text-sm leading-normal dark:text-white" title="${order.productFull}">${order.product}</p>
+                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${quantityInfo}</p>
+                    </td>
+                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <span class="text-sm font-bold leading-tight text-slate-700 dark:text-white">${order.totalPriceFormatted}</span>
+                    </td>
+                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="/orders/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
+                                <i class="fas fa-eye me-1"></i> View
+                            </a>
+                            <a href="/orders/edit/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Edit Order">
+                                <i class="fas fa-pencil-alt me-1"></i> Edit
+                            </a>
+                            <a href="/orders/invoice/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Invoice">
+                                <i class="fas fa-file-invoice me-1"></i> Invoice
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredRecords / pageSize);
+            const paginationButtons = document.getElementById('pagination-buttons');
+            paginationButtons.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${currentPage === 0 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 0;
+            prevBtn.onclick = () => { if (currentPage > 0) { currentPage--; loadData(); } };
+            paginationButtons.appendChild(prevBtn);
+
+            // Page numbers
+            const maxButtons = 5;
+            let startPage = Math.max(0, currentPage - Math.floor(maxButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxButtons);
+            if (endPage - startPage < maxButtons) startPage = Math.max(0, endPage - maxButtons);
+
+            for (let i = startPage; i < endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${i === currentPage ? 'bg-gradient-to-tl from-cyan-500 to-blue-500 text-white' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
+                pageBtn.textContent = i + 1;
+                pageBtn.onclick = () => { currentPage = i; loadData(); };
+                paginationButtons.appendChild(pageBtn);
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${currentPage >= totalPages - 1 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage >= totalPages - 1;
+            nextBtn.onclick = () => { if (currentPage < totalPages - 1) { currentPage++; loadData(); } };
+            paginationButtons.appendChild(nextBtn);
+        }
+
+        async function loadData() {
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            const tbody = document.getElementById('orders-tbody');
+            const table = document.getElementById('orders-table');
+
+            loadingState.classList.remove('hidden');
+            table.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            try {
+                const params = new URLSearchParams({
+                    handler: 'Data',
+                    draw: Date.now(),
+                    start: currentPage * pageSize,
+                    length: pageSize,
+                    search: searchTerm,
+                    statusFilter: statusFilters.join(','),
+                    sortColumn: sortColumn,
+                    sortDirection: sortDirection
+                });
+
+                const response = await fetch(`/orders?${params}`);
+                const result = await response.json();
+
+                totalRecords = result.recordsTotal;
+                filteredRecords = result.recordsFiltered;
+
+                // Update UI
+                document.getElementById('total-count').textContent = totalRecords;
+                document.getElementById('showing-start').textContent = filteredRecords > 0 ? (currentPage * pageSize) + 1 : 0;
+                document.getElementById('showing-end').textContent = Math.min((currentPage + 1) * pageSize, filteredRecords);
+                document.getElementById('showing-total').textContent = filteredRecords;
+
+                loadingState.classList.add('hidden');
+
+                if (result.data.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    table.classList.remove('hidden');
+                    tbody.innerHTML = result.data.map(renderRow).join('');
+                }
+
+                renderPagination();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                loadingState.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('per-page').addEventListener('change', (e) => {
+            pageSize = parseInt(e.target.value);
+            currentPage = 0;
+            loadData();
+        });
+
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchTerm = e.target.value;
+                currentPage = 0;
+                loadData();
+            }, 300);
+        });
+
+        // Sort handlers
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                const col = parseInt(th.dataset.sort);
+                if (sortColumn === col) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = col;
+                    sortDirection = col === 1 ? 'desc' : 'asc'; // Default desc for date
+                }
+                // Update sort icons
+                document.querySelectorAll('th[data-sort] i').forEach(i => i.className = 'fas fa-sort ms-1 text-xs');
+                th.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs text-cyan-500`;
+                loadData();
+            });
+        });
+
+        // Filters
         const filtersBtn = document.getElementById('filters-dropdown-btn');
         const filtersMenu = document.getElementById('filters-dropdown-menu');
+        const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+        const activeFilterCount = document.getElementById('active-filter-count');
 
-        filtersBtn?.addEventListener('click', function(e) {
+        filtersBtn?.addEventListener('click', (e) => {
             e.stopPropagation();
             filtersMenu.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', (e) => {
             if (!filtersMenu?.contains(e.target) && !filtersBtn?.contains(e.target)) {
                 filtersMenu?.classList.add('hidden');
             }
         });
 
-        // Filter functionality with checkboxes
-        const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
-        const activeFiltersContainer = document.getElementById('active-filters-container');
-        const activeFiltersList = document.getElementById('active-filters-list');
-        const activeFilterCount = document.getElementById('active-filter-count');
-
         function updateFilters() {
-            const checkedFilters = Array.from(filterCheckboxes).filter(cb => cb.checked).map(cb => cb.dataset.filter);
-            const uncheckedFilters = Array.from(filterCheckboxes).filter(cb => !cb.checked).map(cb => cb.dataset.filter);
+            statusFilters = Array.from(filterCheckboxes).filter(cb => cb.checked).map(cb => cb.dataset.filter);
+            const uncheckedCount = 4 - statusFilters.length;
 
-            const rows = document.querySelectorAll('#orders-list tbody tr');
-
-            rows.forEach(row => {
-                const status = row.dataset.status;
-                // Show row if its status is checked, or if status matches 'canceled' when 'cancelled' is checked
-                const shouldShow = checkedFilters.includes(status) ||
-                    (status === 'canceled' && checkedFilters.includes('cancelled')) ||
-                    (checkedFilters.length === 4); // All checked
-                row.style.display = shouldShow ? '' : 'none';
-            });
-
-            // Update active filters display
-            updateActiveFiltersDisplay(uncheckedFilters);
-        }
-
-        function updateActiveFiltersDisplay(uncheckedFilters) {
-            if (uncheckedFilters.length === 0) {
-                activeFiltersContainer.classList.add('hidden');
-                activeFilterCount.classList.add('hidden');
-            } else {
-                activeFiltersContainer.classList.remove('hidden');
+            if (uncheckedCount > 0) {
                 activeFilterCount.classList.remove('hidden');
-                activeFilterCount.textContent = 4 - uncheckedFilters.length;
-
-                // Build filter tags for checked items
-                const checkedFilters = Array.from(filterCheckboxes).filter(cb => cb.checked);
-                activeFiltersList.innerHTML = checkedFilters.map(cb => {
-                    const filter = cb.dataset.filter;
-                    const colorMap = {
-                        'paid': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-                        'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-                        'refunded': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-                        'cancelled': 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300'
-                    };
-                    return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${colorMap[filter]}">
-                        ${filter.charAt(0).toUpperCase() + filter.slice(1)}
-                        <button type="button" class="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-black/10 dark:hover:bg-white/10" data-remove-filter="${filter}">
-                            <i class="fas fa-times text-xs"></i>
-                        </button>
-                    </span>`;
-                }).join('');
-
-                // Add click handlers to remove buttons
-                document.querySelectorAll('[data-remove-filter]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const filter = this.dataset.removeFilter;
-                        const checkbox = document.querySelector(`.filter-checkbox[data-filter="${filter}"]`);
-                        if (checkbox) {
-                            checkbox.checked = false;
-                            updateFilters();
-                        }
-                    });
-                });
+                activeFilterCount.textContent = statusFilters.length;
+            } else {
+                activeFilterCount.classList.add('hidden');
             }
+
+            currentPage = 0;
+            loadData();
         }
 
-        filterCheckboxes.forEach(cb => {
-            cb.addEventListener('change', updateFilters);
-        });
+        filterCheckboxes.forEach(cb => cb.addEventListener('change', updateFilters));
 
-        // Clear all filters (uncheck all)
-        document.getElementById('clear-filters')?.addEventListener('click', function() {
+        document.getElementById('clear-filters')?.addEventListener('click', () => {
             filterCheckboxes.forEach(cb => cb.checked = false);
             updateFilters();
             filtersMenu.classList.add('hidden');
         });
 
-        // Get table data for export
-        function getTableData() {
-            const table = document.getElementById('orders-list');
-            const headers = ['Order ID', 'Date', 'Status', 'Customer', 'Product', 'Revenue'];
-            const data = [];
-
-            // Get data rows
-            const rows = table.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                if (row.style.display === 'none') return; // Skip hidden rows
-
-                const rowData = [];
-                const cells = row.querySelectorAll('td');
-                cells.forEach((td, index) => {
-                    if (index < cells.length - 1) { // Skip Action column
-                        if (index === 0) {
-                            // Order ID
-                            const name = td.querySelector('h6')?.textContent?.trim() || '';
-                            rowData.push(name);
-                        } else if (index === 1) {
-                            // Date
-                            const date = td.querySelector('p:first-child')?.textContent?.trim() || '';
-                            rowData.push(date);
-                        } else if (index === 2) {
-                            // Status badge
-                            const badge = td.querySelector('span')?.textContent?.trim() || '';
-                            rowData.push(badge);
-                        } else if (index === 3) {
-                            // Customer
-                            const name = td.querySelector('h6')?.textContent?.trim() || '';
-                            rowData.push(name);
-                        } else if (index === 4) {
-                            // Product
-                            const product = td.querySelector('p:first-child')?.textContent?.trim() || '';
-                            rowData.push(product);
-                        } else if (index === 5) {
-                            // Revenue
-                            const revenue = td.querySelector('span')?.textContent?.trim() || '';
-                            rowData.push(revenue);
-                        }
-                    }
-                });
-                if (rowData.length > 0) {
-                    data.push(rowData);
-                }
+        // Export CSV
+        document.getElementById('export-csv')?.addEventListener('click', async function() {
+            const params = new URLSearchParams({
+                handler: 'Data',
+                start: 0,
+                length: 10000,
+                search: searchTerm,
+                statusFilter: statusFilters.join(',')
             });
+            const response = await fetch(`/orders?${params}`);
+            const result = await response.json();
 
-            return { headers, data };
-        }
-
-        // Export to CSV
-        document.getElementById('export-csv')?.addEventListener('click', function() {
-            const { headers, data } = getTableData();
-
+            const headers = ['Order', 'Date', 'Status', 'Customer', 'Email', 'Product', 'Revenue'];
             let csv = headers.join(',') + '\n';
-            data.forEach(row => {
+            result.data.forEach(o => {
+                const row = [o.name, o.createdAt, o.status, o.customerName, o.email, o.product, o.totalPriceFormatted];
                 csv += row.map(cell => {
                     let escaped = String(cell).replace(/"/g, '""');
                     if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
@@ -404,7 +434,6 @@
                 }).join(',') + '\n';
             });
 
-            // Download
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -416,6 +445,7 @@
             URL.revokeObjectURL(url);
         });
 
-        console.log('Orders page scripts loaded');
+        // Initial load
+        loadData();
     </script>
 }
