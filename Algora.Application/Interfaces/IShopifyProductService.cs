@@ -123,6 +123,15 @@ namespace Algora.Application.Interfaces
         /// <param name="altText">The new alt text.</param>
         /// <returns>A task that resolves to the updated image DTO.</returns>
         Task<ProductImageDto> UpdateProductImageAltAsync(long productId, string imageId, string altText);
+
+        /// <summary>
+        /// Updates the image associated with a variant.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID.</param>
+        /// <param name="variantId">The variant GID.</param>
+        /// <param name="imageId">The image GID to associate (or null to remove).</param>
+        /// <returns>A task that completes when the variant image is updated.</returns>
+        Task UpdateVariantImageAsync(long productId, string variantId, string? imageId);
     }
 
     /// <summary>
@@ -192,5 +201,9 @@ namespace Algora.Application.Interfaces
         public string? Option3 { get; set; }
         public int InventoryQuantity { get; set; }
         public bool IsNew { get; set; }
+        /// <summary>
+        /// Image GID to associate with this variant (from product images).
+        /// </summary>
+        public string? ImageId { get; set; }
     }
 }

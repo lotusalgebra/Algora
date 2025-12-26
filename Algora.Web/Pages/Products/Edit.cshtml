@@ -253,6 +253,38 @@
                                                class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                                placeholder="e.g. Cotton" />
                                     </div>
+                                    @if (Model.ExistingImages.Any())
+                                    {
+                                        <div class="w-full max-w-full px-3 mb-3">
+                                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                                <i class="fas fa-image me-1 text-fuchsia-500"></i> Variant Image
+                                            </label>
+                                            <div class="flex items-center gap-3">
+                                                @if (!string.IsNullOrEmpty(Model.Variants[i].ImageSrc))
+                                                {
+                                                    <img src="@Model.Variants[i].ImageSrc" alt="Current variant image"
+                                                         class="variant-image-preview w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="variant-image-preview w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                                                        <i class="fas fa-image text-slate-300 dark:text-slate-600"></i>
+                                                    </div>
+                                                }
+                                                <select name="Variants[@i].ImageId"
+                                                        class="variant-image-select focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft block flex-1 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
+                                                    <option value="">No image</option>
+                                                    @foreach (var img in Model.ExistingImages)
+                                                    {
+                                                        var isSelected = Model.Variants[i].ImageId == img.Id;
+                                                        <option value="@img.Id" data-src="@img.Src" @(isSelected ? "selected" : "")>
+                                                            @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
+                                                        </option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }
@@ -531,6 +563,35 @@
                     input.name = `DeleteImageIds[${idx}]`;
                 });
             }
+
+            // ===== Variant Image Selection =====
+            document.querySelectorAll('.variant-image-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const variantRow = this.closest('.variant-row');
+                    const preview = variantRow.querySelector('.variant-image-preview');
+                    const selectedOption = this.options[this.selectedIndex];
+                    const imgSrc = selectedOption.dataset.src;
+
+                    if (imgSrc && preview) {
+                        if (preview.tagName === 'IMG') {
+                            preview.src = imgSrc;
+                        } else {
+                            // Replace div placeholder with img
+                            const img = document.createElement('img');
+                            img.src = imgSrc;
+                            img.alt = 'Variant image';
+                            img.className = 'variant-image-preview w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700';
+                            preview.replaceWith(img);
+                        }
+                    } else if (preview && preview.tagName === 'IMG') {
+                        // Replace img with placeholder div
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'variant-image-preview w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center';
+                        placeholder.innerHTML = '<i class="fas fa-image text-slate-300 dark:text-slate-600"></i>';
+                        preview.replaceWith(placeholder);
+                    }
+                });
+            });
 
             // ===== AI Generation Functions =====
             function showAiMessage(message, isSuccess) {

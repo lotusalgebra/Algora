@@ -72,7 +72,9 @@ namespace Algora.Web.Pages.Products
                     Option1 = v.Option1,
                     Option2 = v.Option2,
                     Option3 = v.Option3,
-                    IsNew = false
+                    IsNew = false,
+                    ImageId = v.ImageId,
+                    ImageSrc = v.ImageSrc
                 }).ToList();
 
                 if (Variants.Count == 0)
@@ -195,6 +197,25 @@ namespace Algora.Web.Pages.Products
                     }
                 }
 
+                // Update variant images
+                foreach (var variant in Variants.Where(v => !v.IsNew && !string.IsNullOrEmpty(v.VariantId)))
+                {
+                    try
+                    {
+                        // Only update if ImageId is set (even if empty to remove)
+                        if (variant.ImageId != null)
+                        {
+                            var imageIdToSet = string.IsNullOrWhiteSpace(variant.ImageId) ? null : variant.ImageId;
+                            await _productService.UpdateVariantImageAsync(Product.Id, variant.VariantId!, imageIdToSet);
+                            _logger.LogInformation("Updated variant {VariantId} image to {ImageId}", variant.VariantId, imageIdToSet ?? "none");
+                        }
+                    }
+                    catch (Exception varEx)
+                    {
+                        _logger.LogWarning(varEx, "Failed to update variant {VariantId} image", variant.VariantId);
+                    }
+                }
+
                 TempData["SuccessMessage"] = $"Product '{updatedProduct.Title}' updated successfully!";
                 return RedirectToPage("/Products/Index");
             }
@@ -254,5 +275,15 @@ namespace Algora.Web.Pages.Products
         public string? Option3 { get; set; }
 
         public bool IsNew { get; set; }
+
+        /// <summary>
+        /// Image GID associated with this variant.
+        /// </summary>
+        public string? ImageId { get; set; }
+
+        /// <summary>
+        /// Image URL for display (not submitted).
+        /// </summary>
+        public string? ImageSrc { get; set; }
     }
 }
