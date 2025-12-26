@@ -25,6 +25,9 @@ namespace Algora.Web.Pages.Products
         [BindProperty]
         public List<string> ImageUrls { get; set; } = new();
 
+        [BindProperty]
+        public List<IFormFile> ImageFiles { get; set; } = new();
+
         public string? ErrorMessage { get; set; }
         public string? SuccessMessage { get; set; }
 
@@ -81,6 +84,35 @@ namespace Algora.Web.Pages.Products
 
                 var product = await _productService.CreateProductAsync(input);
                 _logger.LogInformation("Product created successfully: {ProductId}", product.NumericId);
+
+                // Upload image files if any
+                var validImageFiles = ImageFiles?.Where(f => f != null && f.Length > 0).ToList() ?? new List<IFormFile>();
+                foreach (var file in validImageFiles)
+                {
+                    try
+                    {
+                        using var memoryStream = new MemoryStream();
+                        await file.CopyToAsync(memoryStream);
+                        var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+                        var uploadInput = new Algora.Application.DTOs.UploadProductImageInput
+                        {
+                            ProductId = product.NumericId,
+                            Base64Data = base64,
+                            FileName = file.FileName,
+                            ContentType = file.ContentType,
+                            Alt = Path.GetFileNameWithoutExtension(file.FileName)
+                        };
+
+                        await _productService.UploadProductImageAsync(uploadInput);
+                        _logger.LogInformation("Uploaded image {FileName} to product {ProductId}", file.FileName, product.NumericId);
+                    }
+                    catch (Exception imgEx)
+                    {
+                        _logger.LogWarning(imgEx, "Failed to upload image {FileName}", file.FileName);
+                        // Continue with other images even if one fails
+                    }
+                }
 
                 TempData["SuccessMessage"] = $"Product '{product.Title}' created successfully!";
                 return RedirectToPage("/Products/Index");

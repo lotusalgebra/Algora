@@ -1,3 +1,4 @@
+using Algora.Application.DTOs;
 using Algora.Application.Interfaces;
 using Algora.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,17 @@ namespace Algora.Web.Pages.Products
         [BindProperty]
         public List<VariantEditInput> Variants { get; set; } = new();
 
+        [BindProperty]
+        public List<IFormFile> NewImageFiles { get; set; } = new();
+
+        [BindProperty]
+        public List<string> NewImageUrls { get; set; } = new();
+
+        [BindProperty]
+        public List<string> DeleteImageIds { get; set; } = new();
+
+        public List<ProductImageDto> ExistingImages { get; set; } = new();
+
         public string? ErrorMessage { get; set; }
         public string? SuccessMessage { get; set; }
 
@@ -45,6 +57,9 @@ namespace Algora.Web.Pages.Products
                 {
                     Id = product.NumericId,
                     Title = product.Title,
+                    Description = product.Description,
+                    Vendor = product.Vendor,
+                    ProductType = product.ProductType,
                     Tags = string.Join(", ", product.Tags)
                 };
 
@@ -65,6 +80,9 @@ namespace Algora.Web.Pages.Products
                     Variants.Add(new VariantEditInput());
                 }
 
+                // Load existing images
+                ExistingImages = product.Images?.ToList() ?? new List<ProductImageDto>();
+
                 return Page();
             }
             catch (Exception ex)
@@ -84,6 +102,22 @@ namespace Algora.Web.Pages.Products
 
             try
             {
+                // Delete images first
+                var validDeleteIds = DeleteImageIds?.Where(id => !string.IsNullOrWhiteSpace(id)).ToList() ?? new List<string>();
+                foreach (var imageId in validDeleteIds)
+                {
+                    try
+                    {
+                        await _productService.DeleteProductImageAsync(Product.Id, imageId);
+                        _logger.LogInformation("Deleted image {ImageId} from product {ProductId}", imageId, Product.Id);
+                    }
+                    catch (Exception imgEx)
+                    {
+                        _logger.LogWarning(imgEx, "Failed to delete image {ImageId}", imageId);
+                    }
+                }
+
+                // Update product info
                 var input = new UpdateProductInput
                 {
                     ProductId = Product.Id,
@@ -112,6 +146,55 @@ namespace Algora.Web.Pages.Products
                 var updatedProduct = await _productService.UpdateProductAsync(input);
                 _logger.LogInformation("Product updated successfully: {ProductId}", updatedProduct.NumericId);
 
+                // Upload new image files
+                var validImageFiles = NewImageFiles?.Where(f => f != null && f.Length > 0).ToList() ?? new List<IFormFile>();
+                foreach (var file in validImageFiles)
+                {
+                    try
+                    {
+                        using var memoryStream = new MemoryStream();
+                        await file.CopyToAsync(memoryStream);
+                        var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+                        var uploadInput = new UploadProductImageInput
+                        {
+                            ProductId = Product.Id,
+                            Base64Data = base64,
+                            FileName = file.FileName,
+                            ContentType = file.ContentType,
+                            Alt = Path.GetFileNameWithoutExtension(file.FileName)
+                        };
+
+                        await _productService.UploadProductImageAsync(uploadInput);
+                        _logger.LogInformation("Uploaded image {FileName} to product {ProductId}", file.FileName, Product.Id);
+                    }
+                    catch (Exception imgEx)
+                    {
+                        _logger.LogWarning(imgEx, "Failed to upload image {FileName}", file.FileName);
+                    }
+                }
+
+                // Upload new image URLs
+                var validImageUrls = NewImageUrls?.Where(url => !string.IsNullOrWhiteSpace(url)).ToList() ?? new List<string>();
+                foreach (var url in validImageUrls)
+                {
+                    try
+                    {
+                        var uploadInput = new UploadProductImageInput
+                        {
+                            ProductId = Product.Id,
+                            ImageUrl = url
+                        };
+
+                        await _productService.UploadProductImageAsync(uploadInput);
+                        _logger.LogInformation("Uploaded image from URL to product {ProductId}", Product.Id);
+                    }
+                    catch (Exception imgEx)
+                    {
+                        _logger.LogWarning(imgEx, "Failed to upload image from URL {Url}", url);
+                    }
+                }
+
                 TempData["SuccessMessage"] = $"Product '{updatedProduct.Title}' updated successfully!";
                 return RedirectToPage("/Products/Index");
             }
@@ -119,6 +202,13 @@ namespace Algora.Web.Pages.Products
             {
                 _logger.LogError(ex, "Error updating product {ProductId}", Product.Id);
                 ErrorMessage = $"Error updating product: {ex.Message}";
+                // Reload images on error
+                try
+                {
+                    var product = await _productService.GetProductByIdAsync(Product.Id);
+                    ExistingImages = product?.Images?.ToList() ?? new List<ProductImageDto>();
+                }
+                catch { }
                 return Page();
             }
         }
