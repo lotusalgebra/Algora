@@ -28,6 +28,9 @@ namespace Algora.Web.Pages.Products
         [BindProperty]
         public List<IFormFile> ImageFiles { get; set; } = new();
 
+        [BindProperty]
+        public Dictionary<int, IFormFile> VariantImageFiles { get; set; } = new();
+
         public string? ErrorMessage { get; set; }
         public string? SuccessMessage { get; set; }
 
@@ -111,6 +114,49 @@ namespace Algora.Web.Pages.Products
                     {
                         _logger.LogWarning(imgEx, "Failed to upload image {FileName}", file.FileName);
                         // Continue with other images even if one fails
+                    }
+                }
+
+                // Upload variant-specific images and associate with variants
+                if (VariantImageFiles != null && VariantImageFiles.Any() && product.Variants.Any())
+                {
+                    foreach (var kvp in VariantImageFiles)
+                    {
+                        var variantIndex = kvp.Key;
+                        var file = kvp.Value;
+
+                        if (file == null || file.Length == 0 || variantIndex >= product.Variants.Count)
+                            continue;
+
+                        var variant = product.Variants[variantIndex];
+
+                        try
+                        {
+                            // Upload image to product
+                            using var memoryStream = new MemoryStream();
+                            await file.CopyToAsync(memoryStream);
+                            var base64 = Convert.ToBase64String(memoryStream.ToArray());
+
+                            var uploadInput = new Algora.Application.DTOs.UploadProductImageInput
+                            {
+                                ProductId = product.NumericId,
+                                Base64Data = base64,
+                                FileName = file.FileName,
+                                ContentType = file.ContentType,
+                                Alt = $"Variant {variantIndex + 1}"
+                            };
+
+                            var uploadedImage = await _productService.UploadProductImageAsync(uploadInput);
+                            _logger.LogInformation("Uploaded variant image {FileName} to product {ProductId}", file.FileName, product.NumericId);
+
+                            // Associate with variant
+                            await _productService.UpdateVariantImageAsync(product.NumericId, variant.Id, uploadedImage.Id);
+                            _logger.LogInformation("Associated image {ImageId} with variant {VariantId}", uploadedImage.Id, variant.Id);
+                        }
+                        catch (Exception varImgEx)
+                        {
+                            _logger.LogWarning(varImgEx, "Failed to upload/associate image for variant at index {Index}", variantIndex);
+                        }
                     }
                 }
 

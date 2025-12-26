@@ -306,14 +306,13 @@
                                                 }
 
                                                 <!-- Upload new image for this variant -->
-                                                <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
-                                                     data-variant-index="@i">
-                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" class="variant-file-input" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" />
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400 pointer-events-none">
+                                                <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
+                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" class="variant-file-input sr-only" data-variant-index="@i" />
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400">
                                                         <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
-                                                        Click or drag image here
+                                                        Click to upload image
                                                     </span>
-                                                </div>
+                                                </label>
                                                 <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                             </div>
                                         </div>
@@ -628,55 +627,11 @@
             document.querySelectorAll('.variant-image-select').forEach(initVariantImageSelect);
 
             // ===== Variant Image Upload =====
-            function initVariantUploadZone(zone) {
-                const fileInput = zone.querySelector('.variant-file-input');
-                if (!fileInput) {
-                    console.error('No file input found in zone', zone);
-                    return;
-                }
-                const variantRow = zone.closest('.variant-row');
-                const previewContainer = zone.nextElementSibling;
+            function initVariantFileInput(fileInput) {
+                const variantRow = fileInput.closest('.variant-row');
+                const label = fileInput.closest('.variant-upload-label');
+                const previewContainer = label ? label.nextElementSibling : null;
 
-                // Click to upload
-                zone.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    fileInput.click();
-                });
-
-                // Prevent file input click from bubbling
-                fileInput.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-
-                // Drag and drop support
-                zone.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    zone.classList.add('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-                });
-
-                zone.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    zone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-                });
-
-                zone.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    zone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        const dt = new DataTransfer();
-                        dt.items.add(files[0]);
-                        fileInput.files = dt.files;
-                        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    }
-                });
-
-                // File change handler
                 fileInput.addEventListener('change', function() {
                     const file = this.files[0];
                     if (!file) return;
@@ -704,7 +659,7 @@
                                         <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
                                         <p class="text-xs text-green-600 dark:text-green-400">Ready to upload on save</p>
                                     </div>
-                                    <button type="button" class="remove-variant-image text-red-500 hover:text-red-700 p-1">
+                                    <button type="button" class="remove-variant-img-btn text-red-500 hover:text-red-700 p-1">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
@@ -712,16 +667,14 @@
                             previewContainer.style.display = 'block';
 
                             // Remove button handler
-                            const removeBtn = previewContainer.querySelector('.remove-variant-image');
-                            if (removeBtn) {
-                                removeBtn.addEventListener('click', function(evt) {
-                                    evt.preventDefault();
-                                    evt.stopPropagation();
-                                    fileInput.value = '';
-                                    previewContainer.innerHTML = '';
-                                    previewContainer.style.display = 'none';
+                            previewContainer.querySelector('.remove-variant-img-btn').onclick = function(evt) {
+                                evt.preventDefault();
+                                fileInput.value = '';
+                                previewContainer.innerHTML = '';
+                                previewContainer.style.display = 'none';
 
-                                    // Reset main preview
+                                // Reset main preview
+                                if (variantRow) {
                                     const mainPreview = variantRow.querySelector('.variant-image-preview');
                                     if (mainPreview && mainPreview.tagName === 'IMG') {
                                         const placeholder = document.createElement('div');
@@ -729,8 +682,8 @@
                                         placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
                                         mainPreview.replaceWith(placeholder);
                                     }
-                                });
-                            }
+                                }
+                            };
                         }
 
                         // Update the main preview
@@ -754,10 +707,8 @@
                 });
             }
 
-            // Initialize all variant upload zones
-            const variantUploadZones = document.querySelectorAll('.variant-upload-zone');
-            console.log('Found ' + variantUploadZones.length + ' variant upload zones');
-            variantUploadZones.forEach(initVariantUploadZone);
+            // Initialize all variant file inputs
+            document.querySelectorAll('.variant-file-input').forEach(initVariantFileInput);
 
             // ===== AI Generation Functions =====
             function showAiMessage(message, isSuccess) {
@@ -920,18 +871,13 @@
                                     </div>
                                     <div class="flex-1 space-y-2">
                                         <input type="hidden" name="Variants[${newIndex}].ImageId" value="" />
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Save the product first, then assign images to new variants
-                                        </p>
-                                        <div class="variant-upload-zone border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all"
-                                             data-variant-index="${newIndex}">
-                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;" />
-                                            <span class="text-xs text-slate-500 dark:text-slate-400 pointer-events-none">
+                                        <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
+                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input sr-only" data-variant-index="${newIndex}" />
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
                                                 <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
-                                                Click or drag image here
+                                                Click to upload image
                                             </span>
-                                        </div>
+                                        </label>
                                         <div class="variant-upload-preview mt-2" style="display:none;"></div>
                                     </div>
                                 </div>
@@ -942,11 +888,11 @@
 
                 container.insertAdjacentHTML('beforeend', template);
 
-                // Initialize the new variant's upload zone
-                const newVariant = container.querySelector(\`.variant-row[data-index="\${newIndex}"]\`);
-                const newUploadZone = newVariant.querySelector('.variant-upload-zone');
-                if (newUploadZone) {
-                    initVariantUploadZone(newUploadZone);
+                // Initialize the new variant's file input
+                const newVariant = container.querySelector(`.variant-row[data-index="${newIndex}"]`);
+                const newFileInput = newVariant.querySelector('.variant-file-input');
+                if (newFileInput) {
+                    initVariantFileInput(newFileInput);
                 }
 
                 updateRemoveButtons();
