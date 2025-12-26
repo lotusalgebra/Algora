@@ -748,6 +748,10 @@ namespace Algora.Infrastructure.Services
                       name
                       value
                     }
+                    image {
+                      id
+                      url
+                    }
                   }
                 }
               }
@@ -834,7 +838,17 @@ namespace Algora.Infrastructure.Services
                     int? inventoryQuantity = null;
                     if (v.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
                         inventoryQuantity = invQty.GetInt32();
-                    variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
+
+                    // Parse variant image
+                    string? variantImageId = null;
+                    string? variantImageSrc = null;
+                    if (v.TryGetProperty("image", out var varImgEl) && varImgEl.ValueKind != JsonValueKind.Null)
+                    {
+                        variantImageId = varImgEl.TryGetProperty("id", out var vImgId) ? vImgId.GetString() : null;
+                        variantImageSrc = varImgEl.TryGetProperty("url", out var vImgUrl) ? vImgUrl.GetString() : null;
+                    }
+
+                    variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity, variantImageId, variantImageSrc));
                 }
             }
 
@@ -1379,6 +1393,63 @@ namespace Algora.Infrastructure.Services
             int? imgHeight = img.TryGetProperty("height", out var imgHeightProp) && imgHeightProp.ValueKind == JsonValueKind.Number ? imgHeightProp.GetInt32() : null;
 
             return new ProductImageDto(imgId, imgUrl, imgAlt, null, imgWidth, imgHeight);
+        }
+
+        public async Task UpdateVariantImageAsync(long productId, string variantId, string? imageId)
+        {
+            // Use productVariantUpdate mutation to set the image
+            var gql = @"mutation productVariantUpdate($input: ProductVariantInput!) {
+              productVariantUpdate(input: $input) {
+                productVariant {
+                  id
+                  image {
+                    id
+                  }
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var input = new Dictionary<string, object?>
+            {
+                ["id"] = variantId
+            };
+
+            // If imageId is provided, set it; if null, we need to remove the image
+            if (!string.IsNullOrEmpty(imageId))
+            {
+                input["imageId"] = imageId;
+            }
+
+            var variables = new { input };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var updateEl = dataEl.GetProperty("productVariantUpdate");
+
+            // Check for user errors
+            var userErrors = updateEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Variant image update failed: " + string.Join("; ", msgs));
+            }
+
+            _logger.LogInformation("Updated variant {VariantId} image to {ImageId}", variantId, imageId ?? "none");
         }
     }
 }

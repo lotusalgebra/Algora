@@ -22,6 +22,8 @@ namespace Algora.Application.DTOs
     /// <param name="Option2">Optional second option value (for example color).</param>
     /// <param name="Option3">Optional third option value.</param>
     /// <param name="InventoryQuantity">Optional inventory quantity (may be null if not available).</param>
+    /// <param name="ImageId">Optional image ID associated with this variant.</param>
+    /// <param name="ImageSrc">Optional image URL for this variant.</param>
     public record VariantDto
     (
         string Id,
@@ -31,6 +33,8 @@ namespace Algora.Application.DTOs
         string? Option1,
         string? Option2,
         string? Option3,
-        int? InventoryQuantity = null
+        int? InventoryQuantity = null,
+        string? ImageId = null,
+        string? ImageSrc = null
     );
 }
