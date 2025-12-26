@@ -1,0 +1,323 @@
+@page "/admin/plan-features"
+@model Algora.Web.Pages.Admin.PlanFeaturesModel
+@{
+    ViewData["Title"] = "Plan Features Management";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold dark:text-white">Plan Features Management</h1>
+            <p class="mt-1 text-gray-600 dark:text-gray-400">Manage features and assign them to subscription plans</p>
+        </div>
+        <button type="button"
+                onclick="openAddFeatureModal()"
+                class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:shadow-soft-2xl transition-all">
+            <i class="fas fa-plus mr-2"></i> Add Feature
+        </button>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                @Model.SuccessMessage
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                @Model.ErrorMessage
+            </div>
+        </div>
+    }
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Features List (Left Column) -->
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl p-6">
+                <h2 class="text-lg font-semibold dark:text-white mb-4">Available Features</h2>
+
+                @foreach (var category in Model.FeaturesByCategory)
+                {
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">@category.Key</h3>
+                        <div class="space-y-2">
+                            @foreach (var feature in category.Value)
+                            {
+                                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg @(feature.IsActive ? "" : "opacity-50")">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center mr-3">
+                                            <i class="@(feature.IconClass ?? "fas fa-cube") text-white text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-sm dark:text-white">@feature.Name</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">@feature.Code</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <button type="button"
+                                                onclick="openEditFeatureModal(@feature.Id, '@feature.Code', '@feature.Name', '@feature.Description.Replace("'", "\\'")', '@feature.Category', '@feature.IconClass', @feature.SortOrder, @feature.IsActive.ToString().ToLower())"
+                                                class="p-1.5 text-gray-500 hover:text-purple-600 transition-colors"
+                                                title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form method="post" asp-page-handler="ToggleFeature" class="inline">
+                                            <input type="hidden" name="featureId" value="@feature.Id" />
+                                            <button type="submit"
+                                                    class="p-1.5 @(feature.IsActive ? "text-green-500 hover:text-green-600" : "text-gray-400 hover:text-gray-600") transition-colors"
+                                                    title="@(feature.IsActive ? "Deactivate" : "Activate")">
+                                                <i class="fas @(feature.IsActive ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" asp-page-handler="DeleteFeature" class="inline" onsubmit="return confirm('Delete this feature? This will remove it from all plans.')">
+                                            <input type="hidden" name="featureId" value="@feature.Id" />
+                                            <button type="submit"
+                                                    class="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                                                    title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (!Model.FeaturesByCategory.Any())
+                {
+                    <div class="text-center py-8">
+                        <i class="fas fa-cube text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 dark:text-gray-400">No features defined yet.</p>
+                        <button type="button"
+                                onclick="openAddFeatureModal()"
+                                class="mt-3 text-purple-600 hover:text-purple-700 font-medium text-sm">
+                            <i class="fas fa-plus mr-1"></i> Add your first feature
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Plan Feature Matrix (Right Column) -->
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-soft-xl p-6">
+                <h2 class="text-lg font-semibold dark:text-white mb-4">Plan Feature Matrix</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Click checkboxes to add or remove features from each plan.</p>
+
+                @if (Model.PlansWithFeatures.Any() && Model.AllFeatures.Any())
+                {
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    <th class="px-3 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 min-w-[200px]">Feature</th>
+                                    @foreach (var plan in Model.PlansWithFeatures)
+                                    {
+                                        <th class="px-3 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 min-w-[100px]">
+                                            <div>@plan.Name</div>
+                                            <div class="text-xs font-normal text-gray-500">$@plan.MonthlyPrice/mo</div>
+                                        </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in Model.FeaturesByCategory)
+                                {
+                                    <tr class="bg-gray-50 dark:bg-gray-900">
+                                        <td colspan="@(Model.PlansWithFeatures.Count() + 1)" class="px-3 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                            @category.Key
+                                        </td>
+                                    </tr>
+                                    @foreach (var feature in category.Value.Where(f => f.IsActive))
+                                    {
+                                        <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900">
+                                            <td class="px-3 py-3">
+                                                <div class="flex items-center">
+                                                    <i class="@(feature.IconClass ?? "fas fa-cube") text-purple-500 mr-2 w-4 text-center"></i>
+                                                    <span class="dark:text-white">@feature.Name</span>
+                                                </div>
+                                            </td>
+                                            @foreach (var plan in Model.PlansWithFeatures)
+                                            {
+                                                var hasFeature = plan.Features.Any(f => f.Id == feature.Id);
+                                                <td class="px-3 py-3 text-center">
+                                                    <form method="post" asp-page-handler="@(hasFeature ? "RemoveFeature" : "AssignFeature")" class="inline">
+                                                        <input type="hidden" name="planId" value="@plan.Id" />
+                                                        <input type="hidden" name="featureId" value="@feature.Id" />
+                                                        <button type="submit"
+                                                                class="w-6 h-6 rounded border-2 flex items-center justify-center transition-all @(hasFeature ? "bg-purple-500 border-purple-500 text-white" : "border-gray-300 dark:border-gray-600 hover:border-purple-400")">
+                                                            @if (hasFeature)
+                                                            {
+                                                                <i class="fas fa-check text-xs"></i>
+                                                            }
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-table text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 dark:text-gray-400">Add features and plans to see the feature matrix.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Feature Modal -->
+<div id="featureModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-lg w-full mx-4">
+        <div class="p-6">
+            <h3 id="featureModalTitle" class="text-lg font-semibold dark:text-white mb-4">Add Feature</h3>
+            <form method="post" id="featureForm">
+                <input type="hidden" name="featureId" id="editFeatureId" value="0" />
+                <input type="hidden" name="handler" id="featureFormHandler" value="AddFeature" />
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Code</label>
+                        <input type="text" name="code" id="featureCode" required
+                               placeholder="e.g., ai_chatbot"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Name</label>
+                        <input type="text" name="name" id="featureName" required
+                               placeholder="e.g., AI Chatbot"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Description</label>
+                    <textarea name="description" id="featureDescription" rows="2" required
+                              placeholder="What does this feature do?"
+                              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Category</label>
+                        <select name="category" id="featureCategory" required
+                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500">
+                            <option value="Communication">Communication</option>
+                            <option value="AI Tools">AI Tools</option>
+                            <option value="Analytics">Analytics</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Customer Hub">Customer Hub</option>
+                            <option value="Integrations">Integrations</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Icon Class</label>
+                        <input type="text" name="iconClass" id="featureIconClass"
+                               placeholder="fas fa-robot"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Sort Order</label>
+                        <input type="number" name="sortOrder" id="featureSortOrder" value="0"
+                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                    </div>
+                </div>
+
+                <div id="editActiveContainer" class="mb-4 hidden">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="isActive" id="featureIsActive" value="true" checked
+                               class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Active</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button"
+                            onclick="closeFeatureModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:shadow-soft-2xl transition-all">
+                        <span id="featureSubmitText">Add Feature</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openAddFeatureModal() {
+            document.getElementById('featureModalTitle').textContent = 'Add Feature';
+            document.getElementById('featureSubmitText').textContent = 'Add Feature';
+            document.getElementById('editFeatureId').value = '0';
+            document.getElementById('featureFormHandler').value = 'AddFeature';
+            document.getElementById('featureCode').value = '';
+            document.getElementById('featureCode').disabled = false;
+            document.getElementById('featureName').value = '';
+            document.getElementById('featureDescription').value = '';
+            document.getElementById('featureCategory').value = 'Communication';
+            document.getElementById('featureIconClass').value = '';
+            document.getElementById('featureSortOrder').value = '0';
+            document.getElementById('editActiveContainer').classList.add('hidden');
+
+            document.getElementById('featureModal').classList.remove('hidden');
+            document.getElementById('featureModal').classList.add('flex');
+        }
+
+        function openEditFeatureModal(id, code, name, description, category, iconClass, sortOrder, isActive) {
+            document.getElementById('featureModalTitle').textContent = 'Edit Feature';
+            document.getElementById('featureSubmitText').textContent = 'Save Changes';
+            document.getElementById('editFeatureId').value = id;
+            document.getElementById('featureFormHandler').value = 'UpdateFeature';
+            document.getElementById('featureCode').value = code;
+            document.getElementById('featureCode').disabled = true;
+            document.getElementById('featureName').value = name;
+            document.getElementById('featureDescription').value = description;
+            document.getElementById('featureCategory').value = category;
+            document.getElementById('featureIconClass').value = iconClass || '';
+            document.getElementById('featureSortOrder').value = sortOrder;
+            document.getElementById('featureIsActive').checked = isActive;
+            document.getElementById('editActiveContainer').classList.remove('hidden');
+
+            document.getElementById('featureModal').classList.remove('hidden');
+            document.getElementById('featureModal').classList.add('flex');
+        }
+
+        function closeFeatureModal() {
+            document.getElementById('featureModal').classList.add('hidden');
+            document.getElementById('featureModal').classList.remove('flex');
+        }
+
+        document.getElementById('featureModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeatureModal();
+            }
+        });
+
+        // Handle form submission with correct handler
+        document.getElementById('featureForm').addEventListener('submit', function(e) {
+            const handler = document.getElementById('featureFormHandler').value;
+            this.action = '?handler=' + handler;
+        });
+    </script>
+}
