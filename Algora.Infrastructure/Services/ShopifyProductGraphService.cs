@@ -728,13 +728,22 @@ namespace Algora.Infrastructure.Services
                 vendor
                 productType
                 tags
+                images(first: 50) {
+                  nodes {
+                    id
+                    url
+                    altText
+                    width
+                    height
+                  }
+                }
                 variants(first: 50) {
                   nodes {
                     id
                     title
                     sku
                     price
-                            inventoryQuantity
+                    inventoryQuantity
                     selectedOptions {
                       name
                       value
@@ -765,12 +774,33 @@ namespace Algora.Infrastructure.Services
             var gid = productEl.GetProperty("id").GetString() ?? string.Empty;
             var title = productEl.TryGetProperty("title", out var t) ? t.GetString() ?? string.Empty : string.Empty;
             var handle = productEl.TryGetProperty("handle", out var h) ? h.GetString() : null;
+            var description = productEl.TryGetProperty("descriptionHtml", out var desc) ? desc.GetString() : null;
+            var vendor = productEl.TryGetProperty("vendor", out var vend) ? vend.GetString() : null;
+            var productType = productEl.TryGetProperty("productType", out var pt) ? pt.GetString() : null;
 
             var tags = new List<string>();
             if (productEl.TryGetProperty("tags", out var tagsEl) && tagsEl.ValueKind == JsonValueKind.Array)
             {
                 foreach (var ti in tagsEl.EnumerateArray())
                     if (ti.ValueKind == JsonValueKind.String) tags.Add(ti.GetString()!);
+            }
+
+            // Parse images
+            var images = new List<ProductImageDto>();
+            if (productEl.TryGetProperty("images", out var imagesEl) &&
+                imagesEl.TryGetProperty("nodes", out var imageNodes) &&
+                imageNodes.ValueKind == JsonValueKind.Array)
+            {
+                int position = 0;
+                foreach (var img in imageNodes.EnumerateArray())
+                {
+                    var imgId = img.TryGetProperty("id", out var imgIdProp) ? imgIdProp.GetString() ?? string.Empty : string.Empty;
+                    var imgUrl = img.TryGetProperty("url", out var imgUrlProp) ? imgUrlProp.GetString() ?? string.Empty : string.Empty;
+                    var imgAlt = img.TryGetProperty("altText", out var imgAltProp) && imgAltProp.ValueKind != JsonValueKind.Null ? imgAltProp.GetString() : null;
+                    int? imgWidth = img.TryGetProperty("width", out var imgWidthProp) && imgWidthProp.ValueKind == JsonValueKind.Number ? imgWidthProp.GetInt32() : null;
+                    int? imgHeight = img.TryGetProperty("height", out var imgHeightProp) && imgHeightProp.ValueKind == JsonValueKind.Number ? imgHeightProp.GetInt32() : null;
+                    images.Add(new ProductImageDto(imgId, imgUrl, imgAlt, position++, imgWidth, imgHeight));
+                }
             }
 
             var variants = new List<VariantDto>();
@@ -801,14 +831,14 @@ namespace Algora.Infrastructure.Services
                     }
 
                     // Parse inventoryQuantity
-                                int? inventoryQuantity = null;
-                                if (v.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
-                                    inventoryQuantity = invQty.GetInt32();
-                                variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
+                    int? inventoryQuantity = null;
+                    if (v.TryGetProperty("inventoryQuantity", out var invQty) && invQty.ValueKind == JsonValueKind.Number)
+                        inventoryQuantity = invQty.GetInt32();
+                    variants.Add(new VariantDto(vid, vtitle, sku, price, option1, option2, option3, inventoryQuantity));
                 }
             }
 
-            return new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants);
+            return new ProductDto(gid, ParseShopifyId(gid), title, handle, tags, variants, images, description, vendor, productType);
         }
 
         public async Task<ProductDto> UpdateProductAsync(UpdateProductInput input)
@@ -975,6 +1005,380 @@ namespace Algora.Infrastructure.Services
             }
 
             _logger.LogInformation("Product {ProductId} deleted successfully", productId);
+        }
+
+        public async Task<IReadOnlyList<ProductImageDto>> GetProductImagesAsync(long productId)
+        {
+            var product = await GetProductByIdAsync(productId);
+            return product?.Images ?? Array.Empty<ProductImageDto>();
+        }
+
+        public async Task<ProductImageDto> UploadProductImageAsync(UploadProductImageInput input)
+        {
+            var productGid = $"gid://shopify/Product/{input.ProductId}";
+
+            // If we have a URL, use it directly via productAppendImages
+            if (!string.IsNullOrWhiteSpace(input.ImageUrl))
+            {
+                var gql = @"mutation AppendImages($input: ProductAppendImagesInput!) {
+                  productAppendImages(input: $input) {
+                    newImages {
+                      id
+                      url
+                      altText
+                      width
+                      height
+                    }
+                    userErrors {
+                      field
+                      message
+                    }
+                  }
+                }";
+
+                var variables = new
+                {
+                    input = new
+                    {
+                        id = productGid,
+                        images = new[]
+                        {
+                            new
+                            {
+                                src = input.ImageUrl,
+                                altText = input.Alt
+                            }
+                        }
+                    }
+                };
+
+                var raw = await SendGraphQueryRawAsync(gql, variables);
+                if (string.IsNullOrWhiteSpace(raw))
+                    throw new InvalidOperationException("Empty response from Shopify.");
+
+                using var doc = JsonDocument.Parse(raw);
+                var root = doc.RootElement;
+                JsonElement dataEl;
+                if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+                else dataEl = root;
+
+                var appendEl = dataEl.GetProperty("productAppendImages");
+
+                // Check for user errors
+                var userErrors = appendEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                    ? ue.EnumerateArray().ToList()
+                    : new List<JsonElement>();
+
+                if (userErrors.Count > 0)
+                {
+                    var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                    throw new InvalidOperationException("Image upload failed: " + string.Join("; ", msgs));
+                }
+
+                if (appendEl.TryGetProperty("newImages", out var newImages) &&
+                    newImages.ValueKind == JsonValueKind.Array &&
+                    newImages.GetArrayLength() > 0)
+                {
+                    var img = newImages.EnumerateArray().First();
+                    var imgId = img.TryGetProperty("id", out var imgIdProp) ? imgIdProp.GetString() ?? string.Empty : string.Empty;
+                    var imgUrl = img.TryGetProperty("url", out var imgUrlProp) ? imgUrlProp.GetString() ?? string.Empty : string.Empty;
+                    var imgAlt = img.TryGetProperty("altText", out var imgAltProp) && imgAltProp.ValueKind != JsonValueKind.Null ? imgAltProp.GetString() : null;
+                    int? imgWidth = img.TryGetProperty("width", out var imgWidthProp) && imgWidthProp.ValueKind == JsonValueKind.Number ? imgWidthProp.GetInt32() : null;
+                    int? imgHeight = img.TryGetProperty("height", out var imgHeightProp) && imgHeightProp.ValueKind == JsonValueKind.Number ? imgHeightProp.GetInt32() : null;
+                    return new ProductImageDto(imgId, imgUrl, imgAlt, null, imgWidth, imgHeight);
+                }
+
+                throw new InvalidOperationException("No image was created.");
+            }
+
+            // For base64 file upload, use staged uploads
+            if (!string.IsNullOrWhiteSpace(input.Base64Data))
+            {
+                // First, create a staged upload
+                var stagedUploadGql = @"mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+                  stagedUploadsCreate(input: $input) {
+                    stagedTargets {
+                      url
+                      resourceUrl
+                      parameters {
+                        name
+                        value
+                      }
+                    }
+                    userErrors {
+                      field
+                      message
+                    }
+                  }
+                }";
+
+                var fileSize = Convert.FromBase64String(input.Base64Data).Length;
+                var stagedVars = new
+                {
+                    input = new[]
+                    {
+                        new
+                        {
+                            filename = input.FileName ?? "image.jpg",
+                            mimeType = input.ContentType ?? "image/jpeg",
+                            resource = "PRODUCT_IMAGE",
+                            fileSize = fileSize.ToString(),
+                            httpMethod = "POST"
+                        }
+                    }
+                };
+
+                var stagedRaw = await SendGraphQueryRawAsync(stagedUploadGql, stagedVars);
+                if (string.IsNullOrWhiteSpace(stagedRaw))
+                    throw new InvalidOperationException("Empty response from staged upload creation.");
+
+                using var stagedDoc = JsonDocument.Parse(stagedRaw);
+                var stagedRoot = stagedDoc.RootElement;
+                JsonElement stagedDataEl;
+                if (stagedRoot.ValueKind == JsonValueKind.Object && stagedRoot.TryGetProperty("data", out var sd)) stagedDataEl = sd;
+                else stagedDataEl = stagedRoot;
+
+                var stagedCreate = stagedDataEl.GetProperty("stagedUploadsCreate");
+
+                // Check for errors
+                var stagedErrors = stagedCreate.TryGetProperty("userErrors", out var sue) && sue.ValueKind == JsonValueKind.Array
+                    ? sue.EnumerateArray().ToList()
+                    : new List<JsonElement>();
+
+                if (stagedErrors.Count > 0)
+                {
+                    var msgs = stagedErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                    throw new InvalidOperationException("Staged upload creation failed: " + string.Join("; ", msgs));
+                }
+
+                if (!stagedCreate.TryGetProperty("stagedTargets", out var targets) ||
+                    targets.ValueKind != JsonValueKind.Array ||
+                    targets.GetArrayLength() == 0)
+                {
+                    throw new InvalidOperationException("No staged upload target returned.");
+                }
+
+                var target = targets.EnumerateArray().First();
+                var uploadUrl = target.GetProperty("url").GetString() ?? "";
+                var resourceUrl = target.GetProperty("resourceUrl").GetString() ?? "";
+
+                // Get parameters for the upload
+                var parameters = new Dictionary<string, string>();
+                if (target.TryGetProperty("parameters", out var paramsEl) && paramsEl.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var param in paramsEl.EnumerateArray())
+                    {
+                        var name = param.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
+                        var value = param.TryGetProperty("value", out var v) ? v.GetString() ?? "" : "";
+                        if (!string.IsNullOrEmpty(name))
+                            parameters[name] = value;
+                    }
+                }
+
+                // Upload the file to the staged URL
+                using var httpClient = new System.Net.Http.HttpClient();
+                using var formContent = new System.Net.Http.MultipartFormDataContent();
+
+                // Add all parameters first
+                foreach (var param in parameters)
+                {
+                    formContent.Add(new System.Net.Http.StringContent(param.Value), param.Key);
+                }
+
+                // Add the file
+                var fileBytes = Convert.FromBase64String(input.Base64Data);
+                var fileContent = new System.Net.Http.ByteArrayContent(fileBytes);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(input.ContentType ?? "image/jpeg");
+                formContent.Add(fileContent, "file", input.FileName ?? "image.jpg");
+
+                var uploadResponse = await httpClient.PostAsync(uploadUrl, formContent);
+                if (!uploadResponse.IsSuccessStatusCode)
+                {
+                    var errorContent = await uploadResponse.Content.ReadAsStringAsync();
+                    throw new InvalidOperationException($"File upload failed: {uploadResponse.StatusCode} - {errorContent}");
+                }
+
+                // Append the uploaded image to the product using the resource URL
+                var fileCreateGql = @"mutation ProductAppendImages($input: ProductAppendImagesInput!) {
+                  productAppendImages(input: $input) {
+                    newImages {
+                      id
+                      url
+                      altText
+                      width
+                      height
+                    }
+                    userErrors {
+                      field
+                      message
+                    }
+                  }
+                }";
+
+                var appendVars = new
+                {
+                    input = new
+                    {
+                        id = productGid,
+                        images = new[]
+                        {
+                            new
+                            {
+                                src = resourceUrl,
+                                altText = input.Alt
+                            }
+                        }
+                    }
+                };
+
+                var appendRaw = await SendGraphQueryRawAsync(fileCreateGql, appendVars);
+                if (string.IsNullOrWhiteSpace(appendRaw))
+                    throw new InvalidOperationException("Empty response from image append.");
+
+                using var appendDoc = JsonDocument.Parse(appendRaw);
+                var appendRoot = appendDoc.RootElement;
+                JsonElement appendDataEl;
+                if (appendRoot.ValueKind == JsonValueKind.Object && appendRoot.TryGetProperty("data", out var ad)) appendDataEl = ad;
+                else appendDataEl = appendRoot;
+
+                var appendEl = appendDataEl.GetProperty("productAppendImages");
+
+                var appendErrors = appendEl.TryGetProperty("userErrors", out var aue) && aue.ValueKind == JsonValueKind.Array
+                    ? aue.EnumerateArray().ToList()
+                    : new List<JsonElement>();
+
+                if (appendErrors.Count > 0)
+                {
+                    var msgs = appendErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                    throw new InvalidOperationException("Image append failed: " + string.Join("; ", msgs));
+                }
+
+                if (appendEl.TryGetProperty("newImages", out var newImgs) &&
+                    newImgs.ValueKind == JsonValueKind.Array &&
+                    newImgs.GetArrayLength() > 0)
+                {
+                    var img = newImgs.EnumerateArray().First();
+                    var imgId = img.TryGetProperty("id", out var imgIdProp) ? imgIdProp.GetString() ?? string.Empty : string.Empty;
+                    var imgUrl = img.TryGetProperty("url", out var imgUrlProp) ? imgUrlProp.GetString() ?? string.Empty : string.Empty;
+                    var imgAlt = img.TryGetProperty("altText", out var imgAltProp) && imgAltProp.ValueKind != JsonValueKind.Null ? imgAltProp.GetString() : null;
+                    int? imgWidth = img.TryGetProperty("width", out var imgWidthProp) && imgWidthProp.ValueKind == JsonValueKind.Number ? imgWidthProp.GetInt32() : null;
+                    int? imgHeight = img.TryGetProperty("height", out var imgHeightProp) && imgHeightProp.ValueKind == JsonValueKind.Number ? imgHeightProp.GetInt32() : null;
+                    return new ProductImageDto(imgId, imgUrl, imgAlt, null, imgWidth, imgHeight);
+                }
+
+                throw new InvalidOperationException("No image was created.");
+            }
+
+            throw new ArgumentException("Either ImageUrl or Base64Data must be provided.");
+        }
+
+        public async Task DeleteProductImageAsync(long productId, string imageId)
+        {
+            var productGid = $"gid://shopify/Product/{productId}";
+
+            var gql = @"mutation productDeleteImages($id: ID!, $imageIds: [ID!]!) {
+              productDeleteImages(id: $id, imageIds: $imageIds) {
+                deletedImageIds
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var variables = new
+            {
+                id = productGid,
+                imageIds = new[] { imageId }
+            };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var deleteEl = dataEl.GetProperty("productDeleteImages");
+
+            // Check for user errors
+            var userErrors = deleteEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Image delete failed: " + string.Join("; ", msgs));
+            }
+
+            _logger.LogInformation("Image {ImageId} deleted from product {ProductId}", imageId, productId);
+        }
+
+        public async Task<ProductImageDto> UpdateProductImageAltAsync(long productId, string imageId, string altText)
+        {
+            var productGid = $"gid://shopify/Product/{productId}";
+
+            var gql = @"mutation productImageUpdate($productId: ID!, $image: ImageInput!) {
+              productImageUpdate(productId: $productId, image: $image) {
+                image {
+                  id
+                  url
+                  altText
+                  width
+                  height
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var variables = new
+            {
+                productId = productGid,
+                image = new
+                {
+                    id = imageId,
+                    altText = altText
+                }
+            };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var updateEl = dataEl.GetProperty("productImageUpdate");
+
+            // Check for user errors
+            var userErrors = updateEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Image update failed: " + string.Join("; ", msgs));
+            }
+
+            var img = updateEl.GetProperty("image");
+            var imgId = img.TryGetProperty("id", out var imgIdProp) ? imgIdProp.GetString() ?? string.Empty : string.Empty;
+            var imgUrl = img.TryGetProperty("url", out var imgUrlProp) ? imgUrlProp.GetString() ?? string.Empty : string.Empty;
+            var imgAlt = img.TryGetProperty("altText", out var imgAltProp) && imgAltProp.ValueKind != JsonValueKind.Null ? imgAltProp.GetString() : null;
+            int? imgWidth = img.TryGetProperty("width", out var imgWidthProp) && imgWidthProp.ValueKind == JsonValueKind.Number ? imgWidthProp.GetInt32() : null;
+            int? imgHeight = img.TryGetProperty("height", out var imgHeightProp) && imgHeightProp.ValueKind == JsonValueKind.Number ? imgHeightProp.GetInt32() : null;
+
+            return new ProductImageDto(imgId, imgUrl, imgAlt, null, imgWidth, imgHeight);
         }
     }
 }

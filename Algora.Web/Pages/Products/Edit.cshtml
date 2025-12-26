@@ -42,7 +42,7 @@
     }
 
     <!-- Form -->
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Product.Id" />
 
         <div class="flex flex-wrap -mx-3">
@@ -100,6 +100,82 @@
                                        class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
                                        placeholder="e.g. summer, sale, new-arrival" />
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Images Card -->
+                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                        <h6 class="mb-0 dark:text-white"><i class="fas fa-images me-2 text-fuchsia-500"></i>Product Images</h6>
+                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Manage product images</p>
+                    </div>
+                    <div class="flex-auto p-6">
+                        <!-- Existing Images Gallery -->
+                        @if (Model.ExistingImages.Any())
+                        {
+                            <div class="mb-6">
+                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    <i class="fas fa-photo-film me-1"></i> Current Images (@Model.ExistingImages.Count)
+                                </label>
+                                <div id="existing-images-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                                    @for (int i = 0; i < Model.ExistingImages.Count; i++)
+                                    {
+                                        var img = Model.ExistingImages[i];
+                                        <div class="existing-image-item relative group" data-image-id="@img.Id">
+                                            <img src="@img.Src" alt="@(img.Alt ?? "Product image")"
+                                                 class="w-full h-28 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                                                <button type="button" class="delete-image-btn w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-600" title="Delete image">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                            @if (i == 0)
+                                            {
+                                                <span class="absolute top-1 left-1 bg-fuchsia-500 text-white text-xs px-2 py-0.5 rounded-full">Main</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <div id="deleted-images-container"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg text-center">
+                                <i class="fas fa-image text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">No images yet. Add images below.</p>
+                            </div>
+                        }
+
+                        <!-- File Upload Section -->
+                        <div class="mb-6">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                <i class="fas fa-upload me-1"></i> Upload New Images
+                            </label>
+                            <div id="file-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer hover:border-fuchsia-400 transition-colors">
+                                <input type="file" name="NewImageFiles" id="file-input" multiple accept="image/*" class="hidden" />
+                                <div class="text-gray-400 dark:text-gray-500">
+                                    <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
+                                    <p class="text-sm">Drag & drop images here or <span class="text-fuchsia-500 font-semibold">click to browse</span></p>
+                                    <p class="text-xs text-slate-400 mt-1">Supports JPG, PNG, GIF, WebP (max 10MB each)</p>
+                                </div>
+                            </div>
+                            <!-- File Preview -->
+                            <div id="file-preview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4"></div>
+                        </div>
+
+                        <!-- URL Input Section -->
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    <i class="fas fa-link me-1"></i> Or Add Image URLs
+                                </label>
+                                <button type="button" id="add-image-url-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-plus me-1"></i> Add URL
+                                </button>
+                            </div>
+                            <div id="url-inputs-container"></div>
                         </div>
                     </div>
                 </div>
@@ -284,6 +360,177 @@
             const container = document.getElementById('variants-container');
             const addBtn = document.getElementById('add-variant-btn');
             const productId = @Model.Product.Id;
+
+            // ===== Image Management Functions =====
+            const fileDropZone = document.getElementById('file-drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const filePreview = document.getElementById('file-preview');
+            const addImageUrlBtn = document.getElementById('add-image-url-btn');
+            const urlInputsContainer = document.getElementById('url-inputs-container');
+            const deletedImagesContainer = document.getElementById('deleted-images-container');
+            const existingImagesGallery = document.getElementById('existing-images-gallery');
+
+            let selectedFiles = new DataTransfer();
+            let urlInputIndex = 0;
+
+            // File upload handling
+            if (fileDropZone) {
+                fileDropZone.addEventListener('click', () => fileInput.click());
+
+                fileDropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileDropZone.classList.add('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                });
+
+                fileDropZone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                });
+
+                fileDropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                    handleFiles(e.dataTransfer.files);
+                });
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    handleFiles(e.target.files);
+                });
+            }
+
+            function handleFiles(files) {
+                for (const file of files) {
+                    if (!file.type.startsWith('image/')) {
+                        alert(`${file.name} is not an image file.`);
+                        continue;
+                    }
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert(`${file.name} is too large (max 10MB).`);
+                        continue;
+                    }
+                    selectedFiles.items.add(file);
+                }
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function updateFileInput() {
+                if (fileInput) fileInput.files = selectedFiles.files;
+            }
+
+            function renderPreviews() {
+                if (!filePreview) return;
+                filePreview.innerHTML = '';
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    const file = selectedFiles.files[i];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.createElement('div');
+                        preview.className = 'relative group';
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}"
+                                 class="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                            <button type="button" data-index="${i}"
+                                    class="remove-file-btn absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <p class="text-xs text-slate-500 truncate mt-1">${file.name}</p>
+                        `;
+                        filePreview.appendChild(preview);
+                        preview.querySelector('.remove-file-btn').addEventListener('click', () => removeFile(i));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function removeFile(index) {
+                const dt = new DataTransfer();
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    if (i !== index) dt.items.add(selectedFiles.files[i]);
+                }
+                selectedFiles = dt;
+                updateFileInput();
+                renderPreviews();
+            }
+
+            // Add URL input handling
+            if (addImageUrlBtn) {
+                addImageUrlBtn.addEventListener('click', () => {
+                    const urlRow = document.createElement('div');
+                    urlRow.className = 'url-row flex items-center gap-3 mb-3';
+                    urlRow.innerHTML = `
+                        <div class="flex-1">
+                            <input type="url" name="NewImageUrls[${urlInputIndex}]"
+                                   class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                   placeholder="https://example.com/image.jpg" />
+                        </div>
+                        <button type="button" class="remove-url-btn text-red-500 hover:text-red-700 p-2" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    urlInputsContainer.appendChild(urlRow);
+                    urlInputIndex++;
+
+                    urlRow.querySelector('.remove-url-btn').addEventListener('click', () => {
+                        urlRow.remove();
+                        reindexUrlInputs();
+                    });
+                });
+            }
+
+            function reindexUrlInputs() {
+                const urlRows = urlInputsContainer.querySelectorAll('.url-row');
+                urlRows.forEach((row, idx) => {
+                    row.querySelector('input').name = `NewImageUrls[${idx}]`;
+                });
+                urlInputIndex = urlRows.length;
+            }
+
+            // Delete existing image handling
+            if (existingImagesGallery) {
+                existingImagesGallery.querySelectorAll('.delete-image-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const imageItem = this.closest('.existing-image-item');
+                        const imageId = imageItem.dataset.imageId;
+
+                        // Add hidden input for deleted image
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = `DeleteImageIds[${deletedImagesContainer.children.length}]`;
+                        hiddenInput.value = imageId;
+                        deletedImagesContainer.appendChild(hiddenInput);
+
+                        // Visually mark as deleted
+                        imageItem.classList.add('opacity-30');
+                        imageItem.querySelector('.delete-image-btn').disabled = true;
+                        imageItem.querySelector('.delete-image-btn').classList.add('cursor-not-allowed');
+
+                        // Add undo button
+                        const undoBtn = document.createElement('button');
+                        undoBtn.type = 'button';
+                        undoBtn.className = 'undo-delete-btn absolute bottom-1 left-1 right-1 bg-orange-500 text-white text-xs py-1 rounded';
+                        undoBtn.innerHTML = '<i class="fas fa-undo me-1"></i>Undo';
+                        undoBtn.onclick = () => {
+                            hiddenInput.remove();
+                            imageItem.classList.remove('opacity-30');
+                            imageItem.querySelector('.delete-image-btn').disabled = false;
+                            imageItem.querySelector('.delete-image-btn').classList.remove('cursor-not-allowed');
+                            undoBtn.remove();
+                            reindexDeleteInputs();
+                        };
+                        imageItem.appendChild(undoBtn);
+                    });
+                });
+            }
+
+            function reindexDeleteInputs() {
+                const inputs = deletedImagesContainer.querySelectorAll('input');
+                inputs.forEach((input, idx) => {
+                    input.name = `DeleteImageIds[${idx}]`;
+                });
+            }
 
             // ===== AI Generation Functions =====
             function showAiMessage(message, isSuccess) {

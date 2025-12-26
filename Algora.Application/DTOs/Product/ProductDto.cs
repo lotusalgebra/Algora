@@ -27,6 +27,18 @@ namespace Algora.Application.DTOs
     /// <param name="Variants">
     /// Read-only list of variants for the product. Each entry describes a product variant (price, sku, options).
     /// </param>
+    /// <param name="Images">
+    /// Read-only list of images for the product.
+    /// </param>
+    /// <param name="Description">
+    /// Product description (HTML).
+    /// </param>
+    /// <param name="Vendor">
+    /// Product vendor.
+    /// </param>
+    /// <param name="ProductType">
+    /// Product type category.
+    /// </param>
     public record ProductDto
     (
         string Id,
@@ -34,6 +46,10 @@ namespace Algora.Application.DTOs
         string Title,
         string? Handle,
         IReadOnlyList<string> Tags,
-        IReadOnlyList<VariantDto> Variants
+        IReadOnlyList<VariantDto> Variants,
+        IReadOnlyList<ProductImageDto>? Images = null,
+        string? Description = null,
+        string? Vendor = null,
+        string? ProductType = null
     );
 }

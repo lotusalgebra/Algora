@@ -92,6 +92,37 @@ namespace Algora.Application.Interfaces
         /// <param name="productId">The numeric Shopify product ID to delete.</param>
         /// <returns>A task that completes when the product is deleted.</returns>
         Task DeleteProductAsync(long productId);
+
+        /// <summary>
+        /// Gets images for a product.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID.</param>
+        /// <returns>A task that resolves to a list of product images.</returns>
+        Task<IReadOnlyList<ProductImageDto>> GetProductImagesAsync(long productId);
+
+        /// <summary>
+        /// Uploads an image to a product.
+        /// </summary>
+        /// <param name="input">The image upload input containing product ID and image data.</param>
+        /// <returns>A task that resolves to the uploaded image DTO.</returns>
+        Task<ProductImageDto> UploadProductImageAsync(UploadProductImageInput input);
+
+        /// <summary>
+        /// Deletes an image from a product.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID.</param>
+        /// <param name="imageId">The image GID to delete.</param>
+        /// <returns>A task that completes when the image is deleted.</returns>
+        Task DeleteProductImageAsync(long productId, string imageId);
+
+        /// <summary>
+        /// Updates alt text for a product image.
+        /// </summary>
+        /// <param name="productId">The numeric Shopify product ID.</param>
+        /// <param name="imageId">The image GID to update.</param>
+        /// <param name="altText">The new alt text.</param>
+        /// <returns>A task that resolves to the updated image DTO.</returns>
+        Task<ProductImageDto> UpdateProductImageAltAsync(long productId, string imageId, string altText);
     }
 
     /// <summary>
@@ -137,6 +168,14 @@ namespace Algora.Application.Interfaces
         public string? ProductType { get; set; }
         public List<string> Tags { get; set; } = new();
         public List<UpdateVariantInput> Variants { get; set; } = new();
+        /// <summary>
+        /// New image URLs to add to the product.
+        /// </summary>
+        public List<string> NewImageUrls { get; set; } = new();
+        /// <summary>
+        /// Image IDs (GIDs) to delete from the product.
+        /// </summary>
+        public List<string> DeleteImageIds { get; set; } = new();
     }
 
     /// <summary>

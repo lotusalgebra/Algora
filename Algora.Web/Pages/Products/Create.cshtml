@@ -42,7 +42,7 @@
     }
 
     <!-- Form -->
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="flex flex-wrap -mx-3">
             <!-- Left Column - Product Info -->
             <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
@@ -105,28 +105,50 @@
                 <!-- Product Images Card -->
                 <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
                     <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <div class="flex items-center justify-between">
-                            <h6 class="mb-0 dark:text-white"><i class="fas fa-images me-2 text-fuchsia-500"></i>Product Images</h6>
-                            <button type="button" id="add-image-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus me-1"></i> Add Image URL
-                            </button>
-                        </div>
-                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Add image URLs for your product</p>
+                        <h6 class="mb-0 dark:text-white"><i class="fas fa-images me-2 text-fuchsia-500"></i>Product Images</h6>
+                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Upload images or add URLs for your product</p>
                     </div>
-                    <div class="flex-auto p-6" id="images-container">
-                        <div class="image-row flex items-center gap-3 mb-3" data-index="0">
-                            <div class="flex-1">
-                                <input type="url" name="ImageUrls[0]"
-                                       class="image-url focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="https://example.com/image.jpg" />
+                    <div class="flex-auto p-6">
+                        <!-- File Upload Section -->
+                        <div class="mb-6">
+                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                <i class="fas fa-upload me-1"></i> Upload Images
+                            </label>
+                            <div id="file-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer hover:border-fuchsia-400 transition-colors">
+                                <input type="file" name="ImageFiles" id="file-input" multiple accept="image/*" class="hidden" />
+                                <div class="text-gray-400 dark:text-gray-500">
+                                    <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
+                                    <p class="text-sm">Drag & drop images here or <span class="text-fuchsia-500 font-semibold">click to browse</span></p>
+                                    <p class="text-xs text-slate-400 mt-1">Supports JPG, PNG, GIF, WebP (max 10MB each)</p>
+                                </div>
                             </div>
-                            <button type="button" class="remove-image-btn hidden text-red-500 hover:text-red-700 p-2" title="Remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <!-- File Preview -->
+                            <div id="file-preview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4"></div>
                         </div>
-                        <p class="text-xs text-slate-400 dark:text-white/50 mt-2">
-                            <i class="fas fa-info-circle me-1"></i> Enter direct URLs to product images. Images will be uploaded to Shopify.
-                        </p>
+
+                        <!-- URL Input Section -->
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                                    <i class="fas fa-link me-1"></i> Or Add Image URLs
+                                </label>
+                                <button type="button" id="add-image-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg hover:scale-102 active:opacity-85">
+                                    <i class="fas fa-plus me-1"></i> Add URL
+                                </button>
+                            </div>
+                            <div id="images-container">
+                                <div class="image-row flex items-center gap-3 mb-3" data-index="0">
+                                    <div class="flex-1">
+                                        <input type="url" name="ImageUrls[0]"
+                                               class="image-url focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                               placeholder="https://example.com/image.jpg" />
+                                    </div>
+                                    <button type="button" class="remove-image-btn hidden text-red-500 hover:text-red-700 p-2" title="Remove">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -209,8 +231,93 @@
             const toggleIcon = document.getElementById('toggle-icon');
             const toggleText = document.getElementById('toggle-text');
             const addVariantBtn = document.getElementById('add-variant-btn');
+            const fileDropZone = document.getElementById('file-drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const filePreview = document.getElementById('file-preview');
 
             let variantsVisible = false;
+            let selectedFiles = new DataTransfer();
+
+            // ===== File Upload Functions =====
+            fileDropZone.addEventListener('click', () => fileInput.click());
+
+            fileDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.add('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+            });
+
+            fileDropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+            });
+
+            fileDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            function handleFiles(files) {
+                for (const file of files) {
+                    if (!file.type.startsWith('image/')) {
+                        alert(`${file.name} is not an image file.`);
+                        continue;
+                    }
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert(`${file.name} is too large (max 10MB).`);
+                        continue;
+                    }
+                    selectedFiles.items.add(file);
+                }
+                updateFileInput();
+                renderPreviews();
+            }
+
+            function updateFileInput() {
+                fileInput.files = selectedFiles.files;
+            }
+
+            function renderPreviews() {
+                filePreview.innerHTML = '';
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    const file = selectedFiles.files[i];
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.createElement('div');
+                        preview.className = 'relative group';
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}"
+                                 class="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                            <button type="button" data-index="${i}"
+                                    class="remove-file-btn absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <p class="text-xs text-slate-500 truncate mt-1">${file.name}</p>
+                        `;
+                        filePreview.appendChild(preview);
+
+                        // Add remove handler
+                        preview.querySelector('.remove-file-btn').addEventListener('click', () => {
+                            removeFile(i);
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function removeFile(index) {
+                const dt = new DataTransfer();
+                for (let i = 0; i < selectedFiles.files.length; i++) {
+                    if (i !== index) dt.items.add(selectedFiles.files[i]);
+                }
+                selectedFiles = dt;
+                updateFileInput();
+                renderPreviews();
+            }
 
             // Toggle variants section
             toggleVariantsBtn.addEventListener('click', function() {

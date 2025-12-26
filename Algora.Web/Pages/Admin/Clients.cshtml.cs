@@ -109,6 +109,69 @@ namespace Algora.Web.Pages.Admin
             }
         }
 
+        public async Task<IActionResult> OnGetExportCsvAsync()
+        {
+            try
+            {
+                var clients = await _clientService.GetAllClientsAsync();
+                var csv = GenerateCsv(clients);
+
+                var fileName = $"clients-export-{DateTime.UtcNow:yyyy-MM-dd-HHmmss}.csv";
+                var bytes = System.Text.Encoding.UTF8.GetBytes(csv);
+
+                _logger.LogInformation("Exported {Count} clients to CSV", clients.Count());
+
+                return File(bytes, "text/csv", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to export clients to CSV");
+                ErrorMessage = "Failed to export clients. Please try again.";
+                await LoadPageDataAsync();
+                return Page();
+            }
+        }
+
+        private static string GenerateCsv(IEnumerable<ClientDto> clients)
+        {
+            var sb = new System.Text.StringBuilder();
+
+            // Header row
+            sb.AppendLine("Domain,Shop Name,Email,Country,Currency,Plan,License Status,Is Active,Installed At,Last Synced At");
+
+            // Data rows
+            foreach (var client in clients)
+            {
+                sb.AppendLine(string.Join(",",
+                    EscapeCsvField(client.Domain),
+                    EscapeCsvField(client.ShopName ?? ""),
+                    EscapeCsvField(client.Email ?? ""),
+                    EscapeCsvField(client.Country ?? ""),
+                    EscapeCsvField(client.Currency ?? ""),
+                    EscapeCsvField(client.PlanName ?? "Free"),
+                    EscapeCsvField(client.LicenseStatus ?? ""),
+                    client.IsActive ? "Yes" : "No",
+                    client.InstalledAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                    client.LastSyncedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? ""
+                ));
+            }
+
+            return sb.ToString();
+        }
+
+        private static string EscapeCsvField(string field)
+        {
+            if (string.IsNullOrEmpty(field)) return "";
+
+            // If field contains comma, quote, or newline, wrap in quotes and escape existing quotes
+            if (field.Contains(',') || field.Contains('"') || field.Contains('\n') || field.Contains('\r'))
+            {
+                return $"\"{field.Replace("\"", "\"\"")}\"";
+            }
+
+            return field;
+        }
+
         private async Task LoadPageDataAsync()
         {
             var filter = new ClientFilterDto { Page = 1, PageSize = 25 };
