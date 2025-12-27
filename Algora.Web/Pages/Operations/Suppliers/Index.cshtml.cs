@@ -1,3 +1,4 @@
+using Algora.Application.DTOs.Common;
 using Algora.Application.DTOs.Operations;
 using Algora.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -23,24 +24,95 @@ public class IndexModel : PageModel
         _logger = logger;
     }
 
-    public List<SupplierDto> Suppliers { get; set; } = new();
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
 
-    public async Task OnGetAsync()
+    public void OnGet()
+    {
+        if (TempData["SuccessMessage"] != null)
+            SuccessMessage = TempData["SuccessMessage"]?.ToString();
+    }
+
+    public async Task<IActionResult> OnGetDataAsync(
+        int draw = 1,
+        int start = 0,
+        int length = 25,
+        string? search = null,
+        int sortColumn = 0,
+        string sortDirection = "asc")
     {
         try
         {
-            if (TempData["SuccessMessage"] != null)
-                SuccessMessage = TempData["SuccessMessage"]?.ToString();
-
             var suppliers = await _supplierService.GetSuppliersAsync(_shopContext.ShopDomain);
-            Suppliers = suppliers.ToList();
+            var allSuppliers = suppliers.ToList();
+            var totalRecords = allSuppliers.Count;
+
+            var filtered = allSuppliers.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchLower = search.ToLower();
+                filtered = filtered.Where(s =>
+                    (s.Name?.ToLower().Contains(searchLower) ?? false) ||
+                    (s.Code?.ToLower().Contains(searchLower) ?? false) ||
+                    (s.Email?.ToLower().Contains(searchLower) ?? false));
+            }
+
+            var filteredList = filtered.ToList();
+            var filteredCount = filteredList.Count;
+
+            filteredList = sortColumn switch
+            {
+                0 => sortDirection == "asc"
+                    ? filteredList.OrderBy(s => s.Name).ToList()
+                    : filteredList.OrderByDescending(s => s.Name).ToList(),
+                2 => sortDirection == "asc"
+                    ? filteredList.OrderBy(s => s.DefaultLeadTimeDays).ToList()
+                    : filteredList.OrderByDescending(s => s.DefaultLeadTimeDays).ToList(),
+                3 => sortDirection == "asc"
+                    ? filteredList.OrderBy(s => s.TotalOrders).ToList()
+                    : filteredList.OrderByDescending(s => s.TotalOrders).ToList(),
+                4 => sortDirection == "asc"
+                    ? filteredList.OrderBy(s => s.TotalSpent).ToList()
+                    : filteredList.OrderByDescending(s => s.TotalSpent).ToList(),
+                _ => filteredList.OrderBy(s => s.Name).ToList()
+            };
+
+            var pagedData = filteredList
+                .Skip(start)
+                .Take(length)
+                .Select(s => new
+                {
+                    id = s.Id,
+                    name = s.Name,
+                    code = s.Code,
+                    email = s.Email,
+                    phone = s.Phone,
+                    leadTimeDays = s.DefaultLeadTimeDays,
+                    totalOrders = s.TotalOrders,
+                    totalSpent = s.TotalSpent.ToString("N2"),
+                    isActive = s.IsActive
+                })
+                .ToList();
+
+            return new JsonResult(new DataTableResponse<object>
+            {
+                Draw = draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = filteredCount,
+                Data = pagedData
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading suppliers");
-            ErrorMessage = "Failed to load suppliers. Please try again.";
+            _logger.LogError(ex, "Failed to load suppliers data");
+            return new JsonResult(new DataTableResponse<object>
+            {
+                Draw = draw,
+                RecordsTotal = 0,
+                RecordsFiltered = 0,
+                Data = Enumerable.Empty<object>(),
+                Error = "Failed to load suppliers"
+            });
         }
     }
 

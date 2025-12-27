@@ -20,20 +20,10 @@
                             <h6 class="mb-0 dark:text-white">Purchase Orders</h6>
                             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
                                 <i class="fa fa-file-invoice text-fuchsia-500 me-1"></i>
-                                <span class="font-semibold">@Model.PurchaseOrders.Count</span> orders
+                                <span class="font-semibold" id="total-count">0</span> orders
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <select asp-for="StatusFilter" onchange="this.form.submit()" form="filterForm"
-                                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
-                                <option value="">All Status</option>
-                                <option value="draft">Draft</option>
-                                <option value="sent">Sent</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="shipped">Shipped</option>
-                                <option value="received">Received</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
                             <a href="/operations/purchase-orders/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
                                 <i class="fas fa-plus me-2"></i> New Order
                             </a>
@@ -43,7 +33,6 @@
                         </div>
                     </div>
                 </div>
-                <form id="filterForm" method="get"></form>
 
                 <!-- Messages -->
                 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
@@ -62,101 +51,92 @@
                     </div>
                 }
 
+                <!-- Search and Filters -->
+                <div class="px-6 pt-4">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <input type="text" id="search-input" placeholder="Search orders..."
+                                    class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <select id="status-filter"
+                                class="py-2 px-3 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <option value="">All Status</option>
+                                <option value="draft">Draft</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="received">Received</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Card Body -->
                 <div class="flex-auto p-6 px-0 pb-0">
-                    @if (Model.PurchaseOrders.Count == 0)
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-file-invoice fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">No purchase orders yet. Create your first order to start tracking inventory replenishment.</p>
-                            <a href="/operations/purchase-orders/create" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus me-2"></i> Create Order
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-list">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Order #</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Supplier</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Total</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Expected</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Created</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var order in Model.PurchaseOrders)
-                                    {
-                                        var statusColor = order.Status switch
-                                        {
-                                            "draft" => "from-gray-400 to-gray-600",
-                                            "sent" => "from-blue-600 to-cyan-400",
-                                            "confirmed" => "from-purple-700 to-pink-500",
-                                            "shipped" => "from-orange-500 to-yellow-300",
-                                            "received" => "from-green-600 to-lime-400",
-                                            "cancelled" => "from-red-600 to-rose-400",
-                                            _ => "from-gray-400 to-gray-600"
-                                        };
+                    <!-- Loading Spinner -->
+                    <div id="loading-spinner" class="text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
+                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading purchase orders...</p>
+                    </div>
 
-                                        <tr>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <a href="/operations/purchase-orders/details/@order.Id" class="text-sm font-semibold leading-tight text-fuchsia-500 hover:text-fuchsia-700 dark:text-fuchsia-400">
-                                                    @order.OrderNumber
-                                                </a>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <h6 class="mb-0 text-sm leading-normal dark:text-white">@order.SupplierName</h6>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight dark:text-white">@order.Lines.Count</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight dark:text-white">@order.Currency @order.Total.ToString("N2")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@order.Status</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">
-                                                    @(order.ExpectedDeliveryDate?.ToString("MMM dd, yyyy") ?? "-")
-                                                </span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">
-                                                    @order.CreatedAt.ToString("MMM dd, yyyy")
-                                                </span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <a href="/operations/purchase-orders/details/@order.Id" class="text-xs font-semibold leading-tight text-blue-500 hover:text-blue-700 me-3" title="View Details">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                @if (order.Status == "draft")
-                                                {
-                                                    <a href="/operations/purchase-orders/edit/@order.Id" class="text-xs font-semibold leading-tight text-slate-500 hover:text-slate-700 me-3" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                }
-                                                @if (order.Status != "received" && order.Status != "cancelled")
-                                                {
-                                                    <form method="post" asp-page-handler="Cancel" asp-route-id="@order.Id" class="inline" onsubmit="return confirm('Cancel this purchase order?');">
-                                                        <button type="submit" class="text-xs font-semibold leading-tight text-red-500 hover:text-red-700" title="Cancel">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </form>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                    <!-- Empty State -->
+                    <div id="empty-state" class="text-center py-12 hidden">
+                        <i class="fas fa-file-invoice fa-4x text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No purchase orders yet. Create your first order to start tracking inventory replenishment.</p>
+                        <a href="/operations/purchase-orders/create" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                            <i class="fas fa-plus me-2"></i> Create Order
+                        </a>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto" id="table-container" style="display: none;">
+                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-list">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">Order # <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="1">Supplier <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">Total <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Expected</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="4">Created <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> orders
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-left me-1"></i> Previous
+                                </button>
+                                <div id="page-numbers" class="flex gap-1"></div>
+                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    Next <i class="fas fa-chevron-right ms-1"></i>
+                                </button>
+                            </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
@@ -164,21 +144,194 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
     <script>
-        if (document.getElementById('orders-list')) {
-            new simpleDatatables.DataTable("#orders-list", {
-                searchable: true,
-                fixedHeight: false,
-                perPage: 25,
-                perPageSelect: [10, 25, 50, 100],
-                labels: {
-                    placeholder: "Search orders...",
-                    perPage: "per page",
-                    noRows: "No orders found",
-                    info: "Showing {start} to {end} of {rows} orders"
+        (function() {
+            let currentPage = 1;
+            let perPage = 25;
+            let totalRecords = 0;
+            let totalFiltered = 0;
+            let sortColumn = 4;
+            let sortDirection = 'desc';
+            let searchTimeout = null;
+            let drawCounter = 0;
+
+            const searchInput = document.getElementById('search-input');
+            const perPageSelect = document.getElementById('per-page');
+            const statusFilter = document.getElementById('status-filter');
+            const tableBody = document.getElementById('table-body');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const emptyState = document.getElementById('empty-state');
+            const tableContainer = document.getElementById('table-container');
+            const paginationContainer = document.getElementById('pagination-container');
+
+            function loadData() {
+                loadingSpinner.style.display = 'block';
+                emptyState.classList.add('hidden');
+                tableContainer.style.display = 'none';
+                paginationContainer.style.display = 'none';
+
+                drawCounter++;
+                const params = new URLSearchParams({
+                    handler: 'Data',
+                    draw: drawCounter,
+                    start: (currentPage - 1) * perPage,
+                    length: perPage,
+                    search: searchInput.value,
+                    statusFilter: statusFilter.value,
+                    sortColumn: sortColumn,
+                    sortDirection: sortDirection
+                });
+
+                fetch(`/operations/purchase-orders?${params}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.draw !== drawCounter) return;
+
+                        totalRecords = data.recordsTotal;
+                        totalFiltered = data.recordsFiltered;
+                        document.getElementById('total-count').textContent = totalRecords;
+
+                        loadingSpinner.style.display = 'none';
+
+                        if (data.data.length === 0) {
+                            emptyState.classList.remove('hidden');
+                            return;
+                        }
+
+                        tableContainer.style.display = 'block';
+                        paginationContainer.style.display = 'block';
+                        renderTable(data.data);
+                        updatePagination();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        loadingSpinner.style.display = 'none';
+                        emptyState.classList.remove('hidden');
+                    });
+            }
+
+            function renderTable(data) {
+                tableBody.innerHTML = data.map(o => `
+                    <tr>
+                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <a href="/operations/purchase-orders/details/${o.id}" class="text-sm font-semibold leading-tight text-fuchsia-500 hover:text-fuchsia-700 dark:text-fuchsia-400">
+                                ${escapeHtml(o.orderNumber)}
+                            </a>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(o.supplierName)}</h6>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight dark:text-white">${o.lineCount}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight dark:text-white">$${o.totalAmount}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="bg-gradient-to-tl ${o.statusClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${o.status}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">${o.expectedDelivery}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">${o.createdAt}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <a href="/operations/purchase-orders/details/${o.id}" class="text-xs font-semibold leading-tight text-blue-500 hover:text-blue-700 me-3" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            ${o.status === 'draft' ? `
+                                <a href="/operations/purchase-orders/edit/${o.id}" class="text-xs font-semibold leading-tight text-slate-500 hover:text-slate-700 me-3" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>` : ''}
+                            ${o.status !== 'received' && o.status !== 'cancelled' ? `
+                                <form method="post" action="/operations/purchase-orders?handler=Cancel&id=${o.id}" class="inline" onsubmit="return confirm('Cancel this purchase order?');">
+                                    <button type="submit" class="text-xs font-semibold leading-tight text-red-500 hover:text-red-700" title="Cancel">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            function updatePagination() {
+                const totalPages = Math.ceil(totalFiltered / perPage);
+                const start = Math.min((currentPage - 1) * perPage + 1, totalFiltered);
+                const end = Math.min(currentPage * perPage, totalFiltered);
+
+                document.getElementById('showing-start').textContent = totalFiltered > 0 ? start : 0;
+                document.getElementById('showing-end').textContent = end;
+                document.getElementById('total-filtered').textContent = totalFiltered;
+
+                document.getElementById('prev-btn').disabled = currentPage === 1;
+                document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+                const pageNumbers = document.getElementById('page-numbers');
+                pageNumbers.innerHTML = '';
+
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, startPage + 4);
+                if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = i === currentPage
+                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
+                        : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
+                    btn.onclick = () => { currentPage = i; loadData(); };
+                    pageNumbers.appendChild(btn);
                 }
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => { currentPage = 1; loadData(); }, 300);
             });
-        }
+
+            statusFilter.addEventListener('change', function() {
+                currentPage = 1;
+                loadData();
+            });
+
+            perPageSelect.addEventListener('change', function() {
+                perPage = parseInt(this.value);
+                currentPage = 1;
+                loadData();
+            });
+
+            document.getElementById('prev-btn').addEventListener('click', function() {
+                if (currentPage > 1) { currentPage--; loadData(); }
+            });
+
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (currentPage < Math.ceil(totalFiltered / perPage)) { currentPage++; loadData(); }
+            });
+
+            document.querySelectorAll('[data-sort]').forEach(header => {
+                header.addEventListener('click', function() {
+                    const col = parseInt(this.dataset.sort);
+                    if (sortColumn === col) {
+                        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortColumn = col;
+                        sortDirection = 'asc';
+                    }
+                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xxs');
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+                    loadData();
+                });
+            });
+
+            loadData();
+        })();
     </script>
 }

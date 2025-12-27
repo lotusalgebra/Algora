@@ -136,90 +136,75 @@
                     </div>
                 }
 
+                <!-- Search Bar -->
+                <div class="px-6 pt-4">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="relative">
+                            <input type="text" id="search-input" placeholder="Search products..."
+                                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex-auto p-6 px-0 pb-0">
-                    @if (Model.Affinities.Count == 0)
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-link fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">No product affinities calculated yet. Click "Recalculate" to analyze your order history.</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="affinities-list">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Source Product</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Related Product</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Support</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Confidence</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Lift</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Co-occurrences</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Strength</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var affinity in Model.Affinities)
-                                    {
-                                        var strengthColor = affinity.Lift switch
-                                        {
-                                            >= 2.0m => "from-green-600 to-lime-400",
-                                            >= 1.5m => "from-blue-600 to-cyan-400",
-                                            >= 1.0m => "from-yellow-500 to-amber-300",
-                                            _ => "from-gray-400 to-gray-600"
-                                        };
+                    <!-- Loading Spinner -->
+                    <div id="loading-spinner" class="text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading affinities...</p>
+                    </div>
 
-                                        var strengthText = affinity.Lift switch
-                                        {
-                                            >= 2.0m => "Strong",
-                                            >= 1.5m => "Moderate",
-                                            >= 1.0m => "Weak",
-                                            _ => "Negative"
-                                        };
+                    <!-- Empty State -->
+                    <div id="empty-state" class="text-center py-12 hidden">
+                        <i class="fas fa-link fa-4x text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No product affinities calculated yet. Click "Recalculate" to analyze your order history.</p>
+                    </div>
 
-                                        <tr>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex px-2 py-1">
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@affinity.SourceProductTitle</h6>
-                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: @affinity.SourceProductId</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex px-2 py-1">
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@affinity.RelatedProductTitle</h6>
-                                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: @affinity.RelatedProductId</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight dark:text-white">@affinity.Support.ToString("P2")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight @(affinity.Confidence >= 0.3m ? "text-green-600" : affinity.Confidence >= 0.15m ? "text-yellow-600" : "text-gray-500")">
-                                                    @affinity.Confidence.ToString("P1")
-                                                </span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight @(affinity.Lift >= 1.5m ? "text-green-600" : affinity.Lift >= 1.0m ? "text-yellow-600" : "text-red-600")">
-                                                    @affinity.Lift.ToString("N2")x
-                                                </span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight dark:text-white">@affinity.CoOccurrences</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @strengthColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@strengthText</span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                    <!-- Table -->
+                    <div class="overflow-x-auto" id="table-container" style="display: none;">
+                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="affinities-list">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">Source Product <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Related Product</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Support</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">Confidence <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="4">Lift <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="5">Co-occurrences <i class="fas fa-sort ms-1 text-xxs"></i></th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Strength</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> affinities
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-left me-1"></i> Previous
+                                </button>
+                                <div id="page-numbers" class="flex gap-1"></div>
+                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    Next <i class="fas fa-chevron-right ms-1"></i>
+                                </button>
+                            </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
@@ -256,21 +241,183 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
     <script>
-        if (document.getElementById('affinities-list')) {
-            new simpleDatatables.DataTable("#affinities-list", {
-                searchable: true,
-                fixedHeight: false,
-                perPage: 25,
-                perPageSelect: [10, 25, 50, 100],
-                labels: {
-                    placeholder: "Search products...",
-                    perPage: "per page",
-                    noRows: "No affinities found",
-                    info: "Showing {start} to {end} of {rows} affinities"
+        (function() {
+            let currentPage = 1;
+            let perPage = 25;
+            let totalRecords = 0;
+            let totalFiltered = 0;
+            let sortColumn = 4;
+            let sortDirection = 'desc';
+            let searchTimeout = null;
+            let drawCounter = 0;
+
+            const searchInput = document.getElementById('search-input');
+            const perPageSelect = document.getElementById('per-page');
+            const tableBody = document.getElementById('table-body');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const emptyState = document.getElementById('empty-state');
+            const tableContainer = document.getElementById('table-container');
+            const paginationContainer = document.getElementById('pagination-container');
+
+            function loadData() {
+                loadingSpinner.style.display = 'block';
+                emptyState.classList.add('hidden');
+                tableContainer.style.display = 'none';
+                paginationContainer.style.display = 'none';
+
+                drawCounter++;
+                const params = new URLSearchParams({
+                    handler: 'Data',
+                    draw: drawCounter,
+                    start: (currentPage - 1) * perPage,
+                    length: perPage,
+                    search: searchInput.value,
+                    sortColumn: sortColumn,
+                    sortDirection: sortDirection
+                });
+
+                fetch(`/upsell/affinities?${params}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.draw !== drawCounter) return;
+
+                        totalRecords = data.recordsTotal;
+                        totalFiltered = data.recordsFiltered;
+
+                        loadingSpinner.style.display = 'none';
+
+                        if (data.data.length === 0) {
+                            emptyState.classList.remove('hidden');
+                            return;
+                        }
+
+                        tableContainer.style.display = 'block';
+                        paginationContainer.style.display = 'block';
+                        renderTable(data.data);
+                        updatePagination();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        loadingSpinner.style.display = 'none';
+                        emptyState.classList.remove('hidden');
+                    });
+            }
+
+            function renderTable(data) {
+                tableBody.innerHTML = data.map(a => {
+                    const confidenceClass = a.confidenceValue >= 0.3 ? 'text-green-600' : a.confidenceValue >= 0.15 ? 'text-yellow-600' : 'text-gray-500';
+                    const liftClass = a.liftValue >= 1.5 ? 'text-green-600' : a.liftValue >= 1.0 ? 'text-yellow-600' : 'text-red-600';
+
+                    return `
+                    <tr>
+                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <div class="flex px-2 py-1">
+                                <div class="flex flex-col justify-center">
+                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(a.sourceProductTitle)}</h6>
+                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: ${a.sourceProductId}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <div class="flex px-2 py-1">
+                                <div class="flex flex-col justify-center">
+                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(a.relatedProductTitle)}</h6>
+                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: ${a.relatedProductId}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight dark:text-white">${a.support}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight ${confidenceClass}">${a.confidence}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight ${liftClass}">${a.lift}x</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="text-sm font-semibold leading-tight dark:text-white">${a.coOccurrences}</span>
+                        </td>
+                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <span class="bg-gradient-to-tl ${a.strengthClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${a.strengthText}</span>
+                        </td>
+                    </tr>
+                `}).join('');
+            }
+
+            function updatePagination() {
+                const totalPages = Math.ceil(totalFiltered / perPage);
+                const start = Math.min((currentPage - 1) * perPage + 1, totalFiltered);
+                const end = Math.min(currentPage * perPage, totalFiltered);
+
+                document.getElementById('showing-start').textContent = totalFiltered > 0 ? start : 0;
+                document.getElementById('showing-end').textContent = end;
+                document.getElementById('total-filtered').textContent = totalFiltered;
+
+                document.getElementById('prev-btn').disabled = currentPage === 1;
+                document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+                const pageNumbers = document.getElementById('page-numbers');
+                pageNumbers.innerHTML = '';
+
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, startPage + 4);
+                if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = i === currentPage
+                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
+                        : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
+                    btn.onclick = () => { currentPage = i; loadData(); };
+                    pageNumbers.appendChild(btn);
                 }
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => { currentPage = 1; loadData(); }, 300);
             });
-        }
+
+            perPageSelect.addEventListener('change', function() {
+                perPage = parseInt(this.value);
+                currentPage = 1;
+                loadData();
+            });
+
+            document.getElementById('prev-btn').addEventListener('click', function() {
+                if (currentPage > 1) { currentPage--; loadData(); }
+            });
+
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (currentPage < Math.ceil(totalFiltered / perPage)) { currentPage++; loadData(); }
+            });
+
+            document.querySelectorAll('[data-sort]').forEach(header => {
+                header.addEventListener('click', function() {
+                    const col = parseInt(this.dataset.sort);
+                    if (sortColumn === col) {
+                        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortColumn = col;
+                        sortDirection = 'asc';
+                    }
+                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xxs');
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+                    loadData();
+                });
+            });
+
+            loadData();
+        })();
     </script>
 }

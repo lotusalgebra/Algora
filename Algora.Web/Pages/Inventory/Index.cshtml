@@ -108,7 +108,7 @@
                             <h6 class="mb-0 dark:text-white">Inventory Predictions</h6>
                             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
                                 <i class="fa fa-chart-line text-fuchsia-500 me-1"></i>
-                                <span class="font-semibold">@Model.Predictions.Count</span> products analyzed
+                                <span class="font-semibold" id="total-count">0</span> products analyzed
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
@@ -144,98 +144,97 @@
                     </div>
                 }
 
+                <!-- Search and Filter Bar -->
+                <div class="px-6 pt-4">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <input type="text" id="search-input" placeholder="Search products..."
+                                    class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <select id="status-filter" class="py-2 px-3 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <option value="">All Statuses</option>
+                                <option value="out_of_stock">Out of Stock</option>
+                                <option value="critical">Critical</option>
+                                <option value="low_stock">Low Stock</option>
+                                <option value="healthy">Healthy</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Card Body -->
                 <div class="flex-auto p-6 px-0 pb-0">
-                    @if (Model.Predictions.Count == 0)
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-chart-bar fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">No inventory predictions yet. Click "Recalculate" to analyze your inventory.</p>
+                    <!-- Loading Spinner -->
+                    <div id="loading-spinner" class="text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
+                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading predictions...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="text-center py-12 hidden">
+                        <i class="fas fa-chart-bar fa-4x text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No inventory predictions yet. Click "Recalculate" to analyze your inventory.</p>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto" id="table-container" style="display: none;">
+                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="predictions-list">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">
+                                        Product <i class="fas fa-sort ms-1 text-xxs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">SKU</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="2">
+                                        Current Qty <i class="fas fa-sort ms-1 text-xxs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">
+                                        Daily Sales <i class="fas fa-sort ms-1 text-xxs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="4">
+                                        Days Left <i class="fas fa-sort ms-1 text-xxs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="5">
+                                        Reorder Qty <i class="fas fa-sort ms-1 text-xxs"></i>
+                                    </th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
+                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> predictions
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-left me-1"></i> Previous
+                                </button>
+                                <div id="page-numbers" class="flex gap-1"></div>
+                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                                    Next <i class="fas fa-chevron-right ms-1"></i>
+                                </button>
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="predictions-list">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">SKU</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Current Qty</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Daily Sales</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Days Left</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Reorder Qty</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Confidence</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var prediction in Model.Predictions)
-                                    {
-                                        var statusColor = prediction.Status switch
-                                        {
-                                            "out_of_stock" => "from-red-600 to-rose-400",
-                                            "critical" => "from-orange-500 to-yellow-300",
-                                            "low_stock" => "from-yellow-500 to-amber-300",
-                                            _ => "from-green-600 to-lime-400"
-                                        };
-
-                                        var statusText = prediction.Status switch
-                                        {
-                                            "out_of_stock" => "Out of Stock",
-                                            "critical" => "Critical",
-                                            "low_stock" => "Low Stock",
-                                            _ => "Healthy"
-                                        };
-
-                                        var confidenceColor = prediction.ConfidenceLevel switch
-                                        {
-                                            "high" => "from-green-600 to-lime-400",
-                                            "medium" => "from-yellow-500 to-amber-300",
-                                            _ => "from-gray-400 to-gray-600"
-                                        };
-
-                                        <tr>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex px-2 py-1">
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@prediction.ProductTitle</h6>
-                                                        @if (!string.IsNullOrEmpty(prediction.VariantTitle))
-                                                        {
-                                                            <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">@prediction.VariantTitle</p>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-60">@(prediction.Sku ?? "-")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight dark:text-white">@prediction.CurrentQuantity</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@prediction.AverageDailySales.ToString("F2")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-bold leading-tight @(prediction.DaysUntilStockout <= 7 ? "text-red-600" : prediction.DaysUntilStockout <= 14 ? "text-orange-600" : "text-slate-600") dark:text-white">
-                                                    @(prediction.DaysUntilStockout >= 9999 ? "∞" : prediction.DaysUntilStockout.ToString())
-                                                </span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@prediction.SuggestedReorderQuantity</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@statusText</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @confidenceColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@prediction.ConfidenceLevel</span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,21 +242,201 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/plugins/datatables.min.js" asp-append-version="true"></script>
     <script>
-        if (document.getElementById('predictions-list')) {
-            new simpleDatatables.DataTable("#predictions-list", {
-                searchable: true,
-                fixedHeight: false,
-                perPage: 25,
-                perPageSelect: [10, 25, 50, 100],
-                labels: {
-                    placeholder: "Search products...",
-                    perPage: "per page",
-                    noRows: "No predictions found",
-                    info: "Showing {start} to {end} of {rows} predictions"
+        (function() {
+            let currentPage = 1;
+            let perPage = 25;
+            let totalRecords = 0;
+            let totalFiltered = 0;
+            let sortColumn = 4; // Days Left by default
+            let sortDirection = 'asc';
+            let searchTimeout = null;
+            let drawCounter = 0;
+
+            const searchInput = document.getElementById('search-input');
+            const statusFilter = document.getElementById('status-filter');
+            const perPageSelect = document.getElementById('per-page');
+            const tableBody = document.getElementById('table-body');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const emptyState = document.getElementById('empty-state');
+            const tableContainer = document.getElementById('table-container');
+            const paginationContainer = document.getElementById('pagination-container');
+            const totalCountEl = document.getElementById('total-count');
+
+            function loadData() {
+                loadingSpinner.style.display = 'block';
+                emptyState.classList.add('hidden');
+                tableContainer.style.display = 'none';
+                paginationContainer.style.display = 'none';
+
+                const start = (currentPage - 1) * perPage;
+                drawCounter++;
+
+                const params = new URLSearchParams({
+                    handler: 'Data',
+                    draw: drawCounter,
+                    start: start,
+                    length: perPage,
+                    search: searchInput.value,
+                    statusFilter: statusFilter.value,
+                    sortColumn: sortColumn,
+                    sortDirection: sortDirection
+                });
+
+                fetch(`/inventory?${params}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.draw !== drawCounter) return;
+
+                        totalRecords = data.recordsTotal;
+                        totalFiltered = data.recordsFiltered;
+                        totalCountEl.textContent = totalRecords;
+
+                        loadingSpinner.style.display = 'none';
+
+                        if (data.data.length === 0) {
+                            emptyState.classList.remove('hidden');
+                            return;
+                        }
+
+                        tableContainer.style.display = 'block';
+                        paginationContainer.style.display = 'block';
+                        renderTable(data.data);
+                        updatePagination();
+                    })
+                    .catch(error => {
+                        console.error('Error loading data:', error);
+                        loadingSpinner.style.display = 'none';
+                        emptyState.classList.remove('hidden');
+                    });
+            }
+
+            function renderTable(data) {
+                tableBody.innerHTML = data.map(p => {
+                    const daysClass = p.daysUntilStockoutRaw <= 7 ? 'text-red-600' :
+                                     p.daysUntilStockoutRaw <= 14 ? 'text-orange-600' : 'text-slate-600';
+
+                    return `
+                        <tr>
+                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <div class="flex px-2 py-1">
+                                    <div class="flex flex-col justify-center">
+                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(p.productTitle)}</h6>
+                                        ${p.variantTitle ? `<p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${escapeHtml(p.variantTitle)}</p>` : ''}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-60">${escapeHtml(p.sku)}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="text-sm font-semibold leading-tight dark:text-white">${p.currentQuantity}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">${p.averageDailySales}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="text-sm font-bold leading-tight ${daysClass} dark:text-white">${p.daysUntilStockout}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">${p.suggestedReorderQuantity}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="bg-gradient-to-tl ${p.statusClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${escapeHtml(p.statusText)}</span>
+                            </td>
+                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                                <span class="bg-gradient-to-tl ${p.confidenceClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${escapeHtml(p.confidenceLevel)}</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function updatePagination() {
+                const totalPages = Math.ceil(totalFiltered / perPage);
+                const start = Math.min((currentPage - 1) * perPage + 1, totalFiltered);
+                const end = Math.min(currentPage * perPage, totalFiltered);
+
+                document.getElementById('showing-start').textContent = totalFiltered > 0 ? start : 0;
+                document.getElementById('showing-end').textContent = end;
+                document.getElementById('total-filtered').textContent = totalFiltered;
+
+                document.getElementById('prev-btn').disabled = currentPage === 1;
+                document.getElementById('next-btn').disabled = currentPage >= totalPages;
+
+                const pageNumbers = document.getElementById('page-numbers');
+                pageNumbers.innerHTML = '';
+
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, startPage + 4);
+                if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = i === currentPage
+                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
+                        : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
+                    btn.onclick = () => { currentPage = i; loadData(); };
+                    pageNumbers.appendChild(btn);
                 }
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => { currentPage = 1; loadData(); }, 300);
             });
-        }
+
+            statusFilter.addEventListener('change', function() {
+                currentPage = 1;
+                loadData();
+            });
+
+            perPageSelect.addEventListener('change', function() {
+                perPage = parseInt(this.value);
+                currentPage = 1;
+                loadData();
+            });
+
+            document.getElementById('prev-btn').addEventListener('click', function() {
+                if (currentPage > 1) { currentPage--; loadData(); }
+            });
+
+            document.getElementById('next-btn').addEventListener('click', function() {
+                const totalPages = Math.ceil(totalFiltered / perPage);
+                if (currentPage < totalPages) { currentPage++; loadData(); }
+            });
+
+            // Sortable headers
+            document.querySelectorAll('[data-sort]').forEach(header => {
+                header.addEventListener('click', function() {
+                    const col = parseInt(this.dataset.sort);
+                    if (sortColumn === col) {
+                        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortColumn = col;
+                        sortDirection = 'asc';
+                    }
+
+                    document.querySelectorAll('[data-sort] i').forEach(icon => {
+                        icon.className = 'fas fa-sort ms-1 text-xxs';
+                    });
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+
+                    loadData();
+                });
+            });
+
+            // Initial load
+            loadData();
+        })();
     </script>
 }
