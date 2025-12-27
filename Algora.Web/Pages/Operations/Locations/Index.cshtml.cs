@@ -1,3 +1,4 @@
+using Algora.Application.DTOs.Common;
 using Algora.Application.DTOs.Operations;
 using Algora.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -23,24 +24,93 @@ public class IndexModel : PageModel
         _logger = logger;
     }
 
-    public List<LocationDto> Locations { get; set; } = new();
     public string? ErrorMessage { get; set; }
     public string? SuccessMessage { get; set; }
 
-    public async Task OnGetAsync()
+    public void OnGet()
+    {
+        if (TempData["SuccessMessage"] != null)
+            SuccessMessage = TempData["SuccessMessage"]?.ToString();
+    }
+
+    public async Task<IActionResult> OnGetDataAsync(
+        int draw = 1,
+        int start = 0,
+        int length = 25,
+        string? search = null,
+        int sortColumn = 0,
+        string sortDirection = "asc")
     {
         try
         {
-            if (TempData["SuccessMessage"] != null)
-                SuccessMessage = TempData["SuccessMessage"]?.ToString();
-
             var locations = await _locationService.GetLocationsAsync(_shopContext.ShopDomain);
-            Locations = locations.ToList();
+            var allLocations = locations.ToList();
+            var totalRecords = allLocations.Count;
+
+            var filtered = allLocations.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchLower = search.ToLower();
+                filtered = filtered.Where(l =>
+                    (l.Name?.ToLower().Contains(searchLower) ?? false) ||
+                    (l.Address1?.ToLower().Contains(searchLower) ?? false) ||
+                    (l.City?.ToLower().Contains(searchLower) ?? false));
+            }
+
+            var filteredList = filtered.ToList();
+            var filteredCount = filteredList.Count;
+
+            filteredList = sortColumn switch
+            {
+                0 => sortDirection == "asc"
+                    ? filteredList.OrderBy(l => l.Name).ToList()
+                    : filteredList.OrderByDescending(l => l.Name).ToList(),
+                2 => sortDirection == "asc"
+                    ? filteredList.OrderBy(l => l.TotalInventory).ToList()
+                    : filteredList.OrderByDescending(l => l.TotalInventory).ToList(),
+                3 => sortDirection == "asc"
+                    ? filteredList.OrderBy(l => l.TotalProducts).ToList()
+                    : filteredList.OrderByDescending(l => l.TotalProducts).ToList(),
+                _ => filteredList.OrderBy(l => l.Name).ToList()
+            };
+
+            var pagedData = filteredList
+                .Skip(start)
+                .Take(length)
+                .Select(l => new
+                {
+                    id = l.Id,
+                    shopifyLocationId = l.ShopifyLocationId,
+                    name = l.Name,
+                    address = l.Address1,
+                    city = l.City,
+                    province = l.Province,
+                    country = l.Country,
+                    totalInventory = l.TotalInventory,
+                    productCount = l.TotalProducts,
+                    isActive = l.IsActive
+                })
+                .ToList();
+
+            return new JsonResult(new DataTableResponse<object>
+            {
+                Draw = draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = filteredCount,
+                Data = pagedData
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading locations");
-            ErrorMessage = "Failed to load locations. Please try again.";
+            _logger.LogError(ex, "Failed to load locations data");
+            return new JsonResult(new DataTableResponse<object>
+            {
+                Draw = draw,
+                RecordsTotal = 0,
+                RecordsFiltered = 0,
+                Data = Enumerable.Empty<object>(),
+                Error = "Failed to load locations"
+            });
         }
     }
 
