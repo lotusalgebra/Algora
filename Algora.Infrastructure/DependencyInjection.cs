@@ -189,7 +189,15 @@ public static class DependencyInjection
         services.AddScoped<ISocialMediaService, SocialMediaService>();
         services.AddScoped<IExchangeService, ExchangeService>();
         services.AddScoped<ILoyaltyService, LoyaltyService>();
+        services.AddScoped<IChatbotBridgeService, ChatbotBridgeService>();
         services.AddHostedService<LoyaltyBackgroundService>();
+
+        // HttpClient for Chatbot API Bridge
+        services.AddHttpClient<IChatbotBridgeService, ChatbotBridgeService>(client =>
+        {
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
 
         // AI text providers with fallback support (OpenAI -> Anthropic)
         services.AddScoped<OpenAiTextSimpleProvider>();

@@ -163,4 +163,138 @@ public class ChatService : IChatService
 
         await _db.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<bool> EscalateToHumanAsync(int conversationId, string? reason, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var conversation = await _db.Conversations
+                .FirstOrDefaultAsync(c => c.Id == conversationId, cancellationToken);
+
+            if (conversation == null) return false;
+
+            conversation.IsEscalated = true;
+            conversation.EscalationReason = reason ?? "Customer requested to speak with a human agent";
+            conversation.EscalatedAt = DateTime.UtcNow;
+            conversation.Status = ConversationStatus.Escalated;
+            conversation.UpdatedAt = DateTime.UtcNow;
+
+            // Add system message about escalation
+            var systemMsg = new Message
+            {
+                ConversationId = conversationId,
+                Role = MessageRole.System,
+                Content = "This conversation has been escalated to a human support agent. An agent will respond shortly.",
+                CreatedAt = DateTime.UtcNow
+            };
+            _db.Messages.Add(systemMsg);
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error escalating conversation {ConversationId}", conversationId);
+            return false;
+        }
+    }
+
+    public async Task<bool> SendAgentMessageAsync(int conversationId, string message, string agentEmail, string? agentName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var conversation = await _db.Conversations
+                .FirstOrDefaultAsync(c => c.Id == conversationId, cancellationToken);
+
+            if (conversation == null) return false;
+
+            // Ensure agent is assigned
+            if (string.IsNullOrEmpty(conversation.AssignedAgentEmail))
+            {
+                conversation.AssignedAgentEmail = agentEmail;
+            }
+
+            // Update status if escalated
+            if (conversation.Status == ConversationStatus.Escalated)
+            {
+                conversation.Status = ConversationStatus.WaitingForCustomer;
+            }
+
+            // Add agent message
+            var agentMsg = new Message
+            {
+                ConversationId = conversationId,
+                Role = MessageRole.Agent,
+                Content = message,
+                CreatedAt = DateTime.UtcNow
+            };
+            _db.Messages.Add(agentMsg);
+
+            conversation.LastMessageAt = DateTime.UtcNow;
+            conversation.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending agent message to conversation {ConversationId}", conversationId);
+            return false;
+        }
+    }
+
+    public async Task<bool> AssignAgentAsync(int conversationId, string agentEmail, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var conversation = await _db.Conversations
+                .FirstOrDefaultAsync(c => c.Id == conversationId, cancellationToken);
+
+            if (conversation == null) return false;
+
+            conversation.AssignedAgentEmail = agentEmail;
+            conversation.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error assigning agent to conversation {ConversationId}", conversationId);
+            return false;
+        }
+    }
+
+    public async Task<bool> ResolveConversationAsync(int conversationId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var conversation = await _db.Conversations
+                .FirstOrDefaultAsync(c => c.Id == conversationId, cancellationToken);
+
+            if (conversation == null) return false;
+
+            conversation.Status = ConversationStatus.Resolved;
+            conversation.ResolvedAt = DateTime.UtcNow;
+            conversation.UpdatedAt = DateTime.UtcNow;
+
+            // Add resolution message
+            var systemMsg = new Message
+            {
+                ConversationId = conversationId,
+                Role = MessageRole.System,
+                Content = "This conversation has been resolved. Thank you for contacting us!",
+                CreatedAt = DateTime.UtcNow
+            };
+            _db.Messages.Add(systemMsg);
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resolving conversation {ConversationId}", conversationId);
+            return false;
+        }
+    }
 }

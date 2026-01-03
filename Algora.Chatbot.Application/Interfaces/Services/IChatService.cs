@@ -11,4 +11,9 @@ public interface IChatService
     Task<Conversation?> GetConversationBySessionAsync(string shopDomain, string sessionId, CancellationToken cancellationToken = default);
     Task<List<Message>> GetMessagesAsync(int conversationId, CancellationToken cancellationToken = default);
     Task EndConversationAsync(int conversationId, bool wasHelpful, int? rating, string? feedback, CancellationToken cancellationToken = default);
+
+    Task<bool> EscalateToHumanAsync(int conversationId, string? reason, CancellationToken cancellationToken = default);
+    Task<bool> SendAgentMessageAsync(int conversationId, string message, string agentEmail, string? agentName, CancellationToken cancellationToken = default);
+    Task<bool> AssignAgentAsync(int conversationId, string agentEmail, CancellationToken cancellationToken = default);
+    Task<bool> ResolveConversationAsync(int conversationId, CancellationToken cancellationToken = default);
 }

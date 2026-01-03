@@ -1,5 +1,6 @@
 using Algora.Chatbot.Infrastructure;
 using Algora.Chatbot.Infrastructure.Data;
+using Algora.Chatbot.Web.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSignalR();
 
 // Add Infrastructure services
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-// CORS for widget
+// CORS for widget and SignalR
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("WidgetPolicy", policy =>
@@ -20,6 +22,14 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader();
+    });
+
+    options.AddPolicy("SignalRPolicy", policy =>
+    {
+        policy.SetIsOriginAllowed(_ => true)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -44,6 +54,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat").RequireCors("SignalRPolicy");
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

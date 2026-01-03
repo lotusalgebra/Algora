@@ -9,6 +9,11 @@
   var conversationId = null;
   var isOpen = false;
   var container = null;
+  var isEscalated = false;
+  var pollInterval = null;
+  var lastMessageTime = null;
+  var signalRConnection = null;
+  var useSignalR = false;
 
   // Generate unique IDs
   function generateId() {
@@ -110,6 +115,183 @@
     }
   }
 
+  async function escalateToHuman(reason) {
+    if (!conversationId) return null;
+
+    try {
+      var response = await fetch(API_BASE + '/api/widget/v1/conversations/' + conversationId + '/escalate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason })
+      });
+      var data = await response.json();
+      if (data.success) {
+        isEscalated = true;
+        updateEscalatedUI();
+        // SignalR/polling is handled in handleEscalate()
+      }
+      return data;
+    } catch (e) {
+      console.error('Failed to escalate:', e);
+      return null;
+    }
+  }
+
+  async function pollForMessages() {
+    if (!conversationId || !isEscalated) return;
+
+    try {
+      var url = API_BASE + '/api/widget/v1/conversations/' + conversationId + '/poll';
+      if (lastMessageTime) {
+        url += '?since=' + encodeURIComponent(lastMessageTime);
+      }
+
+      var response = await fetch(url);
+      var data = await response.json();
+
+      if (data.success && data.messages && data.messages.length > 0) {
+        data.messages.forEach(function(msg) {
+          if (!document.querySelector('[data-msg-id="' + msg.id + '"]')) {
+            addMessage(msg.content, msg.role, msg.id);
+            lastMessageTime = msg.createdAt;
+          }
+        });
+      }
+
+      // Check if conversation is resolved
+      if (data.status === 'resolved') {
+        stopPolling();
+        isEscalated = false;
+        updateResolvedUI();
+      }
+    } catch (e) {
+      console.error('Failed to poll messages:', e);
+    }
+  }
+
+  function startPolling() {
+    if (pollInterval) return;
+    pollInterval = setInterval(pollForMessages, 3000); // Poll every 3 seconds
+  }
+
+  function stopPolling() {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+  }
+
+  // SignalR connection for real-time messaging
+  async function connectSignalR() {
+    if (signalRConnection || !conversationId) return;
+
+    // Check if SignalR is available
+    if (typeof signalR === 'undefined') {
+      // Try to load SignalR dynamically
+      try {
+        await loadSignalRScript();
+      } catch (e) {
+        console.log('SignalR not available, using polling fallback');
+        return;
+      }
+    }
+
+    try {
+      signalRConnection = new signalR.HubConnectionBuilder()
+        .withUrl(API_BASE + '/hubs/chat')
+        .withAutomaticReconnect()
+        .build();
+
+      signalRConnection.on('ReceiveMessage', function(message) {
+        if (!document.querySelector('[data-msg-id="' + message.id + '"]')) {
+          addMessage(message.content, message.role, message.id);
+        }
+      });
+
+      signalRConnection.on('ConversationUpdated', function(update) {
+        if (update.status === 'resolved') {
+          isEscalated = false;
+          updateResolvedUI();
+          disconnectSignalR();
+        }
+      });
+
+      signalRConnection.on('AgentTyping', function(data) {
+        if (data.isTyping) {
+          showAgentTyping();
+        } else {
+          hideAgentTyping();
+        }
+      });
+
+      await signalRConnection.start();
+      await signalRConnection.invoke('JoinConversation', conversationId.toString());
+      useSignalR = true;
+      stopPolling(); // Stop polling when SignalR is connected
+      console.log('SignalR connected for conversation ' + conversationId);
+    } catch (e) {
+      console.log('SignalR connection failed, using polling fallback:', e);
+      signalRConnection = null;
+      useSignalR = false;
+    }
+  }
+
+  function disconnectSignalR() {
+    if (signalRConnection) {
+      signalRConnection.stop();
+      signalRConnection = null;
+      useSignalR = false;
+    }
+  }
+
+  function loadSignalRScript() {
+    return new Promise(function(resolve, reject) {
+      var script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  function showAgentTyping() {
+    var existingTyping = container.querySelector('#algora-agent-typing');
+    if (existingTyping) return;
+
+    var messagesEl = container.querySelector('#algora-messages');
+    var typing = document.createElement('div');
+    typing.className = 'algora-typing';
+    typing.id = 'algora-agent-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    messagesEl.appendChild(typing);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function hideAgentTyping() {
+    var typing = container.querySelector('#algora-agent-typing');
+    if (typing) typing.remove();
+  }
+
+  function updateEscalatedUI() {
+    var humanBtn = container.querySelector('#algora-human-btn');
+    if (humanBtn) {
+      humanBtn.style.display = 'none';
+    }
+
+    var statusEl = container.querySelector('#algora-status');
+    if (statusEl) {
+      statusEl.textContent = 'Connected to support';
+      statusEl.style.display = 'block';
+    }
+  }
+
+  function updateResolvedUI() {
+    var statusEl = container.querySelector('#algora-status');
+    if (statusEl) {
+      statusEl.textContent = 'Conversation resolved';
+    }
+  }
+
   // UI Creation
   function createWidget(cfg) {
     config = cfg;
@@ -157,6 +339,16 @@
         </div>
 
         <div class="algora-messages" id="algora-messages"></div>
+
+        <div class="algora-human-bar" id="algora-human-bar">
+          <span id="algora-status" style="display: none; color: #22c55e; font-size: 12px;"></span>
+          <button id="algora-human-btn" class="algora-human-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            Talk to Human
+          </button>
+        </div>
 
         <div class="algora-input-area">
           <input type="text" id="algora-input" placeholder="${config.placeholderText || 'Type your message...'}" />
@@ -281,6 +473,55 @@
         color: #333;
         border-bottom-left-radius: 4px;
       }
+      .algora-message.agent {
+        align-self: flex-start;
+        background: #dbeafe;
+        color: #1e40af;
+        border-bottom-left-radius: 4px;
+        border-left: 3px solid #3b82f6;
+      }
+      .algora-message.agent::before {
+        content: '👤 Support Agent';
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        color: #3b82f6;
+        margin-bottom: 4px;
+      }
+      .algora-message.system {
+        align-self: center;
+        background: #fef3c7;
+        color: #92400e;
+        font-size: 12px;
+        border-radius: 8px;
+        max-width: 90%;
+        text-align: center;
+      }
+      .algora-human-bar {
+        padding: 8px 12px;
+        border-top: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .algora-human-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: transparent;
+        border: 1px solid #6b7280;
+        color: #6b7280;
+        border-radius: 16px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .algora-human-btn:hover {
+        background: #f3f4f6;
+        border-color: #374151;
+        color: #374151;
+      }
       .algora-typing {
         display: flex;
         gap: 4px;
@@ -392,6 +633,46 @@
         handleSend();
       }
     });
+
+    // Talk to Human button
+    var humanBtn = container.querySelector('#algora-human-btn');
+    if (humanBtn) {
+      humanBtn.addEventListener('click', function() {
+        handleEscalate();
+      });
+    }
+  }
+
+  async function handleEscalate() {
+    var humanBtn = container.querySelector('#algora-human-btn');
+    if (humanBtn) {
+      humanBtn.disabled = true;
+      humanBtn.textContent = 'Connecting...';
+    }
+
+    var shop = window.AlgoraChatbot.shop;
+
+    // Start conversation if not exists
+    if (!conversationId) {
+      await startConversation(shop);
+    }
+
+    var result = await escalateToHuman('Customer requested human support');
+
+    if (result && result.success) {
+      addMessage(result.message, 'system');
+      // Try to connect via SignalR for real-time updates, fall back to polling
+      await connectSignalR();
+      if (!useSignalR) {
+        startPolling();
+      }
+    } else {
+      if (humanBtn) {
+        humanBtn.disabled = false;
+        humanBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> Talk to Human';
+      }
+      addMessage('Sorry, we could not connect you to an agent. Please try again.', 'system');
+    }
   }
 
   function toggleChat() {
@@ -417,13 +698,29 @@
     }
   }
 
-  function addMessage(content, role) {
+  function addMessage(content, role, msgId) {
     var messagesEl = container.querySelector('#algora-messages');
     var msgEl = document.createElement('div');
     msgEl.className = 'algora-message ' + role;
+    if (msgId) {
+      msgEl.setAttribute('data-msg-id', msgId);
+    }
     msgEl.textContent = content;
     messagesEl.appendChild(msgEl);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    // Play notification sound for agent messages if enabled
+    if (role === 'agent' && config.enableSoundNotifications) {
+      playNotificationSound();
+    }
+  }
+
+  function playNotificationSound() {
+    try {
+      var audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' + Array(300).join('ABC'));
+      audio.volume = 0.3;
+      audio.play().catch(function() {});
+    } catch (e) {}
   }
 
   function showTyping() {

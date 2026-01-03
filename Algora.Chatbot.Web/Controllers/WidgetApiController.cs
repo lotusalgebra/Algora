@@ -1,8 +1,10 @@
 using Algora.Chatbot.Application.DTOs;
 using Algora.Chatbot.Application.Interfaces.Services;
 using Algora.Chatbot.Infrastructure.Data;
+using Algora.Chatbot.Web.Hubs;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Algora.Chatbot.Web.Controllers;
@@ -14,15 +16,18 @@ public class WidgetApiController : ControllerBase
 {
     private readonly IChatService _chatService;
     private readonly ChatbotDbContext _db;
+    private readonly IHubContext<ChatHub> _chatHub;
     private readonly ILogger<WidgetApiController> _logger;
 
     public WidgetApiController(
         IChatService chatService,
         ChatbotDbContext db,
+        IHubContext<ChatHub> chatHub,
         ILogger<WidgetApiController> logger)
     {
         _chatService = chatService;
         _db = db;
+        _chatHub = chatHub;
         _logger = logger;
     }
 
@@ -78,6 +83,15 @@ public class WidgetApiController : ControllerBase
                 CustomerEmail = request.Email
             });
 
+            // Broadcast customer message via SignalR
+            await _chatHub.SendMessageToConversation(id, "user", request.Message);
+
+            // Broadcast bot response via SignalR
+            if (response.Success && !string.IsNullOrEmpty(response.Response))
+            {
+                await _chatHub.SendMessageToConversation(id, "assistant", response.Response);
+            }
+
             return Ok(new
             {
                 success = response.Success,
@@ -130,6 +144,71 @@ public class WidgetApiController : ControllerBase
         {
             _logger.LogError(ex, "Error ending conversation");
             return Ok(new { success = false, error = "Failed to end conversation" });
+        }
+    }
+
+    [HttpPost("conversations/{id}/escalate")]
+    public async Task<IActionResult> EscalateToHuman(int id, [FromBody] EscalateApiRequest request)
+    {
+        try
+        {
+            var success = await _chatService.EscalateToHumanAsync(id, request.Reason);
+            if (success)
+            {
+                // Notify via SignalR that conversation was escalated
+                await _chatHub.NotifyConversationUpdated(id, "escalated");
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Your request has been escalated to a human support agent. An agent will respond shortly."
+                });
+            }
+            return Ok(new { success = false, error = "Failed to escalate conversation" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error escalating conversation {Id}", id);
+            return Ok(new { success = false, error = "Failed to escalate conversation" });
+        }
+    }
+
+    [HttpGet("conversations/{id}/poll")]
+    public async Task<IActionResult> PollMessages(int id, [FromQuery] DateTime? since)
+    {
+        try
+        {
+            var conversation = await _chatService.GetConversationAsync(id);
+            if (conversation == null)
+            {
+                return NotFound(new { success = false, error = "Conversation not found" });
+            }
+
+            var messages = conversation.Messages
+                .Where(m => since == null || m.CreatedAt > since)
+                .OrderBy(m => m.CreatedAt)
+                .Select(m => new
+                {
+                    id = m.Id,
+                    role = m.Role.ToString().ToLower(),
+                    content = m.Content,
+                    createdAt = m.CreatedAt
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                success = true,
+                status = conversation.Status.ToString().ToLower(),
+                isEscalated = conversation.IsEscalated,
+                hasAgent = !string.IsNullOrEmpty(conversation.AssignedAgentEmail),
+                messages = messages
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error polling messages for conversation {Id}", id);
+            return Ok(new { success = false, error = "Failed to get messages" });
         }
     }
 
@@ -217,4 +296,9 @@ public class EndConversationApiRequest
     public bool WasHelpful { get; set; }
     public int? Rating { get; set; }
     public string? Feedback { get; set; }
+}
+
+public class EscalateApiRequest
+{
+    public string? Reason { get; set; }
 }

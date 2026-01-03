@@ -1,0 +1,174 @@
+@page "/customer-hub/inbox/live-chat"
+@model Algora.Web.Pages.CustomerHub.Inbox.LiveChatModel
+@{
+    ViewData["Title"] = "Live Chat";
+}
+
+<div class="w-full px-6 py-6 mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h5 class="font-bold dark:text-white">Live Chat Support</h5>
+            <p class="text-sm text-slate-400">Manage chatbot conversations and escalated requests</p>
+        </div>
+        @if (Model.EscalatedCount > 0)
+        {
+            <div class="flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                <span class="text-sm font-semibold text-orange-700">@Model.EscalatedCount escalated @(Model.EscalatedCount == 1 ? "conversation" : "conversations") waiting</span>
+            </div>
+        }
+    </div>
+
+    <!-- Filters -->
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+        <div class="p-4">
+            <div class="flex flex-wrap gap-2">
+                <a href="?status=" class="px-4 py-2 text-xs font-semibold rounded-lg @(string.IsNullOrEmpty(Model.FilterStatus) ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200")">
+                    All
+                </a>
+                <a href="?status=escalated" class="px-4 py-2 text-xs font-semibold rounded-lg relative @(Model.FilterStatus == "escalated" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200")">
+                    <i class="fas fa-exclamation-circle me-1"></i> Escalated
+                    @if (Model.EscalatedCount > 0)
+                    {
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">@Model.EscalatedCount</span>
+                    }
+                </a>
+                <a href="?status=active" class="px-4 py-2 text-xs font-semibold rounded-lg @(Model.FilterStatus == "active" ? "bg-green-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200")">
+                    <i class="fas fa-comment-dots me-1"></i> Active
+                </a>
+                <a href="?status=waitingforagent" class="px-4 py-2 text-xs font-semibold rounded-lg @(Model.FilterStatus == "waitingforagent" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200")">
+                    <i class="fas fa-clock me-1"></i> Awaiting Agent
+                </a>
+                <a href="?status=resolved" class="px-4 py-2 text-xs font-semibold rounded-lg @(Model.FilterStatus == "resolved" ? "bg-gray-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200")">
+                    <i class="fas fa-check-circle me-1"></i> Resolved
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversations List -->
+    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+        @if (Model.Conversations.Count == 0)
+        {
+            <div class="flex-auto p-6 text-center">
+                <i class="fas fa-comments fa-4x text-gray-300 mb-4"></i>
+                <h6 class="mb-2 dark:text-white">No conversations found</h6>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    @if (Model.FilterStatus == "escalated")
+                    {
+                        <text>No escalated conversations at the moment.</text>
+                    }
+                    else
+                    {
+                        <text>Conversations will appear here when customers use the chatbot.</text>
+                    }
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="flex-auto p-0">
+                @foreach (var conversation in Model.Conversations)
+                {
+                    var isEscalated = conversation.Status.ToLower() == "escalated" || conversation.EscalatedAt.HasValue;
+                    var isWaitingForAgent = conversation.Status.ToLower() == "waitingforagent" || conversation.Status.ToLower() == "escalated";
+
+                    <a href="/customer-hub/inbox/chat/@conversation.Id" class="block border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors @(isEscalated && isWaitingForAgent ? "bg-orange-50 dark:bg-orange-900/10" : "")">
+                        <div class="flex items-start p-4">
+                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 me-4 flex-shrink-0">
+                                <i class="fas fa-comments text-lg relative top-3.5 text-white"></i>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <h6 class="text-sm font-semibold text-slate-700 dark:text-white mb-0">
+                                            @(conversation.CustomerName ?? conversation.CustomerEmail ?? "Anonymous Customer")
+                                        </h6>
+                                        @if (isEscalated)
+                                        {
+                                            <span class="bg-orange-100 text-orange-700 text-xs font-semibold px-2 py-0.5 rounded-full animate-pulse">
+                                                <i class="fas fa-exclamation-triangle me-1"></i> ESCALATED
+                                            </span>
+                                        }
+                                    </div>
+                                    <span class="text-xs text-slate-400 whitespace-nowrap">
+                                        @(conversation.LastMessageAt?.ToString("MMM d, h:mm tt") ?? conversation.CreatedAt.ToString("MMM d, h:mm tt"))
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(conversation.EscalationReason))
+                                {
+                                    <p class="text-xs text-orange-600 mb-1">
+                                        <i class="fas fa-info-circle me-1"></i> @conversation.EscalationReason
+                                    </p>
+                                }
+                                <p class="text-xs text-slate-400 mb-0 line-clamp-1">@conversation.LastMessage</p>
+                            </div>
+                            <div class="flex flex-col items-end ml-4">
+                                <span class="@Model.GetStatusColor(conversation.Status) text-xxs font-semibold px-2 py-1 rounded uppercase mb-2">
+                                    @Model.GetStatusLabel(conversation.Status)
+                                </span>
+                                <span class="text-xs text-slate-400">
+                                    <i class="fas fa-comment me-1"></i> @conversation.MessageCount
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+
+            <!-- Pagination -->
+            @if (Model.TotalPages > 1)
+            {
+                <div class="flex justify-center items-center gap-2 p-4 border-t border-gray-100 dark:border-gray-800">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="?page=@(Model.CurrentPage - 1)&status=@Model.FilterStatus" class="px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </a>
+                    }
+                    <span class="text-sm text-slate-400">Page @Model.CurrentPage of @Model.TotalPages</span>
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a href="?page=@(Model.CurrentPage + 1)&status=@Model.FilterStatus" class="px-3 py-1.5 text-xs font-semibold bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Info Card -->
+    <div class="relative flex flex-col min-w-0 mt-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
+        <div class="p-6 text-white">
+            <div class="flex items-start gap-4">
+                <div class="p-3 bg-white/20 rounded-xl">
+                    <i class="fas fa-robot text-2xl"></i>
+                </div>
+                <div>
+                    <h6 class="font-bold mb-2">How Live Chat Works</h6>
+                    <p class="text-sm opacity-90 mb-0">
+                        Customers can chat with your AI-powered chatbot. When they click "Talk to Human" or the bot detects
+                        a complex issue, the conversation is escalated here. Simply click on a conversation to view the full
+                        chat history and respond directly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh every 30 seconds for escalated conversations
+        @if (Model.FilterStatus == "escalated" || string.IsNullOrEmpty(Model.FilterStatus))
+        {
+            <text>
+            setTimeout(function() {
+                location.reload();
+            }, 30000);
+            </text>
+        }
+    </script>
+}

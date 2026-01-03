@@ -2,7 +2,9 @@ using Algora.Chatbot.Application.Interfaces.Services;
 using Algora.Chatbot.Domain.Entities;
 using Algora.Chatbot.Domain.Enums;
 using Algora.Chatbot.Infrastructure.Data;
+using Algora.Chatbot.Web.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Algora.Chatbot.Web.Controllers;
@@ -13,15 +15,21 @@ public class AdminApiController : ControllerBase
 {
     private readonly ChatbotDbContext _db;
     private readonly IAnalyticsService _analyticsService;
+    private readonly IChatService _chatService;
+    private readonly IHubContext<ChatHub> _chatHub;
     private readonly ILogger<AdminApiController> _logger;
 
     public AdminApiController(
         ChatbotDbContext db,
         IAnalyticsService analyticsService,
+        IChatService chatService,
+        IHubContext<ChatHub> chatHub,
         ILogger<AdminApiController> logger)
     {
         _db = db;
         _analyticsService = analyticsService;
+        _chatService = chatService;
+        _chatHub = chatHub;
         _logger = logger;
     }
 
@@ -406,6 +414,160 @@ public class AdminApiController : ControllerBase
 
         return Ok(new { success = true });
     }
+
+    // Agent messaging endpoints
+
+    [HttpPost("conversations/{id}/message")]
+    public async Task<IActionResult> SendAgentMessage(int id, [FromQuery] string shop, [FromBody] AgentMessageRequest request)
+    {
+        if (string.IsNullOrEmpty(shop))
+        {
+            return BadRequest(new { success = false, error = "Shop parameter is required" });
+        }
+
+        var conversation = await _db.Conversations.FirstOrDefaultAsync(c => c.Id == id && c.ShopDomain == shop);
+        if (conversation == null)
+        {
+            return NotFound(new { success = false, error = "Conversation not found" });
+        }
+
+        try
+        {
+            var success = await _chatService.SendAgentMessageAsync(
+                id,
+                request.Message,
+                request.AgentEmail,
+                request.AgentName);
+
+            if (success)
+            {
+                // Broadcast agent message via SignalR for real-time delivery
+                await _chatHub.SendMessageToConversation(id, "agent", request.Message);
+
+                return Ok(new { success = true, message = "Message sent successfully" });
+            }
+            return Ok(new { success = false, error = "Failed to send message" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending agent message to conversation {Id}", id);
+            return Ok(new { success = false, error = "Failed to send message" });
+        }
+    }
+
+    [HttpPost("conversations/{id}/assign")]
+    public async Task<IActionResult> AssignAgent(int id, [FromQuery] string shop, [FromBody] AssignAgentRequest request)
+    {
+        if (string.IsNullOrEmpty(shop))
+        {
+            return BadRequest(new { success = false, error = "Shop parameter is required" });
+        }
+
+        var conversation = await _db.Conversations.FirstOrDefaultAsync(c => c.Id == id && c.ShopDomain == shop);
+        if (conversation == null)
+        {
+            return NotFound(new { success = false, error = "Conversation not found" });
+        }
+
+        try
+        {
+            var success = await _chatService.AssignAgentAsync(id, request.AgentEmail);
+            if (success)
+            {
+                return Ok(new { success = true, message = "Agent assigned successfully" });
+            }
+            return Ok(new { success = false, error = "Failed to assign agent" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error assigning agent to conversation {Id}", id);
+            return Ok(new { success = false, error = "Failed to assign agent" });
+        }
+    }
+
+    [HttpPost("conversations/{id}/resolve")]
+    public async Task<IActionResult> ResolveConversation(int id, [FromQuery] string shop)
+    {
+        if (string.IsNullOrEmpty(shop))
+        {
+            return BadRequest(new { success = false, error = "Shop parameter is required" });
+        }
+
+        var conversation = await _db.Conversations.FirstOrDefaultAsync(c => c.Id == id && c.ShopDomain == shop);
+        if (conversation == null)
+        {
+            return NotFound(new { success = false, error = "Conversation not found" });
+        }
+
+        try
+        {
+            var success = await _chatService.ResolveConversationAsync(id);
+            if (success)
+            {
+                // Notify via SignalR that conversation was resolved
+                await _chatHub.NotifyConversationUpdated(id, "resolved");
+
+                return Ok(new { success = true, message = "Conversation resolved successfully" });
+            }
+            return Ok(new { success = false, error = "Failed to resolve conversation" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resolving conversation {Id}", id);
+            return Ok(new { success = false, error = "Failed to resolve conversation" });
+        }
+    }
+
+    [HttpGet("conversations/escalated")]
+    public async Task<IActionResult> GetEscalatedConversations(
+        [FromQuery] string shop,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        if (string.IsNullOrEmpty(shop))
+        {
+            return BadRequest(new { success = false, error = "Shop parameter is required" });
+        }
+
+        var query = _db.Conversations
+            .Include(c => c.Messages.OrderByDescending(m => m.CreatedAt).Take(1))
+            .Where(c => c.ShopDomain == shop && c.IsEscalated && c.Status != ConversationStatus.Resolved);
+
+        var total = await query.CountAsync();
+        var conversations = await query
+            .OrderByDescending(c => c.EscalatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => new
+            {
+                id = c.Id,
+                sessionId = c.SessionId,
+                customerEmail = c.CustomerEmail,
+                customerName = c.CustomerName,
+                status = c.Status.ToString().ToLower(),
+                escalationReason = c.EscalationReason,
+                escalatedAt = c.EscalatedAt,
+                assignedAgentEmail = c.AssignedAgentEmail,
+                lastMessage = c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault()!.Content,
+                lastMessageAt = c.LastMessageAt,
+                messageCount = c.Messages.Count,
+                createdAt = c.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(new
+        {
+            success = true,
+            data = conversations,
+            pagination = new
+            {
+                page,
+                pageSize,
+                total,
+                totalPages = (int)Math.Ceiling(total / (double)pageSize)
+            }
+        });
+    }
 }
 
 public class UpdateSettingsRequest
@@ -463,4 +625,16 @@ public class UpdateKnowledgeArticleRequest
     public string? Content { get; set; }
     public string? Tags { get; set; }
     public bool? IsActive { get; set; }
+}
+
+public class AgentMessageRequest
+{
+    public string Message { get; set; } = "";
+    public string AgentEmail { get; set; } = "";
+    public string? AgentName { get; set; }
+}
+
+public class AssignAgentRequest
+{
+    public string AgentEmail { get; set; } = "";
 }
