@@ -28,6 +28,7 @@
     <ProjectReference Include="..\Algora.Application\Algora.Application.csproj" />
     <ProjectReference Include="..\Algora.Domain\Algora.Domain.csproj" />
     <ProjectReference Include="..\Algora.Infrastructure\Algora.Infrastructure.csproj" />
+    <ProjectReference Include="..\Algora.Web\Algora.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
