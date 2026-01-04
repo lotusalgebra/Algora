@@ -23,7 +23,8 @@ public static class DependencyInjection
         // Database
         var connectionString = configuration.GetConnectionString("Default");
         services.AddDbContext<ChatbotDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(connectionString)
+                   .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
         // Configuration
         services.Configure<AiOptions>(configuration.GetSection("AI"));
