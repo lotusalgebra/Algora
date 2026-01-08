@@ -55,7 +55,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Upsell Revenue</p>
-                    <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$@Model.Summary.TotalRevenue.ToString("N2")</h3>
+                    <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$@(Model.Summary.TotalRevenue.ToString("N2"))</h3>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center">
                     <i class="fas fa-dollar-sign text-white text-lg"></i>
@@ -157,7 +157,7 @@
                                             }
                                             <div>
                                                 <p class="font-semibold text-gray-900 dark:text-white">@offer.RecommendedProductTitle</p>
-                                                <p class="text-xs text-gray-500">$@offer.RecommendedProductPrice.ToString("N2")</p>
+                                                <p class="text-xs text-gray-500">$@(offer.RecommendedProductPrice.ToString("N2"))</p>
                                             </div>
                                         </div>
                                     </td>
