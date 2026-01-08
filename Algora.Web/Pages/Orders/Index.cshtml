@@ -2,179 +2,176 @@
 @model Algora.Web.Pages.Orders.IndexModel
 @{
     ViewData["Title"] = "Orders";
+    ViewData["Breadcrumb"] = "Orders";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <!-- Header -->
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-
-                <!-- Card Header -->
-                <div class="p-6 pb-4 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Order List</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                <i class="fa fa-shopping-cart text-cyan-500 me-1"></i>
-                                <span class="font-semibold" id="total-count">0</span> orders from your store
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <!-- Filters Dropdown -->
-                            <div class="relative" id="filters-dropdown-container">
-                                <button type="button" id="filters-dropdown-btn" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                                    <i class="fas fa-filter me-2 text-slate-400"></i>
-                                    Filters
-                                    <span id="active-filter-count" class="hidden ml-2 px-1.5 py-0.5 text-xs font-semibold text-white bg-cyan-500 rounded-full">0</span>
-                                    <i class="fas fa-chevron-down ml-2 text-xs text-slate-400"></i>
-                                </button>
-                                <div id="filters-dropdown-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800 dark:ring-gray-700">
-                                    <div class="py-2 px-3">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 dark:text-gray-400">Status</p>
-                                        <label class="flex items-center py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-700 rounded px-2">
-                                            <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="paid" checked>
-                                            <span class="ml-3 text-sm text-slate-700 dark:text-white">Paid</span>
-                                            <span class="ml-auto w-2 h-2 rounded-full bg-green-500"></span>
-                                        </label>
-                                        <label class="flex items-center py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-700 rounded px-2">
-                                            <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="pending" checked>
-                                            <span class="ml-3 text-sm text-slate-700 dark:text-white">Pending</span>
-                                            <span class="ml-auto w-2 h-2 rounded-full bg-yellow-500"></span>
-                                        </label>
-                                        <label class="flex items-center py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-700 rounded px-2">
-                                            <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="refunded" checked>
-                                            <span class="ml-3 text-sm text-slate-700 dark:text-white">Refunded</span>
-                                            <span class="ml-auto w-2 h-2 rounded-full bg-red-500"></span>
-                                        </label>
-                                        <label class="flex items-center py-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-700 rounded px-2">
-                                            <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="cancelled" checked>
-                                            <span class="ml-3 text-sm text-slate-700 dark:text-white">Cancelled</span>
-                                            <span class="ml-auto w-2 h-2 rounded-full bg-slate-500"></span>
-                                        </label>
-                                        <div class="border-t border-slate-200 dark:border-gray-600 mt-2 pt-2">
-                                            <button type="button" id="clear-filters" class="w-full text-left px-2 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
-                                                <i class="fas fa-times me-2"></i>Remove All Filters
-                                            </button>
-                                        </div>
-                                    </div>
+<div class="p-4">
+    <!-- Header Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h5 class="text-xl font-semibold text-gray-900 dark:text-white">Order List</h5>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-shopping-cart text-cyan-500 me-1"></i>
+                        <span class="font-semibold" id="total-count">0</span> orders from your store
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Filters Dropdown -->
+                    <div class="relative" id="filters-dropdown-container">
+                        <button type="button" id="filters-dropdown-btn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                            <i class="fas fa-filter me-2 text-gray-400"></i>
+                            Filters
+                            <span id="active-filter-count" class="hidden ml-2 px-1.5 py-0.5 text-xs font-semibold text-white bg-cyan-500 rounded-full">0</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs text-gray-400"></i>
+                        </button>
+                        <div id="filters-dropdown-menu" class="hidden absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800 dark:ring-gray-700">
+                            <div class="py-2 px-3">
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 dark:text-gray-400">Status</p>
+                                <label class="flex items-center py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
+                                    <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="paid" checked>
+                                    <span class="ml-3 text-sm text-gray-700 dark:text-white">Paid</span>
+                                    <span class="ml-auto w-2 h-2 rounded-full bg-green-500"></span>
+                                </label>
+                                <label class="flex items-center py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
+                                    <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="pending" checked>
+                                    <span class="ml-3 text-sm text-gray-700 dark:text-white">Pending</span>
+                                    <span class="ml-auto w-2 h-2 rounded-full bg-yellow-500"></span>
+                                </label>
+                                <label class="flex items-center py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
+                                    <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="refunded" checked>
+                                    <span class="ml-3 text-sm text-gray-700 dark:text-white">Refunded</span>
+                                    <span class="ml-auto w-2 h-2 rounded-full bg-red-500"></span>
+                                </label>
+                                <label class="flex items-center py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
+                                    <input type="checkbox" class="filter-checkbox w-4 h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500 dark:border-gray-600" data-filter="cancelled" checked>
+                                    <span class="ml-3 text-sm text-gray-700 dark:text-white">Cancelled</span>
+                                    <span class="ml-auto w-2 h-2 rounded-full bg-gray-500"></span>
+                                </label>
+                                <div class="border-t border-gray-200 dark:border-gray-600 mt-2 pt-2">
+                                    <button type="button" id="clear-filters" class="w-full text-left px-2 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded">
+                                        <i class="fas fa-times me-2"></i>Remove All Filters
+                                    </button>
                                 </div>
                             </div>
-
-                            <!-- Export CSV Button -->
-                            <button type="button" id="export-csv" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                                <i class="fas fa-file-export me-2 text-slate-400"></i>
-                                Export CSV
-                            </button>
-
-                            <!-- New Order Button -->
-                            <a href="/orders/create" class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
-                                <i class="fas fa-plus me-2"></i>
-                                New Order
-                            </a>
                         </div>
                     </div>
+
+                    <button type="button" id="export-csv" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800">
+                        <i class="fas fa-file-export me-2"></i> Export CSV
+                    </button>
+
+                    <a href="/orders/create" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                        <i class="fas fa-plus me-2"></i> New Order
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Card Body -->
-                <div class="flex-auto p-6">
-                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                    {
-                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            @Model.ErrorMessage
+        <!-- Card Body -->
+        <div class="p-6">
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                    <i class="fas fa-exclamation-triangle flex-shrink-0 me-2"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+
+            <!-- Search and Per Page Controls -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-500 dark:text-gray-400">Show</label>
+                    <select id="per-page" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <label class="text-sm text-gray-500 dark:text-gray-400">entries</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-500 dark:text-gray-400">Search:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
                         </div>
-                    }
-
-                    <!-- Search and Per Page Controls -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm text-slate-500 dark:text-white/60">Show</label>
-                            <select id="per-page" class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-cyan-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <label class="text-sm text-slate-500 dark:text-white/60">entries</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm text-slate-500 dark:text-white/60">Search:</label>
-                            <input type="text" id="search-input" placeholder="Search orders..."
-                                   class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-cyan-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white w-64" />
-                        </div>
-                    </div>
-
-                    <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-table">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">
-                                        Order <i class="fas fa-sort ms-1 text-xs"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="1">
-                                        Date <i class="fas fa-sort-down ms-1 text-xs text-cyan-500"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Customer</th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
-                                    <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="5">
-                                        Revenue <i class="fas fa-sort ms-1 text-xs"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-semibold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orders-tbody">
-                                <!-- Data loaded via AJAX -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div id="loading-state" class="text-center py-8">
-                        <i class="fas fa-spinner fa-spin fa-2x text-cyan-500 mb-2"></i>
-                        <p class="text-slate-500 dark:text-white/60">Loading orders...</p>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div id="empty-state" class="text-center py-12 hidden">
-                        <i class="fas fa-shopping-cart fa-4x text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">No orders found.</p>
-                        <a href="/orders/create" class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 border-0 rounded-lg shadow-soft-md hover:scale-102 hover:shadow-soft-xs active:opacity-85 transition-all">
-                            <i class="fas fa-plus me-2"></i>
-                            Create Your First Order
-                        </a>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination-container" class="flex flex-wrap items-center justify-between gap-4 mt-4">
-                        <div class="text-sm text-slate-500 dark:text-white/60">
-                            Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="showing-total">0</span> orders
-                        </div>
-                        <div class="flex items-center gap-1" id="pagination-buttons">
-                            <!-- Pagination buttons added by JS -->
-                        </div>
+                        <input type="text" id="search-input" placeholder="Search orders..."
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-64 ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
                     </div>
                 </div>
             </div>
+
+            <!-- Table -->
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="orders-table">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="0">
+                                Order <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="1">
+                                Date <i class="fas fa-sort-down ms-1 text-xs text-purple-500"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Status</th>
+                            <th scope="col" class="px-6 py-3">Customer</th>
+                            <th scope="col" class="px-6 py-3">Product</th>
+                            <th scope="col" class="px-6 py-3 text-right cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="5">
+                                Revenue <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody">
+                        <!-- Data loaded via AJAX -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-8">
+                <i class="fas fa-spinner fa-spin fa-2x text-purple-500 mb-2"></i>
+                <p class="text-gray-500 dark:text-gray-400">Loading orders...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <i class="fas fa-shopping-cart fa-4x text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 mb-4">No orders found.</p>
+                <a href="/orders/create" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-plus me-2"></i> Create Your First Order
+                </a>
+            </div>
+
+            <!-- Pagination -->
+            <nav class="flex flex-wrap items-center justify-between gap-4 pt-4" id="pagination-container" aria-label="Table navigation">
+                <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    Showing <span class="font-semibold text-gray-900 dark:text-white" id="showing-start">0</span> to
+                    <span class="font-semibold text-gray-900 dark:text-white" id="showing-end">0</span> of
+                    <span class="font-semibold text-gray-900 dark:text-white" id="showing-total">0</span> orders
+                </span>
+                <ul class="inline-flex -space-x-px text-sm h-8" id="pagination-buttons">
+                    <!-- Pagination buttons added by JS -->
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // State management
         let currentPage = 0;
         let pageSize = 10;
         let searchTerm = '';
-        let sortColumn = 1; // Default sort by date
+        let sortColumn = 1;
         let sortDirection = 'desc';
         let totalRecords = 0;
         let filteredRecords = 0;
         let statusFilters = ['paid', 'pending', 'refunded', 'cancelled'];
 
-        const bgColors = ['from-purple-700 to-pink-500', 'from-gray-400 to-gray-600', 'from-green-600 to-lime-400', 'from-blue-600 to-cyan-400', 'from-red-600 to-rose-400', 'from-orange-500 to-yellow-300'];
+        const bgColors = ['from-purple-600 to-pink-500', 'from-gray-400 to-gray-600', 'from-green-500 to-green-700', 'from-blue-500 to-blue-700', 'from-red-500 to-red-700', 'from-orange-400 to-orange-600'];
 
         function getInitials(name) {
             return name.split(' ').filter(w => w.length > 0).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
@@ -185,60 +182,63 @@
             return bgColors[hash % bgColors.length];
         }
 
+        function getStatusBadge(status, statusClass) {
+            const map = {
+                'from-green-600 to-lime-400': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                'from-yellow-500 to-orange-400': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                'from-red-600 to-rose-400': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                'from-gray-500 to-gray-700': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+            };
+            return map[statusClass] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+        }
+
         function renderRow(order) {
             const initials = getInitials(order.customerName);
             const colorClass = getColorClass(order.customerName);
-            const quantityInfo = order.productCount > 1
-                ? `Qty: ${order.quantity} (+${order.totalQuantity - order.quantity} more)`
-                : `Qty: ${order.quantity}`;
+            const statusBadge = getStatusBadge(order.status, order.statusClass);
+            const quantityInfo = order.productCount > 1 ? `Qty: ${order.quantity} (+${order.totalQuantity - order.quantity} more)` : `Qty: ${order.quantity}`;
 
             return `
-                <tr>
-                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <a href="/orders/${order.id}" class="flex px-2 py-1 group">
-                            <div class="flex flex-col justify-center">
-                                <h6 class="mb-0 text-sm font-semibold leading-normal dark:text-white group-hover:text-cyan-500 transition-colors">${order.name}</h6>
-                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">#${order.id}</p>
-                            </div>
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="px-6 py-4">
+                        <a href="/orders/${order.id}" class="group">
+                            <div class="font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 transition-colors">${order.name}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">#${order.id}</div>
                         </a>
                     </td>
-                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <p class="mb-0 text-sm font-semibold leading-normal dark:text-white">${order.createdAt}</p>
-                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${order.createdAtTime}</p>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-gray-900 dark:text-white">${order.createdAt}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">${order.createdAtTime}</div>
                     </td>
-                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <span class="bg-gradient-to-tl ${order.statusClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
-                            ${order.status}
-                        </span>
+                    <td class="px-6 py-4 text-center">
+                        <span class="${statusBadge} text-xs font-medium px-2.5 py-0.5 rounded">${order.status}</span>
                     </td>
-                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <div class="flex px-2 py-1">
-                            <div class="flex items-center justify-center w-9 h-9 mr-4 text-xs text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl ${colorClass}">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="flex items-center justify-center w-9 h-9 mr-3 text-xs text-white font-semibold rounded-lg bg-gradient-to-br ${colorClass}">
                                 ${initials}
                             </div>
-                            <div class="flex flex-col justify-center">
-                                <h6 class="mb-0 text-sm leading-normal dark:text-white">${order.customerName}</h6>
-                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${order.email}</p>
+                            <div>
+                                <div class="font-medium text-gray-900 dark:text-white">${order.customerName}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">${order.email}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <p class="mb-0 text-sm leading-normal dark:text-white" title="${order.productFull}">${order.product}</p>
-                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${quantityInfo}</p>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900 dark:text-white" title="${order.productFull}">${order.product}</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">${quantityInfo}</div>
                     </td>
-                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                        <span class="text-sm font-bold leading-tight text-slate-700 dark:text-white">${order.totalPriceFormatted}</span>
-                    </td>
-                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                    <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">${order.totalPriceFormatted}</td>
+                    <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="/orders/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
-                                <i class="fas fa-eye me-1"></i> View
+                            <a href="/orders/${order.id}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" title="View">
+                                <i class="fas fa-eye"></i>
                             </a>
-                            <a href="/orders/edit/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Edit Order">
-                                <i class="fas fa-pencil-alt me-1"></i> Edit
+                            <a href="/orders/edit/${order.id}" class="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300" title="Edit">
+                                <i class="fas fa-pencil-alt"></i>
                             </a>
-                            <a href="/orders/invoice/${order.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Invoice">
-                                <i class="fas fa-file-invoice me-1"></i> Invoice
+                            <a href="/orders/invoice/${order.id}" class="text-pink-600 hover:text-pink-800 dark:text-pink-400 dark:hover:text-pink-300" title="Invoice">
+                                <i class="fas fa-file-invoice"></i>
                             </a>
                         </div>
                     </td>
@@ -250,16 +250,13 @@
             const totalPages = Math.ceil(filteredRecords / pageSize);
             const paginationButtons = document.getElementById('pagination-buttons');
             paginationButtons.innerHTML = '';
-
             if (totalPages <= 1) return;
 
-            // Previous button
-            const prevBtn = document.createElement('button');
-            prevBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${currentPage === 0 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            prevBtn.disabled = currentPage === 0;
-            prevBtn.onclick = () => { if (currentPage > 0) { currentPage--; loadData(); } };
-            paginationButtons.appendChild(prevBtn);
+            // Previous
+            const prevLi = document.createElement('li');
+            prevLi.innerHTML = `<button class="flex items-center justify-center px-3 h-8 ms-0 leading-tight ${currentPage === 0 ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'} bg-white border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700" ${currentPage === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left text-xs"></i></button>`;
+            if (currentPage > 0) prevLi.querySelector('button').onclick = () => { currentPage--; loadData(); };
+            paginationButtons.appendChild(prevLi);
 
             // Page numbers
             const maxButtons = 5;
@@ -268,20 +265,21 @@
             if (endPage - startPage < maxButtons) startPage = Math.max(0, endPage - maxButtons);
 
             for (let i = startPage; i < endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${i === currentPage ? 'bg-gradient-to-tl from-cyan-500 to-blue-500 text-white' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
-                pageBtn.textContent = i + 1;
-                pageBtn.onclick = () => { currentPage = i; loadData(); };
-                paginationButtons.appendChild(pageBtn);
+                const pageLi = document.createElement('li');
+                if (i === currentPage) {
+                    pageLi.innerHTML = `<span class="flex items-center justify-center px-3 h-8 text-white bg-gradient-to-br from-purple-600 to-pink-500 border border-purple-500">${i + 1}</span>`;
+                } else {
+                    pageLi.innerHTML = `<button class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">${i + 1}</button>`;
+                    pageLi.querySelector('button').onclick = () => { currentPage = i; loadData(); };
+                }
+                paginationButtons.appendChild(pageLi);
             }
 
-            // Next button
-            const nextBtn = document.createElement('button');
-            nextBtn.className = `px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${currentPage >= totalPages - 1 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-gray-700'}`;
-            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage >= totalPages - 1;
-            nextBtn.onclick = () => { if (currentPage < totalPages - 1) { currentPage++; loadData(); } };
-            paginationButtons.appendChild(nextBtn);
+            // Next
+            const nextLi = document.createElement('li');
+            nextLi.innerHTML = `<button class="flex items-center justify-center px-3 h-8 leading-tight ${currentPage >= totalPages - 1 ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'} bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700" ${currentPage >= totalPages - 1 ? 'disabled' : ''}><i class="fas fa-chevron-right text-xs"></i></button>`;
+            if (currentPage < totalPages - 1) nextLi.querySelector('button').onclick = () => { currentPage++; loadData(); };
+            paginationButtons.appendChild(nextLi);
         }
 
         async function loadData() {
@@ -312,7 +310,6 @@
                 totalRecords = result.recordsTotal;
                 filteredRecords = result.recordsFiltered;
 
-                // Update UI
                 document.getElementById('total-count').textContent = totalRecords;
                 document.getElementById('showing-start').textContent = filteredRecords > 0 ? (currentPage * pageSize) + 1 : 0;
                 document.getElementById('showing-end').textContent = Math.min((currentPage + 1) * pageSize, filteredRecords);
@@ -335,89 +332,47 @@
             }
         }
 
-        // Event listeners
-        document.getElementById('per-page').addEventListener('change', (e) => {
-            pageSize = parseInt(e.target.value);
-            currentPage = 0;
-            loadData();
-        });
+        document.getElementById('per-page').addEventListener('change', (e) => { pageSize = parseInt(e.target.value); currentPage = 0; loadData(); });
 
         let searchTimeout;
         document.getElementById('search-input').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                searchTerm = e.target.value;
-                currentPage = 0;
-                loadData();
-            }, 300);
+            searchTimeout = setTimeout(() => { searchTerm = e.target.value; currentPage = 0; loadData(); }, 300);
         });
 
-        // Sort handlers
         document.querySelectorAll('th[data-sort]').forEach(th => {
             th.addEventListener('click', () => {
                 const col = parseInt(th.dataset.sort);
-                if (sortColumn === col) {
-                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-                } else {
-                    sortColumn = col;
-                    sortDirection = col === 1 ? 'desc' : 'asc'; // Default desc for date
-                }
-                // Update sort icons
+                if (sortColumn === col) { sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; }
+                else { sortColumn = col; sortDirection = col === 1 ? 'desc' : 'asc'; }
                 document.querySelectorAll('th[data-sort] i').forEach(i => i.className = 'fas fa-sort ms-1 text-xs');
-                th.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs text-cyan-500`;
+                th.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs text-purple-500`;
                 loadData();
             });
         });
 
-        // Filters
         const filtersBtn = document.getElementById('filters-dropdown-btn');
         const filtersMenu = document.getElementById('filters-dropdown-menu');
         const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
         const activeFilterCount = document.getElementById('active-filter-count');
 
-        filtersBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            filtersMenu.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!filtersMenu?.contains(e.target) && !filtersBtn?.contains(e.target)) {
-                filtersMenu?.classList.add('hidden');
-            }
-        });
+        filtersBtn?.addEventListener('click', (e) => { e.stopPropagation(); filtersMenu.classList.toggle('hidden'); });
+        document.addEventListener('click', (e) => { if (!filtersMenu?.contains(e.target) && !filtersBtn?.contains(e.target)) filtersMenu?.classList.add('hidden'); });
 
         function updateFilters() {
             statusFilters = Array.from(filterCheckboxes).filter(cb => cb.checked).map(cb => cb.dataset.filter);
             const uncheckedCount = 4 - statusFilters.length;
-
-            if (uncheckedCount > 0) {
-                activeFilterCount.classList.remove('hidden');
-                activeFilterCount.textContent = statusFilters.length;
-            } else {
-                activeFilterCount.classList.add('hidden');
-            }
-
+            if (uncheckedCount > 0) { activeFilterCount.classList.remove('hidden'); activeFilterCount.textContent = statusFilters.length; }
+            else { activeFilterCount.classList.add('hidden'); }
             currentPage = 0;
             loadData();
         }
 
         filterCheckboxes.forEach(cb => cb.addEventListener('change', updateFilters));
+        document.getElementById('clear-filters')?.addEventListener('click', () => { filterCheckboxes.forEach(cb => cb.checked = false); updateFilters(); filtersMenu.classList.add('hidden'); });
 
-        document.getElementById('clear-filters')?.addEventListener('click', () => {
-            filterCheckboxes.forEach(cb => cb.checked = false);
-            updateFilters();
-            filtersMenu.classList.add('hidden');
-        });
-
-        // Export CSV
         document.getElementById('export-csv')?.addEventListener('click', async function() {
-            const params = new URLSearchParams({
-                handler: 'Data',
-                start: 0,
-                length: 10000,
-                search: searchTerm,
-                statusFilter: statusFilters.join(',')
-            });
+            const params = new URLSearchParams({ handler: 'Data', start: 0, length: 10000, search: searchTerm, statusFilter: statusFilters.join(',') });
             const response = await fetch(`/orders?${params}`);
             const result = await response.json();
 
@@ -425,13 +380,7 @@
             let csv = headers.join(',') + '\n';
             result.data.forEach(o => {
                 const row = [o.name, o.createdAt, o.status, o.customerName, o.email, o.product, o.totalPriceFormatted];
-                csv += row.map(cell => {
-                    let escaped = String(cell).replace(/"/g, '""');
-                    if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
-                        escaped = '"' + escaped + '"';
-                    }
-                    return escaped;
-                }).join(',') + '\n';
+                csv += row.map(cell => { let escaped = String(cell).replace(/"/g, '""'); if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) escaped = '"' + escaped + '"'; return escaped; }).join(',') + '\n';
             });
 
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -445,7 +394,6 @@
             URL.revokeObjectURL(url);
         });
 
-        // Initial load
         loadData();
     </script>
 }
