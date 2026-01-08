@@ -66,7 +66,7 @@
             display: flex;
             align-items: center;
             padding: 0.625rem 1rem;
-            margin: 0.125rem 1rem;
+            margin: 0.125rem 0;
             border-radius: 0.5rem;
             transition: all 0.15s ease-in-out;
             color: #67748e;
@@ -75,20 +75,20 @@
             font-weight: 500;
         }
         .dark .sidenav-item {
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.8);
         }
         .sidenav-item:hover {
             background-color: #f8f9fa;
         }
         .dark .sidenav-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.1);
         }
         .sidenav-item.active {
             background-color: #fff;
             box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
         }
         .dark .sidenav-item.active {
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.1);
             box-shadow: none;
         }
         .sidenav-item .icon-shape {
@@ -99,22 +99,13 @@
             align-items: center;
             justify-content: center;
             margin-right: 0.75rem;
-            background: linear-gradient(310deg, #f8f9fa, #fff);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(310deg, #f1f5f9, #fff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
             color: #67748e;
             transition: all 0.15s ease-in-out;
         }
         .dark .sidenav-item .icon-shape {
-            background: linear-gradient(310deg, #1e293b, #334155);
-            color: #94a3b8;
-        }
-        .sidenav-item.active .icon-shape {
-            background: linear-gradient(310deg, #7c3aed, #a855f7);
-            color: #fff;
-            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.4);
-        }
-        .dark .sidenav-item.active .icon-shape {
-            background: linear-gradient(310deg, #7c3aed, #a855f7);
+            background: linear-gradient(310deg, #475569, #64748b);
             color: #fff;
         }
         .sidenav-item.active .nav-text {
@@ -122,7 +113,7 @@
             font-weight: 600;
         }
         .dark .sidenav-item.active .nav-text {
-            color: #f1f5f9;
+            color: #fff;
         }
 
         /* Dropdown items */
@@ -138,22 +129,23 @@
             font-weight: 400;
         }
         .dark .sidenav-dropdown-item {
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.6);
         }
         .sidenav-dropdown-item:hover {
             background-color: #f8f9fa;
             color: #344767;
         }
         .dark .sidenav-dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
         .sidenav-dropdown-item.active {
             color: #7c3aed;
             font-weight: 600;
         }
         .dark .sidenav-dropdown-item.active {
-            color: #a78bfa;
+            color: #fff;
+            font-weight: 600;
         }
         .sidenav-dropdown-item::before {
             content: '';
@@ -165,10 +157,13 @@
             transition: all 0.15s ease-in-out;
         }
         .dark .sidenav-dropdown-item::before {
-            background-color: #475569;
+            background-color: rgba(255, 255, 255, 0.3);
         }
         .sidenav-dropdown-item.active::before {
             background-color: #7c3aed;
+        }
+        .dark .sidenav-dropdown-item.active::before {
+            background-color: #a78bfa;
         }
 
         /* Section headers */
@@ -182,7 +177,7 @@
             opacity: 0.6;
         }
         .dark .sidenav-title {
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* Dropdown animation */
@@ -222,216 +217,216 @@
 
     <!-- Sidebar -->
     <aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-        <div class="h-full flex flex-col bg-white dark:bg-slate-850 dark:bg-opacity-95 shadow-soft dark:shadow-none border-r-0 dark:border-r dark:border-slate-700" style="background: linear-gradient(195deg, rgb(66, 66, 74), rgb(25, 25, 25));">
+        <div class="sidebar-container h-full flex flex-col bg-white dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900 shadow-xl dark:shadow-none border-r border-gray-100 dark:border-slate-700">
             <!-- Logo -->
             <div class="flex items-center p-6 pb-4">
                 <a href="/dashboard" class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
-                        <i class="fas fa-cube text-slate-800 text-sm"></i>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 dark:bg-white flex items-center justify-center shadow-md">
+                        <i class="fas fa-cube text-white dark:text-slate-800 text-sm"></i>
                     </div>
                     <div>
-                        <span class="text-sm font-semibold text-white tracking-wide">Algora Dashboard</span>
+                        <span class="text-sm font-semibold text-slate-800 dark:text-white tracking-wide">Algora Dashboard</span>
                     </div>
                 </a>
             </div>
 
-            <hr class="h-px mx-4 my-1 bg-gradient-to-r from-transparent via-white/30 to-transparent border-0">
+            <hr class="h-px mx-4 my-1 bg-gradient-to-r from-transparent via-slate-200 dark:via-white/30 to-transparent border-0">
 
             <!-- Navigation -->
             <nav class="flex-1 overflow-y-auto py-4">
                 <!-- Dashboard -->
-                <a href="/dashboard" class="sidenav-item @(IsActive("/dashboard") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/dashboard") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/dashboard" class="sidenav-item @(IsActive("/dashboard") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/dashboard") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-tv text-xs"></i>
                     </span>
                     <span class="nav-text text-sm font-medium">Dashboard</span>
                 </a>
 
                 <!-- Commerce Section -->
-                <p class="sidenav-title text-white/50 mt-4">Commerce</p>
+                <p class="sidenav-title mt-4">Commerce</p>
 
-                <a href="/orders" class="sidenav-item @(IsActive("/orders") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/orders") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/orders" class="sidenav-item @(IsActive("/orders") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/orders") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-shopping-cart text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Orders</span>
                 </a>
 
-                <a href="/products" class="sidenav-item @(IsActive("/products") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/products") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/products" class="sidenav-item @(IsActive("/products") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/products") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-box text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Products</span>
                 </a>
 
-                <a href="/bundles/admin" class="sidenav-item @(IsActive("/bundles") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/bundles") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/bundles/admin" class="sidenav-item @(IsActive("/bundles") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/bundles") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-boxes-stacked text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Bundles</span>
                 </a>
 
                 <!-- Communication Section -->
-                <p class="sidenav-title text-white/50 mt-4">Communication</p>
+                <p class="sidenav-title mt-4">Communication</p>
 
-                <button onclick="toggleCollapse('comm')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/communication") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/communication") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('comm')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/communication") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/communication") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-comments text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Messages</span>
-                    <i id="comm-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/communication") ? "rotated" : "")"></i>
+                    <i id="comm-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/communication") ? "rotated" : "")"></i>
                 </button>
                 <div id="comm-collapse" class="sidenav-collapse @(IsInSection("/communication") ? "show" : "")">
-                    <a href="/communication/history" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/history") ? "active !text-white font-semibold" : "")">History</a>
-                    <a href="/communication/email-campaigns" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/email-campaigns") ? "active !text-white font-semibold" : "")">Email Campaigns</a>
-                    <a href="/communication/sms" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/sms") ? "active !text-white font-semibold" : "")">SMS</a>
-                    <a href="/communication/whatsapp" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/whatsapp") ? "active !text-white font-semibold" : "")">WhatsApp</a>
+                    <a href="/communication/history" class="sidenav-dropdown-item @(IsActive("/communication/history") ? "active" : "")">History</a>
+                    <a href="/communication/email-campaigns" class="sidenav-dropdown-item @(IsActive("/communication/email-campaigns") ? "active" : "")">Email Campaigns</a>
+                    <a href="/communication/sms" class="sidenav-dropdown-item @(IsActive("/communication/sms") ? "active" : "")">SMS</a>
+                    <a href="/communication/whatsapp" class="sidenav-dropdown-item @(IsActive("/communication/whatsapp") ? "active" : "")">WhatsApp</a>
                 </div>
 
                 <!-- Marketing Section -->
-                <p class="sidenav-title text-white/50 mt-4">Marketing</p>
+                <p class="sidenav-title mt-4">Marketing</p>
 
-                <button onclick="toggleCollapse('marketing')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('marketing')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-bullhorn text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Marketing</span>
-                    <i id="marketing-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "rotated" : "")"></i>
+                    <i id="marketing-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "rotated" : "")"></i>
                 </button>
                 <div id="marketing-collapse" class="sidenav-collapse @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "show" : "")">
-                    <a href="/upsell" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/upsell") ? "active !text-white font-semibold" : "")">Upsell</a>
-                    <a href="/reviews/admin" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsInSection("/reviews") ? "active !text-white font-semibold" : "")">Reviews</a>
-                    <a href="/analytics" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/analytics") ? "active !text-white font-semibold" : "")">Analytics</a>
-                    <a href="/abandoned-checkouts" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsInSection("/abandoned") ? "active !text-white font-semibold" : "")">Abandoned Carts</a>
+                    <a href="/upsell" class="sidenav-dropdown-item @(IsActive("/upsell") ? "active" : "")">Upsell</a>
+                    <a href="/reviews/admin" class="sidenav-dropdown-item @(IsInSection("/reviews") ? "active" : "")">Reviews</a>
+                    <a href="/analytics" class="sidenav-dropdown-item @(IsActive("/analytics") ? "active" : "")">Analytics</a>
+                    <a href="/abandoned-checkouts" class="sidenav-dropdown-item @(IsInSection("/abandoned") ? "active" : "")">Abandoned Carts</a>
                 </div>
 
                 <!-- AI Tools Section -->
-                <p class="sidenav-title text-white/50 mt-4">AI Tools</p>
+                <p class="sidenav-title mt-4">AI Tools</p>
 
-                <a href="/ai" class="sidenav-item @(currentPath == "/ai" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/ai" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/ai" class="sidenav-item @(currentPath == "/ai" ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(currentPath == "/ai" ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-robot text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">AI Dashboard</span>
                 </a>
 
-                <button onclick="toggleCollapse('ai')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/ai/") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/ai/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('ai')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/ai/") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/ai/") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-wand-magic-sparkles text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">AI Tools</span>
-                    <i id="ai-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/ai/") ? "rotated" : "")"></i>
+                    <i id="ai-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/ai/") ? "rotated" : "")"></i>
                 </button>
                 <div id="ai-collapse" class="sidenav-collapse @(IsInSection("/ai/") ? "show" : "")">
-                    <a href="/ai/descriptions" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/descriptions") ? "active !text-white font-semibold" : "")">Descriptions</a>
-                    <a href="/ai/seo" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/seo") ? "active !text-white font-semibold" : "")">SEO Optimizer</a>
-                    <a href="/ai/pricing" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/pricing") ? "active !text-white font-semibold" : "")">Pricing AI</a>
-                    <a href="/ai/alttext" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/alttext") ? "active !text-white font-semibold" : "")">Alt Text</a>
-                    <a href="/ai/chatbot" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/chatbot") ? "active !text-white font-semibold" : "")">Chatbot</a>
+                    <a href="/ai/descriptions" class="sidenav-dropdown-item @(IsActive("/ai/descriptions") ? "active" : "")">Descriptions</a>
+                    <a href="/ai/seo" class="sidenav-dropdown-item @(IsActive("/ai/seo") ? "active" : "")">SEO Optimizer</a>
+                    <a href="/ai/pricing" class="sidenav-dropdown-item @(IsActive("/ai/pricing") ? "active" : "")">Pricing AI</a>
+                    <a href="/ai/alttext" class="sidenav-dropdown-item @(IsActive("/ai/alttext") ? "active" : "")">Alt Text</a>
+                    <a href="/ai/chatbot" class="sidenav-dropdown-item @(IsActive("/ai/chatbot") ? "active" : "")">Chatbot</a>
                 </div>
 
                 <!-- Operations Section -->
-                <p class="sidenav-title text-white/50 mt-4">Operations</p>
+                <p class="sidenav-title mt-4">Operations</p>
 
-                <a href="/operations" class="sidenav-item @(currentPath == "/operations" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/operations" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/operations" class="sidenav-item @(currentPath == "/operations" ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(currentPath == "/operations" ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-gauge-high text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Overview</span>
                 </a>
 
-                <button onclick="toggleCollapse('ops')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/operations/") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/operations/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('ops')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/operations/") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/operations/") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-truck text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Supply Chain</span>
-                    <i id="ops-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/operations/") ? "rotated" : "")"></i>
+                    <i id="ops-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/operations/") ? "rotated" : "")"></i>
                 </button>
                 <div id="ops-collapse" class="sidenav-collapse @(IsInSection("/operations/") ? "show" : "")">
-                    <a href="/operations/suppliers" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/suppliers") ? "active !text-white font-semibold" : "")">Suppliers</a>
-                    <a href="/operations/purchaseorders" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/purchaseorders") ? "active !text-white font-semibold" : "")">Purchase Orders</a>
-                    <a href="/operations/locations" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/locations") ? "active !text-white font-semibold" : "")">Locations</a>
-                    <a href="/operations/barcodes" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/barcodes") ? "active !text-white font-semibold" : "")">Barcodes</a>
-                    <a href="/operations/packing-slips" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/packing-slips") ? "active !text-white font-semibold" : "")">Packing Slips</a>
-                    <a href="/operations/label-designer" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/label-designer") ? "active !text-white font-semibold" : "")">Label Designer</a>
+                    <a href="/operations/suppliers" class="sidenav-dropdown-item @(IsActive("/operations/suppliers") ? "active" : "")">Suppliers</a>
+                    <a href="/operations/purchaseorders" class="sidenav-dropdown-item @(IsActive("/operations/purchaseorders") ? "active" : "")">Purchase Orders</a>
+                    <a href="/operations/locations" class="sidenav-dropdown-item @(IsActive("/operations/locations") ? "active" : "")">Locations</a>
+                    <a href="/operations/barcodes" class="sidenav-dropdown-item @(IsActive("/operations/barcodes") ? "active" : "")">Barcodes</a>
+                    <a href="/operations/packing-slips" class="sidenav-dropdown-item @(IsActive("/operations/packing-slips") ? "active" : "")">Packing Slips</a>
+                    <a href="/operations/label-designer" class="sidenav-dropdown-item @(IsActive("/operations/label-designer") ? "active" : "")">Label Designer</a>
                 </div>
 
                 <!-- Inventory Section -->
-                <p class="sidenav-title text-white/50 mt-4">Inventory</p>
+                <p class="sidenav-title mt-4">Inventory</p>
 
-                <button onclick="toggleCollapse('inv')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/inventory") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/inventory") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('inv')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/inventory") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/inventory") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-warehouse text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Inventory</span>
-                    <i id="inv-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/inventory") ? "rotated" : "")"></i>
+                    <i id="inv-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/inventory") ? "rotated" : "")"></i>
                 </button>
                 <div id="inv-collapse" class="sidenav-collapse @(IsInSection("/inventory") ? "show" : "")">
-                    <a href="/inventory" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(currentPath == "/inventory" ? "active !text-white font-semibold" : "")">Predictions</a>
-                    <a href="/inventory/alerts" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/inventory/alerts") ? "active !text-white font-semibold" : "")">Alerts</a>
-                    <a href="/inventory/settings" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/inventory/settings") ? "active !text-white font-semibold" : "")">Settings</a>
+                    <a href="/inventory" class="sidenav-dropdown-item @(currentPath == "/inventory" ? "active" : "")">Predictions</a>
+                    <a href="/inventory/alerts" class="sidenav-dropdown-item @(IsActive("/inventory/alerts") ? "active" : "")">Alerts</a>
+                    <a href="/inventory/settings" class="sidenav-dropdown-item @(IsActive("/inventory/settings") ? "active" : "")">Settings</a>
                 </div>
 
                 <!-- Customer Hub Section -->
-                <p class="sidenav-title text-white/50 mt-4">Customer Hub</p>
+                <p class="sidenav-title mt-4">Customer Hub</p>
 
-                <a href="/customer-hub" class="sidenav-item @(currentPath == "/customer-hub" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/customer-hub" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/customer-hub" class="sidenav-item @(currentPath == "/customer-hub" ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(currentPath == "/customer-hub" ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-users text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Overview</span>
                 </a>
 
-                <button onclick="toggleCollapse('hub')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/customer-hub/") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/customer-hub/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('hub')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/customer-hub/") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/customer-hub/") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-headset text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Support</span>
-                    <i id="hub-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/customer-hub/") ? "rotated" : "")"></i>
+                    <i id="hub-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/customer-hub/") ? "rotated" : "")"></i>
                 </button>
                 <div id="hub-collapse" class="sidenav-collapse @(IsInSection("/customer-hub/") ? "show" : "")">
-                    <a href="/customer-hub/inbox" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/inbox") && !currentPath.Contains("live-chat") ? "active !text-white font-semibold" : "")">Unified Inbox</a>
-                    <a href="/customer-hub/inbox/live-chat" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/inbox/live-chat") ? "active !text-white font-semibold" : "")">Live Chat</a>
-                    <a href="/customer-hub/exchanges" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/exchanges") ? "active !text-white font-semibold" : "")">Exchanges</a>
-                    <a href="/customer-hub/loyalty" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/loyalty") ? "active !text-white font-semibold" : "")">Loyalty Program</a>
+                    <a href="/customer-hub/inbox" class="sidenav-dropdown-item @(IsActive("/customer-hub/inbox") && !currentPath.Contains("live-chat") ? "active" : "")">Unified Inbox</a>
+                    <a href="/customer-hub/inbox/live-chat" class="sidenav-dropdown-item @(IsActive("/customer-hub/inbox/live-chat") ? "active" : "")">Live Chat</a>
+                    <a href="/customer-hub/exchanges" class="sidenav-dropdown-item @(IsActive("/customer-hub/exchanges") ? "active" : "")">Exchanges</a>
+                    <a href="/customer-hub/loyalty" class="sidenav-dropdown-item @(IsActive("/customer-hub/loyalty") ? "active" : "")">Loyalty Program</a>
                 </div>
 
                 <!-- Returns -->
-                <a href="/returns" class="sidenav-item @(IsInSection("/returns") ? "active" : "") mx-4 my-1 mt-2 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/returns") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/returns" class="sidenav-item @(IsInSection("/returns") ? "active" : "") mx-4 my-1 mt-2">
+                    <span class="icon-shape @(IsInSection("/returns") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-rotate-left text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Returns</span>
                 </a>
 
                 <!-- Admin Section -->
-                <p class="sidenav-title text-white/50 mt-4">Admin</p>
+                <p class="sidenav-title mt-4">Admin</p>
 
-                <button onclick="toggleCollapse('admin')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/admin") ? "active" : "")">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/admin") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <button onclick="toggleCollapse('admin')" class="sidenav-item w-full mx-4 my-1 @(IsInSection("/admin") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/admin") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-shield-halved text-xs"></i>
                     </span>
                     <span class="nav-text text-sm flex-1 text-left">Administration</span>
-                    <i id="admin-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/admin") ? "rotated" : "")"></i>
+                    <i id="admin-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/admin") ? "rotated" : "")"></i>
                 </button>
                 <div id="admin-collapse" class="sidenav-collapse @(IsInSection("/admin") ? "show" : "")">
-                    <a href="/admin/clients" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/clients") ? "active !text-white font-semibold" : "")">Clients</a>
-                    <a href="/admin/plan-features" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/plan-features") ? "active !text-white font-semibold" : "")">Plan Features</a>
-                    <a href="/admin/plan-requests" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/plan-requests") ? "active !text-white font-semibold" : "")">Plan Requests</a>
+                    <a href="/admin/clients" class="sidenav-dropdown-item @(IsActive("/admin/clients") ? "active" : "")">Clients</a>
+                    <a href="/admin/plan-features" class="sidenav-dropdown-item @(IsActive("/admin/plan-features") ? "active" : "")">Plan Features</a>
+                    <a href="/admin/plan-requests" class="sidenav-dropdown-item @(IsActive("/admin/plan-requests") ? "active" : "")">Plan Requests</a>
                 </div>
 
                 <!-- Settings Section -->
-                <p class="sidenav-title text-white/50 mt-4">Settings</p>
+                <p class="sidenav-title mt-4">Settings</p>
 
-                <a href="/account/profile" class="sidenav-item @(IsActive("/account") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/account") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/account/profile" class="sidenav-item @(IsActive("/account") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/account") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-user text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Account</span>
                 </a>
 
-                <a href="/plans" class="sidenav-item @(IsActive("/plans") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
-                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/plans") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                <a href="/plans" class="sidenav-item @(IsActive("/plans") ? "active" : "") mx-4 my-1">
+                    <span class="icon-shape @(IsActive("/plans") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-credit-card text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Plans & Billing</span>
