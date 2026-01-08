@@ -8,7 +8,7 @@
     <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,16 +22,16 @@
                     },
                     colors: {
                         primary: {
-                            50: '#faf5ff',
-                            100: '#f3e8ff',
-                            200: '#e9d5ff',
-                            300: '#d8b4fe',
-                            400: '#c084fc',
-                            500: '#a855f7',
-                            600: '#9333ea',
-                            700: '#7c3aed',
-                            800: '#6b21a8',
-                            900: '#581c87'
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95'
                         }
                     }
                 }
@@ -50,25 +50,60 @@
 
     <style>
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* Sidebar active state */
-        .sidebar-item.active {
-            background: linear-gradient(to right, #7c3aed, #ec4899);
-            color: white;
+        /* Sidebar styling */
+        .nav-item {
+            transition: all 0.15s ease;
         }
-        .sidebar-item.active i { color: white; }
+        .nav-item:hover {
+            background-color: rgba(139, 92, 246, 0.08);
+        }
+        .dark .nav-item:hover {
+            background-color: rgba(139, 92, 246, 0.15);
+        }
+        .nav-item.active {
+            background-color: rgba(139, 92, 246, 0.12);
+            color: #7c3aed;
+            font-weight: 500;
+        }
+        .dark .nav-item.active {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+        .nav-item.active .nav-icon {
+            color: #7c3aed;
+        }
+        .dark .nav-item.active .nav-icon {
+            color: #a78bfa;
+        }
 
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(to right, #7c3aed, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Dropdown animation */
+        .nav-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+        .nav-dropdown.open {
+            max-height: 500px;
+        }
+
+        /* Section divider */
+        .nav-section {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            padding: 1rem 1rem 0.5rem;
+        }
+        .dark .nav-section {
+            color: #64748b;
         }
     </style>
 
@@ -76,352 +111,215 @@
     @await RenderSectionAsync("css", required: false)
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    @{
+        var currentPath = Context.Request.Path.ToString().ToLower();
+        bool IsActive(string path) => currentPath == path.ToLower() || currentPath.StartsWith(path.ToLower() + "/");
+        bool IsInSection(string basePath) => currentPath.StartsWith(basePath.ToLower());
+    }
+
     <!-- Mobile Menu Button -->
     <button data-drawer-target="sidebar" data-drawer-toggle="sidebar" aria-controls="sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
         <span class="sr-only">Open sidebar</span>
-        <i class="fas fa-bars w-6 h-6"></i>
+        <i class="fas fa-bars text-lg"></i>
     </button>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-        <div class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-60 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+        <div class="h-full flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
             <!-- Logo -->
-            <a href="/dashboard" class="flex items-center ps-2.5 mb-5">
-                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 me-3">
-                    <i class="fas fa-cube text-white text-sm"></i>
+            <div class="flex items-center h-16 px-4 border-b border-gray-100 dark:border-gray-800">
+                <a href="/dashboard" class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                        <i class="fas fa-cube text-white text-sm"></i>
+                    </div>
+                    <span class="text-lg font-semibold text-gray-900 dark:text-white">Algora</span>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <!-- Dashboard -->
+                <a href="/dashboard" class="nav-item @(IsActive("/dashboard") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-th-large w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Commerce Section -->
+                <div class="nav-section mt-4">Commerce</div>
+                <a href="/orders" class="nav-item @(IsActive("/orders") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-shopping-bag w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="/products" class="nav-item @(IsActive("/products") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-box w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Products</span>
+                </a>
+                <a href="/bundles/admin" class="nav-item @(IsActive("/bundles") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-boxes-stacked w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Bundles</span>
+                </a>
+
+                <!-- Communication Section -->
+                <div class="nav-section mt-4">Communication</div>
+                <a href="/communication/email-campaigns" class="nav-item @(IsActive("/communication/email-campaigns") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-envelope w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Email Campaigns</span>
+                </a>
+                <a href="/communication/sms" class="nav-item @(IsActive("/communication/sms") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-comment-sms w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>SMS</span>
+                </a>
+                <a href="/communication/whatsapp" class="nav-item @(IsActive("/communication/whatsapp") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fab fa-whatsapp w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>WhatsApp</span>
+                </a>
+
+                <!-- Marketing Section -->
+                <div class="nav-section mt-4">Marketing</div>
+                <button onclick="toggleNav('marketing')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="nav-icon fas fa-bullhorn w-4 text-gray-400 dark:text-gray-500"></i>
+                        <span>Marketing</span>
+                    </div>
+                    <i id="marketing-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "rotate-90" : "")"></i>
+                </button>
+                <div id="marketing-dropdown" class="nav-dropdown @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "open" : "") pl-7 space-y-0.5">
+                    <a href="/upsell" class="nav-item @(IsActive("/upsell") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Upsell</a>
+                    <a href="/reviews/admin" class="nav-item @(IsInSection("/reviews") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Reviews</a>
+                    <a href="/analytics" class="nav-item @(IsActive("/analytics") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Analytics</a>
+                    <a href="/abandoned-checkouts" class="nav-item @(IsInSection("/abandoned") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Abandoned Carts</a>
                 </div>
-                <span class="self-center text-xl font-bold whitespace-nowrap dark:text-white gradient-text">Algora</span>
-            </a>
 
-            <ul class="space-y-2 font-medium">
-                <!-- MAIN Section -->
-                <li class="pt-2">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Main</span>
-                </li>
-                <li>
-                    <a href="/dashboard" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
-                            <i class="fas fa-home text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">Dashboard</span>
-                    </a>
-                </li>
+                <!-- AI Tools Section -->
+                <div class="nav-section mt-4">AI Tools</div>
+                <a href="/ai" class="nav-item @(currentPath == "/ai" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-sparkles w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>AI Dashboard</span>
+                </a>
+                <button onclick="toggleNav('ai')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="nav-icon fas fa-wand-magic-sparkles w-4 text-gray-400 dark:text-gray-500"></i>
+                        <span>AI Tools</span>
+                    </div>
+                    <i id="ai-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/ai/") ? "rotate-90" : "")"></i>
+                </button>
+                <div id="ai-dropdown" class="nav-dropdown @(IsInSection("/ai/") ? "open" : "") pl-7 space-y-0.5">
+                    <a href="/ai/descriptions" class="nav-item @(IsActive("/ai/descriptions") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Descriptions</a>
+                    <a href="/ai/seo" class="nav-item @(IsActive("/ai/seo") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">SEO Optimizer</a>
+                    <a href="/ai/pricing" class="nav-item @(IsActive("/ai/pricing") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Pricing AI</a>
+                    <a href="/ai/alttext" class="nav-item @(IsActive("/ai/alttext") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Alt Text</a>
+                    <a href="/ai/chatbot" class="nav-item @(IsActive("/ai/chatbot") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Chatbot</a>
+                </div>
 
-                <!-- COMMERCE Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Commerce</span>
-                </li>
-                <li>
-                    <a href="/orders" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-shopping-cart text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="ms-3">Orders</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/products" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-box text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="ms-3">Products</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/bundles/admin" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-layer-group text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="ms-3">Bundles</span>
-                    </a>
-                </li>
+                <!-- Operations Section -->
+                <div class="nav-section mt-4">Operations</div>
+                <a href="/operations" class="nav-item @(currentPath == "/operations" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-gauge-high w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Overview</span>
+                </a>
+                <button onclick="toggleNav('ops')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="nav-icon fas fa-truck w-4 text-gray-400 dark:text-gray-500"></i>
+                        <span>Supply Chain</span>
+                    </div>
+                    <i id="ops-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/operations/") ? "rotate-90" : "")"></i>
+                </button>
+                <div id="ops-dropdown" class="nav-dropdown @(IsInSection("/operations/") ? "open" : "") pl-7 space-y-0.5">
+                    <a href="/operations/suppliers" class="nav-item @(IsActive("/operations/suppliers") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Suppliers</a>
+                    <a href="/operations/purchaseorders" class="nav-item @(IsActive("/operations/purchaseorders") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Purchase Orders</a>
+                    <a href="/operations/locations" class="nav-item @(IsActive("/operations/locations") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Locations</a>
+                    <a href="/operations/barcodes" class="nav-item @(IsActive("/operations/barcodes") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Barcodes</a>
+                    <a href="/operations/packing-slips" class="nav-item @(IsActive("/operations/packing-slips") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Packing Slips</a>
+                    <a href="/operations/label-designer" class="nav-item @(IsActive("/operations/label-designer") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Label Designer</a>
+                </div>
 
-                <!-- COMMUNICATION Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Communication</span>
-                </li>
-                @{
-                    var isOnCommunication = Context.Request.Path.StartsWithSegments("/communication");
-                }
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 @(isOnCommunication ? "bg-gray-100 dark:bg-gray-700" : "")" aria-controls="dropdown-communication" data-collapse-toggle="dropdown-communication" onclick="toggleDropdown('dropdown-communication', this)">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-teal-400">
-                            <i class="fas fa-comments text-white text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Communication</span>
-                        <i class="fas fa-chevron-down w-3 h-3 transition-transform @(isOnCommunication ? "rotate-180" : "")"></i>
-                    </button>
-                    <ul id="dropdown-communication" class="@(isOnCommunication ? "" : "hidden") py-2 space-y-2">
-                        <li>
-                            <a href="/communication/whatsapp" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 @(Context.Request.Path == "/communication/whatsapp" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" : "")">
-                                <i class="fab fa-whatsapp me-2 text-green-500"></i> WhatsApp
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/communication/email-campaigns" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 @(Context.Request.Path == "/communication/email-campaigns" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" : "")">
-                                <i class="fas fa-envelope me-2 text-blue-500"></i> Email Campaigns
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/communication/sms" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 @(Context.Request.Path == "/communication/sms" ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300" : "")">
-                                <i class="fas fa-sms me-2 text-purple-500"></i> SMS
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                <!-- Inventory Section -->
+                <div class="nav-section mt-4">Inventory</div>
+                <a href="/inventory" class="nav-item @(currentPath == "/inventory" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-chart-line w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Predictions</span>
+                </a>
+                <a href="/inventory/alerts" class="nav-item @(IsActive("/inventory/alerts") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-bell w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Alerts</span>
+                </a>
+                <a href="/inventory/settings" class="nav-item @(IsActive("/inventory/settings") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-sliders w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Settings</span>
+                </a>
 
-                <!-- MARKETING Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Marketing</span>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-marketing" data-collapse-toggle="dropdown-marketing">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-bullhorn text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Marketing</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-marketing" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/upsell" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Upsell</a>
-                        </li>
-                        <li>
-                            <a href="/reviews/admin" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Reviews</a>
-                        </li>
-                        <li>
-                            <a href="/analytics" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Analytics</a>
-                        </li>
-                        <li>
-                            <a href="/abandoned-checkouts" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Abandoned Carts</a>
-                        </li>
-                    </ul>
-                </li>
+                <!-- Customer Hub Section -->
+                <div class="nav-section mt-4">Customer Hub</div>
+                <a href="/customer-hub" class="nav-item @(currentPath == "/customer-hub" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-users w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Overview</span>
+                </a>
+                <button onclick="toggleNav('hub')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="nav-icon fas fa-headset w-4 text-gray-400 dark:text-gray-500"></i>
+                        <span>Support</span>
+                    </div>
+                    <i id="hub-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/customer-hub/") ? "rotate-90" : "")"></i>
+                </button>
+                <div id="hub-dropdown" class="nav-dropdown @(IsInSection("/customer-hub/") ? "open" : "") pl-7 space-y-0.5">
+                    <a href="/customer-hub/inbox" class="nav-item @(IsActive("/customer-hub/inbox") && !currentPath.Contains("live-chat") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Unified Inbox</a>
+                    <a href="/customer-hub/inbox/live-chat" class="nav-item @(IsActive("/customer-hub/inbox/live-chat") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Live Chat</a>
+                    <a href="/customer-hub/exchanges" class="nav-item @(IsActive("/customer-hub/exchanges") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Exchanges</a>
+                    <a href="/customer-hub/loyalty" class="nav-item @(IsActive("/customer-hub/loyalty") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Loyalty Program</a>
+                </div>
 
-                <!-- AI TOOLS Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">AI Tools</span>
-                </li>
-                <li>
-                    <a href="/ai" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
-                            <i class="fas fa-robot text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">AI Dashboard</span>
+                <!-- Returns -->
+                <a href="/returns" class="nav-item @(IsInSection("/returns") ? "active" : "") flex items-center gap-3 px-3 py-2 mt-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <i class="nav-icon fas fa-rotate-left w-4 text-gray-400 dark:text-gray-500"></i>
+                    <span>Returns</span>
+                </a>
+
+                <!-- Admin Section -->
+                <div class="nav-section mt-4">Admin</div>
+                <button onclick="toggleNav('admin')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex items-center gap-3">
+                        <i class="nav-icon fas fa-shield-halved w-4 text-gray-400 dark:text-gray-500"></i>
+                        <span>Administration</span>
+                    </div>
+                    <i id="admin-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/admin") ? "rotate-90" : "")"></i>
+                </button>
+                <div id="admin-dropdown" class="nav-dropdown @(IsInSection("/admin") ? "open" : "") pl-7 space-y-0.5">
+                    <a href="/admin/clients" class="nav-item @(IsActive("/admin/clients") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Clients</a>
+                    <a href="/admin/plan-features" class="nav-item @(IsActive("/admin/plan-features") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Plan Features</a>
+                    <a href="/admin/plan-requests" class="nav-item @(IsActive("/admin/plan-requests") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Plan Requests</a>
+                </div>
+            </nav>
+
+            <!-- User Section -->
+            <div class="border-t border-gray-100 dark:border-gray-800 p-3">
+                <div class="flex items-center gap-3 px-2 py-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shadow-lg shadow-purple-500/20">
+                        A
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Admin User</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@algora.com</p>
+                    </div>
+                    <a href="/account/profile" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <i class="fas fa-cog text-sm"></i>
                     </a>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-ai" data-collapse-toggle="dropdown-ai">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-wand-magic-sparkles text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">AI Tools</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-ai" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/ai/descriptions" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Descriptions</a>
-                        </li>
-                        <li>
-                            <a href="/ai/seo" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">SEO Optimizer</a>
-                        </li>
-                        <li>
-                            <a href="/ai/pricing" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Pricing AI</a>
-                        </li>
-                        <li>
-                            <a href="/ai/alttext" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Alt Text</a>
-                        </li>
-                        <li>
-                            <a href="/ai/chatbot" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Chatbot</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- OPERATIONS Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Operations</span>
-                </li>
-                <li>
-                    <a href="/operations" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400">
-                            <i class="fas fa-cogs text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">Operations</span>
-                    </a>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-operations" data-collapse-toggle="dropdown-operations">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-boxes-stacked text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Manage</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-operations" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/operations/suppliers" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Suppliers</a>
-                        </li>
-                        <li>
-                            <a href="/operations/purchaseorders" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Purchase Orders</a>
-                        </li>
-                        <li>
-                            <a href="/operations/locations" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Locations</a>
-                        </li>
-                        <li>
-                            <a href="/operations/barcodes" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Barcodes</a>
-                        </li>
-                        <li>
-                            <a href="/operations/packing-slips" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Packing Slips</a>
-                        </li>
-                        <li>
-                            <a href="/operations/label-designer" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Label Designer</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- INVENTORY Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Inventory</span>
-                </li>
-                <li>
-                    <a href="/inventory" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-lime-400">
-                            <i class="fas fa-chart-bar text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">Predictions</span>
-                    </a>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-inventory" data-collapse-toggle="dropdown-inventory">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-warehouse text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Inventory</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-inventory" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/inventory/alerts" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Alerts</a>
-                        </li>
-                        <li>
-                            <a href="/inventory/settings" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
-                        </li>
-                        <li>
-                            <a href="/operations/thresholds" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Thresholds</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- CUSTOMER HUB Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Customer Hub</span>
-                </li>
-                <li>
-                    <a href="/customer-hub" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-400">
-                            <i class="fas fa-users text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-customerhub" data-collapse-toggle="dropdown-customerhub">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-headset text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Support</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-customerhub" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/customer-hub/inbox" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Unified Inbox</a>
-                        </li>
-                        <li>
-                            <a href="/customer-hub/inbox/live-chat" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Live Chat</a>
-                        </li>
-                        <li>
-                            <a href="/customer-hub/exchanges" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Exchanges</a>
-                        </li>
-                        <li>
-                            <a href="/customer-hub/loyalty" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Loyalty Program</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- RETURNS Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Returns</span>
-                </li>
-                <li>
-                    <a href="/returns" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500 to-slate-400">
-                            <i class="fas fa-undo text-white text-sm"></i>
-                        </div>
-                        <span class="ms-3">Returns</span>
-                    </a>
-                </li>
-
-                <!-- ADMIN Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Admin</span>
-                </li>
-                <li>
-                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-admin" data-collapse-toggle="dropdown-admin">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-rose-400">
-                            <i class="fas fa-shield-halved text-white text-sm"></i>
-                        </div>
-                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Admin</span>
-                        <i class="fas fa-chevron-down w-3 h-3"></i>
-                    </button>
-                    <ul id="dropdown-admin" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="/admin/clients" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Clients</a>
-                        </li>
-                        <li>
-                            <a href="/admin/plan-features" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Plan Features</a>
-                        </li>
-                        <li>
-                            <a href="/admin/plan-requests" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Plan Requests</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <!-- SETTINGS Section -->
-                <li class="pt-4">
-                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Settings</span>
-                </li>
-                <li>
-                    <a href="/account/profile" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-user text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="ms-3">Account</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/plans" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
-                            <i class="fas fa-credit-card text-gray-500 dark:text-gray-400 text-sm"></i>
-                        </div>
-                        <span class="ms-3">Plans & Billing</span>
-                    </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="sm:ml-64">
+    <div class="sm:ml-60">
         <!-- Top Navbar -->
-        <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2.5">
-            <div class="flex flex-wrap justify-between items-center">
+        <nav class="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center justify-between h-14 px-4">
                 <!-- Breadcrumb -->
                 <div class="flex items-center">
                     <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <ol class="inline-flex items-center space-x-2">
                             <li class="inline-flex items-center">
-                                <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
-                                    <i class="fas fa-home w-3 h-3 me-2.5"></i>
+                                <a href="/dashboard" class="inline-flex items-center text-sm text-gray-500 hover:text-violet-600 dark:text-gray-400 dark:hover:text-violet-400">
+                                    <i class="fas fa-home text-xs me-2"></i>
                                     Home
                                 </a>
                             </li>
@@ -429,8 +327,8 @@
                             {
                                 <li>
                                     <div class="flex items-center">
-                                        <i class="fas fa-chevron-right w-3 h-3 text-gray-400 mx-1"></i>
-                                        <span class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">@ViewData["Breadcrumb"]</span>
+                                        <i class="fas fa-chevron-right text-[10px] text-gray-400 mx-2"></i>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">@ViewData["Breadcrumb"]</span>
                                     </div>
                                 </li>
                             }
@@ -439,51 +337,29 @@
                 </div>
 
                 <!-- Right side buttons -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
                     <!-- Dark mode toggle -->
-                    <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                        <i id="theme-toggle-dark-icon" class="hidden fas fa-moon w-5 h-5"></i>
-                        <i id="theme-toggle-light-icon" class="hidden fas fa-sun w-5 h-5"></i>
+                    <button id="theme-toggle" type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <i id="theme-toggle-dark-icon" class="hidden fas fa-moon text-sm"></i>
+                        <i id="theme-toggle-light-icon" class="hidden fas fa-sun text-sm"></i>
                     </button>
 
                     <!-- Notifications -->
-                    <button type="button" class="relative text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                        <i class="fas fa-bell w-5 h-5"></i>
-                        <span class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">3</span>
+                    <button type="button" class="relative p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <i class="fas fa-bell text-sm"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
 
-                    <!-- User menu -->
-                    <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                        <span class="sr-only">Open user menu</span>
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white text-sm font-medium">
-                            A
-                        </div>
+                    <!-- Help -->
+                    <button type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <i class="fas fa-question-circle text-sm"></i>
                     </button>
-
-                    <!-- User dropdown menu -->
-                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
-                        <div class="px-4 py-3">
-                            <span class="block text-sm text-gray-900 dark:text-white">Admin User</span>
-                            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">admin@algora.com</span>
-                        </div>
-                        <ul class="py-2" aria-labelledby="user-menu-button">
-                            <li>
-                                <a href="/account/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
-                            </li>
-                            <li>
-                                <a href="/plans" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Billing</a>
-                            </li>
-                            <li>
-                                <a href="/auth/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </nav>
 
         <!-- Page Content -->
-        <main class="p-4">
+        <main class="p-6">
             @RenderBody()
         </main>
     </div>
@@ -494,9 +370,9 @@
     <!-- Flowbite JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
-    <!-- Dark mode toggle script -->
+    <!-- Scripts -->
     <script>
-        // Check theme on load
+        // Theme toggle
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
@@ -505,54 +381,30 @@
             document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
         }
 
-        // Toggle theme
         document.getElementById('theme-toggle').addEventListener('click', function() {
             document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden');
             document.getElementById('theme-toggle-light-icon').classList.toggle('hidden');
 
-            if (localStorage.getItem('color-theme')) {
-                if (localStorage.getItem('color-theme') === 'light') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                }
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
             } else {
-                if (document.documentElement.classList.contains('dark')) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                }
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
             }
         });
 
-        // Highlight current page in sidebar
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPath = window.location.pathname.toLowerCase();
-            const sidebarLinks = document.querySelectorAll('.sidebar-item');
+        // Navigation dropdown toggle
+        function toggleNav(name) {
+            const dropdown = document.getElementById(name + '-dropdown');
+            const chevron = document.getElementById(name + '-chevron');
 
-            sidebarLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                if (href && currentPath === href.toLowerCase()) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Toggle dropdown function for sidebar collapsible menus
-        function toggleDropdown(dropdownId, button) {
-            const dropdown = document.getElementById(dropdownId);
-            const chevron = button.querySelector('.fa-chevron-down');
-
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                if (chevron) chevron.classList.add('rotate-180');
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                chevron.classList.remove('rotate-90');
             } else {
-                dropdown.classList.add('hidden');
-                if (chevron) chevron.classList.remove('rotate-180');
+                dropdown.classList.add('open');
+                chevron.classList.add('rotate-90');
             }
         }
     </script>
