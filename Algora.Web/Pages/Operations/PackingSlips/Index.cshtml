@@ -4,170 +4,160 @@
     ViewData["Title"] = "Packing Slips";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
+<div class="p-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Settings Panel -->
-        <div class="flex-none w-full max-w-full px-3 lg:w-4/12">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+        <div class="lg:col-span-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between">
-                        <h6 class="mb-0 dark:text-white">Packing Slip Settings</h6>
-                        <a href="/operations" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Packing Slip Settings</h2>
+                        <a href="/operations" class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                             <i class="fas fa-arrow-left me-2"></i> Back
                         </a>
                     </div>
                 </div>
-                <div class="flex-auto p-6">
+                <div class="p-6">
                     <form id="settingsForm">
                         <div class="space-y-4">
-                            <div class="min-h-6 pl-7 mb-0.5 block">
+                            <div class="flex items-center">
                                 <input type="checkbox" name="Settings.ShowPrices" checked
-                                    class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
-                                <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
-                                    Show Prices
-                                </label>
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <label class="ms-2 text-sm font-medium text-gray-900 dark:text-white">Show Prices</label>
                             </div>
 
-                            <div class="min-h-6 pl-7 mb-0.5 block">
+                            <div class="flex items-center">
                                 <input type="checkbox" name="Settings.ShowBarcode" checked
-                                    class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
-                                <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
-                                    Show Order Barcode
-                                </label>
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <label class="ms-2 text-sm font-medium text-gray-900 dark:text-white">Show Order Barcode</label>
                             </div>
 
-                            <div class="min-h-6 pl-7 mb-0.5 block">
+                            <div class="flex items-center">
                                 <input type="checkbox" name="Settings.ShowNotes" checked
-                                    class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
-                                <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
-                                    Show Order Notes
-                                </label>
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <label class="ms-2 text-sm font-medium text-gray-900 dark:text-white">Show Order Notes</label>
                             </div>
 
-                            <div class="min-h-6 pl-7 mb-0.5 block">
+                            <div class="flex items-center">
                                 <input type="checkbox" name="Settings.ShowShippingInfo" checked
-                                    class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
-                                <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
-                                    Show Shipping Info
-                                </label>
+                                    class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                                <label class="ms-2 text-sm font-medium text-gray-900 dark:text-white">Show Shipping Info</label>
                             </div>
 
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Company Name</label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company Name</label>
                                 <input type="text" name="Settings.CompanyName" placeholder="Your Company Name"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                             </div>
 
                             <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Footer Message</label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Footer Message</label>
                                 <textarea name="Settings.FooterMessage" rows="2" placeholder="Thank you for your order!"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"></textarea>
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
                             </div>
                         </div>
                     </form>
 
-                    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
-                        <h6 class="text-sm font-bold mb-2 dark:text-white">Quick Actions</h6>
-                        <div class="space-y-2">
-                            <form method="post" asp-page-handler="GenerateBulk">
-                                <input type="hidden" name="orderIds" id="selectedOrderIds" />
-                                <button type="submit" id="bulkPrintBtn" disabled
-                                    class="inline-block w-full px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <i class="fas fa-print me-2"></i> Print Selected (<span id="selectedCount">0</span>)
-                                </button>
-                            </form>
-                        </div>
+                    <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <h6 class="text-sm font-semibold mb-3 text-gray-900 dark:text-white">Quick Actions</h6>
+                        <form method="post" asp-page-handler="GenerateBulk">
+                            <input type="hidden" name="orderIds" id="selectedOrderIds" />
+                            <button type="submit" id="bulkPrintBtn" disabled
+                                class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-print me-2"></i> Print Selected (<span id="selectedCount">0</span>)
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Orders List -->
-        <div class="flex-none w-full max-w-full px-3 lg:w-8/12">
+        <div class="lg:col-span-8">
             @if (TempData["ErrorMessage"] != null)
             {
-                <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                <div class="mb-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                     <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
                 </div>
             }
 
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                <div class="mb-4 flex items-center p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
                     <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
                 </div>
             }
 
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between">
-                        <h6 class="mb-0 dark:text-white">Recent Orders</h6>
-                        <div class="flex items-center space-x-2">
-                            <button type="button" id="selectAllBtn" class="px-3 py-1 text-xs font-bold text-slate-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-white">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Orders</h2>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="selectAllBtn" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 Select All
                             </button>
-                            <button type="button" id="clearSelectionBtn" class="px-3 py-1 text-xs font-bold text-slate-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-white">
+                            <button type="button" id="clearSelectionBtn" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                                 Clear
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="flex-auto p-6">
+                <div class="p-6">
                     @if (Model.RecentOrders.Count == 0)
                     {
-                        <div class="text-center py-8 text-slate-500 dark:text-slate-400">
-                            <i class="fas fa-inbox text-4xl mb-4 opacity-50"></i>
-                            <p>No orders found</p>
+                        <div class="text-center py-8">
+                            <i class="fas fa-inbox text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No orders found</p>
                         </div>
                     }
                     else
                     {
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <thead>
-                                    <tr class="text-xs font-bold uppercase text-slate-400 bg-gray-50 dark:bg-gray-800">
-                                        <th class="p-3 w-10">
-                                            <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4 rounded" />
+                        <div class="relative overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="p-3 w-10">
+                                            <input type="checkbox" id="selectAllCheckbox" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
                                         </th>
-                                        <th class="p-3">Order</th>
-                                        <th class="p-3">Customer</th>
-                                        <th class="p-3">Items</th>
-                                        <th class="p-3">Total</th>
-                                        <th class="p-3">Status</th>
-                                        <th class="p-3 text-center">Actions</th>
+                                        <th scope="col" class="p-3">Order</th>
+                                        <th scope="col" class="p-3">Customer</th>
+                                        <th scope="col" class="p-3">Items</th>
+                                        <th scope="col" class="p-3">Total</th>
+                                        <th scope="col" class="p-3">Status</th>
+                                        <th scope="col" class="p-3 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var order in Model.RecentOrders)
                                     {
-                                        <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900">
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <td class="p-3">
-                                                <input type="checkbox" class="order-checkbox w-4 h-4 rounded" data-order-id="@order.Id" />
+                                                <input type="checkbox" class="order-checkbox w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" data-order-id="@order.Id" />
                                             </td>
                                             <td class="p-3">
-                                                <div class="font-semibold dark:text-white">@order.OrderNumber</div>
-                                                <div class="text-xs text-slate-400">@order.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</div>
+                                                <div class="font-semibold text-gray-900 dark:text-white">@order.OrderNumber</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">@order.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</div>
                                             </td>
-                                            <td class="p-3 dark:text-white">@order.CustomerName</td>
-                                            <td class="p-3 dark:text-white">@order.ItemCount items</td>
-                                            <td class="p-3 font-semibold dark:text-white">$@order.Total.ToString("F2")</td>
+                                            <td class="p-3 text-gray-900 dark:text-white">@order.CustomerName</td>
+                                            <td class="p-3 text-gray-900 dark:text-white">@order.ItemCount items</td>
+                                            <td class="p-3 font-semibold text-gray-900 dark:text-white">$@order.Total.ToString("F2")</td>
                                             <td class="p-3">
                                                 @{
-                                                    var statusColor = order.FulfillmentStatus switch
+                                                    var statusBadge = order.FulfillmentStatus switch
                                                     {
-                                                        "fulfilled" => "bg-green-100 text-green-700",
-                                                        "partial" => "bg-yellow-100 text-yellow-700",
-                                                        _ => "bg-gray-100 text-gray-700"
+                                                        "fulfilled" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                                                        "partial" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                                                        _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                                                     };
                                                 }
-                                                <span class="px-2 py-1 text-xs font-bold rounded @statusColor">
+                                                <span class="@statusBadge text-xs font-medium px-2.5 py-0.5 rounded">
                                                     @(order.FulfillmentStatus ?? "unfulfilled")
                                                 </span>
                                             </td>
                                             <td class="p-3 text-center">
                                                 <form method="post" asp-page-handler="Generate" class="inline">
                                                     <input type="hidden" name="orderId" value="@order.Id" />
-                                                    <button type="submit" class="px-3 py-1 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded hover:scale-105 transition-transform" title="Download Packing Slip">
+                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded hover:bg-gradient-to-bl" title="Download Packing Slip">
                                                         <i class="fas fa-file-pdf"></i>
                                                     </button>
                                                 </form>

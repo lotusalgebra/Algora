@@ -4,138 +4,142 @@
     ViewData["Title"] = "Purchase Orders";
 }
 
-@section css {
-    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
-}
-
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-
-                <!-- Card Header -->
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Purchase Orders</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                <i class="fa fa-file-invoice text-fuchsia-500 me-1"></i>
-                                <span class="font-semibold" id="total-count">0</span> orders
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <a href="/operations/purchase-orders/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus me-2"></i> New Order
-                            </a>
-                            <a href="/operations" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                                <i class="fas fa-arrow-left me-2"></i> Back
-                            </a>
-                        </div>
-                    </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Purchase Orders</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-file-invoice text-purple-500 me-1"></i>
+                        <span class="font-semibold" id="total-count">0</span> orders
+                    </p>
                 </div>
-
-                <!-- Messages -->
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        @Model.SuccessMessage
-                    </div>
-                }
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <!-- Search and Filters -->
-                <div class="px-6 pt-4">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center gap-4">
-                            <div class="relative">
-                                <input type="text" id="search-input" placeholder="Search orders..."
-                                    class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
-                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            </div>
-                            <select id="status-filter"
-                                class="py-2 px-3 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <option value="">All Status</option>
-                                <option value="draft">Draft</option>
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="shipped">Shipped</option>
-                                <option value="received">Received</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <option value="10">10</option>
-                                <option value="25" selected>25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <a href="/operations/purchase-orders/create" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300">
+                        <i class="fas fa-plus me-2"></i> New Order
+                    </a>
+                    <a href="/operations" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left me-2"></i> Back
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Card Body -->
-                <div class="flex-auto p-6 px-0 pb-0">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="text-center py-12">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading purchase orders...</p>
-                    </div>
+        <!-- Messages -->
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-700 dark:text-green-400" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>@Model.SuccessMessage</span>
+            </div>
+        }
 
-                    <!-- Empty State -->
-                    <div id="empty-state" class="text-center py-12 hidden">
-                        <i class="fas fa-file-invoice fa-4x text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">No purchase orders yet. Create your first order to start tracking inventory replenishment.</p>
-                        <a href="/operations/purchase-orders/create" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                            <i class="fas fa-plus me-2"></i> Create Order
-                        </a>
-                    </div>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span>@Model.ErrorMessage</span>
+            </div>
+        }
 
-                    <!-- Table -->
-                    <div class="overflow-x-auto" id="table-container" style="display: none;">
-                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="orders-list">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">Order # <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="1">Supplier <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">Total <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Expected</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="4">Created <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body"></tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> orders
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    <i class="fas fa-chevron-left me-1"></i> Previous
-                                </button>
-                                <div id="page-numbers" class="flex gap-1"></div>
-                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    Next <i class="fas fa-chevron-right ms-1"></i>
-                                </button>
-                            </div>
+        <!-- Search and Filters -->
+        <div class="px-6 pt-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
                         </div>
+                        <input type="text" id="search-input" placeholder="Search orders..."
+                            class="block w-64 ps-10 p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                    </div>
+                    <select id="status-filter"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">All Status</option>
+                        <option value="draft">Draft</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="received">Received</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                    <select id="per-page" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-6">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center py-12">
+                <svg class="animate-spin h-8 w-8 text-purple-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Loading purchase orders...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <i class="fas fa-file-invoice text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 mb-4">No purchase orders yet. Create your first order to start tracking inventory replenishment.</p>
+                <a href="/operations/purchase-orders/create" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg hover:bg-gradient-to-bl">
+                    <i class="fas fa-plus me-2"></i> Create Order
+                </a>
+            </div>
+
+            <!-- Table -->
+            <div class="relative overflow-x-auto" id="table-container" style="display: none;">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="orders-list">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="0">
+                                Order # <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="1">
+                                Supplier <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Items</th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="3">
+                                Total <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Status</th>
+                            <th scope="col" class="px-6 py-3 text-center">Expected</th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="4">
+                                Created <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4" style="display: none;">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span id="showing-start" class="font-medium">0</span> to <span id="showing-end" class="font-medium">0</span> of <span id="total-filtered" class="font-medium">0</span> orders
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="prev-btn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </button>
+                        <div id="page-numbers" class="flex gap-1"></div>
+                        <button id="next-btn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -163,6 +167,15 @@
             const emptyState = document.getElementById('empty-state');
             const tableContainer = document.getElementById('table-container');
             const paginationContainer = document.getElementById('pagination-container');
+
+            const statusBadges = {
+                'draft': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+                'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+                'confirmed': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+                'shipped': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                'received': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                'cancelled': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+            };
 
             function loadData() {
                 loadingSpinner.style.display = 'block';
@@ -211,48 +224,42 @@
             }
 
             function renderTable(data) {
-                tableBody.innerHTML = data.map(o => `
-                    <tr>
-                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <a href="/operations/purchase-orders/details/${o.id}" class="text-sm font-semibold leading-tight text-fuchsia-500 hover:text-fuchsia-700 dark:text-fuchsia-400">
+                tableBody.innerHTML = data.map(o => {
+                    const badgeClass = statusBadges[o.status.toLowerCase()] || statusBadges['draft'];
+                    return `
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td class="px-6 py-4">
+                            <a href="/operations/purchase-orders/details/${o.id}" class="font-medium text-purple-600 hover:text-purple-800 dark:text-purple-400">
                                 ${escapeHtml(o.orderNumber)}
                             </a>
                         </td>
-                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(o.supplierName)}</h6>
+                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${escapeHtml(o.supplierName)}</td>
+                        <td class="px-6 py-4 text-center font-medium text-gray-900 dark:text-white">${o.lineCount}</td>
+                        <td class="px-6 py-4 text-center font-medium text-gray-900 dark:text-white">$${o.totalAmount}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="${badgeClass} text-xs font-medium px-2.5 py-0.5 rounded">${o.status}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">${o.lineCount}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">$${o.totalAmount}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="bg-gradient-to-tl ${o.statusClass} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${o.status}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">${o.expectedDelivery}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">${o.createdAt}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <a href="/operations/purchase-orders/details/${o.id}" class="text-xs font-semibold leading-tight text-blue-500 hover:text-blue-700 me-3" title="View Details">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            ${o.status === 'draft' ? `
-                                <a href="/operations/purchase-orders/edit/${o.id}" class="text-xs font-semibold leading-tight text-slate-500 hover:text-slate-700 me-3" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>` : ''}
-                            ${o.status !== 'received' && o.status !== 'cancelled' ? `
-                                <form method="post" action="/operations/purchase-orders?handler=Cancel&id=${o.id}" class="inline" onsubmit="return confirm('Cancel this purchase order?');">
-                                    <button type="submit" class="text-xs font-semibold leading-tight text-red-500 hover:text-red-700" title="Cancel">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>` : ''}
+                        <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">${o.expectedDelivery}</td>
+                        <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">${o.createdAt}</td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="/operations/purchase-orders/details/${o.id}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                ${o.status === 'draft' ? `
+                                    <a href="/operations/purchase-orders/edit/${o.id}" class="text-gray-600 hover:text-gray-800 dark:text-gray-400" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>` : ''}
+                                ${o.status !== 'received' && o.status !== 'cancelled' ? `
+                                    <form method="post" action="/operations/purchase-orders?handler=Cancel&id=${o.id}" class="inline" onsubmit="return confirm('Cancel this purchase order?');">
+                                        <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400" title="Cancel">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>` : ''}
+                            </div>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
             }
 
             function updatePagination() {
@@ -278,8 +285,8 @@
                     const btn = document.createElement('button');
                     btn.textContent = i;
                     btn.className = i === currentPage
-                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
-                        : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
+                        ? 'px-3 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg'
+                        : 'px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400';
                     btn.onclick = () => { currentPage = i; loadData(); };
                     pageNumbers.appendChild(btn);
                 }
@@ -325,8 +332,8 @@
                         sortColumn = col;
                         sortDirection = 'asc';
                     }
-                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xxs');
-                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xs');
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs`;
                     loadData();
                 });
             });

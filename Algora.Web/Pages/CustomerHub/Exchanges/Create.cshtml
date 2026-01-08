@@ -4,16 +4,16 @@
     ViewData["Title"] = "Create Exchange";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
-            <a href="/customer-hub/exchanges" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <a href="/customer-hub/exchanges" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h5 class="font-bold dark:text-white">Create Exchange</h5>
-                <p class="text-sm text-slate-400">Request a product exchange for an order</p>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Create Exchange</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Request a product exchange for an order</p>
             </div>
         </div>
     </div>
@@ -21,7 +21,7 @@
     <!-- Error Message -->
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i> @Model.ErrorMessage
         </div>
     }
@@ -29,18 +29,18 @@
     @if (!Model.OrderId.HasValue)
     {
         <!-- Order Lookup -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-            <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                <h6 class="mb-0 dark:text-white">Find Order</h6>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="font-semibold text-gray-900 dark:text-white">Find Order</h6>
             </div>
-            <div class="flex-auto p-6">
+            <div class="p-6">
                 <form method="get">
                     <div class="mb-4">
-                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Order ID</label>
-                        <input type="number" name="OrderId" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Enter order ID..." required />
-                        <p class="mt-1 text-xs text-slate-400">Enter the internal order ID to check exchange eligibility.</p>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Order ID</label>
+                        <input type="number" name="OrderId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter order ID..." required />
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the internal order ID to check exchange eligibility.</p>
                     </div>
-                    <button type="submit" class="px-6 py-3 text-xs font-bold text-white uppercase bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                    <button type="submit" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
                         <i class="fas fa-search me-2"></i> Check Eligibility
                     </button>
                 </form>
@@ -50,34 +50,33 @@
     else if (Model.Eligibility == null)
     {
         <!-- Loading -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-            <div class="flex-auto p-6 text-center">
-                <i class="fas fa-spinner fa-spin fa-3x text-fuchsia-500 mb-4"></i>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Checking eligibility...</p>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <svg class="animate-spin h-12 w-12 text-purple-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Checking eligibility...</p>
         </div>
     }
     else if (!Model.Eligibility.IsEligible)
     {
         <!-- Not Eligible -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-            <div class="flex-auto p-6 text-center">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
-                    <i class="fas fa-times-circle fa-3x text-red-500"></i>
-                </div>
-                <h5 class="mb-2 dark:text-white">Not Eligible for Exchange</h5>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">@Model.Eligibility.Reason</p>
-                <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 inline-block">
-                    <p class="text-sm text-slate-600 dark:text-gray-400 mb-0">
-                        <strong>Days since order:</strong> @Model.Eligibility.DaysSinceOrder<br />
-                        <strong>Maximum allowed:</strong> @Model.Eligibility.MaxDaysAllowed days
-                    </p>
-                </div>
-                <div class="mt-4">
-                    <a href="/customer-hub/exchanges/create" class="px-4 py-2 text-xs font-bold text-slate-700 uppercase border border-slate-300 rounded-lg hover:scale-102 active:opacity-85 dark:text-white dark:border-gray-700">
-                        <i class="fas fa-search me-2"></i> Try Another Order
-                    </a>
-                </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <i class="fas fa-times-circle text-5xl text-red-500"></i>
+            </div>
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Not Eligible for Exchange</h5>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">@Model.Eligibility.Reason</p>
+            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 inline-block">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    <strong>Days since order:</strong> @Model.Eligibility.DaysSinceOrder<br />
+                    <strong>Maximum allowed:</strong> @Model.Eligibility.MaxDaysAllowed days
+                </p>
+            </div>
+            <div class="mt-4">
+                <a href="/customer-hub/exchanges/create" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-search me-2"></i> Try Another Order
+                </a>
             </div>
         </div>
     }
@@ -87,29 +86,29 @@
         <form method="post" asp-page-handler="CreateExchange">
             <input type="hidden" asp-for="ExchangeForm.OrderId" />
 
-            <div class="flex flex-wrap -mx-3">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Items Selection -->
-                <div class="w-full max-w-full px-3 lg:w-2/3">
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <div class="lg:col-span-2">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex items-center justify-between">
-                                <h6 class="mb-0 dark:text-white">Select Items to Exchange</h6>
-                                <span class="px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                                <h6 class="font-semibold text-gray-900 dark:text-white">Select Items to Exchange</h6>
+                                <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                                     <i class="fas fa-check me-1"></i> Eligible
                                 </span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">@Model.Eligibility.DaysSinceOrder days since order (max @Model.Eligibility.MaxDaysAllowed days)</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">@Model.Eligibility.DaysSinceOrder days since order (max @Model.Eligibility.MaxDaysAllowed days)</p>
                         </div>
-                        <div class="flex-auto p-6">
+                        <div class="p-6 space-y-4">
                             @for (var i = 0; i < Model.ExchangeForm.Items.Count; i++)
                             {
                                 var item = Model.ExchangeForm.Items[i];
-                                <div class="p-4 mb-4 rounded-xl bg-gray-50 dark:bg-gray-800 last:mb-0">
+                                <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
                                     <div class="flex items-start gap-4">
                                         <div class="pt-1">
-                                            <input type="checkbox" asp-for="ExchangeForm.Items[i].Selected" class="w-5 h-5 text-fuchsia-500 border-gray-300 rounded focus:ring-fuchsia-500 dark:border-gray-600 dark:bg-gray-700" onchange="toggleItemFields(this, @i)" />
+                                            <input type="checkbox" asp-for="ExchangeForm.Items[i].Selected" class="w-5 h-5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-600" onchange="toggleItemFields(this, @i)" />
                                         </div>
-                                        <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                        <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-box text-gray-400 text-xl"></i>
                                         </div>
                                         <div class="flex-grow">
@@ -122,29 +121,29 @@
                                             <input type="hidden" asp-for="ExchangeForm.Items[i].Price" />
                                             <input type="hidden" asp-for="ExchangeForm.Items[i].MaxQuantity" />
 
-                                            <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@item.ProductTitle</p>
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-white">@item.ProductTitle</p>
                                             @if (!string.IsNullOrEmpty(item.VariantTitle))
                                             {
-                                                <p class="text-xs text-slate-500 mb-0">@item.VariantTitle</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">@item.VariantTitle</p>
                                             }
                                             @if (!string.IsNullOrEmpty(item.Sku))
                                             {
-                                                <p class="text-xs text-slate-400 mb-0">SKU: @item.Sku</p>
+                                                <p class="text-xs text-gray-400">SKU: @item.Sku</p>
                                             }
-                                            <p class="text-sm font-semibold text-fuchsia-500 mt-1">@item.Price.ToString("C")</p>
-                                            <p class="text-xs text-slate-400">Available for exchange: @item.MaxQuantity</p>
+                                            <p class="text-sm font-semibold text-purple-500 mt-1">@item.Price.ToString("C")</p>
+                                            <p class="text-xs text-gray-400">Available for exchange: @item.MaxQuantity</p>
                                         </div>
                                     </div>
 
-                                    <div id="item-fields-@i" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 @(item.Selected ? "" : "hidden")">
+                                    <div id="item-fields-@i" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600 @(item.Selected ? "" : "hidden")">
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Quantity</label>
-                                                <input type="number" asp-for="ExchangeForm.Items[i].Quantity" min="1" max="@item.MaxQuantity" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Quantity</label>
+                                                <input type="number" asp-for="ExchangeForm.Items[i].Quantity" min="1" max="@item.MaxQuantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
                                             </div>
                                             <div class="md:col-span-2">
-                                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Reason</label>
-                                                <select asp-for="ExchangeForm.Items[i].Reason" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Reason</label>
+                                                <select asp-for="ExchangeForm.Items[i].Reason" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                                                     <option value="">Select a reason...</option>
                                                     <option value="wrong_size">Wrong size</option>
                                                     <option value="wrong_color">Wrong color</option>
@@ -156,8 +155,8 @@
                                             </div>
                                         </div>
                                         <div class="mt-3">
-                                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Customer Note (optional)</label>
-                                            <textarea asp-for="ExchangeForm.Items[i].CustomerNote" rows="2" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Additional details..."></textarea>
+                                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Customer Note (optional)</label>
+                                            <textarea asp-for="ExchangeForm.Items[i].CustomerNote" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Additional details..."></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -167,40 +166,40 @@
                 </div>
 
                 <!-- Customer & Notes -->
-                <div class="w-full max-w-full px-3 lg:w-1/3">
+                <div class="space-y-6">
                     <!-- Customer Info -->
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                            <h6 class="mb-0 dark:text-white">Customer Information</h6>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h6 class="font-semibold text-gray-900 dark:text-white">Customer Information</h6>
                         </div>
-                        <div class="flex-auto p-6">
-                            <div class="mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Email <span class="text-red-500">*</span></label>
-                                <input type="email" asp-for="ExchangeForm.CustomerEmail" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="customer@example.com" required />
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Email <span class="text-red-500">*</span></label>
+                                <input type="email" asp-for="ExchangeForm.CustomerEmail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="customer@example.com" required />
                             </div>
-                            <div class="mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Name</label>
-                                <input type="text" asp-for="ExchangeForm.CustomerName" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Customer name" />
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Name</label>
+                                <input type="text" asp-for="ExchangeForm.CustomerName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Customer name" />
                             </div>
                         </div>
                     </div>
 
                     <!-- Notes -->
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                            <h6 class="mb-0 dark:text-white">Notes</h6>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h6 class="font-semibold text-gray-900 dark:text-white">Notes</h6>
                         </div>
-                        <div class="flex-auto p-6">
-                            <textarea asp-for="ExchangeForm.Notes" rows="4" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Internal notes about this exchange..."></textarea>
+                        <div class="p-6">
+                            <textarea asp-for="ExchangeForm.Notes" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Internal notes about this exchange..."></textarea>
                         </div>
                     </div>
 
                     <!-- Submit -->
                     <div class="flex gap-2">
-                        <a href="/customer-hub/exchanges" class="flex-1 px-4 py-3 text-xs font-bold text-center text-slate-700 uppercase border border-slate-300 rounded-lg hover:scale-102 active:opacity-85 dark:text-white dark:border-gray-700">
+                        <a href="/customer-hub/exchanges" class="flex-1 inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                             Cancel
                         </a>
-                        <button type="submit" class="flex-1 px-4 py-3 text-xs font-bold text-center text-white uppercase bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                        <button type="submit" class="flex-1 inline-flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
                             <i class="fas fa-exchange-alt me-2"></i> Create Exchange
                         </button>
                     </div>
@@ -216,14 +215,12 @@
         var fields = document.getElementById('item-fields-' + index);
         if (checkbox.checked) {
             fields.classList.remove('hidden');
-            // Set default quantity to 1 when selected
             var qtyInput = fields.querySelector('input[type="number"]');
             if (qtyInput && qtyInput.value == '0') {
                 qtyInput.value = '1';
             }
         } else {
             fields.classList.add('hidden');
-            // Reset quantity when deselected
             var qtyInput = fields.querySelector('input[type="number"]');
             if (qtyInput) {
                 qtyInput.value = '0';

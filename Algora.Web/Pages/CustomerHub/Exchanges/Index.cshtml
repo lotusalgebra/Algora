@@ -4,145 +4,156 @@
     ViewData["Title"] = "Exchanges";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h5 class="font-bold dark:text-white">Exchanges</h5>
-            <p class="text-sm text-slate-400">Manage product exchanges</p>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Exchanges</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Manage product exchanges</p>
         </div>
-        <a href="/customer-hub/exchanges/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+        <a href="/customer-hub/exchanges/create" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
             <i class="fas fa-plus me-2"></i> New Exchange
         </a>
     </div>
 
     <!-- Summary Cards -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="flex-auto p-4">
-                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Pending</p>
-                    <h5 class="mb-0 font-bold dark:text-white text-orange-600">@Model.PendingCount</h5>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <!-- Pending -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending</p>
+                    <h3 class="text-2xl font-bold text-orange-600 dark:text-orange-400">@Model.PendingCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
+                    <i class="fas fa-clock text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="flex-auto p-4">
-                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Approved</p>
-                    <h5 class="mb-0 font-bold dark:text-white text-blue-600">@Model.ApprovedCount</h5>
+
+        <!-- Approved -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Approved</p>
+                    <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400">@Model.ApprovedCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-check text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="flex-auto p-4">
-                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Completed</p>
-                    <h5 class="mb-0 font-bold dark:text-white text-green-600">@Model.CompletedCount</h5>
+
+        <!-- Completed -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</p>
+                    <h3 class="text-2xl font-bold text-green-600 dark:text-green-400">@Model.CompletedCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-600 to-lime-400 flex items-center justify-center">
+                    <i class="fas fa-check-double text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="flex-auto p-4">
-                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Cancelled</p>
-                    <h5 class="mb-0 font-bold dark:text-white">@Model.CancelledCount</h5>
+
+        <!-- Cancelled -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Cancelled</p>
+                    <h3 class="text-2xl font-bold text-gray-600 dark:text-gray-400">@Model.CancelledCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
+                    <i class="fas fa-times text-white text-lg"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-        <div class="p-4">
-            <div class="flex flex-wrap gap-2">
-                <a href="?status=" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(string.IsNullOrEmpty(Model.FilterStatus) ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">All</a>
-                <a href="?status=pending" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "pending" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Pending</a>
-                <a href="?status=approved" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "approved" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Approved</a>
-                <a href="?status=shipped" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "shipped" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Shipped</a>
-                <a href="?status=received" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "received" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Received</a>
-                <a href="?status=completed" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "completed" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Completed</a>
-                <a href="?status=cancelled" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "cancelled" ? "bg-fuchsia-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300")">Cancelled</a>
-            </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+        <div class="flex flex-wrap gap-2">
+            <a href="?status=" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(string.IsNullOrEmpty(Model.FilterStatus) ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">All</a>
+            <a href="?status=pending" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "pending" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Pending</a>
+            <a href="?status=approved" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "approved" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Approved</a>
+            <a href="?status=shipped" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "shipped" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Shipped</a>
+            <a href="?status=received" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "received" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Received</a>
+            <a href="?status=completed" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "completed" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Completed</a>
+            <a href="?status=cancelled" class="px-3 py-1.5 text-xs font-semibold rounded-lg @(Model.FilterStatus == "cancelled" ? "bg-purple-500 text-white" : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600")">Cancelled</a>
         </div>
     </div>
 
     <!-- Exchanges Table -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
         @if (Model.Exchanges.Count == 0)
         {
-            <div class="flex-auto p-6 text-center">
-                <i class="fas fa-exchange-alt fa-4x text-gray-300 mb-4"></i>
-                <h6 class="mb-2 dark:text-white">No exchanges found</h6>
+            <div class="p-6 text-center">
+                <i class="fas fa-exchange-alt text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No exchanges found</h6>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Exchange requests will appear here.</p>
             </div>
         }
         else
         {
-            <div class="flex-auto p-0">
-                <div class="overflow-x-auto">
-                    <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
-                        <thead class="align-bottom">
-                            <tr>
-                                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Exchange #</th>
-                                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Customer</th>
-                                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Order #</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Items</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Price Diff</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Status</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Date</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var exchange in Model.Exchanges)
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Exchange #</th>
+                            <th scope="col" class="px-6 py-3">Customer</th>
+                            <th scope="col" class="px-6 py-3">Order #</th>
+                            <th scope="col" class="px-6 py-3 text-center">Items</th>
+                            <th scope="col" class="px-6 py-3 text-center">Price Diff</th>
+                            <th scope="col" class="px-6 py-3 text-center">Status</th>
+                            <th scope="col" class="px-6 py-3 text-center">Date</th>
+                            <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var exchange in Model.Exchanges)
+                        {
+                            var statusBadge = exchange.Status switch
                             {
-                                var statusColor = exchange.Status switch
-                                {
-                                    "pending" => "from-orange-500 to-yellow-300",
-                                    "approved" => "from-blue-600 to-cyan-400",
-                                    "shipped" => "from-purple-700 to-pink-500",
-                                    "received" => "from-cyan-500 to-blue-400",
-                                    "completed" => "from-green-600 to-lime-400",
-                                    "cancelled" => "from-red-600 to-rose-400",
-                                    _ => "from-gray-400 to-gray-600"
-                                };
+                                "pending" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                                "approved" => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                                "shipped" => "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+                                "received" => "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+                                "completed" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                                "cancelled" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                                _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                            };
 
-                                <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap">
-                                        <a href="/customer-hub/exchanges/@exchange.Id" class="text-sm font-semibold text-fuchsia-500 hover:text-fuchsia-700">@exchange.ExchangeNumber</a>
-                                    </td>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap">
-                                        <div>
-                                            <p class="mb-0 text-sm font-semibold leading-normal dark:text-white">@(exchange.CustomerName ?? "N/A")</p>
-                                            <p class="mb-0 text-xs leading-tight text-slate-400">@exchange.CustomerEmail</p>
-                                        </div>
-                                    </td>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap">
-                                        <span class="text-sm text-slate-700 dark:text-white">@exchange.OrderNumber</span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                        <span class="text-sm font-semibold dark:text-white">@exchange.Items.Count()</span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                        <span class="text-sm font-semibold @(exchange.PriceDifference > 0 ? "text-green-600" : exchange.PriceDifference < 0 ? "text-red-600" : "text-slate-700 dark:text-white")">
-                                            @(exchange.PriceDifference >= 0 ? "+" : "")@exchange.PriceDifference.ToString("C")
-                                        </span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                        <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">@exchange.Status</span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                        <span class="text-xs text-slate-400">@exchange.CreatedAt.ToString("MMM d, yyyy")</span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                        <a href="/customer-hub/exchanges/@exchange.Id" class="text-xs font-semibold text-slate-400 hover:text-fuchsia-500">View</a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="px-6 py-4">
+                                    <a href="/customer-hub/exchanges/@exchange.Id" class="font-semibold text-purple-600 hover:text-purple-800 dark:text-purple-400">@exchange.ExchangeNumber</a>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900 dark:text-white">@(exchange.CustomerName ?? "N/A")</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">@exchange.CustomerEmail</div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-700 dark:text-white">@exchange.OrderNumber</td>
+                                <td class="px-6 py-4 text-center font-semibold">@exchange.Items.Count()</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="font-semibold @(exchange.PriceDifference > 0 ? "text-green-600" : exchange.PriceDifference < 0 ? "text-red-600" : "")">
+                                        @(exchange.PriceDifference >= 0 ? "+" : "")@exchange.PriceDifference.ToString("C")
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="@statusBadge text-xs font-medium px-2.5 py-0.5 rounded uppercase">@exchange.Status</span>
+                                </td>
+                                <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    @exchange.CreatedAt.ToString("MMM d, yyyy")
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <a href="/customer-hub/exchanges/@exchange.Id" class="text-purple-600 hover:text-purple-800 dark:text-purple-400">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         }
     </div>

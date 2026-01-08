@@ -4,42 +4,60 @@
     ViewData["Title"] = "Product Description Generator";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
-                    <li class="breadcrumb-item active">Description Generator</li>
+            <nav class="flex mb-2" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/AI" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                            AI Tools
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Description Generator</span>
+                        </div>
+                    </li>
                 </ol>
             </nav>
-            <h1 class="h3 mb-0">Product Description Generator</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Product Description Generator</h1>
         </div>
     </div>
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Product Selection -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-box mr-2"></i>Select Product
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <input type="text" id="productSearch" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search products..." />
                     </div>
-                    <div id="productList" class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                    <div id="productList" class="space-y-1 max-h-72 overflow-y-auto">
                         @foreach (var product in Model.Products)
                         {
-                            <a href="#" class="list-group-item list-group-item-action product-item" data-id="@product.Id" data-title="@product.Title" data-description="@product.Description" data-vendor="@product.Vendor" data-type="@product.ProductType" data-tags="@product.Tags">
-                                <div class="d-flex justify-content-between align-items-center">
+                            <a href="#" class="product-item block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                               data-id="@product.Id"
+                               data-title="@product.Title"
+                               data-description="@product.Description"
+                               data-vendor="@product.Vendor"
+                               data-type="@product.ProductType"
+                               data-tags="@product.Tags">
+                                <div class="flex justify-between items-center">
                                     <div>
-                                        <h6 class="mb-1">@product.Title</h6>
-                                        <small class="text-muted">@(product.Vendor ?? "No vendor")</small>
+                                        <h6 class="font-medium text-gray-900 dark:text-white text-sm">@product.Title</h6>
+                                        <small class="text-gray-500 dark:text-gray-400">@(product.Vendor ?? "No vendor")</small>
                                     </div>
                                     @if (string.IsNullOrEmpty(product.Description))
                                     {
-                                        <span class="badge bg-warning">No description</span>
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">No description</span>
                                     }
                                 </div>
                             </a>
@@ -49,14 +67,16 @@
             </div>
 
             <!-- Generation Settings -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Tone</label>
-                        <select id="tone" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tone</label>
+                        <select id="tone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <option value="professional">Professional</option>
                             <option value="casual">Casual & Friendly</option>
                             <option value="luxury">Luxury & Premium</option>
@@ -64,95 +84,99 @@
                             <option value="technical">Technical & Detailed</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Maximum Words: <span id="wordCountLabel">150</span></label>
-                        <input type="range" id="maxWords" class="form-range" min="50" max="300" value="150" step="25" />
+                    <div class="mb-4">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum Words: <span id="wordCountLabel">150</span></label>
+                        <input type="range" id="maxWords" min="50" max="300" value="150" step="25" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
                     </div>
-                    <div class="mb-3">
-                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Additional Context (optional)</label>
-                        <textarea id="additionalContext" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" rows="2" placeholder="E.g., Target audience, key features to highlight..."></textarea>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Additional Context (optional)</label>
+                        <textarea id="additionalContext" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="E.g., Target audience, key features to highlight..."></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Generation Panel -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-magic me-2"></i>Generated Description</h5>
-                    <div>
-                        <button type="button" id="generateBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
-                            <i class="fas fa-wand-magic-sparkles me-2"></i>Generate
-                        </button>
-                    </div>
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-magic mr-2"></i>Generated Description
+                    </h5>
+                    <button type="button" id="generateBtn" disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate
+                    </button>
                 </div>
-                <div class="card-body">
-                    <!-- Selected Product Info -->
-                    <div id="noProductSelected" class="text-center py-5">
-                        <i class="fas fa-hand-pointer fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Select a product from the list to generate a description</p>
+                <div class="p-6">
+                    <!-- No Product Selected -->
+                    <div id="noProductSelected" class="text-center py-12">
+                        <i class="fas fa-hand-pointer text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">Select a product from the list to generate a description</p>
                     </div>
 
-                    <div id="productPanel" class="d-none">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h6 class="text-muted mb-2">Selected Product</h6>
-                                <h4 id="selectedProductTitle"></h4>
-                                <p class="text-muted mb-0">
+                    <!-- Product Panel -->
+                    <div id="productPanel" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h6 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Selected Product</h6>
+                                <h4 id="selectedProductTitle" class="text-lg font-semibold text-gray-900 dark:text-white"></h4>
+                                <p class="text-gray-500 dark:text-gray-400">
                                     <span id="selectedProductVendor"></span> &bull;
                                     <span id="selectedProductType"></span>
                                 </p>
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted mb-2">Tags</h6>
-                                <div id="selectedProductTags"></div>
+                            <div>
+                                <h6 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tags</h6>
+                                <div id="selectedProductTags" class="flex flex-wrap gap-1"></div>
                             </div>
                         </div>
 
-                        <hr />
+                        <hr class="border-gray-200 dark:border-gray-700 mb-6" />
 
                         <!-- Current Description -->
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-muted mb-0">Current Description</h6>
-                                <small class="text-muted" id="currentDescWordCount"></small>
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h6 class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Description</h6>
+                                <small class="text-gray-400 dark:text-gray-500" id="currentDescWordCount"></small>
                             </div>
-                            <div id="currentDescription" class="p-3 bg-light rounded border">
-                                <em class="text-muted">No description</em>
+                            <div id="currentDescription" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                                <em class="text-gray-500 dark:text-gray-400">No description</em>
                             </div>
                         </div>
 
                         <!-- Generated Description -->
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-muted mb-0">AI Generated Description</h6>
-                                <small class="text-muted" id="generatedDescWordCount"></small>
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h6 class="text-sm font-medium text-gray-500 dark:text-gray-400">AI Generated Description</h6>
+                                <small class="text-gray-400 dark:text-gray-500" id="generatedDescWordCount"></small>
                             </div>
                             <div id="generatedDescriptionWrapper">
-                                <div id="generatingPlaceholder" class="text-center py-4 d-none">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Generating...</span>
+                                <div id="generatingPlaceholder" class="text-center py-8 hidden">
+                                    <div role="status">
+                                        <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                        </svg>
                                     </div>
-                                    <p class="text-muted mt-2">Generating description with AI...</p>
+                                    <p class="text-gray-500 dark:text-gray-400 mt-4">Generating description with AI...</p>
                                 </div>
-                                <textarea id="generatedDescription" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none d-none" rows="6"></textarea>
-                                <div id="noGeneratedDescription" class="p-3 bg-light rounded border text-center">
-                                    <em class="text-muted">Click "Generate" to create an AI description</em>
+                                <textarea id="generatedDescription" rows="6" class="hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"></textarea>
+                                <div id="noGeneratedDescription" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 text-center">
+                                    <em class="text-gray-500 dark:text-gray-400">Click "Generate" to create an AI description</em>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div id="actionButtons" class="d-flex gap-2 d-none">
-                            <button type="button" id="applyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-check me-2"></i>Apply to Product
+                        <div id="actionButtons" class="hidden flex flex-wrap gap-2">
+                            <button type="button" id="applyBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                                <i class="fas fa-check mr-2"></i>Apply to Product
                             </button>
-                            <button type="button" id="copyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-copy me-2"></i>Copy to Clipboard
+                            <button type="button" id="copyBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                                <i class="fas fa-copy mr-2"></i>Copy to Clipboard
                             </button>
-                            <button type="button" id="regenerateBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-redo me-2"></i>Regenerate
+                            <button type="button" id="regenerateBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                                <i class="fas fa-redo mr-2"></i>Regenerate
                             </button>
                         </div>
                     </div>
@@ -160,7 +184,7 @@
             </div>
 
             <!-- Success/Error Messages -->
-            <div id="alertContainer" class="mt-3"></div>
+            <div id="alertContainer" class="mt-4"></div>
         </div>
     </div>
 </div>
@@ -197,12 +221,12 @@
             productItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    productItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    productItems.forEach(i => i.classList.remove('bg-purple-50', 'dark:bg-purple-900/20'));
+                    this.classList.add('bg-purple-50', 'dark:bg-purple-900/20');
 
                     selectedProductId = this.dataset.id;
-                    document.getElementById('noProductSelected').classList.add('d-none');
-                    document.getElementById('productPanel').classList.remove('d-none');
+                    document.getElementById('noProductSelected').classList.add('hidden');
+                    document.getElementById('productPanel').classList.remove('hidden');
 
                     document.getElementById('selectedProductTitle').textContent = this.dataset.title;
                     document.getElementById('selectedProductVendor').textContent = this.dataset.vendor || 'No vendor';
@@ -210,8 +234,8 @@
 
                     const tags = this.dataset.tags ? this.dataset.tags.split(',') : [];
                     const tagsHtml = tags.length > 0
-                        ? tags.map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('')
-                        : '<span class="text-muted">No tags</span>';
+                        ? tags.map(t => `<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">${t.trim()}</span>`).join('')
+                        : '<span class="text-gray-500 dark:text-gray-400">No tags</span>';
                     document.getElementById('selectedProductTags').innerHTML = tagsHtml;
 
                     const currentDesc = this.dataset.description;
@@ -220,14 +244,14 @@
                         currentDescEl.innerHTML = currentDesc;
                         document.getElementById('currentDescWordCount').textContent = `${currentDesc.split(/\s+/).length} words`;
                     } else {
-                        currentDescEl.innerHTML = '<em class="text-muted">No description</em>';
+                        currentDescEl.innerHTML = '<em class="text-gray-500 dark:text-gray-400">No description</em>';
                         document.getElementById('currentDescWordCount').textContent = '';
                     }
 
                     generateBtn.disabled = false;
-                    document.getElementById('actionButtons').classList.add('d-none');
-                    document.getElementById('generatedDescription').classList.add('d-none');
-                    document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                    document.getElementById('actionButtons').classList.add('hidden');
+                    document.getElementById('generatedDescription').classList.add('hidden');
+                    document.getElementById('noGeneratedDescription').classList.remove('hidden');
                 });
             });
 
@@ -239,10 +263,10 @@
                 const maxWords = document.getElementById('maxWords').value;
                 const context = document.getElementById('additionalContext').value;
 
-                document.getElementById('generatingPlaceholder').classList.remove('d-none');
-                document.getElementById('noGeneratedDescription').classList.add('d-none');
-                document.getElementById('generatedDescription').classList.add('d-none');
-                document.getElementById('actionButtons').classList.add('d-none');
+                document.getElementById('generatingPlaceholder').classList.remove('hidden');
+                document.getElementById('noGeneratedDescription').classList.add('hidden');
+                document.getElementById('generatedDescription').classList.add('hidden');
+                document.getElementById('actionButtons').classList.add('hidden');
                 generateBtn.disabled = true;
 
                 try {
@@ -264,19 +288,19 @@
 
                     if (result.success) {
                         document.getElementById('generatedDescription').value = result.description;
-                        document.getElementById('generatedDescription').classList.remove('d-none');
+                        document.getElementById('generatedDescription').classList.remove('hidden');
                         document.getElementById('generatedDescWordCount').textContent = `${result.description.split(/\s+/).length} words`;
-                        document.getElementById('actionButtons').classList.remove('d-none');
+                        document.getElementById('actionButtons').classList.remove('hidden');
                         showAlert('Description generated successfully!', 'success');
                     } else {
-                        showAlert(result.error || 'Failed to generate description', 'danger');
-                        document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                        showAlert(result.error || 'Failed to generate description', 'error');
+                        document.getElementById('noGeneratedDescription').classList.remove('hidden');
                     }
                 } catch (error) {
-                    showAlert('Error generating description: ' + error.message, 'danger');
-                    document.getElementById('noGeneratedDescription').classList.remove('d-none');
+                    showAlert('Error generating description: ' + error.message, 'error');
+                    document.getElementById('noGeneratedDescription').classList.remove('hidden');
                 } finally {
-                    document.getElementById('generatingPlaceholder').classList.add('d-none');
+                    document.getElementById('generatingPlaceholder').classList.add('hidden');
                     generateBtn.disabled = false;
                 }
             }
@@ -307,20 +331,18 @@
 
                     if (result.success) {
                         showAlert('Description applied to product successfully!', 'success');
-                        // Update the current description display
                         document.getElementById('currentDescription').innerHTML = description;
                         document.getElementById('currentDescWordCount').textContent = `${description.split(/\s+/).length} words`;
-                        // Update the product item's data attribute
                         const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
                         if (productItem) {
                             productItem.dataset.description = description;
-                            productItem.querySelector('.badge')?.remove();
+                            productItem.querySelector('.bg-yellow-100')?.remove();
                         }
                     } else {
-                        showAlert(result.error || 'Failed to apply description', 'danger');
+                        showAlert(result.error || 'Failed to apply description', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error applying description: ' + error.message, 'danger');
+                    showAlert('Error applying description: ' + error.message, 'error');
                 }
             });
 
@@ -330,22 +352,26 @@
                 navigator.clipboard.writeText(description).then(() => {
                     showAlert('Description copied to clipboard!', 'success');
                 }).catch(err => {
-                    showAlert('Failed to copy: ' + err, 'danger');
+                    showAlert('Failed to copy: ' + err, 'error');
                 });
             });
         });
 
         function showAlert(message, type) {
             const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show`;
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 dark:bg-gray-800 dark:text-green-400' : 'bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500';
+
+            container.innerHTML = `
+                <div class="flex items-center p-4 mb-4 text-sm rounded-lg ${bgColor}" role="alert">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             `;
-            container.innerHTML = '';
-            container.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+            setTimeout(() => container.innerHTML = '', 5000);
         }
     </script>
 }

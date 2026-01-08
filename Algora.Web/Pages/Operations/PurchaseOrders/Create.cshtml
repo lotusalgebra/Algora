@@ -4,150 +4,143 @@
     ViewData["Title"] = "Create Purchase Order";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-
-                <!-- Card Header -->
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <h6 class="mb-0 dark:text-white">Create Purchase Order</h6>
-                        <a href="/operations/purchase-orders" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                            <i class="fas fa-arrow-left me-2"></i> Back
-                        </a>
-                    </div>
-                </div>
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <!-- Card Body -->
-                <div class="flex-auto p-6">
-                    <form method="post" id="poForm">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Supplier <span class="text-red-500">*</span>
-                                </label>
-                                <select asp-for="Input.SupplierId" asp-items="Model.Suppliers"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
-                                    <option value="">Select a supplier</option>
-                                </select>
-                                <span asp-validation-for="Input.SupplierId" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Destination Location
-                                </label>
-                                <select asp-for="Input.LocationId" asp-items="Model.Locations"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
-                                    <option value="">Default Location</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Expected Delivery Date
-                                </label>
-                                <input type="date" asp-for="Input.ExpectedDeliveryDate"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Notes
-                                </label>
-                                <input type="text" asp-for="Input.Notes"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="Optional notes" />
-                            </div>
-                        </div>
-
-                        <!-- Line Items -->
-                        <div class="mt-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h6 class="font-bold text-slate-500 dark:text-white">Line Items</h6>
-                                <button type="button" id="addLineBtn" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-plus me-2"></i> Add Product
-                                </button>
-                            </div>
-
-                            <div id="lineItems" class="space-y-3">
-                                <!-- Line items will be added here -->
-                            </div>
-
-                            <div id="noItems" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-box-open fa-3x mb-3 text-gray-300"></i>
-                                <p>No items added yet. Click "Add Product" to add line items.</p>
-                            </div>
-
-                            <!-- Totals -->
-                            <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
-                                <div class="flex justify-between items-center text-lg font-bold dark:text-white">
-                                    <span>Total:</span>
-                                    <span id="orderTotal">$0.00</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end gap-3 mt-6">
-                            <a href="/operations/purchase-orders" class="inline-block px-6 py-3 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                                Cancel
-                            </a>
-                            <button type="submit" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-save me-2"></i> Create Order
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Create Purchase Order</h6>
+                <a href="/operations/purchase-orders" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back
+                </a>
             </div>
         </div>
 
-        @if (Model.SuggestedOrders.Count > 0)
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="flex-none w-full max-w-full px-3 mt-6">
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Suggested Reorders</h6>
-                        <p class="mb-0 text-sm text-slate-400">Products that may need reordering based on sales velocity</p>
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Card Body -->
+        <div class="p-6">
+            <form method="post" id="poForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Supplier <span class="text-red-500">*</span>
+                        </label>
+                        <select asp-for="Input.SupplierId" asp-items="Model.Suppliers"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Select a supplier</option>
+                        </select>
+                        <span asp-validation-for="Input.SupplierId" class="text-xs text-red-500"></span>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach (var suggestion in Model.SuggestedOrders)
-                            {
-                                @foreach (var line in suggestion.Lines.Take(2))
-                                {
-                                    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 suggested-item"
-                                         data-product-id="@line.ProductId"
-                                         data-variant-id="@line.ProductVariantId"
-                                         data-title="@line.ProductTitle"
-                                         data-quantity="@line.SuggestedQuantity"
-                                         data-cost="@line.UnitCost">
-                                        <h6 class="mb-1 text-sm font-semibold dark:text-white">@line.ProductTitle</h6>
-                                        <div class="flex justify-between text-xs text-slate-400">
-                                            <span>Current: @line.CurrentStock</span>
-                                            <span>Suggest: @line.SuggestedQuantity</span>
-                                        </div>
-                                        <div class="flex justify-between text-xs text-slate-400">
-                                            <span>@line.DaysUntilStockout days left</span>
-                                            <span>$@line.UnitCost.ToString("N2")/unit</span>
-                                        </div>
-                                    </div>
-                                }
-                            }
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Destination Location
+                        </label>
+                        <select asp-for="Input.LocationId" asp-items="Model.Locations"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Default Location</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Expected Delivery Date
+                        </label>
+                        <input type="date" asp-for="Input.ExpectedDeliveryDate"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Notes
+                        </label>
+                        <input type="text" asp-for="Input.Notes"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Optional notes" />
+                    </div>
+                </div>
+
+                <!-- Line Items -->
+                <div class="mt-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h6 class="font-semibold text-gray-700 dark:text-white">Line Items</h6>
+                        <button type="button" id="addLineBtn" class="text-white bg-gradient-to-br from-green-500 to-lime-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fas fa-plus me-2"></i> Add Product
+                        </button>
+                    </div>
+
+                    <div id="lineItems" class="space-y-3">
+                        <!-- Line items will be added here -->
+                    </div>
+
+                    <div id="noItems" class="text-center py-12 text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-box-open fa-3x mb-3 text-gray-300 dark:text-gray-600"></i>
+                        <p>No items added yet. Click "Add Product" to add line items.</p>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+                        <div class="flex justify-between items-center text-lg font-bold text-gray-900 dark:text-white">
+                            <span>Total:</span>
+                            <span id="orderTotal">$0.00</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <a href="/operations/purchase-orders" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit" class="text-white bg-gradient-to-br from-blue-600 to-cyan-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <i class="fas fa-save me-2"></i> Create Order
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+
+    @if (Model.SuggestedOrders.Count > 0)
+    {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mt-6">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Suggested Reorders</h6>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Products that may need reordering based on sales velocity</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach (var suggestion in Model.SuggestedOrders)
+                    {
+                        @foreach (var line in suggestion.Lines.Take(2))
+                        {
+                            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors suggested-item"
+                                 data-product-id="@line.ProductId"
+                                 data-variant-id="@line.ProductVariantId"
+                                 data-title="@line.ProductTitle"
+                                 data-quantity="@line.SuggestedQuantity"
+                                 data-cost="@line.UnitCost">
+                                <h6 class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">@line.ProductTitle</h6>
+                                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                                    <span>Current: @line.CurrentStock</span>
+                                    <span>Suggest: @line.SuggestedQuantity</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                                    <span>@line.DaysUntilStockout days left</span>
+                                    <span>$@line.UnitCost.ToString("N2")/unit</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
@@ -172,31 +165,31 @@
         function addLineItem(productId = '', variantId = '', title = '', quantity = 1, cost = 0) {
             const container = document.getElementById('lineItems');
             const div = document.createElement('div');
-            div.className = 'line-item p-4 bg-gray-50 rounded-lg dark:bg-gray-800';
+            div.className = 'line-item p-4 bg-gray-50 rounded-lg dark:bg-gray-700';
             div.innerHTML = `
                 <div class="flex flex-wrap items-center gap-4">
                     <div class="flex-1 min-w-[200px]">
-                        <label class="block mb-1 text-xs font-bold text-slate-700 dark:text-white">Product</label>
-                        <select name="Input.Lines[${lineIndex}].ProductId" class="product-select focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white">
+                        <label class="block mb-1 text-sm font-bold text-gray-700 dark:text-white">Product</label>
+                        <select name="Input.Lines[${lineIndex}].ProductId" class="product-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white">
                             <option value="">Select product</option>
                             ${products.map(p => `<option value="${p.value}" ${p.value === productId + '|' + variantId ? 'selected' : ''}>${p.text}</option>`).join('')}
                         </select>
                         <input type="hidden" name="Input.Lines[${lineIndex}].ProductVariantId" class="variant-input" />
                     </div>
                     <div class="w-24">
-                        <label class="block mb-1 text-xs font-bold text-slate-700 dark:text-white">Quantity</label>
-                        <input type="number" name="Input.Lines[${lineIndex}].QuantityOrdered" value="${quantity}" min="1" class="qty-input focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                        <label class="block mb-1 text-sm font-bold text-gray-700 dark:text-white">Quantity</label>
+                        <input type="number" name="Input.Lines[${lineIndex}].QuantityOrdered" value="${quantity}" min="1" class="qty-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white" />
                     </div>
                     <div class="w-28">
-                        <label class="block mb-1 text-xs font-bold text-slate-700 dark:text-white">Unit Cost</label>
-                        <input type="number" name="Input.Lines[${lineIndex}].UnitCost" value="${cost}" step="0.01" min="0" class="cost-input focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                        <label class="block mb-1 text-sm font-bold text-gray-700 dark:text-white">Unit Cost</label>
+                        <input type="number" name="Input.Lines[${lineIndex}].UnitCost" value="${cost}" step="0.01" min="0" class="cost-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white" />
                     </div>
                     <div class="w-24 text-right">
-                        <label class="block mb-1 text-xs font-bold text-slate-700 dark:text-white">Total</label>
-                        <span class="line-total text-sm font-bold dark:text-white">$0.00</span>
+                        <label class="block mb-1 text-sm font-bold text-gray-700 dark:text-white">Total</label>
+                        <span class="line-total text-sm font-bold text-gray-900 dark:text-white">$0.00</span>
                     </div>
                     <div class="w-8">
-                        <button type="button" class="remove-line text-red-500 hover:text-red-700 mt-5" title="Remove">
+                        <button type="button" class="remove-line text-red-600 hover:text-red-800 dark:text-red-400 mt-6" title="Remove">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>

@@ -2,7 +2,7 @@
 @model Algora.Web.Pages.Returns.RequestModel
 @{
     Layout = null;
-    var primaryColor = Model.Settings?.PrimaryColor ?? "#4f46e5";
+    var primaryColor = Model.Settings?.PrimaryColor ?? "#9333ea";
 }
 
 <!DOCTYPE html>
@@ -11,27 +11,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(Model.Settings?.PageTitle ?? "Start a Return")</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: @primaryColor;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '@primaryColor',
+                    }
+                }
+            }
         }
-        .btn-primary {
-            background-color: var(--primary-color);
-        }
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-        .text-primary {
-            color: var(--primary-color);
-        }
-        .border-primary {
-            border-color: var(--primary-color);
-        }
-        .ring-primary:focus {
-            --tw-ring-color: var(--primary-color);
-        }
-    </style>
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-2xl mx-auto px-4 py-8">
@@ -55,7 +47,8 @@
         <!-- Error Message -->
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-xl bg-red-50 border border-red-200" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
                 @Model.ErrorMessage
             </div>
         }
@@ -63,12 +56,10 @@
         <!-- Success: Return Submitted -->
         @if (Model.SubmittedReturn != null)
         {
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-xl shadow-md p-6">
                 <div class="text-center">
                     <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                        <i class="fas fa-check text-3xl text-green-600"></i>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-2">Return Request Submitted!</h2>
                     <p class="text-gray-600 mb-4">Your return request number is:</p>
@@ -77,47 +68,43 @@
 
                 @if (Model.SubmittedReturn.IsAutoApproved && Model.SubmittedReturn.Label != null)
                 {
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-center mb-2">
-                            <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="font-semibold text-green-800">Your return has been approved!</span>
+                    <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-xl bg-green-50 border border-green-200">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>
+                            <span class="font-semibold">Your return has been approved!</span>
+                            <p class="text-green-700 mt-1">A prepaid shipping label is ready for you.</p>
                         </div>
-                        <p class="text-green-700 text-sm">A prepaid shipping label is ready for you.</p>
                     </div>
 
                     <a href="/returns/label/@Model.SubmittedReturn.RequestNumber?shop=@Model.ShopDomain"
-                       class="block w-full text-center btn-primary text-white py-3 px-4 rounded-md font-medium mb-4">
-                        Print Shipping Label
+                       class="block w-full text-center bg-primary text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity mb-4">
+                        <i class="fas fa-print me-2"></i> Print Shipping Label
                     </a>
                 }
                 else
                 {
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-center mb-2">
-                            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="font-semibold text-blue-800">Return request is pending review</span>
+                    <div class="flex items-center p-4 mb-6 text-sm text-blue-800 rounded-xl bg-blue-50 border border-blue-200">
+                        <i class="fas fa-clock me-2"></i>
+                        <div>
+                            <span class="font-semibold">Return request is pending review</span>
+                            <p class="text-blue-700 mt-1">We'll email you once your return is approved.</p>
                         </div>
-                        <p class="text-blue-700 text-sm">We'll email you once your return is approved.</p>
                     </div>
                 }
 
                 <a href="/returns/status/@Model.SubmittedReturn.RequestNumber?shop=@Model.ShopDomain"
-                   class="block w-full text-center border border-gray-300 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-50">
-                    Track Return Status
+                   class="block w-full text-center border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-search me-2"></i> Track Return Status
                 </a>
             </div>
         }
         else if (Model.Eligibility != null && Model.Eligibility.IsEligible)
         {
             <!-- Step 2: Select Items to Return -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-xl shadow-md p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-900">Select Items to Return</h2>
-                    <span class="text-sm text-gray-500">Order #@Model.Eligibility.OrderNumber</span>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Order #@Model.Eligibility.OrderNumber</span>
                 </div>
 
                 <form method="post" asp-page-handler="Submit" asp-route-shop="@Model.ShopDomain" asp-route-orderId="@Model.Eligibility.OrderId">
@@ -125,21 +112,19 @@
                     <input type="hidden" asp-for="Email" />
 
                     <!-- Items -->
-                    <div class="divide-y divide-gray-200 mb-6">
+                    <div class="divide-y divide-gray-100 mb-6">
                         @for (int i = 0; i < Model.Eligibility.EligibleItems.Count; i++)
                         {
                             var item = Model.Eligibility.EligibleItems[i];
                             <div class="py-4 flex items-start gap-4">
                                 @if (!string.IsNullOrEmpty(item.ImageUrl))
                                 {
-                                    <img src="@item.ImageUrl" alt="@item.ProductTitle" class="w-16 h-16 object-cover rounded" />
+                                    <img src="@item.ImageUrl" alt="@item.ProductTitle" class="w-16 h-16 object-cover rounded-lg" />
                                 }
                                 else
                                 {
-                                    <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
+                                    <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-box text-gray-400 text-xl"></i>
                                     </div>
                                 }
                                 <div class="flex-1 min-w-0">
@@ -164,7 +149,7 @@
                                     <input type="hidden" name="ReturnItems[@i].OrderLineId" value="@item.OrderLineId" />
                                     <label class="text-sm text-gray-500">Qty:</label>
                                     <select name="ReturnItems[@i].Quantity"
-                                            class="block w-20 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            class="block w-20 rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary">
                                         <option value="0">0</option>
                                         @for (int q = 1; q <= item.QuantityReturnable; q++)
                                         {
@@ -178,9 +163,9 @@
 
                     <!-- Return Reason -->
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Return *</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Reason for Return <span class="text-red-500">*</span></label>
                         <select asp-for="ReasonCode"
-                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="block w-full rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary"
                                 required>
                             <option value="">Select a reason...</option>
                             @foreach (var reason in Model.Reasons)
@@ -192,44 +177,40 @@
 
                     <!-- Additional Notes -->
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes (Optional)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Additional Notes (Optional)</label>
                         <textarea asp-for="CustomerNote"
                                   rows="3"
-                                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                  class="block w-full rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary"
                                   placeholder="Please provide any additional details about your return..."></textarea>
                     </div>
 
                     <!-- Return Deadline Info -->
                     @if (Model.Eligibility.ReturnDeadline.HasValue)
                     {
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span class="text-yellow-800">
-                                    @if (Model.Eligibility.DaysRemaining > 0)
-                                    {
-                                        <span>You have <strong>@Model.Eligibility.DaysRemaining days</strong> remaining to return this order.</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Return deadline: @Model.Eligibility.ReturnDeadline.Value.ToString("MMM d, yyyy")</span>
-                                    }
-                                </span>
-                            </div>
+                        <div class="flex items-center p-4 mb-6 text-sm text-yellow-800 rounded-xl bg-yellow-50 border border-yellow-200">
+                            <i class="fas fa-clock me-2"></i>
+                            <span>
+                                @if (Model.Eligibility.DaysRemaining > 0)
+                                {
+                                    <span>You have <strong>@Model.Eligibility.DaysRemaining days</strong> remaining to return this order.</span>
+                                }
+                                else
+                                {
+                                    <span>Return deadline: @Model.Eligibility.ReturnDeadline.Value.ToString("MMM d, yyyy")</span>
+                                }
+                            </span>
                         </div>
                     }
 
                     <button type="submit"
-                            class="w-full btn-primary text-white py-3 px-4 rounded-md font-medium">
-                        Submit Return Request
+                            class="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                        <i class="fas fa-paper-plane me-2"></i> Submit Return Request
                     </button>
 
                     <button type="button"
                             onclick="window.location.href='/returns/request?shop=@Model.ShopDomain'"
-                            class="w-full mt-3 border border-gray-300 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-50">
-                        Start Over
+                            class="w-full mt-3 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-arrow-left me-2"></i> Start Over
                     </button>
                 </form>
             </div>
@@ -237,31 +218,41 @@
         else
         {
             <!-- Step 1: Order Lookup -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-xl shadow-md p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-6">Find Your Order</h2>
 
                 <form method="post" asp-page-handler="Lookup" asp-route-shop="@Model.ShopDomain">
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Order Number</label>
-                        <input type="text"
-                               asp-for="OrderNumber"
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                               placeholder="e.g., 1001 or #1001"
-                               required />
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Order Number</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-hashtag text-gray-400"></i>
+                            </div>
+                            <input type="text"
+                                   asp-for="OrderNumber"
+                                   class="block w-full pl-10 rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary"
+                                   placeholder="e.g., 1001 or #1001"
+                                   required />
+                        </div>
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                        <input type="email"
-                               asp-for="Email"
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                               placeholder="The email used for your order"
-                               required />
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email"
+                                   asp-for="Email"
+                                   class="block w-full pl-10 rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary"
+                                   placeholder="The email used for your order"
+                                   required />
+                        </div>
                     </div>
 
                     <button type="submit"
-                            class="w-full btn-primary text-white py-3 px-4 rounded-md font-medium">
-                        Find My Order
+                            class="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                        <i class="fas fa-search me-2"></i> Find My Order
                     </button>
                 </form>
             </div>
@@ -270,31 +261,36 @@
             <div class="mt-6 text-center">
                 <p class="text-gray-600">
                     Already started a return?
-                    <a href="#" onclick="showTrackingModal()" class="text-primary hover:underline">Track your return status</a>
+                    <button onclick="showTrackingModal()" class="text-primary font-medium hover:underline">Track your return status</button>
                 </p>
             </div>
 
             <!-- Tracking Modal -->
-            <div id="trackingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Track Your Return</h3>
+            <div id="trackingModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Track Your Return</h3>
+                        <button onclick="hideTrackingModal()" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <form onsubmit="trackReturn(event)">
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Return Request Number</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Return Request Number</label>
                             <input type="text"
                                    id="trackingNumber"
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                   class="block w-full rounded-lg border-gray-300 text-sm focus:ring-primary focus:border-primary"
                                    placeholder="e.g., RET-XXXX"
                                    required />
                         </div>
                         <div class="flex gap-3">
                             <button type="submit"
-                                    class="flex-1 btn-primary text-white py-2 px-4 rounded-md font-medium">
-                                Track
+                                    class="flex-1 bg-primary text-white py-2.5 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                                <i class="fas fa-search me-2"></i> Track
                             </button>
                             <button type="button"
                                     onclick="hideTrackingModal()"
-                                    class="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-md font-medium hover:bg-gray-50">
+                                    class="flex-1 border border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors">
                                 Cancel
                             </button>
                         </div>
@@ -307,7 +303,7 @@
         @if (Model.Settings != null && Model.Settings.ReturnWindowDays > 0)
         {
             <div class="mt-8 text-center text-sm text-gray-500">
-                <p>Items can be returned within @Model.Settings.ReturnWindowDays days of delivery.</p>
+                <p><i class="fas fa-info-circle me-1"></i> Items can be returned within @Model.Settings.ReturnWindowDays days of delivery.</p>
             </div>
         }
     </div>
@@ -332,6 +328,13 @@
         // Close modal on outside click
         document.getElementById('trackingModal').addEventListener('click', function(e) {
             if (e.target === this) {
+                hideTrackingModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
                 hideTrackingModal();
             }
         });

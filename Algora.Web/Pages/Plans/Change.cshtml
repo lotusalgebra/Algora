@@ -4,20 +4,20 @@
     ViewData["Title"] = "Change Plan";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <div class="max-w-2xl mx-auto">
         <!-- Back Link -->
         <a href="/plans" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-6">
-            <i class="fas fa-arrow-left mr-2"></i>
+            <i class="fas fa-arrow-left me-2"></i>
             Back to Plans
         </a>
 
         <!-- Card -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg">
             <div class="p-6">
                 <!-- Header -->
                 <div class="text-center mb-6">
-                    <h1 class="text-2xl font-bold dark:text-white">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                         @(Model.IsUpgrade ? "Upgrade" : "Downgrade") Your Plan
                     </h1>
                     <p class="mt-2 text-gray-600 dark:text-gray-400">
@@ -35,20 +35,18 @@
                 <!-- Error Message -->
                 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
                 {
-                    <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-circle mr-2"></i>
-                            @Model.ErrorMessage
-                        </div>
+                    <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        @Model.ErrorMessage
                     </div>
                 }
 
                 <!-- Plan Comparison -->
                 <div class="flex items-center justify-center space-x-4 mb-8">
                     <!-- Current Plan -->
-                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg w-40">
+                    <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg w-40">
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase">Current</p>
-                        <p class="text-lg font-bold dark:text-white">@(Model.CurrentPlan?.Name ?? "None")</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white">@(Model.CurrentPlan?.Name ?? "None")</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             @if (Model.CurrentPlan?.MonthlyPrice > 0)
                             {
@@ -91,19 +89,19 @@
                         <div class="space-y-3 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Orders per month</span>
-                                <span class="font-medium dark:text-white">
+                                <span class="font-medium text-gray-900 dark:text-white">
                                     @(Model.NewPlan.OrderLimit == -1 ? "Unlimited" : Model.NewPlan.OrderLimit.ToString("N0"))
                                 </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Products</span>
-                                <span class="font-medium dark:text-white">
+                                <span class="font-medium text-gray-900 dark:text-white">
                                     @(Model.NewPlan.ProductLimit == -1 ? "Unlimited" : Model.NewPlan.ProductLimit.ToString("N0"))
                                 </span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Customers</span>
-                                <span class="font-medium dark:text-white">
+                                <span class="font-medium text-gray-900 dark:text-white">
                                     @(Model.NewPlan.CustomerLimit == -1 ? "Unlimited" : Model.NewPlan.CustomerLimit.ToString("N0"))
                                 </span>
                             </div>
@@ -179,29 +177,21 @@
                 <!-- Notice -->
                 @if (!Model.IsUpgrade)
                 {
-                    <div class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
-                        <div class="flex">
-                            <i class="fas fa-info-circle text-yellow-600 dark:text-yellow-400 mt-0.5 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Downgrade Request</p>
-                                <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                                    Downgrade requests require admin approval. You'll continue on your current plan until the request is processed.
-                                </p>
-                            </div>
+                    <div class="flex items-center p-4 mb-6 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400" role="alert">
+                        <i class="fas fa-info-circle me-3 flex-shrink-0"></i>
+                        <div>
+                            <p class="font-medium">Downgrade Request</p>
+                            <p class="mt-1">Downgrade requests require admin approval. You'll continue on your current plan until the request is processed.</p>
                         </div>
                     </div>
                 }
                 else if (Model.NewPlan?.TrialDays > 0)
                 {
-                    <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
-                        <div class="flex">
-                            <i class="fas fa-gift text-green-600 dark:text-green-400 mt-0.5 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-green-800 dark:text-green-200">Free Trial Included</p>
-                                <p class="text-sm text-green-700 dark:text-green-300 mt-1">
-                                    Your @Model.NewPlan.TrialDays-day free trial starts immediately. You won't be charged until the trial ends.
-                                </p>
-                            </div>
+                    <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                        <i class="fas fa-gift me-3 flex-shrink-0"></i>
+                        <div>
+                            <p class="font-medium">Free Trial Included</p>
+                            <p class="mt-1">Your @Model.NewPlan.TrialDays-day free trial starts immediately. You won't be charged until the trial ends.</p>
                         </div>
                     </div>
                 }
@@ -211,7 +201,7 @@
                     <input type="hidden" name="plan" value="@Model.Plan" />
 
                     <button type="submit"
-                            class="w-full px-6 py-3 text-sm font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:opacity-90 transition-opacity">
+                            class="w-full px-6 py-3 text-sm font-semibold text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:opacity-90 transition-opacity">
                         @if (Model.IsUpgrade)
                         {
                             <span>Confirm Upgrade</span>
@@ -223,7 +213,7 @@
                     </button>
 
                     <a href="/plans"
-                       class="block w-full px-6 py-3 text-sm font-semibold text-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                       class="block w-full px-6 py-3 text-sm font-semibold text-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                         Cancel
                     </a>
                 </form>

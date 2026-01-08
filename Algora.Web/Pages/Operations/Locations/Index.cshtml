@@ -4,132 +4,134 @@
     ViewData["Title"] = "Locations";
 }
 
-@section css {
-    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
-}
-
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-
-                <!-- Card Header -->
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Inventory Locations</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                <i class="fa fa-warehouse text-fuchsia-500 me-1"></i>
-                                <span class="font-semibold" id="total-count">0</span> locations synced from Shopify
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <form method="post" asp-page-handler="Sync" class="inline">
-                                <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-sync-alt me-2"></i> Sync Locations
-                                </button>
-                            </form>
-                            <form method="post" asp-page-handler="SyncInventory" class="inline">
-                                <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-cubes me-2"></i> Sync Inventory
-                                </button>
-                            </form>
-                            <a href="/operations" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                                <i class="fas fa-arrow-left me-2"></i> Back
-                            </a>
-                        </div>
-                    </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Inventory Locations</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-warehouse text-purple-500 me-1"></i>
+                        <span class="font-semibold" id="total-count">0</span> locations synced from Shopify
+                    </p>
                 </div>
-
-                <!-- Messages -->
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        @Model.SuccessMessage
-                    </div>
-                }
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <!-- Search Bar -->
-                <div class="px-6 pt-4">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div class="relative">
-                            <input type="text" id="search-input" placeholder="Search locations..."
-                                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <option value="10">10</option>
-                                <option value="25" selected>25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <form method="post" asp-page-handler="Sync" class="inline">
+                        <button type="submit" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300">
+                            <i class="fas fa-sync-alt me-2"></i> Sync Locations
+                        </button>
+                    </form>
+                    <form method="post" asp-page-handler="SyncInventory" class="inline">
+                        <button type="submit" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-600 to-lime-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300">
+                            <i class="fas fa-cubes me-2"></i> Sync Inventory
+                        </button>
+                    </form>
+                    <a href="/operations" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left me-2"></i> Back
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Card Body -->
-                <div class="flex-auto p-6 px-0 pb-0">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="text-center py-12">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading locations...</p>
+        <!-- Messages -->
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-700 dark:text-green-400" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span>@Model.SuccessMessage</span>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span>@Model.ErrorMessage</span>
+            </div>
+        }
+
+        <!-- Search Bar -->
+        <div class="px-6 pt-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
                     </div>
+                    <input type="text" id="search-input" placeholder="Search locations..."
+                        class="block w-64 ps-10 p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                    <select id="per-page" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Empty State -->
-                    <div id="empty-state" class="text-center py-12 hidden">
-                        <i class="fas fa-warehouse fa-4x text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">No locations found. Click "Sync Locations" to import from Shopify.</p>
-                        <form method="post" asp-page-handler="Sync" class="inline">
-                            <button type="submit" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-sync-alt me-2"></i> Sync Locations
-                            </button>
-                        </form>
+        <!-- Card Body -->
+        <div class="p-6">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center py-12">
+                <svg class="animate-spin h-8 w-8 text-purple-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Loading locations...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <i class="fas fa-warehouse text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 mb-4">No locations found. Click "Sync Locations" to import from Shopify.</p>
+                <form method="post" asp-page-handler="Sync" class="inline">
+                    <button type="submit" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg hover:bg-gradient-to-bl">
+                        <i class="fas fa-sync-alt me-2"></i> Sync Locations
+                    </button>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="relative overflow-x-auto" id="table-container" style="display: none;">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="locations-list">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="0">
+                                Location <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3">Address</th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="2">
+                                Total Inventory <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600" data-sort="3">
+                                Products <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4" style="display: none;">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span id="showing-start" class="font-medium">0</span> to <span id="showing-end" class="font-medium">0</span> of <span id="total-filtered" class="font-medium">0</span> locations
                     </div>
-
-                    <!-- Table -->
-                    <div class="overflow-x-auto" id="table-container" style="display: none;">
-                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="locations-list">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">Location <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Address</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="2">Total Inventory <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">Products <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body"></tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> locations
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    <i class="fas fa-chevron-left me-1"></i> Previous
-                                </button>
-                                <div id="page-numbers" class="flex gap-1"></div>
-                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    Next <i class="fas fa-chevron-right ms-1"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <button id="prev-btn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </button>
+                        <div id="page-numbers" class="flex gap-1"></div>
+                        <button id="next-btn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -207,29 +209,23 @@
                     const address = [l.address, l.city, l.province, l.country].filter(x => x).join(', ');
 
                     return `
-                    <tr>
-                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <div class="flex px-2 py-1">
-                                <div class="inline-block w-10 h-10 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 me-3">
-                                    <i class="fas fa-warehouse text-white text-sm relative top-3"></i>
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-lime-400 flex items-center justify-center me-3">
+                                    <i class="fas fa-warehouse text-white text-sm"></i>
                                 </div>
-                                <div class="flex flex-col justify-center">
-                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(l.name)}</h6>
-                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">ID: ${l.shopifyLocationId || l.id}</p>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">${escapeHtml(l.name)}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">ID: ${l.shopifyLocationId || l.id}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40">
-                            <span class="text-sm text-slate-500 dark:text-slate-300">${address || '-'}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">${(l.totalInventory || 0).toLocaleString()}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">${l.productCount || 0}</span>
-                        </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="bg-gradient-to-tl ${l.isActive ? 'from-green-600 to-lime-400' : 'from-gray-400 to-gray-600'} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${l.isActive ? 'Active' : 'Inactive'}</span>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${address || '-'}</td>
+                        <td class="px-6 py-4 text-center font-medium text-gray-900 dark:text-white">${(l.totalInventory || 0).toLocaleString()}</td>
+                        <td class="px-6 py-4 text-center font-medium text-gray-900 dark:text-white">${l.productCount || 0}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="${l.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} text-xs font-medium px-2.5 py-0.5 rounded">${l.isActive ? 'Active' : 'Inactive'}</span>
                         </td>
                     </tr>
                 `}).join('');
@@ -258,8 +254,8 @@
                     const btn = document.createElement('button');
                     btn.textContent = i;
                     btn.className = i === currentPage
-                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
-                        : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
+                        ? 'px-3 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg'
+                        : 'px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400';
                     btn.onclick = () => { currentPage = i; loadData(); };
                     pageNumbers.appendChild(btn);
                 }
@@ -300,8 +296,8 @@
                         sortColumn = col;
                         sortDirection = 'asc';
                     }
-                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xxs');
-                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xs');
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs`;
                     loadData();
                 });
             });

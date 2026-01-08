@@ -4,21 +4,31 @@
     ViewData["Title"] = $"Exchange {Model.Exchange?.ExchangeNumber}";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
-            <a href="/customer-hub/exchanges" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <a href="/customer-hub/exchanges" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
                 <i class="fas fa-arrow-left text-lg"></i>
             </a>
             <div>
-                <h5 class="font-bold dark:text-white">Exchange @Model.Exchange?.ExchangeNumber</h5>
-                <p class="text-sm text-slate-400">Order @Model.Exchange?.OrderNumber</p>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Exchange @Model.Exchange?.ExchangeNumber</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Order @Model.Exchange?.OrderNumber</p>
             </div>
         </div>
         @if (Model.Exchange != null)
         {
-            <span class="bg-gradient-to-tl @Model.GetStatusColor(Model.Exchange.Status) px-4 py-2 text-sm rounded-lg inline-block whitespace-nowrap text-center font-bold uppercase leading-none text-white">
+            var statusBadge = Model.Exchange.Status switch
+            {
+                "pending" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                "approved" => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                "shipped" => "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+                "received" => "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+                "completed" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                "cancelled" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+            };
+            <span class="@statusBadge text-sm font-semibold px-4 py-2 rounded-lg uppercase">
                 <i class="@Model.GetStatusIcon(Model.Exchange.Status) me-2"></i>@Model.Exchange.Status
             </span>
         }
@@ -27,101 +37,99 @@
     <!-- Success/Error Messages -->
     @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
-        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+        <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
             <i class="fas fa-check-circle me-2"></i> @Model.SuccessMessage
         </div>
     }
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i> @Model.ErrorMessage
         </div>
     }
 
     @if (Model.Exchange == null)
     {
-        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-            <div class="flex-auto p-6 text-center">
-                <i class="fas fa-exclamation-triangle fa-3x text-orange-400 mb-4"></i>
-                <h5 class="mb-2 dark:text-white">Exchange Not Found</h5>
-                <p class="text-sm text-gray-500 dark:text-gray-400">The requested exchange could not be found.</p>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <i class="fas fa-exclamation-triangle text-6xl text-orange-400 mb-4"></i>
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Exchange Not Found</h5>
+            <p class="text-sm text-gray-500 dark:text-gray-400">The requested exchange could not be found.</p>
         </div>
     }
     else
     {
-        <div class="flex flex-wrap -mx-3">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
-            <div class="w-full max-w-full px-3 lg:w-2/3">
+            <div class="lg:col-span-2 space-y-6">
                 <!-- Exchange Items -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Exchange Items</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="font-semibold text-gray-900 dark:text-white">Exchange Items</h6>
                     </div>
-                    <div class="flex-auto p-6">
+                    <div class="p-6 space-y-4">
                         @foreach (var item in Model.Exchange.Items)
                         {
-                            <div class="flex flex-col md:flex-row gap-4 p-4 mb-4 rounded-xl bg-gray-50 dark:bg-gray-800 last:mb-0">
+                            <div class="flex flex-col md:flex-row gap-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
                                 <!-- Original Item -->
                                 <div class="flex-1">
-                                    <p class="text-xs font-semibold text-slate-400 mb-2">ORIGINAL ITEM</p>
+                                    <p class="text-xs font-semibold text-gray-400 mb-2">ORIGINAL ITEM</p>
                                     <div class="flex items-start gap-3">
-                                        <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                                        <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-box text-gray-400 text-xl"></i>
                                         </div>
                                         <div>
-                                            <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@item.OriginalProductTitle</p>
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-white">@item.OriginalProductTitle</p>
                                             @if (!string.IsNullOrEmpty(item.OriginalVariantTitle))
                                             {
-                                                <p class="text-xs text-slate-500 mb-0">@item.OriginalVariantTitle</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">@item.OriginalVariantTitle</p>
                                             }
                                             @if (!string.IsNullOrEmpty(item.OriginalSku))
                                             {
-                                                <p class="text-xs text-slate-400 mb-0">SKU: @item.OriginalSku</p>
+                                                <p class="text-xs text-gray-400">SKU: @item.OriginalSku</p>
                                             }
-                                            <p class="text-sm font-semibold text-slate-700 dark:text-white mt-1">
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-white mt-1">
                                                 @item.OriginalPrice.ToString("C") x @item.Quantity
                                             </p>
                                         </div>
                                     </div>
                                     @if (!string.IsNullOrEmpty(item.Reason))
                                     {
-                                        <div class="mt-2 p-2 bg-white dark:bg-gray-700 rounded">
-                                            <p class="text-xs text-slate-500 mb-0"><strong>Reason:</strong> @item.Reason</p>
+                                        <div class="mt-2 p-2 bg-white dark:bg-gray-600 rounded">
+                                            <p class="text-xs text-gray-500 dark:text-gray-300"><strong>Reason:</strong> @item.Reason</p>
                                         </div>
                                     }
                                     @if (!string.IsNullOrEmpty(item.CustomerNote))
                                     {
-                                        <div class="mt-2 p-2 bg-white dark:bg-gray-700 rounded">
-                                            <p class="text-xs text-slate-500 mb-0"><strong>Customer Note:</strong> @item.CustomerNote</p>
+                                        <div class="mt-2 p-2 bg-white dark:bg-gray-600 rounded">
+                                            <p class="text-xs text-gray-500 dark:text-gray-300"><strong>Customer Note:</strong> @item.CustomerNote</p>
                                         </div>
                                     }
                                 </div>
 
                                 <!-- Arrow -->
                                 <div class="flex items-center justify-center px-4">
-                                    <i class="fas fa-arrow-right text-2xl text-fuchsia-500 hidden md:block"></i>
-                                    <i class="fas fa-arrow-down text-2xl text-fuchsia-500 md:hidden"></i>
+                                    <i class="fas fa-arrow-right text-2xl text-purple-500 hidden md:block"></i>
+                                    <i class="fas fa-arrow-down text-2xl text-purple-500 md:hidden"></i>
                                 </div>
 
                                 <!-- New Item -->
                                 <div class="flex-1">
-                                    <p class="text-xs font-semibold text-slate-400 mb-2">REPLACEMENT ITEM</p>
+                                    <p class="text-xs font-semibold text-gray-400 mb-2">REPLACEMENT ITEM</p>
                                     @if (item.NewProductId.HasValue)
                                     {
                                         <div class="flex items-start gap-3">
-                                            <div class="w-16 h-16 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
+                                            <div class="w-16 h-16 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
                                                 <i class="fas fa-box text-green-600 text-xl"></i>
                                             </div>
                                             <div>
-                                                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@item.NewProductTitle</p>
+                                                <p class="text-sm font-semibold text-gray-700 dark:text-white">@item.NewProductTitle</p>
                                                 @if (!string.IsNullOrEmpty(item.NewVariantTitle))
                                                 {
-                                                    <p class="text-xs text-slate-500 mb-0">@item.NewVariantTitle</p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">@item.NewVariantTitle</p>
                                                 }
                                                 @if (!string.IsNullOrEmpty(item.NewSku))
                                                 {
-                                                    <p class="text-xs text-slate-400 mb-0">SKU: @item.NewSku</p>
+                                                    <p class="text-xs text-gray-400">SKU: @item.NewSku</p>
                                                 }
                                                 <p class="text-sm font-semibold text-green-600 mt-1">
                                                     @item.NewPrice?.ToString("C")
@@ -131,8 +139,8 @@
                                     }
                                     else
                                     {
-                                        <div class="flex items-center justify-center h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-                                            <p class="text-sm text-slate-400">Not selected yet</p>
+                                        <div class="flex items-center justify-center h-16 border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-lg">
+                                            <p class="text-sm text-gray-400">Not selected yet</p>
                                         </div>
                                     }
                                 </div>
@@ -140,14 +148,14 @@
                         }
 
                         <!-- Price Difference Summary -->
-                        <div class="mt-4 p-4 rounded-xl bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-700">
+                        <div class="mt-4 p-4 rounded-lg bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800">
                             <div class="flex justify-between items-center">
-                                <span class="text-sm font-semibold text-slate-700 dark:text-white">Price Difference</span>
-                                <span class="text-lg font-bold @(Model.Exchange.PriceDifference > 0 ? "text-green-600" : Model.Exchange.PriceDifference < 0 ? "text-red-600" : "text-slate-700 dark:text-white")">
+                                <span class="text-sm font-semibold text-gray-700 dark:text-white">Price Difference</span>
+                                <span class="text-lg font-bold @(Model.Exchange.PriceDifference > 0 ? "text-green-600" : Model.Exchange.PriceDifference < 0 ? "text-red-600" : "text-gray-700 dark:text-white")">
                                     @(Model.Exchange.PriceDifference >= 0 ? "+" : "")@Model.Exchange.PriceDifference.ToString("C")
                                 </span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">
+                            <p class="text-xs text-gray-400 mt-1">
                                 @if (Model.Exchange.PriceDifference > 0)
                                 {
                                     <text>Customer will be charged for the difference.</text>
@@ -168,53 +176,53 @@
                 <!-- Notes -->
                 @if (!string.IsNullOrEmpty(Model.Exchange.Notes))
                 {
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                            <h6 class="mb-0 dark:text-white">Notes</h6>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h6 class="font-semibold text-gray-900 dark:text-white">Notes</h6>
                         </div>
-                        <div class="flex-auto p-6">
-                            <p class="text-sm text-slate-600 dark:text-gray-400">@Model.Exchange.Notes</p>
+                        <div class="p-6">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">@Model.Exchange.Notes</p>
                         </div>
                     </div>
                 }
             </div>
 
             <!-- Sidebar -->
-            <div class="w-full max-w-full px-3 lg:w-1/3">
+            <div class="space-y-6">
                 <!-- Customer Info -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Customer</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="font-semibold text-gray-900 dark:text-white">Customer</h6>
                     </div>
-                    <div class="flex-auto p-6">
+                    <div class="p-6">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center text-white font-bold">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white font-bold">
                                 @(Model.Exchange.CustomerName?.FirstOrDefault().ToString().ToUpper() ?? "?")
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">@(Model.Exchange.CustomerName ?? "Unknown")</p>
-                                <p class="text-xs text-slate-400 mb-0">@Model.Exchange.CustomerEmail</p>
+                                <p class="text-sm font-semibold text-gray-700 dark:text-white">@(Model.Exchange.CustomerName ?? "Unknown")</p>
+                                <p class="text-xs text-gray-400">@Model.Exchange.CustomerEmail</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Timeline -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Timeline</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="font-semibold text-gray-900 dark:text-white">Timeline</h6>
                     </div>
-                    <div class="flex-auto p-6">
+                    <div class="p-6">
                         <div class="relative">
-                            <div class="absolute w-0.5 bg-gray-200 dark:bg-gray-700 h-full left-4 top-0"></div>
+                            <div class="absolute w-0.5 bg-gray-200 dark:bg-gray-600 h-full left-4 top-0"></div>
 
                             <div class="relative flex items-start mb-4">
-                                <div class="w-8 h-8 rounded-full bg-fuchsia-500 flex items-center justify-center z-10">
+                                <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center z-10">
                                     <i class="fas fa-plus text-white text-xs"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">Created</p>
-                                    <p class="text-xs text-slate-400">@Model.Exchange.CreatedAt.ToString("MMM d, yyyy h:mm tt")</p>
+                                    <p class="text-sm font-semibold text-gray-700 dark:text-white">Created</p>
+                                    <p class="text-xs text-gray-400">@Model.Exchange.CreatedAt.ToString("MMM d, yyyy h:mm tt")</p>
                                 </div>
                             </div>
 
@@ -225,8 +233,8 @@
                                         <i class="fas fa-check text-white text-xs"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">Approved</p>
-                                        <p class="text-xs text-slate-400">@Model.Exchange.ApprovedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                        <p class="text-sm font-semibold text-gray-700 dark:text-white">Approved</p>
+                                        <p class="text-xs text-gray-400">@Model.Exchange.ApprovedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
                                     </div>
                                 </div>
                             }
@@ -238,8 +246,8 @@
                                         <i class="fas fa-check-double text-white text-xs"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-semibold text-slate-700 dark:text-white mb-0">Completed</p>
-                                        <p class="text-xs text-slate-400">@Model.Exchange.CompletedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                        <p class="text-sm font-semibold text-gray-700 dark:text-white">Completed</p>
+                                        <p class="text-xs text-gray-400">@Model.Exchange.CompletedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
                                     </div>
                                 </div>
                             }
@@ -250,19 +258,19 @@
                 <!-- Actions -->
                 @if (Model.Exchange.Status != "completed" && Model.Exchange.Status != "cancelled")
                 {
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                        <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                            <h6 class="mb-0 dark:text-white">Actions</h6>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h6 class="font-semibold text-gray-900 dark:text-white">Actions</h6>
                         </div>
-                        <div class="flex-auto p-6">
+                        <div class="p-6 space-y-3">
                             @if (Model.Exchange.Status == "pending")
                             {
-                                <form method="post" asp-page-handler="Approve" asp-route-id="@Model.Exchange.Id" class="mb-3">
+                                <form method="post" asp-page-handler="Approve" asp-route-id="@Model.Exchange.Id">
                                     <div class="mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Notes (optional)</label>
-                                        <textarea asp-for="Notes" rows="2" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Add notes..."></textarea>
+                                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Notes (optional)</label>
+                                        <textarea asp-for="Notes" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Add notes..."></textarea>
                                     </div>
-                                    <button type="submit" class="w-full px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg hover:scale-102 active:opacity-85">
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-600 to-lime-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300">
                                         <i class="fas fa-check me-2"></i> Approve Exchange
                                     </button>
                                 </form>
@@ -270,8 +278,8 @@
 
                             @if (Model.Exchange.Status == "approved" || Model.Exchange.Status == "shipped")
                             {
-                                <form method="post" asp-page-handler="MarkReceived" asp-route-id="@Model.Exchange.Id" class="mb-3">
-                                    <button type="submit" class="w-full px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-cyan-500 to-blue-400 rounded-lg hover:scale-102 active:opacity-85">
+                                <form method="post" asp-page-handler="MarkReceived" asp-route-id="@Model.Exchange.Id">
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-cyan-500 to-blue-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300">
                                         <i class="fas fa-box me-2"></i> Mark Items Received
                                     </button>
                                 </form>
@@ -279,21 +287,21 @@
 
                             @if (Model.Exchange.Status == "received")
                             {
-                                <form method="post" asp-page-handler="Complete" asp-route-id="@Model.Exchange.Id" class="mb-3">
-                                    <button type="submit" class="w-full px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg hover:scale-102 active:opacity-85">
+                                <form method="post" asp-page-handler="Complete" asp-route-id="@Model.Exchange.Id">
+                                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-600 to-lime-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300">
                                         <i class="fas fa-check-double me-2"></i> Complete Exchange
                                     </button>
                                 </form>
                             }
 
-                            <hr class="my-4 border-gray-200 dark:border-gray-700" />
+                            <hr class="my-4 border-gray-200 dark:border-gray-600" />
 
                             <form method="post" asp-page-handler="Cancel" asp-route-id="@Model.Exchange.Id" onsubmit="return confirm('Are you sure you want to cancel this exchange?');">
                                 <div class="mb-3">
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Cancellation Reason</label>
-                                    <textarea asp-for="CancelReason" rows="2" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Reason for cancellation..."></textarea>
+                                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Cancellation Reason</label>
+                                    <textarea asp-for="CancelReason" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Reason for cancellation..."></textarea>
                                 </div>
-                                <button type="submit" class="w-full px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-red-600 to-rose-400 rounded-lg hover:scale-102 active:opacity-85">
+                                <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-red-600 to-rose-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-300">
                                     <i class="fas fa-times me-2"></i> Cancel Exchange
                                 </button>
                             </form>

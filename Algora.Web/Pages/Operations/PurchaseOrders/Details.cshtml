@@ -3,70 +3,66 @@
 @using Algora.Application.DTOs.Operations
 @{
     ViewData["Title"] = $"Purchase Order: {Model.Order?.OrderNumber}";
-    var statusColor = Model.Order?.Status switch
+    var statusBadge = Model.Order?.Status switch
     {
-        "draft" => "from-gray-400 to-gray-600",
-        "sent" => "from-blue-600 to-cyan-400",
-        "confirmed" => "from-purple-700 to-pink-500",
-        "shipped" => "from-orange-500 to-yellow-300",
-        "received" => "from-green-600 to-lime-400",
-        "cancelled" => "from-red-600 to-rose-400",
-        _ => "from-gray-400 to-gray-600"
+        "draft" => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+        "sent" => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+        "confirmed" => "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+        "shipped" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+        "received" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        "cancelled" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+        _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
     };
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <div>
-                            <h5 class="mb-1 dark:text-white">@Model.Order?.OrderNumber</h5>
-                            <p class="mb-0 text-sm text-slate-400">
-                                <span class="bg-gradient-to-tl @statusColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white me-2">@Model.Order?.Status</span>
-                                Supplier: @Model.Order?.SupplierName
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            @if (Model.Order?.Status == "draft")
-                            {
-                                <form method="post" asp-page-handler="Send" asp-route-id="@Model.Order.Id" class="inline">
-                                    <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                        <i class="fas fa-paper-plane me-2"></i> Send to Supplier
-                                    </button>
-                                </form>
-                            }
-                            @if (Model.Order?.Status == "sent")
-                            {
-                                <button type="button" onclick="document.getElementById('confirmModal').classList.remove('hidden')" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-check me-2"></i> Confirm Order
-                                </button>
-                            }
-                            @if (Model.Order?.Status == "confirmed")
-                            {
-                                <button type="button" onclick="document.getElementById('shippedModal').classList.remove('hidden')" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-orange-500 to-yellow-300 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-truck me-2"></i> Mark Shipped
-                                </button>
-                            }
-                            @if (Model.Order?.Status == "shipped" || Model.Order?.Status == "confirmed")
-                            {
-                                <button type="button" onclick="document.getElementById('receiveModal').classList.remove('hidden')" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-box-open me-2"></i> Receive Items
-                                </button>
-                            }
-                            @if (Model.Order?.Status != "received" && Model.Order?.Status != "cancelled")
-                            {
-                                <button type="button" onclick="document.getElementById('cancelModal').classList.remove('hidden')" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-red-600 to-rose-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-times me-2"></i> Cancel
-                                </button>
-                            }
-                            <a href="/operations/purchase-orders" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                                <i class="fas fa-arrow-left me-2"></i> Back
-                            </a>
-                        </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+        <div class="p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">@Model.Order?.OrderNumber</h5>
+                    <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+                        <span class="@statusBadge text-xs font-medium px-2.5 py-0.5 rounded uppercase">@Model.Order?.Status</span>
+                        <span>Supplier: @Model.Order?.SupplierName</span>
                     </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    @if (Model.Order?.Status == "draft")
+                    {
+                        <form method="post" asp-page-handler="Send" asp-route-id="@Model.Order.Id" class="inline">
+                            <button type="submit" class="text-white bg-gradient-to-br from-blue-600 to-cyan-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                                <i class="fas fa-paper-plane me-2"></i> Send to Supplier
+                            </button>
+                        </form>
+                    }
+                    @if (Model.Order?.Status == "sent")
+                    {
+                        <button type="button" onclick="document.getElementById('confirmModal').classList.remove('hidden')" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fas fa-check me-2"></i> Confirm Order
+                        </button>
+                    }
+                    @if (Model.Order?.Status == "confirmed")
+                    {
+                        <button type="button" onclick="document.getElementById('shippedModal').classList.remove('hidden')" class="text-white bg-gradient-to-br from-orange-500 to-yellow-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-orange-300 dark:focus:ring-orange-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fas fa-truck me-2"></i> Mark Shipped
+                        </button>
+                    }
+                    @if (Model.Order?.Status == "shipped" || Model.Order?.Status == "confirmed")
+                    {
+                        <button type="button" onclick="document.getElementById('receiveModal').classList.remove('hidden')" class="text-white bg-gradient-to-br from-green-500 to-lime-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fas fa-box-open me-2"></i> Receive Items
+                        </button>
+                    }
+                    @if (Model.Order?.Status != "received" && Model.Order?.Status != "cancelled")
+                    {
+                        <button type="button" onclick="document.getElementById('cancelModal').classList.remove('hidden')" class="text-white bg-gradient-to-br from-red-600 to-rose-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </button>
+                    }
+                    <a href="/operations/purchase-orders" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        <i class="fas fa-arrow-left me-2"></i> Back
+                    </a>
                 </div>
             </div>
         </div>
@@ -74,159 +70,133 @@
 
     @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
-        <div class="mx-0 mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
             <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
         </div>
     }
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="mx-0 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>@Model.ErrorMessage
         </div>
     }
 
-    <div class="flex flex-wrap -mx-3">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Order Info -->
-        <div class="flex-none w-full max-w-full px-3 lg:w-1/3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 dark:text-white">Order Details</h6>
-                </div>
-                <div class="flex-auto p-6">
-                    <ul class="flex flex-col pl-0 mb-0 rounded-lg">
-                        <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                            <div class="flex flex-col w-full">
-                                <span class="text-xs text-slate-400">Order Number</span>
-                                <span class="text-sm font-semibold dark:text-white">@Model.Order?.OrderNumber</span>
-                            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Order Details</h6>
+            </div>
+            <div class="p-6">
+                <ul class="space-y-3">
+                    <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Order Number</span>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order?.OrderNumber</p>
+                    </li>
+                    <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Supplier</span>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order?.SupplierName</p>
+                    </li>
+                    @if (!string.IsNullOrEmpty(Model.Order?.LocationName))
+                    {
+                        <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Destination</span>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order.LocationName</p>
                         </li>
-                        <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                            <div class="flex flex-col w-full">
-                                <span class="text-xs text-slate-400">Supplier</span>
-                                <span class="text-sm font-semibold dark:text-white">@Model.Order?.SupplierName</span>
-                            </div>
+                    }
+                    <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Created</span>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order?.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</p>
+                    </li>
+                    @if (Model.Order?.ExpectedDeliveryDate.HasValue == true)
+                    {
+                        <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Expected Delivery</span>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order.ExpectedDeliveryDate.Value.ToString("MMM dd, yyyy")</p>
                         </li>
-                        @if (!string.IsNullOrEmpty(Model.Order?.LocationName))
-                        {
-                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <div class="flex flex-col w-full">
-                                    <span class="text-xs text-slate-400">Destination</span>
-                                    <span class="text-sm font-semibold dark:text-white">@Model.Order.LocationName</span>
-                                </div>
-                            </li>
-                        }
-                        <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                            <div class="flex flex-col w-full">
-                                <span class="text-xs text-slate-400">Created</span>
-                                <span class="text-sm font-semibold dark:text-white">@Model.Order?.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</span>
-                            </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Order?.TrackingNumber))
+                    {
+                        <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Tracking Number</span>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">@Model.Order.TrackingNumber</p>
                         </li>
-                        @if (Model.Order?.ExpectedDeliveryDate.HasValue == true)
-                        {
-                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <div class="flex flex-col w-full">
-                                    <span class="text-xs text-slate-400">Expected Delivery</span>
-                                    <span class="text-sm font-semibold dark:text-white">@Model.Order.ExpectedDeliveryDate.Value.ToString("MMM dd, yyyy")</span>
-                                </div>
-                            </li>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Order?.TrackingNumber))
-                        {
-                            <li class="relative flex p-3 mb-2 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <div class="flex flex-col w-full">
-                                    <span class="text-xs text-slate-400">Tracking Number</span>
-                                    <span class="text-sm font-semibold dark:text-white">@Model.Order.TrackingNumber</span>
-                                </div>
-                            </li>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Order?.Notes))
-                        {
-                            <li class="relative flex p-3 border-0 rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <div class="flex flex-col w-full">
-                                    <span class="text-xs text-slate-400">Notes</span>
-                                    <span class="text-sm dark:text-white">@Model.Order.Notes</span>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Order?.Notes))
+                    {
+                        <li class="p-3 bg-gray-50 rounded-lg dark:bg-gray-700">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Notes</span>
+                            <p class="text-sm text-gray-900 dark:text-white">@Model.Order.Notes</p>
+                        </li>
+                    }
+                </ul>
             </div>
         </div>
 
         <!-- Line Items -->
-        <div class="flex-none w-full max-w-full px-3 lg:w-2/3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <h6 class="mb-0 dark:text-white">Line Items</h6>
-                </div>
-                <div class="flex-auto p-6">
-                    <div class="overflow-x-auto">
-                        <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 dark:border-white/40 dark:text-white">Product</th>
-                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 dark:border-white/40 dark:text-white">Ordered</th>
-                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 dark:border-white/40 dark:text-white">Received</th>
-                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 dark:border-white/40 dark:text-white">Unit Cost</th>
-                                    <th class="px-4 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 dark:border-white/40 dark:text-white">Total</th>
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Line Items</h6>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">Product</th>
+                                <th scope="col" class="px-4 py-3 text-center">Ordered</th>
+                                <th scope="col" class="px-4 py-3 text-center">Received</th>
+                                <th scope="col" class="px-4 py-3 text-center">Unit Cost</th>
+                                <th scope="col" class="px-4 py-3 text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var line in Model.Order?.Lines ?? new List<PurchaseOrderLineDto>())
+                            {
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <td class="px-4 py-4">
+                                        <p class="font-medium text-gray-900 dark:text-white">@line.ProductTitle</p>
+                                        @if (!string.IsNullOrEmpty(line.VariantTitle))
+                                        {
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">@line.VariantTitle</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(line.Sku))
+                                        {
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">SKU: @line.Sku</p>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-4 text-center font-semibold text-gray-900 dark:text-white">@line.QuantityOrdered</td>
+                                    <td class="px-4 py-4 text-center font-semibold @(line.QuantityReceived >= line.QuantityOrdered ? "text-green-600" : "text-orange-600")">@line.QuantityReceived</td>
+                                    <td class="px-4 py-4 text-center text-gray-900 dark:text-white">$@line.UnitCost.ToString("N2")</td>
+                                    <td class="px-4 py-4 text-right font-semibold text-gray-900 dark:text-white">$@line.TotalCost.ToString("N2")</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var line in Model.Order?.Lines ?? new List<PurchaseOrderLineDto>())
-                                {
-                                    <tr>
-                                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <h6 class="mb-0 text-sm leading-normal dark:text-white">@line.ProductTitle</h6>
-                                            @if (!string.IsNullOrEmpty(line.VariantTitle))
-                                            {
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">@line.VariantTitle</p>
-                                            }
-                                            @if (!string.IsNullOrEmpty(line.Sku))
-                                            {
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">SKU: @line.Sku</p>
-                                            }
-                                        </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <span class="text-sm font-semibold dark:text-white">@line.QuantityOrdered</span>
-                                        </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <span class="text-sm font-semibold @(line.QuantityReceived >= line.QuantityOrdered ? "text-green-600" : "text-orange-600")">@line.QuantityReceived</span>
-                                        </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <span class="text-sm dark:text-white">$@line.UnitCost.ToString("N2")</span>
-                                        </td>
-                                        <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                            <span class="text-sm font-semibold dark:text-white">$@line.TotalCost.ToString("N2")</span>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                            <tfoot>
+                            }
+                        </tbody>
+                        <tfoot class="border-t-2 border-gray-200 dark:border-gray-600">
+                            <tr>
+                                <td colspan="4" class="px-4 py-3 text-right font-bold text-gray-900 dark:text-white">Subtotal:</td>
+                                <td class="px-4 py-3 text-right font-bold text-gray-900 dark:text-white">$@Model.Order?.Subtotal.ToString("N2")</td>
+                            </tr>
+                            @if (Model.Order?.Tax > 0)
+                            {
                                 <tr>
-                                    <td colspan="4" class="p-2 text-right font-bold dark:text-white">Subtotal:</td>
-                                    <td class="p-2 text-right font-bold dark:text-white">$@Model.Order?.Subtotal.ToString("N2")</td>
+                                    <td colspan="4" class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">Tax:</td>
+                                    <td class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">$@Model.Order.Tax.ToString("N2")</td>
                                 </tr>
-                                @if (Model.Order?.Tax > 0)
-                                {
-                                    <tr>
-                                        <td colspan="4" class="p-2 text-right text-slate-400">Tax:</td>
-                                        <td class="p-2 text-right text-slate-400">$@Model.Order.Tax.ToString("N2")</td>
-                                    </tr>
-                                }
-                                @if (Model.Order?.Shipping > 0)
-                                {
-                                    <tr>
-                                        <td colspan="4" class="p-2 text-right text-slate-400">Shipping:</td>
-                                        <td class="p-2 text-right text-slate-400">$@Model.Order.Shipping.ToString("N2")</td>
-                                    </tr>
-                                }
+                            }
+                            @if (Model.Order?.Shipping > 0)
+                            {
                                 <tr>
-                                    <td colspan="4" class="p-2 text-right font-bold text-lg dark:text-white">Total:</td>
-                                    <td class="p-2 text-right font-bold text-lg dark:text-white">@Model.Order?.Currency $@Model.Order?.Total.ToString("N2")</td>
+                                    <td colspan="4" class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">Shipping:</td>
+                                    <td class="px-4 py-2 text-right text-gray-500 dark:text-gray-400">$@Model.Order.Shipping.ToString("N2")</td>
                                 </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                            }
+                            <tr>
+                                <td colspan="4" class="px-4 py-3 text-right font-bold text-lg text-gray-900 dark:text-white">Total:</td>
+                                <td class="px-4 py-3 text-right font-bold text-lg text-gray-900 dark:text-white">@Model.Order?.Currency $@Model.Order?.Total.ToString("N2")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
@@ -234,16 +204,16 @@
 </div>
 
 <!-- Confirm Modal -->
-<div id="confirmModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-900">
-        <h5 class="mb-4 font-bold dark:text-white">Confirm Order</h5>
+<div id="confirmModal" class="hidden fixed inset-0 bg-gray-900/50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+        <h5 class="mb-4 font-bold text-gray-900 dark:text-white">Confirm Order</h5>
         <form method="post" asp-page-handler="Confirm" asp-route-id="@Model.Order?.Id">
             <div class="mb-4">
-                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Expected Delivery Date</label>
-                <input type="date" name="expectedDelivery" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Expected Delivery Date</label>
+                <input type="date" name="expectedDelivery" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
             </div>
             <div class="flex justify-end gap-2">
-                <button type="button" onclick="document.getElementById('confirmModal').classList.add('hidden')" class="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white">Cancel</button>
+                <button type="button" onclick="document.getElementById('confirmModal').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm text-white bg-purple-600 rounded-lg hover:bg-purple-700">Confirm</button>
             </div>
         </form>
@@ -251,16 +221,16 @@
 </div>
 
 <!-- Shipped Modal -->
-<div id="shippedModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-900">
-        <h5 class="mb-4 font-bold dark:text-white">Mark as Shipped</h5>
+<div id="shippedModal" class="hidden fixed inset-0 bg-gray-900/50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+        <h5 class="mb-4 font-bold text-gray-900 dark:text-white">Mark as Shipped</h5>
         <form method="post" asp-page-handler="Shipped" asp-route-id="@Model.Order?.Id">
             <div class="mb-4">
-                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Tracking Number</label>
-                <input type="text" name="trackingNumber" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" placeholder="Optional tracking number" />
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Tracking Number</label>
+                <input type="text" name="trackingNumber" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional tracking number" />
             </div>
             <div class="flex justify-end gap-2">
-                <button type="button" onclick="document.getElementById('shippedModal').classList.add('hidden')" class="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white">Cancel</button>
+                <button type="button" onclick="document.getElementById('shippedModal').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm text-white bg-orange-500 rounded-lg hover:bg-orange-600">Mark Shipped</button>
             </div>
         </form>
@@ -268,9 +238,9 @@
 </div>
 
 <!-- Receive Modal -->
-<div id="receiveModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-10 mx-auto p-5 border w-[600px] max-w-full shadow-lg rounded-lg bg-white dark:bg-gray-900">
-        <h5 class="mb-4 font-bold dark:text-white">Receive Items</h5>
+<div id="receiveModal" class="hidden fixed inset-0 bg-gray-900/50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-5 border w-[600px] max-w-full shadow-lg rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+        <h5 class="mb-4 font-bold text-gray-900 dark:text-white">Receive Items</h5>
         <form method="post" asp-page-handler="Receive" asp-route-id="@Model.Order?.Id">
             <div class="max-h-80 overflow-y-auto mb-4">
                 @for (int i = 0; i < (Model.Order?.Lines.Count ?? 0); i++)
@@ -278,27 +248,27 @@
                     var line = Model.Order!.Lines[i];
                     var remaining = line.QuantityOrdered - line.QuantityReceived;
                     <input type="hidden" name="ReceiveData.Lines[@i].LineId" value="@line.Id" />
-                    <div class="flex items-center gap-4 p-3 mb-2 bg-gray-50 rounded-lg dark:bg-gray-800">
+                    <div class="flex items-center gap-4 p-3 mb-2 bg-gray-50 rounded-lg dark:bg-gray-700">
                         <div class="flex-1">
-                            <span class="text-sm font-semibold dark:text-white">@line.ProductTitle</span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">@line.ProductTitle</span>
                             @if (!string.IsNullOrEmpty(line.VariantTitle))
                             {
-                                <span class="text-xs text-slate-400"> - @line.VariantTitle</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400"> - @line.VariantTitle</span>
                             }
-                            <div class="text-xs text-slate-400">Ordered: @line.QuantityOrdered | Received: @line.QuantityReceived | Remaining: @remaining</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">Ordered: @line.QuantityOrdered | Received: @line.QuantityReceived | Remaining: @remaining</div>
                         </div>
                         <div class="w-24">
-                            <input type="number" name="ReceiveData.Lines[@i].QuantityReceived" value="@remaining" min="0" max="@remaining" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
+                            <input type="number" name="ReceiveData.Lines[@i].QuantityReceived" value="@remaining" min="0" max="@remaining" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white" />
                         </div>
                     </div>
                 }
             </div>
             <div class="mb-4">
-                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Notes</label>
-                <textarea name="ReceiveData.Notes" rows="2" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" placeholder="Optional receiving notes"></textarea>
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Notes</label>
+                <textarea name="ReceiveData.Notes" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional receiving notes"></textarea>
             </div>
             <div class="flex justify-end gap-2">
-                <button type="button" onclick="document.getElementById('receiveModal').classList.add('hidden')" class="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white">Cancel</button>
+                <button type="button" onclick="document.getElementById('receiveModal').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700">Receive Items</button>
             </div>
         </form>
@@ -306,16 +276,16 @@
 </div>
 
 <!-- Cancel Modal -->
-<div id="cancelModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-900">
-        <h5 class="mb-4 font-bold dark:text-white">Cancel Order</h5>
+<div id="cancelModal" class="hidden fixed inset-0 bg-gray-900/50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700">
+        <h5 class="mb-4 font-bold text-gray-900 dark:text-white">Cancel Order</h5>
         <form method="post" asp-page-handler="Cancel" asp-route-id="@Model.Order?.Id">
             <div class="mb-4">
-                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">Reason</label>
-                <textarea name="reason" rows="2" class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" placeholder="Optional reason"></textarea>
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Reason</label>
+                <textarea name="reason" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional reason"></textarea>
             </div>
             <div class="flex justify-end gap-2">
-                <button type="button" onclick="document.getElementById('cancelModal').classList.add('hidden')" class="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white">Close</button>
+                <button type="button" onclick="document.getElementById('cancelModal').classList.add('hidden')" class="px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">Close</button>
                 <button type="submit" class="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700">Cancel Order</button>
             </div>
         </form>

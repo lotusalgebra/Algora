@@ -1,64 +1,69 @@
 @model Algora.Core.Models.OrderViewModel
 
-<article class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl p-4 mb-4">
-    <header class="flex items-start justify-between mb-3">
+<article class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
+    <header class="flex items-start justify-between mb-4">
         <div>
-            <h3 class="text-lg font-semibold">Order #@Model.Id</h3>
-            <div class="text-sm text-slate-500">@Model.Date.ToString("yyyy-MM-dd HH:mm")</div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Order #@Model.Id</h3>
+            <div class="text-sm text-gray-500 dark:text-gray-400">@Model.Date.ToString("yyyy-MM-dd HH:mm")</div>
         </div>
 
         <div class="text-right">
-            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        @(Model.Status == "Completed" ? "bg-green-100 text-green-800" :
-                          Model.Status == "Cancelled" ? "bg-red-100 text-red-800" :
-                          "bg-yellow-100 text-yellow-800")">
+            @{
+                var statusBadge = Model.Status switch
+                {
+                    "Completed" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                    "Cancelled" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                    _ => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                };
+            }
+            <span class="@statusBadge text-xs font-medium px-2.5 py-0.5 rounded">
                 @Model.Status
-            </div>
-            <div class="mt-2 text-right text-base font-bold">$@Model.TotalAmount.ToString("0.00")</div>
+            </span>
+            <div class="mt-2 text-lg font-bold text-gray-900 dark:text-white">$@Model.TotalAmount.ToString("0.00")</div>
         </div>
     </header>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="col-span-1">
-            <h4 class="text-sm font-semibold text-slate-600">Customer</h4>
-            <div class="text-sm">@Model.CustomerName</div>
-            <div class="text-xs text-slate-500">@Model.Email</div>
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
+            <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Customer</h4>
+            <div class="text-sm text-gray-900 dark:text-white">@Model.CustomerName</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">@Model.Email</div>
         </div>
 
-        <div class="col-span-1">
-            <h4 class="text-sm font-semibold text-slate-600">Shipping</h4>
-            <div class="text-sm">@Model.ShippingAddress</div>
+        <div>
+            <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Shipping</h4>
+            <div class="text-sm text-gray-900 dark:text-white">@Model.ShippingAddress</div>
         </div>
 
-        <div class="col-span-1">
-            <h4 class="text-sm font-semibold text-slate-600">Billing</h4>
-            <div class="text-sm">@Model.BillingAddress</div>
+        <div>
+            <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Billing</h4>
+            <div class="text-sm text-gray-900 dark:text-white">@Model.BillingAddress</div>
         </div>
     </section>
 
-    <section class="mt-4">
-        <h5 class="text-sm font-semibold text-slate-600 mb-2">Items</h5>
+    <section class="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <h5 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3">Items</h5>
         <div class="space-y-2">
             @foreach (var item in Model.Items)
             {
                 <div class="flex items-center justify-between text-sm">
                     <div>
-                        <div class="font-medium">@item.Name</div>
-                        <div class="text-xs text-slate-500">Qty: @item.Qty</div>
+                        <div class="font-medium text-gray-900 dark:text-white">@item.Name</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">Qty: @item.Qty</div>
                     </div>
-                    <div class="font-medium">$@item.Price.ToString("0.00")</div>
+                    <div class="font-medium text-gray-900 dark:text-white">$@item.Price.ToString("0.00")</div>
                 </div>
             }
         </div>
     </section>
 
-    <footer class="mt-4 flex items-center justify-between">
-        <div class="text-xs text-slate-500">ID: @Model.Id</div>
+    <footer class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div class="text-xs text-gray-500 dark:text-gray-400">ID: @Model.Id</div>
         <div class="flex gap-2">
-            <a asp-page="/Orders/Details" asp-route-id="@Model.Id" class="inline-block px-3 py-1 text-sm font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <a asp-page="/Orders/Details" asp-route-id="@Model.Id" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                 View
             </a>
-            <a asp-page="/Orders/EditStatus" asp-route-id="@Model.Id" class="inline-block px-3 py-1 text-sm font-semibold rounded-lg bg-fuchsia-500 text-white hover:opacity-90">
+            <a asp-page="/Orders/EditStatus" asp-route-id="@Model.Id" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
                 Change status
             </a>
         </div>

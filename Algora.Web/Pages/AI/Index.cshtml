@@ -4,192 +4,181 @@
     ViewData["Title"] = "AI Tools";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
         <div>
-            <h1 class="h3 mb-1">AI Tools</h1>
-            <p class="text-muted mb-0">Leverage AI to enhance your product content and customer experience</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">AI Tools</h1>
+            <p class="text-gray-500 dark:text-gray-400">Leverage AI to enhance your product content and customer experience</p>
         </div>
     </div>
 
     <!-- AI Tools Grid -->
-    <div class="row g-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <!-- Product Description Generator -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-file-alt text-primary fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">Description Generator</h5>
-                            <small class="text-muted">Generate compelling product descriptions</small>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-purple-100 dark:bg-purple-900/30 p-3 mr-3">
+                        <i class="fas fa-file-alt text-purple-600 dark:text-purple-400 text-lg"></i>
                     </div>
-                    <p class="card-text text-muted">
-                        Create engaging, SEO-friendly product descriptions using AI. Supports multiple tones and bulk generation.
-                    </p>
-                    <ul class="list-unstyled small text-muted mb-3">
-                        <li><i class="fas fa-check text-success me-2"></i>Professional, casual, luxury tones</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Bulk generation for multiple products</li>
-                        <li><i class="fas fa-check text-success me-2"></i>One-click apply to products</li>
-                    </ul>
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Description Generator</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Generate compelling product descriptions</p>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <a href="/AI/Descriptions" class="btn btn-primary w-100">
-                        <i class="fas fa-magic me-2"></i>Generate Descriptions
-                    </a>
-                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    Create engaging, SEO-friendly product descriptions using AI. Supports multiple tones and bulk generation.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Professional, casual, luxury tones</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Bulk generation for multiple products</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>One-click apply to products</li>
+                </ul>
+            </div>
+            <div class="p-6 pt-0">
+                <a href="/AI/Descriptions" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-magic mr-2"></i>Generate Descriptions
+                </a>
             </div>
         </div>
 
         <!-- SEO Optimizer -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-search text-success fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">SEO Optimizer</h5>
-                            <small class="text-muted">Optimize meta tags for search engines</small>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-green-100 dark:bg-green-900/30 p-3 mr-3">
+                        <i class="fas fa-search text-green-600 dark:text-green-400 text-lg"></i>
                     </div>
-                    <p class="card-text text-muted">
-                        Generate optimized meta titles, descriptions, and keywords to improve search rankings.
-                    </p>
-                    <ul class="list-unstyled small text-muted mb-3">
-                        <li><i class="fas fa-check text-success me-2"></i>Meta title optimization (60 chars)</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Meta description (155 chars)</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Keyword suggestions</li>
-                    </ul>
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 dark:text-white">SEO Optimizer</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Optimize meta tags for search engines</p>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <a href="/AI/Seo" class="btn btn-success w-100">
-                        <i class="fas fa-chart-line me-2"></i>Optimize SEO
-                    </a>
-                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    Generate optimized meta titles, descriptions, and keywords to improve search rankings.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Meta title optimization (60 chars)</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Meta description (155 chars)</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Keyword suggestions</li>
+                </ul>
+            </div>
+            <div class="p-6 pt-0">
+                <a href="/AI/Seo" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800">
+                    <i class="fas fa-chart-line mr-2"></i>Optimize SEO
+                </a>
             </div>
         </div>
 
         <!-- Alt-Text Generator -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-image text-info fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">Alt-Text Generator</h5>
-                            <small class="text-muted">Generate accessible image descriptions</small>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-blue-100 dark:bg-blue-900/30 p-3 mr-3">
+                        <i class="fas fa-image text-blue-600 dark:text-blue-400 text-lg"></i>
                     </div>
-                    <p class="card-text text-muted">
-                        Create descriptive alt text for product images to improve accessibility and SEO.
-                    </p>
-                    <ul class="list-unstyled small text-muted mb-3">
-                        <li><i class="fas fa-check text-success me-2"></i>AI-powered image analysis</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Accessibility compliant</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Bulk generation support</li>
-                    </ul>
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Alt-Text Generator</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Generate accessible image descriptions</p>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <a href="/AI/AltText" class="btn btn-info w-100 text-white">
-                        <i class="fas fa-universal-access me-2"></i>Generate Alt-Text
-                    </a>
-                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    Create descriptive alt text for product images to improve accessibility and SEO.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>AI-powered image analysis</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Accessibility compliant</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Bulk generation support</li>
+                </ul>
+            </div>
+            <div class="p-6 pt-0">
+                <a href="/AI/AltText" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                    <i class="fas fa-universal-access mr-2"></i>Generate Alt-Text
+                </a>
             </div>
         </div>
 
         <!-- Customer Chatbot -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-robot text-warning fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">Customer Chatbot</h5>
-                            <small class="text-muted">AI-powered customer support</small>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-yellow-100 dark:bg-yellow-900/30 p-3 mr-3">
+                        <i class="fas fa-robot text-yellow-600 dark:text-yellow-400 text-lg"></i>
                     </div>
-                    <p class="card-text text-muted">
-                        Deploy an AI chatbot in your customer portal for 24/7 self-service support.
-                    </p>
-                    <ul class="list-unstyled small text-muted mb-3">
-                        <li><i class="fas fa-check text-success me-2"></i>Order status lookups</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Return/exchange assistance</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Escalation to human agents</li>
-                    </ul>
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Customer Chatbot</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">AI-powered customer support</p>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <a href="/AI/Chatbot" class="btn btn-warning w-100">
-                        <i class="fas fa-comments me-2"></i>Configure Chatbot
-                    </a>
-                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    Deploy an AI chatbot in your customer portal for 24/7 self-service support.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Order status lookups</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Return/exchange assistance</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Escalation to human agents</li>
+                </ul>
+            </div>
+            <div class="p-6 pt-0">
+                <a href="/AI/Chatbot" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800">
+                    <i class="fas fa-comments mr-2"></i>Configure Chatbot
+                </a>
             </div>
         </div>
 
         <!-- Pricing Optimizer -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-dollar-sign text-danger fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">Pricing Optimizer</h5>
-                            <small class="text-muted">AI-powered pricing suggestions</small>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-red-100 dark:bg-red-900/30 p-3 mr-3">
+                        <i class="fas fa-dollar-sign text-red-600 dark:text-red-400 text-lg"></i>
                     </div>
-                    <p class="card-text text-muted">
-                        Get intelligent pricing recommendations based on costs, margins, and market data.
-                    </p>
-                    <ul class="list-unstyled small text-muted mb-3">
-                        <li><i class="fas fa-check text-success me-2"></i>Margin analysis</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Price range suggestions</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Reasoning explanations</li>
-                    </ul>
+                    <div>
+                        <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Pricing Optimizer</h5>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">AI-powered pricing suggestions</p>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-0 pt-0">
-                    <a href="/AI/Pricing" class="btn btn-danger w-100">
-                        <i class="fas fa-tags me-2"></i>Optimize Pricing
-                    </a>
-                </div>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    Get intelligent pricing recommendations based on costs, margins, and market data.
+                </p>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Margin analysis</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Price range suggestions</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i>Reasoning explanations</li>
+                </ul>
+            </div>
+            <div class="p-6 pt-0">
+                <a href="/AI/Pricing" class="w-full inline-flex justify-center items-center px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800">
+                    <i class="fas fa-tags mr-2"></i>Optimize Pricing
+                </a>
             </div>
         </div>
 
         <!-- AI Usage Stats -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-white">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-white bg-opacity-25 p-3 me-3">
-                            <i class="fas fa-chart-bar fa-lg"></i>
-                        </div>
-                        <div>
-                            <h5 class="card-title mb-0">AI Usage</h5>
-                            <small class="text-white-50">This month's statistics</small>
-                        </div>
+        <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg shadow-md h-full flex flex-col">
+            <div class="p-6 text-white">
+                <div class="flex items-center mb-4">
+                    <div class="rounded-full bg-white/25 p-3 mr-3">
+                        <i class="fas fa-chart-bar text-lg"></i>
                     </div>
-                    <div class="row text-center mt-4">
-                        <div class="col-4">
-                            <h3 class="mb-0">@Model.DescriptionsGenerated</h3>
-                            <small class="text-white-50">Descriptions</small>
-                        </div>
-                        <div class="col-4">
-                            <h3 class="mb-0">@Model.SeoOptimized</h3>
-                            <small class="text-white-50">SEO Tags</small>
-                        </div>
-                        <div class="col-4">
-                            <h3 class="mb-0">@Model.ChatbotMessages</h3>
-                            <small class="text-white-50">Chat Messages</small>
-                        </div>
+                    <div>
+                        <h5 class="text-lg font-semibold">AI Usage</h5>
+                        <p class="text-sm text-white/70">This month's statistics</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center mt-6">
+                    <div>
+                        <h3 class="text-2xl font-bold">@Model.DescriptionsGenerated</h3>
+                        <small class="text-white/70">Descriptions</small>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold">@Model.SeoOptimized</h3>
+                        <small class="text-white/70">SEO Tags</small>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold">@Model.ChatbotMessages</h3>
+                        <small class="text-white/70">Chat Messages</small>
                     </div>
                 </div>
             </div>
@@ -197,34 +186,34 @@
     </div>
 
     <!-- Provider Status -->
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-transparent">
-            <h5 class="mb-0"><i class="fas fa-plug me-2"></i>AI Provider Status</h5>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <i class="fas fa-plug mr-2"></i>AI Provider Status
+            </h5>
         </div>
-        <div class="card-body">
-            <div class="row g-3">
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 @foreach (var provider in Model.Providers)
                 {
-                    <div class="col-md-4">
-                        <div class="d-flex align-items-center p-3 border rounded">
-                            <div class="me-3">
-                                @if (provider.IsConfigured)
-                                {
-                                    <span class="badge bg-success rounded-pill">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary rounded-pill">
-                                        <i class="fas fa-times"></i>
-                                    </span>
-                                }
-                            </div>
-                            <div>
-                                <h6 class="mb-0">@provider.DisplayName</h6>
-                                <small class="text-muted">@(provider.IsConfigured ? "Configured" : "Not configured")</small>
-                            </div>
+                    <div class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div class="mr-3">
+                            @if (provider.IsConfigured)
+                            {
+                                <span class="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-800 rounded-full dark:bg-green-900 dark:text-green-300">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 text-gray-800 rounded-full dark:bg-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            }
+                        </div>
+                        <div>
+                            <h6 class="font-medium text-gray-900 dark:text-white">@provider.DisplayName</h6>
+                            <small class="text-gray-500 dark:text-gray-400">@(provider.IsConfigured ? "Configured" : "Not configured")</small>
                         </div>
                     </div>
                 }

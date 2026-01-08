@@ -4,179 +4,154 @@
     ViewData["Title"] = "Add Supplier";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-
-                <!-- Card Header -->
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <h6 class="mb-0 dark:text-white">Add New Supplier</h6>
-                        <a href="/operations/suppliers" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                            <i class="fas fa-arrow-left me-2"></i> Back to Suppliers
-                        </a>
-                    </div>
-                </div>
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <!-- Card Body -->
-                <div class="flex-auto p-6">
-                    <form method="post">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Basic Info -->
-                            <div class="col-span-2">
-                                <h6 class="mb-4 font-bold text-slate-500 dark:text-white">Basic Information</h6>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Supplier Name <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" asp-for="Input.Name"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="Enter supplier name" />
-                                <span asp-validation-for="Input.Name" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Supplier Code
-                                </label>
-                                <input type="text" asp-for="Input.Code"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="e.g., SUP001" />
-                                <span asp-validation-for="Input.Code" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <!-- Contact Info -->
-                            <div class="col-span-2 mt-4">
-                                <h6 class="mb-4 font-bold text-slate-500 dark:text-white">Contact Information</h6>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Email
-                                </label>
-                                <input type="email" asp-for="Input.Email"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="supplier@example.com" />
-                                <span asp-validation-for="Input.Email" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Phone
-                                </label>
-                                <input type="tel" asp-for="Input.Phone"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="+1 (555) 123-4567" />
-                                <span asp-validation-for="Input.Phone" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Contact Person
-                                </label>
-                                <input type="text" asp-for="Input.ContactPerson"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="Contact name" />
-                                <span asp-validation-for="Input.ContactPerson" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Website
-                                </label>
-                                <input type="url" asp-for="Input.Website"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="https://supplier.com" />
-                                <span asp-validation-for="Input.Website" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div class="col-span-2">
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Address
-                                </label>
-                                <textarea asp-for="Input.Address" rows="2"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="Street address, city, state, zip"></textarea>
-                                <span asp-validation-for="Input.Address" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <!-- Order Settings -->
-                            <div class="col-span-2 mt-4">
-                                <h6 class="mb-4 font-bold text-slate-500 dark:text-white">Order Settings</h6>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Default Lead Time (days)
-                                </label>
-                                <input type="number" asp-for="Input.DefaultLeadTimeDays" min="1" max="365"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white" />
-                                <span asp-validation-for="Input.DefaultLeadTimeDays" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Minimum Order Amount ($)
-                                </label>
-                                <input type="number" asp-for="Input.MinimumOrderAmount" step="0.01" min="0"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="0.00" />
-                                <span asp-validation-for="Input.MinimumOrderAmount" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div>
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Payment Terms
-                                </label>
-                                <input type="text" asp-for="Input.PaymentTerms"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="e.g., Net 30, COD" />
-                                <span asp-validation-for="Input.PaymentTerms" class="text-xs text-red-500"></span>
-                            </div>
-
-                            <div class="flex items-center">
-                                <div class="min-h-6 pl-7 mb-0.5 block">
-                                    <input type="checkbox" asp-for="Input.IsActive"
-                                        class="w-5 h-5 ease-soft text-base rounded-1.4 checked:bg-gradient-to-tl checked:from-gray-900 checked:to-slate-800 after:text-xxs after:font-awesome after:duration-250 after:ease-soft-in-out duration-250 relative float-left mt-1 cursor-pointer appearance-none border border-solid border-slate-200 bg-white bg-contain bg-center bg-no-repeat align-top transition-all after:absolute after:flex after:h-full after:w-full after:items-center after:justify-center after:text-white after:opacity-0 after:transition-all checked:border-0 checked:border-transparent checked:bg-transparent checked:after:opacity-100" />
-                                    <label class="inline-block pl-2 mb-0 text-sm font-normal cursor-pointer select-none text-slate-700 dark:text-white">
-                                        Active Supplier
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-span-2">
-                                <label class="block mb-2 text-xs font-bold text-slate-700 dark:text-white">
-                                    Notes
-                                </label>
-                                <textarea asp-for="Input.Notes" rows="3"
-                                    class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none dark:bg-gray-950 dark:border-gray-700 dark:text-white"
-                                    placeholder="Additional notes about this supplier..."></textarea>
-                                <span asp-validation-for="Input.Notes" class="text-xs text-red-500"></span>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end gap-3 mt-6">
-                            <a href="/operations/suppliers" class="inline-block px-6 py-3 text-xs font-bold text-center uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gray-200 text-slate-700 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 dark:bg-gray-700 dark:text-white">
-                                Cancel
-                            </a>
-                            <button type="submit" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus me-2"></i> Create Supplier
-                            </button>
-                        </div>
-                    </form>
-                </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Add New Supplier</h6>
+                <a href="/operations/suppliers" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Suppliers
+                </a>
             </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Card Body -->
+        <div class="p-6">
+            <form method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Basic Info -->
+                    <div class="col-span-2">
+                        <h6 class="mb-4 font-semibold text-gray-700 dark:text-white">Basic Information</h6>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Supplier Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" asp-for="Input.Name"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Enter supplier name" />
+                        <span asp-validation-for="Input.Name" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
+                            Supplier Code
+                        </label>
+                        <input type="text" asp-for="Input.Code"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="e.g., SUP001" />
+                        <span asp-validation-for="Input.Code" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="col-span-2 mt-4">
+                        <h6 class="mb-4 font-semibold text-gray-700 dark:text-white">Contact Information</h6>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Email</label>
+                        <input type="email" asp-for="Input.Email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="supplier@example.com" />
+                        <span asp-validation-for="Input.Email" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Phone</label>
+                        <input type="tel" asp-for="Input.Phone"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="+1 (555) 123-4567" />
+                        <span asp-validation-for="Input.Phone" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Contact Person</label>
+                        <input type="text" asp-for="Input.ContactPerson"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Contact name" />
+                        <span asp-validation-for="Input.ContactPerson" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Website</label>
+                        <input type="url" asp-for="Input.Website"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="https://supplier.com" />
+                        <span asp-validation-for="Input.Website" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Address</label>
+                        <textarea asp-for="Input.Address" rows="2"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Street address, city, state, zip"></textarea>
+                        <span asp-validation-for="Input.Address" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <!-- Order Settings -->
+                    <div class="col-span-2 mt-4">
+                        <h6 class="mb-4 font-semibold text-gray-700 dark:text-white">Order Settings</h6>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Default Lead Time (days)</label>
+                        <input type="number" asp-for="Input.DefaultLeadTimeDays" min="1" max="365"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <span asp-validation-for="Input.DefaultLeadTimeDays" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Minimum Order Amount ($)</label>
+                        <input type="number" asp-for="Input.MinimumOrderAmount" step="0.01" min="0"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="0.00" />
+                        <span asp-validation-for="Input.MinimumOrderAmount" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Payment Terms</label>
+                        <input type="text" asp-for="Input.PaymentTerms"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="e.g., Net 30, COD" />
+                        <span asp-validation-for="Input.PaymentTerms" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <div class="flex items-center">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" asp-for="Input.IsActive"
+                                class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="text-sm text-gray-700 dark:text-white">Active Supplier</span>
+                        </label>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Notes</label>
+                        <textarea asp-for="Input.Notes" rows="3"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Additional notes about this supplier..."></textarea>
+                        <span asp-validation-for="Input.Notes" class="text-xs text-red-500"></span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <a href="/operations/suppliers" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <i class="fas fa-plus me-2"></i> Create Supplier
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

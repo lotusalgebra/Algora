@@ -5,19 +5,14 @@
     Layout = "_AuthLayout";
 }
 
-<main class="mt-0 transition-all duration-200 ease-soft-in-out">
-    <section class="min-h-screen flex items-center justify-center">
-        <div class="container">
-            <div class="flex flex-wrap justify-center -mx-3">
-                <div class="w-full max-w-full px-3 mx-auto text-center lg:w-6/12">
-                    <h1 class="mt-12 mb-2 text-9xl font-bold text-slate-700">403</h1>
-                    <h2 class="mb-4 text-3xl font-bold text-slate-700">Access Denied</h2>
-                    <p class="mb-8 text-lg text-slate-500">You don't have permission to access this resource.</p>
-                    <a asp-page="/Auth/Login" class="inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs">
-                        Go to Login
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
+<div class="flex flex-col items-center justify-center text-center">
+    <div class="w-20 h-20 mb-6 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+        <i class="fas fa-ban text-red-500 text-4xl"></i>
+    </div>
+    <h1 class="mb-2 text-6xl font-bold text-gray-900 dark:text-white">403</h1>
+    <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Access Denied</h2>
+    <p class="mb-8 text-gray-500 dark:text-gray-400">You don't have permission to access this resource.</p>
+    <a asp-page="/Auth/Login" class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 rounded-lg">
+        <i class="fas fa-arrow-left me-2"></i> Go to Login
+    </a>
+</div>

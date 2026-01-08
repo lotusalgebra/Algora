@@ -4,42 +4,40 @@
     ViewData["Title"] = "Product Performance";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between mb-6">
         <div>
-            <h6 class="mb-0 dark:text-white">Product Performance Heatmap</h6>
-            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Product Performance Heatmap</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
                 <i class="fa fa-chart-bar text-blue-500 me-1"></i>
                 Performance metrics for <span class="font-semibold">@Model.GetPeriodLabel()</span>
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="/analytics" class="inline-block px-4 py-2 text-xs font-bold text-center text-slate-700 dark:text-white uppercase align-middle transition-all border border-slate-200 dark:border-white/20 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-900">
-                <i class="fas fa-arrow-left me-2"></i> Back
-            </a>
-        </div>
+        <a href="/analytics" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back
+        </a>
     </div>
 
     <!-- Time Period Selector -->
     <div class="flex flex-wrap items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <span class="text-sm text-slate-600 dark:text-white dark:opacity-60 mr-2">Period:</span>
-            <div class="inline-flex rounded-lg border border-gray-200 dark:border-white/20" role="group">
-                <a href="?period=today&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "today" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-l-lg border-r border-gray-200 dark:border-white/20">
+            <span class="text-sm text-gray-600 dark:text-gray-400 mr-2">Period:</span>
+            <div class="inline-flex rounded-lg border border-gray-200 dark:border-gray-700" role="group">
+                <a href="?period=today&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "today" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") rounded-l-lg border-r border-gray-200 dark:border-gray-700">
                     Today
                 </a>
-                <a href="?period=7days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "7days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                <a href="?period=7days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "7days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                     7 days
                 </a>
-                <a href="?period=30days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "30days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                <a href="?period=30days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "30days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                     30 days
                 </a>
-                <a href="?period=90days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "90days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+                <a href="?period=90days&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "90days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                     90 days
                 </a>
-                <a href="?period=12months&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "12months" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-r-lg">
+                <a href="?period=12months&sortBy=@Model.SortBy" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "12months" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") rounded-r-lg">
                     12 months
                 </a>
             </div>
@@ -48,141 +46,125 @@
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+        <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             @Model.ErrorMessage
         </div>
     }
 
     <!-- Performance Legend -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-4">
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Performance Levels</h6>
-                        </div>
-                        <div class="flex items-center gap-4 flex-wrap">
-                            <div class="flex items-center">
-                                <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-tl from-green-600 to-lime-400"></span>
-                                <span class="text-xs dark:text-white">Excellent</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-tl from-blue-600 to-cyan-400"></span>
-                                <span class="text-xs dark:text-white">Good</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-tl from-orange-500 to-yellow-300"></span>
-                                <span class="text-xs dark:text-white">Average</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-tl from-red-600 to-rose-400"></span>
-                                <span class="text-xs dark:text-white">Poor</span>
-                            </div>
-                        </div>
-                    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 p-4">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h6 class="font-semibold text-gray-900 dark:text-white">Performance Levels</h6>
+            </div>
+            <div class="flex items-center gap-4 flex-wrap">
+                <div class="flex items-center">
+                    <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-br from-green-500 to-lime-400"></span>
+                    <span class="text-xs text-gray-900 dark:text-white">Excellent</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-br from-blue-600 to-cyan-400"></span>
+                    <span class="text-xs text-gray-900 dark:text-white">Good</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-br from-orange-500 to-yellow-400"></span>
+                    <span class="text-xs text-gray-900 dark:text-white">Average</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="inline-block w-4 h-4 mr-2 rounded bg-gradient-to-br from-red-500 to-rose-400"></span>
+                    <span class="text-xs text-gray-900 dark:text-white">Poor</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Product Performance Grid -->
-    <div class="flex flex-wrap -mx-3">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <h6 class="dark:text-white">Product Performance</h6>
-                    <p class="leading-normal text-sm dark:opacity-60">
-                        <i class="fa fa-box text-purple-500"></i>
-                        <span class="font-semibold">@Model.ProductHeatmap.TotalProducts products</span> analyzed
-                    </p>
-                </div>
-                <div class="flex-auto p-6 px-0 pb-2">
-                    @if (Model.ProductHeatmap.Products.Any())
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Product</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Qty Sold</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Revenue</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">COGS</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Profit</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Margin %</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Performance</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var product in Model.ProductHeatmap.Products)
-                                    {
-                                        var initials = string.Join("", product.ProductTitle.Split(' ').Take(2).Select(w => w.Length > 0 ? w[0].ToString().ToUpper() : ""));
-                                        var performanceColor = Model.GetPerformanceColorClass(product.PerformanceLevel);
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Product Performance</h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                <i class="fa fa-box text-purple-500"></i>
+                <span class="font-semibold">@Model.ProductHeatmap.TotalProducts products</span> analyzed
+            </p>
+        </div>
+        <div class="p-6">
+            @if (Model.ProductHeatmap.Products.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Product</th>
+                                <th scope="col" class="px-6 py-3 text-center">Qty Sold</th>
+                                <th scope="col" class="px-6 py-3 text-center">Revenue</th>
+                                <th scope="col" class="px-6 py-3 text-center">COGS</th>
+                                <th scope="col" class="px-6 py-3 text-center">Profit</th>
+                                <th scope="col" class="px-6 py-3 text-center">Margin %</th>
+                                <th scope="col" class="px-6 py-3 text-center">Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model.ProductHeatmap.Products)
+                            {
+                                var initials = string.Join("", product.ProductTitle.Split(' ').Take(2).Select(w => w.Length > 0 ? w[0].ToString().ToUpper() : ""));
+                                var performanceColor = Model.GetPerformanceColorClass(product.PerformanceLevel);
 
-                                        <tr>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex px-2 py-1">
-                                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
-                                                    {
-                                                        <img src="@product.ImageUrl" class="inline-flex items-center justify-center mr-4 text-white transition-all duration-200 ease-soft-in-out text-sm h-9 w-9 rounded-xl" alt="@product.ProductTitle">
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="flex items-center justify-center w-9 h-9 mr-4 text-sm text-white transition-all duration-200 ease-soft-in-out rounded-xl bg-gradient-to-tl @performanceColor">
-                                                            @initials
-                                                        </div>
-                                                    }
-                                                    <div class="flex flex-col justify-center">
-                                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">@product.ProductTitle</h6>
-                                                        @if (!string.IsNullOrEmpty(product.Sku))
-                                                        {
-                                                            <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">SKU: @product.Sku</p>
-                                                        }
-                                                    </div>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                            {
+                                                <img src="@product.ImageUrl" class="w-10 h-10 rounded-lg object-cover mr-3" alt="@product.ProductTitle">
+                                            }
+                                            else
+                                            {
+                                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br @performanceColor flex items-center justify-center text-white text-sm font-semibold mr-3">
+                                                    @initials
                                                 </div>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.QuantitySold</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.Revenue.ToString("C0")</span>
-                                                <p class="mb-0 text-xs text-slate-400 dark:text-white dark:opacity-60">@product.RevenueShare.ToString("F1")% share</p>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@product.COGS.ToString("C0")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight @(product.Profit >= 0 ? "text-green-600" : "text-red-600")">@product.Profit.ToString("C0")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex items-center justify-center">
-                                                    <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 mr-2">@product.ProfitMargin.ToString("F1")%</span>
-                                                    <div class="relative w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                        <div class="absolute top-0 left-0 h-full bg-gradient-to-tl @performanceColor" style="width: @Math.Min(100, Math.Max(0, product.ProfitMargin))%"></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl @performanceColor px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
-                                                    @product.PerformanceLevel
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-box-open fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400">No product performance data available for the selected period.</p>
-                        </div>
-                    }
+                                            }
+                                            <div>
+                                                <p class="font-medium text-gray-900 dark:text-white">@product.ProductTitle</p>
+                                                @if (!string.IsNullOrEmpty(product.Sku))
+                                                {
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">SKU: @product.Sku</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">@product.QuantitySold</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="font-semibold text-gray-900 dark:text-white">@product.Revenue.ToString("C0")</span>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">@product.RevenueShare.ToString("F1")% share</p>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">@product.COGS.ToString("C0")</td>
+                                    <td class="px-6 py-4 text-center font-semibold @(product.Profit >= 0 ? "text-green-600" : "text-red-600")">@product.Profit.ToString("C0")</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center">
+                                            <span class="font-semibold text-gray-900 dark:text-white mr-2">@product.ProfitMargin.ToString("F1")%</span>
+                                            <div class="relative w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                <div class="absolute top-0 left-0 h-full bg-gradient-to-br @performanceColor" style="width: @Math.Min(100, Math.Max(0, product.ProfitMargin))%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="bg-gradient-to-br @performanceColor text-white text-xs font-medium px-2.5 py-0.5 rounded">
+                                            @product.PerformanceLevel
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <i class="fas fa-box-open fa-4x text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400">No product performance data available for the selected period.</p>
+                </div>
+            }
         </div>
     </div>
 </div>

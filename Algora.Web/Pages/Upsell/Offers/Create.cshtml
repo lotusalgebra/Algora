@@ -4,131 +4,128 @@
     ViewData["Title"] = "Create Upsell Offer";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Create Upsell Offer</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                Configure a new post-purchase upsell offer
-                            </p>
-                        </div>
-                        <a href="/upsell/offers" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border border-gray-300 rounded-lg cursor-pointer text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
-                            <i class="fas fa-arrow-left me-2"></i> Back
-                        </a>
-                    </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Create Upsell Offer</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Configure a new post-purchase upsell offer
+                    </p>
                 </div>
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <div class="flex-auto p-6">
-                    <form method="post">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Left Column -->
-                            <div class="space-y-6">
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Recommended Product ID *</label>
-                                    <input type="number" asp-for="Input.RecommendedProductId" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Shopify Product ID" required />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">The product to recommend as an upsell</p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Recommended Variant ID</label>
-                                    <input type="number" asp-for="Input.RecommendedVariantId" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Shopify Variant ID (optional)" />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Specific variant to recommend (optional)</p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Trigger Product IDs</label>
-                                    <input type="text" asp-for="TriggerProductIdsText" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="123456, 789012, ..." />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Comma-separated product IDs that trigger this offer (leave empty for all)</p>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Type</label>
-                                        <select asp-for="Input.DiscountType" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                            <option value="">No Discount</option>
-                                            <option value="percentage">Percentage</option>
-                                            <option value="fixed">Fixed Amount</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Value</label>
-                                        <input type="number" step="0.01" asp-for="Input.DiscountValue" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="0" />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Discount Code</label>
-                                    <input type="text" asp-for="Input.DiscountCode" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="UPSELL10" />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shopify discount code to apply (optional)</p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Priority</label>
-                                    <input type="number" asp-for="Input.Priority" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" value="0" />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Higher priority offers are shown first</p>
-                                </div>
-                            </div>
-
-                            <!-- Right Column -->
-                            <div class="space-y-6">
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Headline</label>
-                                    <input type="text" asp-for="Input.Headline" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="LIMITED TIME OFFER" />
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Short attention-grabbing headline</p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Body Text</label>
-                                    <textarea asp-for="Input.BodyText" rows="3" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Describe the offer..."></textarea>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Description shown on the confirmation page</p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Button Text</label>
-                                    <input type="text" asp-for="Input.ButtonText" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Add to Cart" />
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Start Date</label>
-                                        <input type="datetime-local" asp-for="Input.StartDate" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                    <div>
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">End Date</label>
-                                        <input type="datetime-local" asp-for="Input.EndDate" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center">
-                                    <input type="checkbox" asp-for="Input.IsActive" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" checked />
-                                    <label class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Active</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <a href="/upsell/offers" class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                Cancel
-                            </a>
-                            <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-gradient-to-tl from-indigo-600 to-purple-400 rounded-lg shadow-soft-md hover:scale-102 active:opacity-85">
-                                <i class="fas fa-save me-2"></i> Create Offer
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <a href="/upsell/offers" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-arrow-left me-2"></i> Back
+                </a>
             </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <div class="p-6">
+            <form method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Recommended Product ID *</label>
+                            <input type="number" asp-for="Input.RecommendedProductId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Shopify Product ID" required />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">The product to recommend as an upsell</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Recommended Variant ID</label>
+                            <input type="number" asp-for="Input.RecommendedVariantId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Shopify Variant ID (optional)" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Specific variant to recommend (optional)</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Trigger Product IDs</label>
+                            <input type="text" asp-for="TriggerProductIdsText" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="123456, 789012, ..." />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Comma-separated product IDs that trigger this offer (leave empty for all)</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Discount Type</label>
+                                <select asp-for="Input.DiscountType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <option value="">No Discount</option>
+                                    <option value="percentage">Percentage</option>
+                                    <option value="fixed">Fixed Amount</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Discount Value</label>
+                                <input type="number" step="0.01" asp-for="Input.DiscountValue" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="0" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Discount Code</label>
+                            <input type="text" asp-for="Input.DiscountCode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="UPSELL10" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shopify discount code to apply (optional)</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Priority</label>
+                            <input type="number" asp-for="Input.Priority" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="0" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Higher priority offers are shown first</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Headline</label>
+                            <input type="text" asp-for="Input.Headline" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="LIMITED TIME OFFER" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Short attention-grabbing headline</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Body Text</label>
+                            <textarea asp-for="Input.BodyText" rows="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Describe the offer..."></textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Description shown on the confirmation page</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Button Text</label>
+                            <input type="text" asp-for="Input.ButtonText" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Add to Cart" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Start Date</label>
+                                <input type="datetime-local" asp-for="Input.StartDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">End Date</label>
+                                <input type="datetime-local" asp-for="Input.EndDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" asp-for="Input.IsActive" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:bg-gray-700 dark:border-gray-600" checked />
+                            <label class="ml-2 text-sm font-medium text-gray-700 dark:text-white">Active</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <a href="/upsell/offers" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg dark:focus:ring-purple-800">
+                        <i class="fas fa-save me-2"></i> Create Offer
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

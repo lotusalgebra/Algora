@@ -4,62 +4,58 @@
     ViewData["Title"] = "Experiment Details";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     @if (Model.Experiment == null)
     {
         <div class="text-center py-12">
-            <i class="fas fa-exclamation-circle fa-4x text-gray-300 mb-4"></i>
+            <i class="fas fa-exclamation-circle fa-4x text-gray-300 dark:text-gray-600 mb-4"></i>
             <p class="text-gray-500 dark:text-gray-400">Experiment not found.</p>
-            <a href="/upsell/experiments" class="inline-block mt-4 px-6 py-2 text-sm font-medium text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg">
-                Back to Experiments
+            <a href="/upsell/experiments" class="inline-flex items-center mt-4 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 rounded-lg">
+                <i class="fas fa-arrow-left me-2"></i> Back to Experiments
             </a>
         </div>
     }
     else
     {
         <!-- Header -->
-        <div class="flex flex-wrap -mx-3 mb-6">
-            <div class="flex-none w-full max-w-full px-3">
-                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                            <h4 class="mb-1 text-xl font-bold dark:text-white">@Model.Experiment.Name</h4>
-                            <p class="text-sm text-slate-400 dark:text-white dark:opacity-60">@Model.Experiment.Description</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            @{
-                                var statusColor = Model.Experiment.Status switch
-                                {
-                                    "running" => "from-green-600 to-lime-400",
-                                    "paused" => "from-yellow-500 to-amber-300",
-                                    "completed" => "from-blue-600 to-cyan-400",
-                                    _ => "from-gray-400 to-gray-600"
-                                };
-                            }
-                            <span class="bg-gradient-to-tl @statusColor px-4 py-2 text-xs rounded-lg inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
-                                @Model.Experiment.Status
-                            </span>
-                            @if (Model.Experiment.Status == "running")
-                            {
-                                <form method="post" asp-page-handler="Pause" class="inline">
-                                    <button type="submit" class="px-4 py-2 text-xs font-bold text-center text-white uppercase rounded-lg bg-gradient-to-tl from-yellow-500 to-amber-300">
-                                        <i class="fas fa-pause me-1"></i> Pause
-                                    </button>
-                                </form>
-                            }
-                            @if (Model.Experiment.Status == "running" || Model.Experiment.Status == "paused")
-                            {
-                                <form method="post" asp-page-handler="End" class="inline">
-                                    <button type="submit" class="px-4 py-2 text-xs font-bold text-center text-white uppercase rounded-lg bg-gradient-to-tl from-red-600 to-rose-400">
-                                        <i class="fas fa-stop me-1"></i> End
-                                    </button>
-                                </form>
-                            }
-                            <a href="/upsell/experiments" class="px-4 py-2 text-xs font-bold text-center uppercase border border-gray-300 rounded-lg text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
-                                <i class="fas fa-arrow-left me-1"></i> Back
-                            </a>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h4 class="mb-1 text-xl font-bold text-gray-900 dark:text-white">@Model.Experiment.Name</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">@Model.Experiment.Description</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    @{
+                        var statusBadge = Model.Experiment.Status switch
+                        {
+                            "running" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                            "paused" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+                            "completed" => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                            _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                        };
+                    }
+                    <span class="@statusBadge px-3 py-1.5 text-xs font-medium rounded-lg uppercase">
+                        @Model.Experiment.Status
+                    </span>
+                    @if (Model.Experiment.Status == "running")
+                    {
+                        <form method="post" asp-page-handler="Pause" class="inline">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800">
+                                <i class="fas fa-pause me-1"></i> Pause
+                            </button>
+                        </form>
+                    }
+                    @if (Model.Experiment.Status == "running" || Model.Experiment.Status == "paused")
+                    {
+                        <form method="post" asp-page-handler="End" class="inline">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800">
+                                <i class="fas fa-stop me-1"></i> End
+                            </button>
+                        </form>
+                    }
+                    <a href="/upsell/experiments" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                        <i class="fas fa-arrow-left me-1"></i> Back
+                    </a>
                 </div>
             </div>
         </div>
@@ -73,110 +69,76 @@
         }
 
         <!-- Summary Stats -->
-        <div class="flex flex-wrap -mx-3 mb-6">
-            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="flex-auto p-4">
-                        <div class="flex flex-row -mx-3">
-                            <div class="flex-none w-2/3 max-w-full px-3">
-                                <div>
-                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Impressions</p>
-                                    <h5 class="mb-0 font-bold dark:text-white">@Model.Experiment.TotalImpressions.ToString("N0")</h5>
-                                </div>
-                            </div>
-                            <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400">
-                                    <i class="fas fa-eye text-lg relative top-3.5 text-white"></i>
-                                </div>
-                            </div>
-                        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Impressions</p>
+                        <h5 class="text-xl font-bold text-gray-900 dark:text-white">@Model.Experiment.TotalImpressions.ToString("N0")</h5>
+                    </div>
+                    <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-400">
+                        <i class="fas fa-eye text-lg text-white"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="flex-auto p-4">
-                        <div class="flex flex-row -mx-3">
-                            <div class="flex-none w-2/3 max-w-full px-3">
-                                <div>
-                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Total Conversions</p>
-                                    <h5 class="mb-0 font-bold dark:text-white text-green-600">@Model.Experiment.TotalConversions</h5>
-                                </div>
-                            </div>
-                            <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400">
-                                    <i class="fas fa-shopping-cart text-lg relative top-3.5 text-white"></i>
-                                </div>
-                            </div>
-                        </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Conversions</p>
+                        <h5 class="text-xl font-bold text-green-600">@Model.Experiment.TotalConversions</h5>
+                    </div>
+                    <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-green-600 to-lime-400">
+                        <i class="fas fa-shopping-cart text-lg text-white"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="flex-auto p-4">
-                        <div class="flex flex-row -mx-3">
-                            <div class="flex-none w-2/3 max-w-full px-3">
-                                <div>
-                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Statistical Significance</p>
-                                    <h5 class="mb-0 font-bold @(Model.Experiment.IsStatisticallySignificant ? "text-green-600" : "text-gray-400")">
-                                        @(Model.Experiment.IsStatisticallySignificant ? "Yes" : "Not Yet")
-                                    </h5>
-                                </div>
-                            </div>
-                            <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl @(Model.Experiment.IsStatisticallySignificant ? "from-green-600 to-lime-400" : "from-gray-400 to-gray-600")">
-                                    <i class="fas fa-chart-line text-lg relative top-3.5 text-white"></i>
-                                </div>
-                            </div>
-                        </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Statistical Significance</p>
+                        <h5 class="text-xl font-bold @(Model.Experiment.IsStatisticallySignificant ? "text-green-600" : "text-gray-400")">
+                            @(Model.Experiment.IsStatisticallySignificant ? "Yes" : "Not Yet")
+                        </h5>
+                    </div>
+                    <div class="flex items-center justify-center w-12 h-12 rounded-lg @(Model.Experiment.IsStatisticallySignificant ? "bg-gradient-to-br from-green-600 to-lime-400" : "bg-gradient-to-br from-gray-400 to-gray-600")">
+                        <i class="fas fa-chart-line text-lg text-white"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 xl:w-1/4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="flex-auto p-4">
-                        <div class="flex flex-row -mx-3">
-                            <div class="flex-none w-2/3 max-w-full px-3">
-                                <div>
-                                    <p class="mb-0 font-sans text-sm font-semibold leading-normal dark:text-white dark:opacity-60">Running Since</p>
-                                    <h5 class="mb-0 font-bold dark:text-white text-sm">
-                                        @(Model.Experiment.StartedAt?.ToString("MMM dd, yyyy") ?? "Not started")
-                                    </h5>
-                                </div>
-                            </div>
-                            <div class="px-3 text-right basis-1/3">
-                                <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-indigo-600 to-purple-400">
-                                    <i class="fas fa-calendar text-lg relative top-3.5 text-white"></i>
-                                </div>
-                            </div>
-                        </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Running Since</p>
+                        <h5 class="text-lg font-bold text-gray-900 dark:text-white">
+                            @(Model.Experiment.StartedAt?.ToString("MMM dd, yyyy") ?? "Not started")
+                        </h5>
+                    </div>
+                    <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+                        <i class="fas fa-calendar text-lg text-white"></i>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Variant Results -->
-        <div class="flex flex-wrap -mx-3">
-            <div class="flex-none w-full max-w-full px-3">
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <div class="flex items-center justify-between">
-                            <h6 class="mb-0 dark:text-white">Variant Performance</h6>
-                            <form method="post" asp-page-handler="Recalculate" class="inline">
-                                <button type="submit" class="text-xs font-semibold text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-sync-alt me-1"></i> Recalculate Stats
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Variant Performance</h6>
+                    <form method="post" asp-page-handler="Recalculate" class="inline">
+                        <button type="submit" class="text-sm font-medium text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300">
+                            <i class="fas fa-sync-alt me-1"></i> Recalculate Stats
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-                    <div class="flex-auto p-6">
-                        <div class="space-y-6">
-                            @foreach (var variant in Model.Experiment.VariantResults)
+            <div class="p-6">
+                <div class="space-y-6">
+                    @foreach (var variant in Model.Experiment.VariantResults)
                             {
                                 var isLeading = Model.Experiment.VariantResults.Count > 1 &&
                                     variant.ConversionRate == Model.Experiment.VariantResults.Max(v => v.ConversionRate);
@@ -247,39 +209,33 @@
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
 
         <!-- Experiment Settings -->
-        <div class="flex flex-wrap -mx-3">
-            <div class="flex-none w-full max-w-full px-3">
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Experiment Settings</h6>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Experiment Settings</h6>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Traffic Percentage</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">@Model.Experiment.TrafficPercentage%</p>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Traffic Percentage</p>
-                                <p class="font-semibold text-gray-900 dark:text-white">@Model.Experiment.TrafficPercentage%</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Min. Sample Size</p>
-                                <p class="font-semibold text-gray-900 dark:text-white">@Model.Experiment.MinSampleSize per variant</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Significance Level</p>
-                                <p class="font-semibold text-gray-900 dark:text-white">@((1 - Model.Experiment.SignificanceLevel) * 100)% confidence</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Auto-select Winner</p>
-                                <p class="font-semibold text-gray-900 dark:text-white">@(Model.Experiment.AutoSelectWinner ? "Yes" : "No")</p>
-                            </div>
-                        </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Min. Sample Size</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">@Model.Experiment.MinSampleSize per variant</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Significance Level</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">@((1 - Model.Experiment.SignificanceLevel) * 100)% confidence</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Auto-select Winner</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">@(Model.Experiment.AutoSelectWinner ? "Yes" : "No")</p>
                     </div>
                 </div>
             </div>

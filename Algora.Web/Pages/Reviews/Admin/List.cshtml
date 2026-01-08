@@ -4,33 +4,32 @@
     ViewData["Title"] = "All Reviews";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold dark:text-white">All Reviews</h1>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">All Reviews</h1>
             <p class="text-sm text-gray-500 dark:text-gray-400">Moderate and manage product reviews</p>
         </div>
-        <div class="flex gap-2">
-            <a href="/reviews/admin" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i> Back
-            </a>
-        </div>
+        <a href="/reviews/admin" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back
+        </a>
     </div>
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
             @Model.ErrorMessage
         </div>
     }
 
     <!-- Filters -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl p-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
         <form method="get" class="flex flex-wrap gap-4 items-end">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                <select name="status" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Status</label>
+                <select name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option value="">All</option>
                     <option value="pending" selected="@(Model.Status == "pending")">Pending</option>
                     <option value="approved" selected="@(Model.Status == "approved")">Approved</option>
@@ -38,8 +37,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Source</label>
-                <select name="source" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Source</label>
+                <select name="source" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option value="">All Sources</option>
                     <option value="manual" selected="@(Model.Source == "manual")">Manual</option>
                     <option value="amazon" selected="@(Model.Source == "amazon")">Amazon</option>
@@ -48,8 +47,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Rating</label>
-                <select name="minRating" class="rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Min Rating</label>
+                <select name="minRating" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option value="">Any</option>
                     <option value="5" selected="@(Model.MinRating == 5)">5 Stars</option>
                     <option value="4" selected="@(Model.MinRating == 4)">4+ Stars</option>
@@ -57,146 +56,147 @@
                 </select>
             </div>
             <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
-                <input type="text" name="search" value="@Model.Search" placeholder="Search reviews..." class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Search</label>
+                <input type="text" name="search" value="@Model.Search" placeholder="Search reviews..."
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" />
             </div>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                <i class="fas fa-search mr-1"></i> Filter
+            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                <i class="fas fa-search me-1"></i> Filter
             </button>
-            <a href="/reviews/admin/list" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+            <a href="/reviews/admin/list" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
                 Clear
             </a>
         </form>
     </div>
 
     <!-- Bulk Actions -->
-    <div id="bulkActions" class="hidden bg-indigo-50 dark:bg-indigo-900 rounded-lg p-4 mb-4 flex items-center justify-between">
-        <span class="text-indigo-700 dark:text-indigo-300"><span id="selectedCount">0</span> reviews selected</span>
+    <div id="bulkActions" class="hidden bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4 mb-4 flex items-center justify-between">
+        <span class="text-purple-700 dark:text-purple-300"><span id="selectedCount">0</span> reviews selected</span>
         <div class="flex gap-2">
-            <button onclick="bulkApprove()" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
-                <i class="fas fa-check mr-1"></i> Approve All
+            <button onclick="bulkApprove()" class="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                <i class="fas fa-check me-1"></i> Approve All
             </button>
-            <button onclick="bulkReject()" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
-                <i class="fas fa-times mr-1"></i> Reject All
+            <button onclick="bulkReject()" class="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
+                <i class="fas fa-times me-1"></i> Reject All
             </button>
-            <button onclick="bulkDelete()" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
-                <i class="fas fa-trash mr-1"></i> Delete
+            <button onclick="bulkDelete()" class="px-3 py-1.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm">
+                <i class="fas fa-trash me-1"></i> Delete
             </button>
         </div>
     </div>
 
     <!-- Reviews Table -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-        <div class="flex-auto p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6">
             @if (Model.Reviews.Items.Any())
             {
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-xs font-semibold tracking-wide text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                                <th class="px-4 py-3">
-                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded" />
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                 </th>
-                                <th class="px-4 py-3">Review</th>
-                                <th class="px-4 py-3">Rating</th>
-                                <th class="px-4 py-3">Product</th>
-                                <th class="px-4 py-3">Source</th>
-                                <th class="px-4 py-3">Status</th>
-                                <th class="px-4 py-3">Date</th>
-                                <th class="px-4 py-3">Actions</th>
+                                <th scope="col" class="px-6 py-3">Review</th>
+                                <th scope="col" class="px-6 py-3">Rating</th>
+                                <th scope="col" class="px-6 py-3">Product</th>
+                                <th scope="col" class="px-6 py-3">Source</th>
+                                <th scope="col" class="px-6 py-3">Status</th>
+                                <th scope="col" class="px-6 py-3">Date</th>
+                                <th scope="col" class="px-6 py-3">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y dark:divide-gray-700">
+                        <tbody>
                             @foreach (var review in Model.Reviews.Items)
                             {
-                                <tr class="text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800">
-                                    <td class="px-4 py-3">
-                                        <input type="checkbox" class="review-checkbox rounded" data-id="@review.Id" onchange="updateSelection()" />
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="px-6 py-4">
+                                        <input type="checkbox" class="review-checkbox w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" data-id="@review.Id" onchange="updateSelection()" />
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             @if (review.HasMedia)
                                             {
-                                                <div class="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
+                                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                                                     <i class="fas fa-image text-blue-500"></i>
                                                 </div>
                                             }
                                             <div>
-                                                <p class="font-semibold dark:text-white">@review.ReviewerName</p>
+                                                <p class="font-semibold text-gray-900 dark:text-white">@review.ReviewerName</p>
                                                 @if (!string.IsNullOrEmpty(review.Title))
                                                 {
-                                                    <p class="text-sm font-medium">@review.Title</p>
+                                                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">@review.Title</p>
                                                 }
-                                                <p class="text-xs text-gray-500">@review.BodyPreview</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">@review.BodyPreview</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4">
                                         <div class="flex text-yellow-400">
                                             @for (var i = 0; i < 5; i++)
                                             {
-                                                <i class="fas fa-star @(i < review.Rating ? "" : "text-gray-300")"></i>
+                                                <i class="fas fa-star @(i < review.Rating ? "" : "text-gray-300 dark:text-gray-600")"></i>
                                             }
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 text-sm">
+                                    <td class="px-6 py-4 text-gray-900 dark:text-white">
                                         @(review.ProductTitle ?? "No product")
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4">
                                         @{
                                             var sourceColor = review.Source switch
                                             {
-                                                "amazon" => "bg-orange-100 text-orange-700",
-                                                "aliexpress" => "bg-red-100 text-red-700",
-                                                "email_request" => "bg-blue-100 text-blue-700",
-                                                _ => "bg-gray-100 text-gray-700"
+                                                "amazon" => "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+                                                "aliexpress" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                                                "email_request" => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                                                _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                                             };
                                         }
-                                        <span class="px-2 py-1 text-xs font-medium rounded @sourceColor capitalize">
+                                        <span class="@sourceColor text-xs font-medium px-2.5 py-0.5 rounded capitalize">
                                             @review.Source.Replace("_", " ")
                                         </span>
                                         @if (review.IsVerifiedPurchase)
                                         {
-                                            <span class="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-700 ml-1">
+                                            <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 text-xs font-medium px-2.5 py-0.5 rounded ms-1">
                                                 <i class="fas fa-check"></i> Verified
                                             </span>
                                         }
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4">
                                         @{
                                             var statusColor = review.Status switch
                                             {
-                                                "approved" => "bg-green-100 text-green-700",
-                                                "rejected" => "bg-red-100 text-red-700",
-                                                _ => "bg-yellow-100 text-yellow-700"
+                                                "approved" => "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                                                "rejected" => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                                                _ => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
                                             };
                                         }
-                                        <span class="px-2 py-1 text-xs font-medium rounded @statusColor capitalize">
+                                        <span class="@statusColor text-xs font-medium px-2.5 py-0.5 rounded capitalize">
                                             @review.Status
                                         </span>
                                         @if (review.IsFeatured)
                                         {
-                                            <i class="fas fa-star text-yellow-500 ml-1" title="Featured"></i>
+                                            <i class="fas fa-star text-yellow-500 ms-1" title="Featured"></i>
                                         }
                                     </td>
-                                    <td class="px-4 py-3 text-sm">
+                                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
                                         @review.ReviewDate.ToString("MMM d, yyyy")
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4">
                                         <div class="flex gap-1">
                                             @if (review.Status == "pending")
                                             {
-                                                <button onclick="approveReview(@review.Id)" class="p-2 text-green-600 hover:bg-green-100 rounded" title="Approve">
+                                                <button onclick="approveReview(@review.Id)" class="p-2 text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg" title="Approve">
                                                     <i class="fas fa-check"></i>
                                                 </button>
-                                                <button onclick="rejectReview(@review.Id)" class="p-2 text-red-600 hover:bg-red-100 rounded" title="Reject">
+                                                <button onclick="rejectReview(@review.Id)" class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg" title="Reject">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             }
-                                            <button onclick="toggleFeatured(@review.Id)" class="p-2 @(review.IsFeatured ? "text-yellow-600" : "text-gray-400") hover:bg-yellow-100 rounded" title="Toggle Featured">
+                                            <button onclick="toggleFeatured(@review.Id)" class="p-2 @(review.IsFeatured ? "text-yellow-600" : "text-gray-400") hover:bg-yellow-100 dark:hover:bg-yellow-900/30 rounded-lg" title="Toggle Featured">
                                                 <i class="fas fa-star"></i>
                                             </button>
-                                            <button onclick="deleteReview(@review.Id)" class="p-2 text-gray-500 hover:bg-gray-100 rounded" title="Delete">
+                                            <button onclick="deleteReview(@review.Id)" class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -210,26 +210,26 @@
                 <!-- Pagination -->
                 @if (Model.Reviews.TotalPages > 1)
                 {
-                    <div class="flex justify-between items-center mt-6">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mt-6">
                         <p class="text-sm text-gray-500 dark:text-gray-400">
                             Showing @((Model.Page - 1) * 20 + 1) to @Math.Min(Model.Page * 20, Model.Reviews.TotalCount) of @Model.Reviews.TotalCount reviews
                         </p>
                         <div class="flex gap-1">
                             @if (Model.Reviews.HasPreviousPage)
                             {
-                                <a href="?page=@(Model.Page - 1)&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1 border rounded hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                                <a href="?page=@(Model.Page - 1)&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
                                     <i class="fas fa-chevron-left"></i>
                                 </a>
                             }
                             @for (var i = Math.Max(1, Model.Page - 2); i <= Math.Min(Model.Reviews.TotalPages, Model.Page + 2); i++)
                             {
-                                <a href="?page=@i&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1 border rounded @(i == Model.Page ? "bg-indigo-600 text-white border-indigo-600" : "hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-600 dark:text-gray-300")">
+                                <a href="?page=@i&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1.5 border rounded-lg @(i == Model.Page ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300")">
                                     @i
                                 </a>
                             }
                             @if (Model.Reviews.HasNextPage)
                             {
-                                <a href="?page=@(Model.Page + 1)&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1 border rounded hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                                <a href="?page=@(Model.Page + 1)&status=@Model.Status&source=@Model.Source&minRating=@Model.MinRating&search=@Model.Search" class="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             }
@@ -240,10 +240,10 @@
             else
             {
                 <div class="text-center py-12">
-                    <i class="fas fa-star text-4xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500 dark:text-gray-400">No reviews found</p>
-                    <a href="/reviews/admin/import" class="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                        <i class="fas fa-download mr-2"></i> Import Reviews
+                    <i class="fas fa-star text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">No reviews found</p>
+                    <a href="/reviews/admin/import" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <i class="fas fa-download me-2"></i> Import Reviews
                     </a>
                 </div>
             }

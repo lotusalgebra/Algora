@@ -4,62 +4,58 @@
     ViewData["Title"] = "AI Content Generation";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h5 class="mb-0 font-bold dark:text-white">
-                        <i class="fas fa-wand-magic-sparkles me-2 text-purple-500"></i>
-                        AI Content Generation
-                    </h5>
-                    <p class="mb-0 text-sm leading-normal dark:text-white/60">
-                        Generate SEO-friendly titles, descriptions, and images for multiple products
-                    </p>
-                </div>
-                <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Products
-                </a>
-            </div>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h5 class="text-lg font-bold text-gray-900 dark:text-white">
+                <i class="fas fa-wand-magic-sparkles me-2 text-purple-500"></i>
+                AI Content Generation
+            </h5>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Generate SEO-friendly titles, descriptions, and images for multiple products
+            </p>
         </div>
+        <a href="/products" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back to Products
+        </a>
     </div>
 
-    <div class="flex flex-wrap -mx-3">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Configuration Panel -->
-        <div class="w-full max-w-full px-3 lg:w-4/12">
+        <div class="lg:col-span-4">
             <!-- Settings Card -->
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
                 <div class="p-6">
-                    <h6 class="mb-4 dark:text-white">Generation Settings</h6>
+                    <h6 class="mb-4 font-semibold text-gray-900 dark:text-white">Generation Settings</h6>
 
                     <!-- Content Type Selection -->
                     <div class="mb-4">
-                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Generate</label>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Generate</label>
                         <div class="space-y-2">
                             <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="gen-titles" checked class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
-                                <span class="ml-2 text-sm dark:text-white/80">Product Titles</span>
+                                <input type="checkbox" id="gen-titles" checked class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-sm text-gray-900 dark:text-white">Product Titles</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="gen-descriptions" checked class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
-                                <span class="ml-2 text-sm dark:text-white/80">Product Descriptions</span>
+                                <input type="checkbox" id="gen-descriptions" checked class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-sm text-gray-900 dark:text-white">Product Descriptions</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="gen-alt-text" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
-                                <span class="ml-2 text-sm dark:text-white/80">Image Alt Text</span>
+                                <input type="checkbox" id="gen-alt-text" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-sm text-gray-900 dark:text-white">Image Alt Text</span>
                             </label>
                             <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="gen-images" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
-                                <span class="ml-2 text-sm dark:text-white/80">Product Images (AI Generated)</span>
+                                <input type="checkbox" id="gen-images" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <span class="ml-2 text-sm text-gray-900 dark:text-white">Product Images (AI Generated)</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Provider Selection -->
                     <div class="mb-4">
-                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Text Provider</label>
-                        <select id="text-provider" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Text Provider</label>
+                        <select id="text-provider" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @foreach (var provider in Model.TextProviders)
                             {
                                 if (provider.IsConfigured)
@@ -75,8 +71,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Image Provider</label>
-                        <select id="image-provider" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Image Provider</label>
+                        <select id="image-provider" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @foreach (var provider in Model.ImageProviders)
                             {
                                 if (provider.IsConfigured)
@@ -93,8 +89,8 @@
 
                     <!-- Tone Selection -->
                     <div class="mb-6">
-                        <label class="font-bold text-xs text-slate-700 dark:text-white/80 mb-2 block">Content Tone</label>
-                        <select id="content-tone" class="w-full text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white p-2.5 focus:ring-purple-500 focus:border-purple-500">
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Content Tone</label>
+                        <select id="content-tone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <option value="professional, persuasive">Professional & Persuasive</option>
                             <option value="friendly, conversational">Friendly & Conversational</option>
                             <option value="luxury, premium">Luxury & Premium</option>
@@ -104,45 +100,45 @@
                     </div>
 
                     <!-- Start Button -->
-                    <button type="button" id="start-generation" class="w-full px-6 py-3 text-sm font-bold text-white uppercase bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 transition-all shadow-soft-md">
+                    <button type="button" id="start-generation" class="w-full text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-3">
                         <i class="fas fa-play me-2"></i> Start Generation
                     </button>
                 </div>
             </div>
 
             <!-- Progress Card (hidden initially) -->
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl hidden" id="progress-card">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6 hidden" id="progress-card">
                 <div class="p-6">
-                    <h6 class="mb-4 dark:text-white">Progress</h6>
+                    <h6 class="mb-4 font-semibold text-gray-900 dark:text-white">Progress</h6>
                     <div class="mb-4">
                         <div class="flex justify-between mb-1">
-                            <span class="text-sm dark:text-white/80" id="progress-text">0 of 0</span>
-                            <span class="text-sm font-bold dark:text-white" id="progress-percent">0%</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300" id="progress-text">0 of 0</span>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white" id="progress-percent">0%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                             <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-300" id="progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div id="progress-stats" class="text-xs text-slate-500 dark:text-white/60 space-y-1">
+                    <div id="progress-stats" class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                         <div class="flex justify-between"><span>Success:</span><span id="success-count" class="text-green-500 font-semibold">0</span></div>
                         <div class="flex justify-between"><span>Failed:</span><span id="fail-count" class="text-red-500 font-semibold">0</span></div>
                         <div class="flex justify-between"><span>Est. Cost:</span><span id="est-cost" class="font-semibold">$0.00</span></div>
                     </div>
 
-                    <button type="button" id="stop-generation" class="w-full mt-4 px-4 py-2 text-sm font-bold text-red-500 border border-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hidden">
+                    <button type="button" id="stop-generation" class="w-full mt-4 px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-50 dark:text-red-500 dark:border-red-500 dark:hover:bg-red-900/20 hidden">
                         <i class="fas fa-stop me-2"></i> Stop Generation
                     </button>
                 </div>
             </div>
 
             <!-- Help Card -->
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-6">
+            <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg shadow-md mb-6">
+                <div class="p-6">
                     <div class="flex items-center mb-3">
                         <i class="fas fa-lightbulb text-white text-xl me-3"></i>
-                        <h6 class="mb-0 text-white">Tips</h6>
+                        <h6 class="mb-0 text-white font-semibold">Tips</h6>
                     </div>
-                    <ul class="text-xs text-white/80 space-y-2">
+                    <ul class="text-sm text-white/90 space-y-2">
                         <li><i class="fas fa-check me-2"></i>Select products with good existing data for best results</li>
                         <li><i class="fas fa-check me-2"></i>OpenAI GPT-4 provides the highest quality output</li>
                         <li><i class="fas fa-check me-2"></i>Image generation may take 10-20 seconds per image</li>
@@ -153,53 +149,53 @@
         </div>
 
         <!-- Product Selection Panel -->
-        <div class="w-full max-w-full px-3 lg:w-8/12">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0">
-                    <div class="flex justify-between items-center mb-4">
-                        <h6 class="dark:text-white">Select Products <span class="text-sm font-normal text-slate-400" id="selected-count">(0 selected)</span></h6>
+        <div class="lg:col-span-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Select Products <span class="text-sm font-normal text-gray-500 dark:text-gray-400" id="selected-count">(0 selected)</span></h6>
                         <div class="flex gap-2">
-                            <button type="button" id="select-all" class="px-3 py-1.5 text-xs font-bold text-purple-500 border border-purple-500 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20">
+                            <button type="button" id="select-all" class="px-3 py-1.5 text-xs font-medium text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 dark:text-purple-400 dark:border-purple-400 dark:hover:bg-purple-900/20">
                                 Select All
                             </button>
-                            <button type="button" id="deselect-all" class="px-3 py-1.5 text-xs font-bold text-slate-500 border border-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-800">
+                            <button type="button" id="deselect-all" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700">
                                 Deselect All
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="p-6 pt-0">
+                <div class="p-6">
                     @if (Model.Products.Any())
                     {
                         <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
-                            <table class="w-full text-sm">
-                                <thead class="sticky top-0 bg-white dark:bg-gray-950">
-                                    <tr class="border-b dark:border-gray-700">
-                                        <th class="p-3 text-left">
-                                            <input type="checkbox" id="check-all" class="rounded text-purple-500 focus:ring-purple-500 border-gray-300">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="p-3">
+                                            <input type="checkbox" id="check-all" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         </th>
-                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Product</th>
-                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Status</th>
-                                        <th class="p-3 text-left dark:text-white/80 font-semibold">Result</th>
+                                        <th scope="col" class="p-3">Product</th>
+                                        <th scope="col" class="p-3">Status</th>
+                                        <th scope="col" class="p-3">Result</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products-table">
                                     @foreach (var product in Model.Products)
                                     {
-                                        <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900" data-product-id="@product.NumericId">
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" data-product-id="@product.NumericId">
                                             <td class="p-3">
-                                                <input type="checkbox" class="product-check rounded text-purple-500 focus:ring-purple-500 border-gray-300" value="@product.NumericId">
+                                                <input type="checkbox" class="product-check w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="@product.NumericId">
                                             </td>
                                             <td class="p-3">
-                                                <div class="dark:text-white font-medium">@product.Title</div>
-                                                <div class="text-xs text-slate-400">ID: @product.NumericId</div>
+                                                <div class="font-medium text-gray-900 dark:text-white">@product.Title</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">ID: @product.NumericId</div>
                                             </td>
                                             <td class="p-3">
-                                                <span class="status-badge text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                                <span class="status-badge bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
                                                     Pending
                                                 </span>
                                             </td>
-                                            <td class="p-3 result-cell text-xs text-slate-500 dark:text-white/60">-</td>
+                                            <td class="p-3 result-cell text-xs text-gray-500 dark:text-gray-400">-</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -209,9 +205,9 @@
                     else
                     {
                         <div class="text-center py-12">
-                            <i class="fas fa-box-open text-4xl text-slate-300 mb-4"></i>
-                            <p class="text-slate-500 dark:text-white/60">No products found. Add some products first.</p>
-                            <a href="/products/create" class="inline-flex items-center mt-4 px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600">
+                            <i class="fas fa-box-open text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No products found. Add some products first.</p>
+                            <a href="/products/create" class="inline-flex items-center mt-4 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 rounded-lg">
                                 <i class="fas fa-plus me-2"></i> Add Product
                             </a>
                         </div>

@@ -8,142 +8,134 @@
     <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <!-- Header -->
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Card Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Abandoned Checkouts</h6>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-shopping-cart text-orange-500 me-1"></i>
+                        <span class="font-semibold" id="total-count">0</span> abandoned carts in the last 30 days
+                    </p>
+                </div>
+                <button type="button" id="refresh-btn" onclick="location.reload()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                    <i class="fas fa-sync-alt me-2 text-gray-400"></i>
+                    Refresh
+                </button>
+            </div>
+        </div>
 
-                <!-- Card Header -->
-                <div class="p-6 pb-4 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Abandoned Checkouts</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                <i class="fas fa-shopping-cart text-orange-500 me-1"></i>
-                                <span class="font-semibold" id="total-count">0</span> abandoned carts in the last 30 days
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button type="button" id="refresh-btn" onclick="location.reload()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                                <i class="fas fa-sync-alt me-2 text-slate-400"></i>
-                                Refresh
-                            </button>
-                        </div>
+        <!-- Alert Messages -->
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                @Model.SuccessMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Search Bar -->
+        <div class="p-6 pb-0">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search by email, phone, or item..."
+                        class="pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white w-80">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                    <select id="per-page" class="py-1.5 px-3 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-6">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Loading abandoned carts...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <i class="fas fa-cart-arrow-down fa-4x text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h5 class="text-gray-500 dark:text-gray-400 mb-2">No Abandoned Checkouts</h5>
+                <p class="text-gray-400 dark:text-gray-500 mb-4">Great news! There are no abandoned checkouts in the last 30 days.</p>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto" id="table-container" style="display: none;">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="abandoned-checkouts-list">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer" data-sort="0">
+                                Customer <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3">Contact</th>
+                            <th scope="col" class="px-6 py-3">Items</th>
+                            <th scope="col" class="px-6 py-3 text-right cursor-pointer" data-sort="3">
+                                Cart Value <i class="fas fa-sort ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor-pointer" data-sort="4">
+                                Abandoned <i class="fas fa-sort-down ms-1 text-xs"></i>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4" style="display: none;">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> carts
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </button>
+                        <div id="page-numbers" class="flex gap-1"></div>
+                        <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Alert Messages -->
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="mx-6 mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        @Model.SuccessMessage
+            <!-- Summary Stats -->
+            <div id="summary-stats" class="pt-6 border-t border-gray-200 dark:border-gray-700 mt-6" style="display: none;">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="stat-total">@Model.TotalCarts</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Total Carts</p>
                     </div>
-                }
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-2xl font-bold text-orange-600 dark:text-orange-400" id="stat-revenue">@Model.PotentialRevenue.ToString("C")</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Potential Revenue</p>
                     </div>
-                }
-
-                <!-- Search Bar -->
-                <div class="px-6">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div class="relative">
-                            <input type="text" id="search-input" placeholder="Search by email, phone, or item..."
-                                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-80">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <option value="5">5</option>
-                                <option value="10" selected>10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                            </select>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card Body -->
-                <div class="flex-auto px-0 pb-0">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="text-center py-12">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading abandoned carts...</p>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div id="empty-state" class="text-center py-12 hidden">
-                        <i class="fas fa-cart-arrow-down fa-4x text-gray-300 mb-4"></i>
-                        <h5 class="text-gray-500 dark:text-gray-400 mb-2">No Abandoned Checkouts</h5>
-                        <p class="text-gray-400 dark:text-gray-500 mb-4">Great news! There are no abandoned checkouts in the last 30 days.</p>
-                    </div>
-
-                    <!-- Table -->
-                    <div class="overflow-x-auto" id="table-container" style="display: none;">
-                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="abandoned-checkouts-list">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">
-                                        Customer <i class="fas fa-sort ms-1 text-xxs"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Contact</th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Items</th>
-                                    <th class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">
-                                        Cart Value <i class="fas fa-sort ms-1 text-xxs"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="4">
-                                        Abandoned <i class="fas fa-sort-down ms-1 text-xxs"></i>
-                                    </th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body">
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> carts
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    <i class="fas fa-chevron-left me-1"></i> Previous
-                                </button>
-                                <div id="page-numbers" class="flex gap-1"></div>
-                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    Next <i class="fas fa-chevron-right ms-1"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Summary Stats -->
-                    <div id="summary-stats" class="p-6 border-t border-gray-200 dark:border-white/10" style="display: none;">
-                        <div class="flex flex-wrap justify-around text-center">
-                            <div class="px-4 py-2">
-                                <p class="text-2xl font-bold text-slate-700 dark:text-white" id="stat-total">@Model.TotalCarts</p>
-                                <p class="text-xs text-slate-500 dark:text-gray-400">Total Carts</p>
-                            </div>
-                            <div class="px-4 py-2">
-                                <p class="text-2xl font-bold text-orange-600 dark:text-orange-400" id="stat-revenue">@Model.PotentialRevenue.ToString("C")</p>
-                                <p class="text-xs text-slate-500 dark:text-gray-400">Potential Revenue</p>
-                            </div>
-                            <div class="px-4 py-2">
-                                <p class="text-2xl font-bold text-slate-700 dark:text-white" id="stat-recoverable">@Model.RecoverableCarts</p>
-                                <p class="text-xs text-slate-500 dark:text-gray-400">Recoverable</p>
-                            </div>
-                        </div>
+                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white" id="stat-recoverable">@Model.RecoverableCarts</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Recoverable</p>
                     </div>
                 </div>
             </div>
@@ -232,50 +224,50 @@
                     const colorIndex = Math.abs(hashCode(c.customerDisplay)) % bgColors.length;
 
                     return `
-                        <tr>
-                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                <div class="flex px-2 py-1">
-                                    <div class="flex items-center justify-center w-10 h-10 mr-4 text-xs text-white rounded-xl bg-gradient-to-tl ${bgColors[colorIndex]}">
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="flex items-center justify-center w-10 h-10 mr-3 text-xs text-white rounded-lg bg-gradient-to-br ${bgColors[colorIndex]}">
                                         ${escapeHtml(initials)}
                                     </div>
-                                    <div class="flex flex-col justify-center">
-                                        <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(c.customerDisplay)}</h6>
-                                        <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">#${c.id}</p>
+                                    <div>
+                                        <div class="font-medium text-gray-900 dark:text-white">${escapeHtml(c.customerDisplay)}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">#${c.id}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    ${c.email ? `<span class="text-xs text-slate-600 dark:text-gray-300"><i class="fas fa-envelope me-1 text-slate-400"></i>${escapeHtml(c.email)}</span>` : ''}
-                                    ${c.phone ? `<span class="text-xs text-slate-600 dark:text-gray-300 mt-1"><i class="fas fa-phone me-1 text-slate-400"></i>${escapeHtml(c.phone)}</span>` : ''}
-                                    ${!c.email && !c.phone ? `<span class="text-xs text-slate-400">No contact info</span>` : ''}
+                                    ${c.email ? `<span class="text-xs text-gray-600 dark:text-gray-300"><i class="fas fa-envelope me-1 text-gray-400"></i>${escapeHtml(c.email)}</span>` : ''}
+                                    ${c.phone ? `<span class="text-xs text-gray-600 dark:text-gray-300 mt-1"><i class="fas fa-phone me-1 text-gray-400"></i>${escapeHtml(c.phone)}</span>` : ''}
+                                    ${!c.email && !c.phone ? `<span class="text-xs text-gray-400">No contact info</span>` : ''}
                                 </div>
                             </td>
-                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                <p class="mb-0 text-sm leading-normal dark:text-white" title="${escapeHtml(c.itemTitle)}">${escapeHtml(c.itemDisplay)}</p>
-                                ${c.itemCount > 0 ? `<p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${c.itemCount} item(s)</p>` : ''}
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 dark:text-white" title="${escapeHtml(c.itemTitle)}">${escapeHtml(c.itemDisplay)}</div>
+                                ${c.itemCount > 0 ? `<div class="text-xs text-gray-500 dark:text-gray-400">${c.itemCount} item(s)</div>` : ''}
                             </td>
-                            <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                <span class="text-sm font-bold leading-tight text-orange-600 dark:text-orange-400">${escapeHtml(c.totalPriceFormatted)}</span>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-orange-600 dark:text-orange-400">${escapeHtml(c.totalPriceFormatted)}</span>
                             </td>
-                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                <p class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(c.timeAgo)}</p>
-                                <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">${escapeHtml(c.abandonedAt)}</p>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 dark:text-white">${escapeHtml(c.timeAgo)}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">${escapeHtml(c.abandonedAt)}</div>
                             </td>
-                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                            <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="/abandoned-checkouts/${c.id}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-cyan-500 to-blue-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="View Details">
+                                    <a href="/abandoned-checkouts/${c.id}" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" title="View Details">
                                         <i class="fas fa-eye me-1"></i> View
                                     </a>
                                     ${c.hasContact ? `
                                         <form method="post" action="/abandoned-checkouts?handler=SendReminder&checkoutId=${c.id}" class="inline">
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Send Reminder">
+                                            <button type="submit" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl" title="Send Reminder">
                                                 <i class="fas fa-bell me-1"></i> Remind
                                             </button>
                                         </form>
                                     ` : ''}
                                     ${c.recoveryUrl ? `
-                                        <a href="${c.recoveryUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-green-600 to-lime-400 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Recovery Link">
+                                        <a href="${c.recoveryUrl}" target="_blank" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-white bg-green-600 rounded-lg hover:bg-green-700" title="Recovery Link">
                                             <i class="fas fa-link me-1"></i> Recover
                                         </a>
                                     ` : ''}
@@ -309,7 +301,7 @@
                     const btn = document.createElement('button');
                     btn.textContent = i;
                     btn.className = i === currentPage
-                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
+                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg'
                         : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
                     btn.onclick = () => { currentPage = i; loadData(); };
                     pageNumbers.appendChild(btn);

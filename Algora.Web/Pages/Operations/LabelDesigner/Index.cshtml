@@ -16,11 +16,18 @@
         gap: 12px;
         flex-wrap: wrap;
     }
+    .dark .designer-toolbar {
+        background: #1f2937;
+        border-color: #374151;
+    }
 
     .toolbar-divider {
         width: 1px;
         height: 28px;
         background: #e5e7eb;
+    }
+    .dark .toolbar-divider {
+        background: #374151;
     }
 
     .toolbar-btn {
@@ -38,12 +45,20 @@
         cursor: pointer;
         transition: all 0.15s ease;
     }
+    .dark .toolbar-btn {
+        background: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
     .toolbar-btn:hover {
         background: #f9fafb;
         border-color: #d1d5db;
     }
+    .dark .toolbar-btn:hover {
+        background: #4b5563;
+    }
     .toolbar-btn.primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
         border: none;
         color: white;
     }
@@ -63,10 +78,15 @@
         appearance: none;
         min-width: 140px;
     }
+    .dark .toolbar-select {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
     .toolbar-select:focus {
         outline: none;
-        border-color: #818cf8;
-        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+        border-color: #a855f7;
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
     }
 
     .toolbar-input {
@@ -79,10 +99,15 @@
         color: #374151;
         min-width: 150px;
     }
+    .dark .toolbar-input {
+        background: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
     .toolbar-input:focus {
         outline: none;
-        border-color: #818cf8;
-        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+        border-color: #a855f7;
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
     }
 
     .color-picker-wrapper {
@@ -95,6 +120,10 @@
         border-radius: 8px;
         background: white;
         cursor: pointer;
+    }
+    .dark .color-picker-wrapper {
+        background: #374151;
+        border-color: #4b5563;
     }
     .color-picker-wrapper:hover {
         border-color: #d1d5db;
@@ -125,6 +154,10 @@
         gap: 4px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
+    .dark .format-toolbar {
+        background: #1f2937;
+        border-color: #374151;
+    }
 
     .format-btn {
         width: 32px;
@@ -143,9 +176,17 @@
         background: #f3f4f6;
         color: #374151;
     }
+    .dark .format-btn:hover {
+        background: #374151;
+        color: #e5e7eb;
+    }
     .format-btn.active {
-        background: #eef2ff;
-        color: #6366f1;
+        background: #f3e8ff;
+        color: #9333ea;
+    }
+    .dark .format-btn.active {
+        background: #4c1d95;
+        color: #e9d5ff;
     }
 
     .format-select {
@@ -159,9 +200,14 @@
         cursor: pointer;
         appearance: none;
     }
+    .dark .format-select {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
     .format-select:focus {
         outline: none;
-        border-color: #818cf8;
+        border-color: #a855f7;
     }
 
     .format-input {
@@ -175,9 +221,14 @@
         text-align: center;
         color: #374151;
     }
+    .dark .format-input {
+        background: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
     .format-input:focus {
         outline: none;
-        border-color: #818cf8;
+        border-color: #a855f7;
     }
 
     .canvas-area {
@@ -188,6 +239,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .dark .canvas-area {
+        background: #374151;
     }
 
     .label-canvas {
@@ -215,7 +269,7 @@
         border-color: #3b82f6;
     }
 
-    /* Blue resize handles like in reference */
+    /* Blue resize handles */
     .resize-handle {
         width: 8px;
         height: 8px;
@@ -253,6 +307,10 @@
         display: none;
         overflow: hidden;
     }
+    .dark .add-element-menu {
+        background: #1f2937;
+        border-color: #374151;
+    }
     .add-element-menu.show {
         display: block;
     }
@@ -266,8 +324,14 @@
         cursor: pointer;
         transition: background 0.15s ease;
     }
+    .dark .add-element-item {
+        color: #e5e7eb;
+    }
     .add-element-item:hover {
         background: #f9fafb;
+    }
+    .dark .add-element-item:hover {
+        background: #374151;
     }
     .add-element-item i {
         width: 18px;
@@ -281,6 +345,10 @@
         border-radius: 12px;
         overflow: hidden;
     }
+    .dark .settings-panel {
+        background: #1f2937;
+        border-color: #374151;
+    }
     .settings-header {
         padding: 12px 16px;
         background: #f9fafb;
@@ -290,6 +358,10 @@
         justify-content: space-between;
         cursor: pointer;
     }
+    .dark .settings-header {
+        background: #374151;
+        border-color: #4b5563;
+    }
     .settings-header h6 {
         font-size: 13px;
         font-weight: 600;
@@ -297,6 +369,9 @@
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+    .dark .settings-header h6 {
+        color: #e5e7eb;
     }
     .settings-content {
         padding: 16px;
@@ -321,17 +396,27 @@
         font-weight: 500;
         color: #6b7280;
     }
+    .dark .size-badge {
+        background: #374151;
+        color: #9ca3af;
+    }
 </style>
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Page Header -->
-    <div class="flex flex-wrap items-center justify-between mb-5">
+    <div class="flex flex-wrap items-center justify-between mb-5 gap-4">
         <div>
-            <h4 class="font-bold text-xl text-slate-800 dark:text-white">Label Design</h4>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Label Designer</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Create and print product labels</p>
         </div>
-        <button id="testPrintBtn" class="toolbar-btn">
-            <i class="fas fa-print"></i> Test Print
-        </button>
+        <div class="flex items-center gap-2">
+            <button id="testPrintBtn" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                <i class="fas fa-print me-2"></i> Test Print
+            </button>
+            <a href="/operations" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                <i class="fas fa-arrow-left me-2"></i> Back
+            </a>
+        </div>
     </div>
 
     <!-- Main Toolbar -->
@@ -384,7 +469,7 @@
         <!-- Color Picker -->
         <div class="color-picker-wrapper">
             <div id="colorSwatch" class="color-swatch" style="background: #000000;"></div>
-            <span class="text-sm text-slate-600">Color</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400">Color</span>
             <input type="color" id="textColor" value="#000000" />
         </div>
 
@@ -400,7 +485,7 @@
 
         <!-- Delete Button -->
         <button id="deleteElement" class="toolbar-btn" title="Delete selected element">
-            <i class="fas fa-trash"></i>
+            <i class="fas fa-trash text-red-500"></i>
         </button>
     </div>
 
@@ -449,8 +534,8 @@
             <!-- Template Panel -->
             <div class="settings-panel">
                 <div class="settings-header" onclick="togglePanel('templatePanel')">
-                    <h6><i class="fas fa-file-alt text-indigo-500"></i> Template</h6>
-                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                    <h6><i class="fas fa-file-alt text-purple-500"></i> Template</h6>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
                 </div>
                 <div id="templatePanel" class="settings-content">
                     <div class="space-y-3">
@@ -479,8 +564,8 @@
             <!-- Label Size Panel -->
             <div class="settings-panel">
                 <div class="settings-header" onclick="togglePanel('sizePanel')">
-                    <h6><i class="fas fa-ruler-combined text-indigo-500"></i> Label Size</h6>
-                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                    <h6><i class="fas fa-ruler-combined text-purple-500"></i> Label Size</h6>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
                 </div>
                 <div id="sizePanel" class="settings-content">
                     <div class="space-y-3">
@@ -505,12 +590,12 @@
                         </select>
                         <div id="customSizeInputs" class="hidden grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 block">Width (in)</label>
+                                <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Width (in)</label>
                                 <input type="number" id="customWidth" step="0.125" min="0.5" max="10" value="2"
                                        class="toolbar-input w-full" />
                             </div>
                             <div>
-                                <label class="text-xs text-slate-500 mb-1 block">Height (in)</label>
+                                <label class="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Height (in)</label>
                                 <input type="number" id="customHeight" step="0.125" min="0.5" max="10" value="1"
                                        class="toolbar-input w-full" />
                             </div>
@@ -526,8 +611,8 @@
             <!-- Preview Product Panel -->
             <div class="settings-panel">
                 <div class="settings-header" onclick="togglePanel('previewPanel')">
-                    <h6><i class="fas fa-eye text-indigo-500"></i> Preview Product</h6>
-                    <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                    <h6><i class="fas fa-eye text-purple-500"></i> Preview Product</h6>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
                 </div>
                 <div id="previewPanel" class="settings-content">
                     <select id="previewProduct" class="toolbar-select w-full">
@@ -556,14 +641,14 @@
 </div>
 
 <!-- Print Labels Modal -->
-<div id="printModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+<div id="printModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         <!-- Modal Header -->
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-gray-800 flex items-center justify-between">
-            <h5 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <i class="fas fa-print text-indigo-500"></i> Print Labels
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h5 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <i class="fas fa-print text-purple-500"></i> Print Labels
             </h5>
-            <button id="closePrintModal" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all">
+            <button id="closePrintModal" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -572,8 +657,8 @@
         <div class="p-6 overflow-y-auto max-h-[60vh] space-y-5">
             <!-- Template Selection -->
             <div>
-                <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Template</label>
-                <select id="printTemplateSelector" class="toolbar-select w-full">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Template</label>
+                <select id="printTemplateSelector" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     @if (!Model.Templates.Any())
                     {
                         <option value="">No templates - create one first</option>
@@ -588,42 +673,38 @@
             <!-- Product Selection -->
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Products</label>
-                    <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-                        <input type="checkbox" id="selectAllProducts" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                    <label class="text-sm font-medium text-gray-900 dark:text-white">Products</label>
+                    <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+                        <input type="checkbox" id="selectAllProducts" class="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
                         Select All
                     </label>
                 </div>
-                <div class="border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-slate-50 dark:bg-gray-900">
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th class="w-10 p-3"></th>
-                                <th class="p-3 text-left text-xs font-semibold text-slate-600 uppercase">Product</th>
-                                <th class="p-3 text-left text-xs font-semibold text-slate-600 uppercase">SKU</th>
-                                <th class="p-3 text-center text-xs font-semibold text-slate-600 uppercase w-20">Qty</th>
+                                <th class="p-3">Product</th>
+                                <th class="p-3">SKU</th>
+                                <th class="p-3 text-center w-20">Qty</th>
                             </tr>
                         </thead>
-                        <tbody id="printProductList" class="divide-y divide-slate-100 dark:divide-gray-800">
+                        <tbody id="printProductList" class="divide-y divide-gray-100 dark:divide-gray-700">
                             @foreach (var product in Model.Products)
                             {
                                 var displayName = string.IsNullOrEmpty(product.VariantTitle) || product.VariantTitle == "Default Title"
                                     ? product.ProductTitle
                                     : $"{product.ProductTitle} - {product.VariantTitle}";
-                                <tr class="hover:bg-slate-50 transition-colors">
+                                <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="p-3 text-center">
-                                        <input type="checkbox" class="product-checkbox w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                        <input type="checkbox" class="product-checkbox w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600"
                                                data-product-id="@product.ProductId"
                                                data-variant-id="@product.VariantId" />
                                     </td>
+                                    <td class="p-3 font-medium text-gray-900 dark:text-white">@displayName</td>
+                                    <td class="p-3 font-mono text-gray-500 dark:text-gray-400">@(product.SKU ?? "—")</td>
                                     <td class="p-3">
-                                        <span class="text-sm font-medium text-slate-800 dark:text-white">@displayName</span>
-                                    </td>
-                                    <td class="p-3">
-                                        <span class="text-sm font-mono text-slate-500">@(product.SKU ?? "—")</span>
-                                    </td>
-                                    <td class="p-3">
-                                        <input type="number" class="copies-input w-full px-2 py-1.5 text-sm text-center bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                        <input type="number" class="copies-input w-full px-2 py-1.5 text-sm text-center bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                                value="1" min="1" max="999" />
                                     </td>
                                 </tr>
@@ -635,41 +716,45 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-end gap-3">
-            <button id="cancelPrint" class="toolbar-btn">Cancel</button>
-            <button id="generatePdfBtn" class="toolbar-btn primary">
-                <i class="fas fa-file-pdf"></i> Generate PDF
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button id="cancelPrint" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                Cancel
+            </button>
+            <button id="generatePdfBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                <i class="fas fa-file-pdf me-2"></i> Generate PDF
             </button>
         </div>
     </div>
 </div>
 
 <!-- Image Upload Modal -->
-<div id="imageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-gray-800 flex items-center justify-between">
-            <h5 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <i class="fas fa-image text-indigo-500"></i> Add Image
+<div id="imageModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h5 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <i class="fas fa-image text-purple-500"></i> Add Image
             </h5>
-            <button id="closeImageModal" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all">
+            <button id="closeImageModal" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="p-6">
-            <div id="imageDropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer">
-                <i class="fas fa-cloud-upload-alt text-4xl text-slate-300 mb-3"></i>
-                <p class="text-sm text-slate-600 mb-2">Drag & drop an image here</p>
-                <p class="text-xs text-slate-400">or click to browse</p>
+            <div id="imageDropZone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer">
+                <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Drag & drop an image here</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500">or click to browse</p>
                 <input type="file" id="imageInput" accept="image/*" class="hidden" />
             </div>
             <div id="imagePreview" class="hidden mt-4">
                 <img id="previewImg" class="max-h-40 mx-auto rounded-lg" />
             </div>
         </div>
-        <div class="px-6 py-4 border-t border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-end gap-3">
-            <button id="cancelImage" class="toolbar-btn">Cancel</button>
-            <button id="addImageBtn" class="toolbar-btn primary">
-                <i class="fas fa-plus"></i> Add to Label
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end gap-3">
+            <button id="cancelImage" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                Cancel
+            </button>
+            <button id="addImageBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                <i class="fas fa-plus me-2"></i> Add to Label
             </button>
         </div>
     </div>

@@ -4,38 +4,39 @@
     ViewData["Title"] = "Create Order";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Breadcrumb -->
-    <nav class="mb-4">
-        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
-            <li class="leading-normal text-sm">
-                <a class="text-slate-500 dark:text-white/60" href="/orders">Orders</a>
+    <nav class="flex mb-4" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="/orders" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                    <i class="fas fa-shopping-cart me-2"></i> Orders
+                </a>
             </li>
-            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
-                New Order
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+                    <span class="text-sm font-medium text-gray-700 dark:text-white">New Order</span>
+                </div>
             </li>
         </ol>
     </nav>
 
     <!-- Header -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h5 class="mb-0 font-bold dark:text-white">Create New Order</h5>
-                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Create a manual order for your customer</p>
-                </div>
-                <a href="/orders" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Orders
-                </a>
-            </div>
+    <div class="flex flex-wrap items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Create New Order</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Create a manual order for your customer</p>
         </div>
+        <a href="/orders" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back to Orders
+        </a>
     </div>
 
     <!-- Error Message -->
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             @Model.ErrorMessage
         </div>
@@ -43,50 +44,50 @@
 
     <!-- Form -->
     <form method="post">
-        <div class="flex flex-wrap -mx-3">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Left Column - Order Details -->
-            <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
+            <div class="lg:col-span-8 space-y-6">
                 <!-- Customer Information Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center">
-                            <i class="fas fa-user text-cyan-500 me-3"></i>
-                            <h6 class="mb-0 dark:text-white">Customer Information</h6>
+                            <i class="fas fa-user text-purple-500 me-3"></i>
+                            <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Customer Information</h6>
                         </div>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="flex flex-wrap -mx-3">
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
                                     First Name <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" asp-for="Order.CustomerFirstName"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="John" />
                                 <span asp-validation-for="Order.CustomerFirstName" class="text-red-500 text-xs"></span>
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
                                     Last Name <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" asp-for="Order.CustomerLastName"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="Doe" />
                                 <span asp-validation-for="Order.CustomerLastName" class="text-red-500 text-xs"></span>
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">
                                     Email <span class="text-red-500">*</span>
                                 </label>
                                 <input type="email" asp-for="Order.CustomerEmail"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="john.doe@example.com" />
                                 <span asp-validation-for="Order.CustomerEmail" class="text-red-500 text-xs"></span>
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Phone</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Phone</label>
                                 <div class="flex">
-                                    <select id="phone-country-code" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft appearance-none rounded-l-lg border border-r-0 border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none w-24">
+                                    <select id="phone-country-code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-l-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white w-24">
                                         <option value="+1">+1 US</option>
                                         <option value="+44">+44 UK</option>
                                         <option value="+91">+91 IN</option>
@@ -99,37 +100,37 @@
                                         <option value="+55">+55 BR</option>
                                     </select>
                                     <input type="tel" id="customer-phone-input"
-                                           class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-r-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                            placeholder="5551234567" pattern="[0-9]{10,15}" />
                                 </div>
                                 <input type="hidden" asp-for="Order.CustomerPhone" id="customer-phone-hidden" />
-                                <p class="mt-1 text-xs text-slate-400 dark:text-white/60">Enter digits only (e.g., 5551234567)</p>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter digits only (e.g., 5551234567)</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Line Items Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <i class="fas fa-shopping-cart text-cyan-500 me-3"></i>
-                                <h6 class="mb-0 dark:text-white">Order Items</h6>
-                                <span class="ml-2 px-2 py-0.5 text-xs font-medium bg-cyan-100 text-cyan-800 rounded-full dark:bg-cyan-900 dark:text-cyan-200">
+                                <i class="fas fa-shopping-cart text-purple-500 me-3"></i>
+                                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Order Items</h6>
+                                <span class="ml-2 px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded-full dark:bg-purple-900 dark:text-purple-200">
                                     @Model.AvailableProducts.Count products available
                                 </span>
                             </div>
-                            <button type="button" id="open-product-modal" class="inline-flex items-center px-4 py-2 text-sm font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85 shadow-soft-md">
+                            <button type="button" id="open-product-modal" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
                                 <i class="fas fa-plus me-2"></i> Add Product
                             </button>
                         </div>
                     </div>
-                    <div class="flex-auto p-6" id="items-container">
+                    <div class="p-6" id="items-container">
                         <div id="line-items-list">
                             <!-- Line items will be added here -->
                         </div>
-                        <div id="empty-state" class="text-center py-8 text-slate-400 dark:text-white/40">
+                        <div id="empty-state" class="text-center py-8 text-gray-400 dark:text-gray-500">
                             <i class="fas fa-box-open text-4xl mb-3"></i>
                             <p>No products added yet. Click "Add Product" to get started.</p>
                         </div>
@@ -139,63 +140,63 @@
                     <div class="px-6 pb-6">
                         <div class="flex justify-end border-t border-gray-200 dark:border-gray-700 pt-4">
                             <div class="text-right">
-                                <span class="text-sm text-slate-500 dark:text-white/60">Total:</span>
-                                <span id="order-total" class="ml-2 text-xl font-bold text-cyan-600 dark:text-cyan-400">$0.00</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Total:</span>
+                                <span id="order-total" class="ml-2 text-xl font-bold text-purple-600 dark:text-purple-400">$0.00</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Billing Address Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center">
-                            <i class="fas fa-map-marker-alt text-cyan-500 me-3"></i>
-                            <h6 class="mb-0 dark:text-white">Billing Address</h6>
+                            <i class="fas fa-map-marker-alt text-purple-500 me-3"></i>
+                            <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Billing Address</h6>
                         </div>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="flex flex-wrap -mx-3">
-                            <div class="w-full max-w-full px-3 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Full Name</label>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Full Name</label>
                                 <input type="text" asp-for="Order.BillingName"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="John Doe" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 1</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Address Line 1</label>
                                 <input type="text" asp-for="Order.BillingAddress1"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="123 Main Street" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 2</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Address Line 2</label>
                                 <input type="text" asp-for="Order.BillingAddress2"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="Apt, Suite, etc." />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">City</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">City</label>
                                 <input type="text" asp-for="Order.BillingCity"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="New York" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">State/Province</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">State/Province</label>
                                 <input type="text" asp-for="Order.BillingProvince"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="NY" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Country</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Country</label>
                                 <input type="text" asp-for="Order.BillingCountry"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="United States" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">ZIP/Postal Code</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">ZIP/Postal Code</label>
                                 <input type="text" asp-for="Order.BillingZip"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="10001" />
                             </div>
                         </div>
@@ -203,62 +204,62 @@
                 </div>
 
                 <!-- Shipping Address Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <i class="fas fa-truck text-cyan-500 me-3"></i>
-                                <h6 class="mb-0 dark:text-white">Shipping Address</h6>
+                                <i class="fas fa-truck text-purple-500 me-3"></i>
+                                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Shipping Address</h6>
                             </div>
                             <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" asp-for="Order.SameAsShipping" id="same-as-billing"
-                                       class="w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500 dark:border-gray-600" checked />
-                                <span class="ml-2 text-sm text-slate-700 dark:text-white">Same as billing</span>
+                                       class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" checked />
+                                <span class="ml-2 text-sm text-gray-700 dark:text-white">Same as billing</span>
                             </label>
                         </div>
                     </div>
-                    <div class="flex-auto p-6" id="shipping-address-section">
-                        <div class="flex flex-wrap -mx-3">
-                            <div class="w-full max-w-full px-3 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Full Name</label>
+                    <div class="p-6" id="shipping-address-section">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Full Name</label>
                                 <input type="text" asp-for="Order.ShippingName"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="John Doe" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 1</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Address Line 1</label>
                                 <input type="text" asp-for="Order.ShippingAddress1"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="123 Main Street" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Address Line 2</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Address Line 2</label>
                                 <input type="text" asp-for="Order.ShippingAddress2"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="Apt, Suite, etc." />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">City</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">City</label>
                                 <input type="text" asp-for="Order.ShippingCity"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="New York" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">State/Province</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">State/Province</label>
                                 <input type="text" asp-for="Order.ShippingProvince"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="NY" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Country</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Country</label>
                                 <input type="text" asp-for="Order.ShippingCountry"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="United States" />
                             </div>
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">ZIP/Postal Code</label>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">ZIP/Postal Code</label>
                                 <input type="text" asp-for="Order.ShippingZip"
-                                       class="shipping-input focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                                       class="shipping-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                        placeholder="10001" />
                             </div>
                         </div>
@@ -267,17 +268,17 @@
             </div>
 
             <!-- Right Column - Actions -->
-            <div class="w-full max-w-full px-3 lg:w-4/12 lg:flex-none">
+            <div class="lg:col-span-4 space-y-6">
                 <!-- Order Status Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl sticky top-6">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Order Status</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md sticky top-6">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Order Status</h6>
                     </div>
-                    <div class="flex-auto p-6">
+                    <div class="p-6">
                         <div class="mb-4">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Payment Status</label>
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Payment Status</label>
                             <select asp-for="Order.FinancialStatus"
-                                    class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <option value="pending">Pending</option>
                                 <option value="paid">Paid</option>
                                 <option value="authorized">Authorized</option>
@@ -286,10 +287,10 @@
                         </div>
 
                         <div class="flex flex-col gap-3 mt-6">
-                            <button type="submit" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white uppercase transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25">
+                            <button type="submit" class="w-full text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-3">
                                 <i class="fas fa-check me-2"></i> Create Order
                             </button>
-                            <a href="/orders" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
+                            <a href="/orders" class="w-full text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-3 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
                                 <i class="fas fa-times me-2"></i> Cancel
                             </a>
                         </div>
@@ -297,11 +298,11 @@
                 </div>
 
                 <!-- Order Summary Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-cyan-500 to-blue-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                    <div class="flex-auto p-6">
+                <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg shadow-md">
+                    <div class="p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-receipt text-white text-xl me-3"></i>
-                            <h6 class="mb-0 text-white">Order Summary</h6>
+                            <h6 class="text-lg font-semibold text-white">Order Summary</h6>
                         </div>
                         <div class="space-y-2 text-white/80 text-sm">
                             <div class="flex justify-between">
@@ -328,13 +329,13 @@
 <!-- Product Selection Modal -->
 <div id="product-modal" class="fixed inset-0 z-[9999] hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" id="modal-overlay"></div>
+        <div class="fixed inset-0 transition-opacity bg-gray-900/50 backdrop-blur-sm" id="modal-overlay"></div>
 
-        <div class="relative inline-block w-full max-w-md overflow-hidden text-left align-bottom bg-white rounded-2xl shadow-xl dark:bg-gray-900 sm:my-8 sm:align-middle">
+        <div class="relative inline-block w-full max-w-md overflow-hidden text-left align-bottom bg-white rounded-lg shadow-xl dark:bg-gray-800 sm:my-8 sm:align-middle">
             <!-- Modal Header -->
             <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-bold dark:text-white">
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white">
                         <i class="fas fa-box me-2 text-purple-500"></i>
                         Select Products
                     </h3>
@@ -345,7 +346,7 @@
                 <!-- Search -->
                 <div class="mt-3">
                     <input type="text" id="product-search"
-                           class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                           class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                            placeholder="Search products..." />
                 </div>
             </div>
@@ -371,12 +372,12 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                 <div class="flex justify-end gap-2">
-                    <button type="button" id="cancel-modal" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <button type="button" id="cancel-modal" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-600">
                         Cancel
                     </button>
-                    <button type="button" id="confirm-selection" class="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102">
+                    <button type="button" id="confirm-selection" class="px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
                         Add (<span id="selected-count">0</span>)
                     </button>
                 </div>
@@ -479,15 +480,15 @@
                 }
 
                 productsList.innerHTML = pageProducts.map(p => `
-                    <div class="product-item flex items-center p-2.5 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                    <div class="product-item flex items-center p-2.5 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                          data-product-id="${p.productId}"
                          data-title="${p.title}"
                          data-price="${p.price}"
                          data-vendor="${p.vendor || ''}">
-                        <input type="checkbox" class="product-checkbox w-4 h-4 text-purple-500 border-gray-300 rounded focus:ring-purple-500 mr-3"
+                        <input type="checkbox" class="product-checkbox w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600 mr-3"
                                ${selectedProducts.some(s => s.productId === p.productId) ? 'checked' : ''} />
                         <div class="flex-1 min-w-0">
-                            <div class="font-medium text-sm dark:text-white truncate">${p.title}</div>
+                            <div class="font-medium text-sm text-gray-900 dark:text-white truncate">${p.title}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400">${p.vendor || 'No vendor'}</div>
                         </div>
                         <div class="text-sm font-bold text-purple-600 dark:text-purple-400 ml-2">$${p.price.toFixed(2)}</div>
@@ -562,23 +563,23 @@
 
                 emptyState.classList.add('hidden');
                 lineItemsList.innerHTML = lineItems.map((item, idx) => `
-                    <div class="line-item flex items-center p-4 mb-3 bg-gray-50 dark:bg-gray-800 rounded-xl" data-index="${item.index}">
+                    <div class="line-item flex items-center p-4 mb-3 bg-gray-50 dark:bg-gray-700 rounded-lg" data-index="${item.index}">
                         <div class="flex-1">
-                            <div class="font-medium dark:text-white">${item.title}</div>
+                            <div class="font-medium text-gray-900 dark:text-white">${item.title}</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">$${item.price.toFixed(2)} each</div>
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="flex items-center">
-                                <button type="button" class="qty-btn minus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-l-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                <button type="button" class="qty-btn minus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-l-lg hover:bg-gray-300 dark:hover:bg-gray-500">
                                     <i class="fas fa-minus text-xs"></i>
                                 </button>
                                 <input type="number" min="1" value="${item.quantity}"
-                                       class="qty-input w-12 h-8 text-center border-y border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
-                                <button type="button" class="qty-btn plus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                                       class="qty-input w-12 h-8 text-center border-y border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" />
+                                <button type="button" class="qty-btn plus w-8 h-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-500">
                                     <i class="fas fa-plus text-xs"></i>
                                 </button>
                             </div>
-                            <div class="w-24 text-right font-bold text-cyan-600 dark:text-cyan-400">
+                            <div class="w-24 text-right font-bold text-purple-600 dark:text-purple-400">
                                 $<span class="line-total">${(item.price * item.quantity).toFixed(2)}</span>
                             </div>
                             <button type="button" class="remove-item text-red-500 hover:text-red-700 p-2">

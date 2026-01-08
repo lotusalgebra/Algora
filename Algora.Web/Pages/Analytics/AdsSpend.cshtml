@@ -4,41 +4,39 @@
     ViewData["Title"] = "Ads Spend & ROAS";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Header -->
     <div class="flex flex-wrap items-center justify-between mb-6">
         <div>
-            <h6 class="mb-0 dark:text-white">Ads Spend & ROAS Management</h6>
-            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Ads Spend & ROAS Management</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
                 <i class="fa fa-ad text-green-500 me-1"></i>
                 Track advertising performance for <span class="font-semibold">@Model.GetPeriodLabel()</span>
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <a href="/analytics" class="inline-block px-4 py-2 text-xs font-bold text-center text-slate-700 dark:text-white uppercase align-middle transition-all border border-slate-200 dark:border-white/20 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-900">
-                <i class="fas fa-arrow-left me-2"></i> Back
-            </a>
-        </div>
+        <a href="/analytics" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back
+        </a>
     </div>
 
     <!-- Time Period Selector -->
     <div class="flex items-center gap-2 mb-6">
-        <span class="text-sm text-slate-600 dark:text-white dark:opacity-60 mr-2">Period:</span>
-        <div class="inline-flex rounded-lg border border-gray-200 dark:border-white/20" role="group">
-            <a href="?period=today" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "today" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-l-lg border-r border-gray-200 dark:border-white/20">
+        <span class="text-sm text-gray-600 dark:text-gray-400 mr-2">Period:</span>
+        <div class="inline-flex rounded-lg border border-gray-200 dark:border-gray-700" role="group">
+            <a href="?period=today" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "today" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") rounded-l-lg border-r border-gray-200 dark:border-gray-700">
                 Today
             </a>
-            <a href="?period=7days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "7days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+            <a href="?period=7days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "7days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                 7 days
             </a>
-            <a href="?period=30days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "30days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+            <a href="?period=30days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "30days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                 30 days
             </a>
-            <a href="?period=90days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "90days" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") border-r border-gray-200 dark:border-white/20">
+            <a href="?period=90days" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "90days" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") border-r border-gray-200 dark:border-gray-700">
                 90 days
             </a>
-            <a href="?period=12months" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "12months" ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white" : "bg-white dark:bg-gray-950 text-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900") rounded-r-lg">
+            <a href="?period=12months" class="px-3 py-2 text-xs font-medium @(Model.SelectedPeriod == "12months" ? "bg-gradient-to-br from-purple-600 to-pink-500 text-white" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700") rounded-r-lg">
                 12 months
             </a>
         </div>
@@ -46,7 +44,7 @@
 
     @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
-        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+        <div class="mb-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
             <i class="fas fa-check-circle me-2"></i>
             @Model.SuccessMessage
         </div>
@@ -54,105 +52,63 @@
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+        <div class="mb-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             @Model.ErrorMessage
         </div>
     }
 
     <!-- Summary Cards -->
-    <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <!-- Total Spend -->
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-4">
-                    <div class="flex flex-wrap -mx-3">
-                        <div class="flex-none w-2/3 max-w-full px-3">
-                            <div>
-                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Total Spend</p>
-                                <h5 class="mb-0 font-bold dark:text-white">
-                                    @Model.Summary.TotalSpend.ToString("C0")
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
-                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-red-600 to-rose-400 shadow-soft-2xl">
-                                <i class="ni leading-none ni-money-coins text-lg relative top-3.5 text-white"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Spend</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Summary.TotalSpend.ToString("C0")</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-rose-400 flex items-center justify-center">
+                    <i class="fas fa-money-bill-wave text-white text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Revenue from Ads -->
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-4">
-                    <div class="flex flex-wrap -mx-3">
-                        <div class="flex-none w-2/3 max-w-full px-3">
-                            <div>
-                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Revenue</p>
-                                <h5 class="mb-0 font-bold dark:text-white">
-                                    @Model.Summary.TotalRevenue.ToString("C0")
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
-                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-2xl">
-                                <i class="ni leading-none ni-chart-bar-32 text-lg relative top-3.5 text-white"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Summary.TotalRevenue.ToString("C0")</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-lime-400 flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-white text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- ROAS -->
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-4">
-                    <div class="flex flex-wrap -mx-3">
-                        <div class="flex-none w-2/3 max-w-full px-3">
-                            <div>
-                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">ROAS</p>
-                                <h5 class="mb-0 font-bold dark:text-white">
-                                    @Model.Summary.OverallROAS.ToString("F2")x
-                                </h5>
-                                <span class="leading-normal text-xs text-slate-400 dark:text-white dark:opacity-60">
-                                    Return on ad spend
-                                </span>
-                            </div>
-                        </div>
-                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
-                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-2xl">
-                                <i class="ni leading-none ni-chart-pie-35 text-lg relative top-3.5 text-white"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">ROAS</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Summary.OverallROAS.ToString("F2")x</h3>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Return on ad spend</span>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
+                    <i class="fas fa-percentage text-white text-lg"></i>
                 </div>
             </div>
         </div>
 
         <!-- Conversions -->
-        <div class="w-full max-w-full px-3 mb-6 sm:w-1/2 lg:w-1/4 sm:flex-none">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="flex-auto p-4">
-                    <div class="flex flex-wrap -mx-3">
-                        <div class="flex-none w-2/3 max-w-full px-3">
-                            <div>
-                                <p class="mb-0 font-sans font-semibold leading-normal text-sm dark:opacity-60">Conversions</p>
-                                <h5 class="mb-0 font-bold dark:text-white">
-                                    @Model.Summary.TotalConversions.ToString("N0")
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="w-4/12 max-w-full px-3 text-right flex-0">
-                            <div class="inline-block w-12 h-12 text-center rounded-lg bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-2xl">
-                                <i class="ni leading-none ni-cart text-lg relative top-3.5 text-white"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Conversions</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Summary.TotalConversions.ToString("N0")</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-white text-lg"></i>
                 </div>
             </div>
         </div>
@@ -161,242 +117,218 @@
     <!-- Platform Breakdown -->
     @if (Model.Summary.ByPlatform.Any())
     {
-        <div class="flex flex-wrap -mx-3 mb-6">
-            <div class="w-full max-w-full px-3">
-                <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="dark:text-white">Platform Breakdown</h6>
-                    </div>
-                    <div class="flex-auto p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach (var platform in Model.Summary.ByPlatform)
-                            {
-                                <div class="p-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-white/20">
-                                    <h6 class="mb-2 text-sm font-bold dark:text-white">@platform.Platform</h6>
-                                    <div class="space-y-1">
-                                        <div class="flex justify-between">
-                                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">Spend:</span>
-                                            <span class="text-xs font-semibold dark:text-white">@platform.Spend.ToString("C0") (@platform.SpendPercentage.ToString("F1")%)</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">Revenue:</span>
-                                            <span class="text-xs font-semibold dark:text-white">@platform.Revenue.ToString("C0")</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">ROAS:</span>
-                                            <span class="text-xs font-semibold @(platform.ROAS >= 2 ? "text-green-600" : platform.ROAS >= 1 ? "text-orange-500" : "text-red-600")">@platform.ROAS.ToString("F2")x</span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">Conversions:</span>
-                                            <span class="text-xs font-semibold dark:text-white">@platform.Conversions</span>
-                                        </div>
-                                    </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Platform Breakdown</h6>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach (var platform in Model.Summary.ByPlatform)
+                    {
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <h6 class="mb-2 text-sm font-bold text-gray-900 dark:text-white">@platform.Platform</h6>
+                            <div class="space-y-1">
+                                <div class="flex justify-between">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Spend:</span>
+                                    <span class="text-xs font-semibold text-gray-900 dark:text-white">@platform.Spend.ToString("C0") (@platform.SpendPercentage.ToString("F1")%)</span>
                                 </div>
-                            }
+                                <div class="flex justify-between">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Revenue:</span>
+                                    <span class="text-xs font-semibold text-gray-900 dark:text-white">@platform.Revenue.ToString("C0")</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">ROAS:</span>
+                                    <span class="text-xs font-semibold @(platform.ROAS >= 2 ? "text-green-600" : platform.ROAS >= 1 ? "text-orange-500" : "text-red-600")">@platform.ROAS.ToString("F2")x</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Conversions:</span>
+                                    <span class="text-xs font-semibold text-gray-900 dark:text-white">@platform.Conversions</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
     }
 
     <!-- Add New Spend Entry Form -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 break-words bg-white dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <h6 class="dark:text-white">Add Ads Spend Entry</h6>
-                    <p class="leading-normal text-sm dark:opacity-60">
-                        <i class="fa fa-plus-circle text-purple-500"></i>
-                        <span class="font-semibold">Track your advertising spend</span>
-                    </p>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Add Ads Spend Entry</h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                <i class="fa fa-plus-circle text-purple-500"></i>
+                <span class="font-semibold">Track your advertising spend</span>
+            </p>
+        </div>
+        <div class="p-6">
+            <form method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Platform -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Platform">Platform</label>
+                        <select asp-for="Input.Platform" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="Facebook">Facebook</option>
+                            <option value="Google">Google</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Twitter">Twitter</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Input.Platform" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Campaign Name -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.CampaignName">Campaign Name</label>
+                        <input type="text" asp-for="Input.CampaignName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g., Summer Sale 2024" />
+                        <span asp-validation-for="Input.CampaignName" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Spend Date -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.SpendDate">Date</label>
+                        <input type="date" asp-for="Input.SpendDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <span asp-validation-for="Input.SpendDate" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Amount -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Amount">Amount Spent</label>
+                        <input type="number" step="0.01" asp-for="Input.Amount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="0.00" />
+                        <span asp-validation-for="Input.Amount" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Currency -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Currency">Currency</label>
+                        <select asp-for="Input.Currency" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                        <span asp-validation-for="Input.Currency" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Impressions -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Impressions">Impressions</label>
+                        <input type="number" asp-for="Input.Impressions" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional" />
+                        <span asp-validation-for="Input.Impressions" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Clicks -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Clicks">Clicks</label>
+                        <input type="number" asp-for="Input.Clicks" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional" />
+                        <span asp-validation-for="Input.Clicks" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Conversions -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Conversions">Conversions</label>
+                        <input type="number" asp-for="Input.Conversions" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional" />
+                        <span asp-validation-for="Input.Conversions" class="text-xs text-red-600"></span>
+                    </div>
+
+                    <!-- Revenue -->
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Revenue">Revenue Generated</label>
+                        <input type="number" step="0.01" asp-for="Input.Revenue" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Optional" />
+                        <span asp-validation-for="Input.Revenue" class="text-xs text-red-600"></span>
+                    </div>
                 </div>
-                <div class="flex-auto p-6">
-                    <form method="post">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Platform -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Platform">Platform</label>
-                                <select asp-for="Input.Platform" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="Google">Google</option>
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="TikTok">TikTok</option>
-                                    <option value="Twitter">Twitter</option>
-                                    <option value="LinkedIn">LinkedIn</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <span asp-validation-for="Input.Platform" class="text-xs text-red-600"></span>
-                            </div>
 
-                            <!-- Campaign Name -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.CampaignName">Campaign Name</label>
-                                <input type="text" asp-for="Input.CampaignName" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="e.g., Summer Sale 2024" />
-                                <span asp-validation-for="Input.CampaignName" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Spend Date -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.SpendDate">Date</label>
-                                <input type="date" asp-for="Input.SpendDate" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
-                                <span asp-validation-for="Input.SpendDate" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Amount -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Amount">Amount Spent</label>
-                                <input type="number" step="0.01" asp-for="Input.Amount" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="0.00" />
-                                <span asp-validation-for="Input.Amount" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Currency -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Currency">Currency</label>
-                                <select asp-for="Input.Currency" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="GBP">GBP</option>
-                                </select>
-                                <span asp-validation-for="Input.Currency" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Impressions -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Impressions">Impressions</label>
-                                <input type="number" asp-for="Input.Impressions" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Optional" />
-                                <span asp-validation-for="Input.Impressions" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Clicks -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Clicks">Clicks</label>
-                                <input type="number" asp-for="Input.Clicks" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Optional" />
-                                <span asp-validation-for="Input.Clicks" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Conversions -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Conversions">Conversions</label>
-                                <input type="number" asp-for="Input.Conversions" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Optional" />
-                                <span asp-validation-for="Input.Conversions" class="text-xs text-red-600"></span>
-                            </div>
-
-                            <!-- Revenue -->
-                            <div>
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Revenue">Revenue Generated</label>
-                                <input type="number" step="0.01" asp-for="Input.Revenue" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Optional" />
-                                <span asp-validation-for="Input.Revenue" class="text-xs text-red-600"></span>
-                            </div>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="mt-4">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white" asp-for="Input.Notes">Notes</label>
-                            <textarea asp-for="Input.Notes" rows="2" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 dark:border-white/20 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Additional notes..."></textarea>
-                            <span asp-validation-for="Input.Notes" class="text-xs text-red-600"></span>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="mt-6">
-                            <button type="submit" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-save me-2"></i> Save Entry
-                            </button>
-                        </div>
-                    </form>
+                <!-- Notes -->
+                <div class="mt-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white" asp-for="Input.Notes">Notes</label>
+                    <textarea asp-for="Input.Notes" rows="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Additional notes..."></textarea>
+                    <span asp-validation-for="Input.Notes" class="text-xs text-red-600"></span>
                 </div>
-            </div>
+
+                <!-- Submit Button -->
+                <div class="mt-6">
+                    <button type="submit" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg dark:focus:ring-purple-800">
+                        <i class="fas fa-save me-2"></i> Save Entry
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Ads Spend Entries Table -->
-    <div class="flex flex-wrap -mx-3">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 dark:bg-gray-950 shadow-soft-xl dark:shadow-soft-dark-xl rounded-2xl bg-clip-border">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <h6 class="dark:text-white">Ads Spend Entries</h6>
-                    <p class="leading-normal text-sm dark:opacity-60">
-                        <i class="fa fa-list text-blue-500"></i>
-                        <span class="font-semibold">@Model.AdsSpendList.Count entries</span> for this period
-                    </p>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Ads Spend Entries</h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                <i class="fa fa-list text-blue-500"></i>
+                <span class="font-semibold">@Model.AdsSpendList.Count entries</span> for this period
+            </p>
+        </div>
+        <div class="p-6">
+            @if (Model.AdsSpendList.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Date</th>
+                                <th scope="col" class="px-6 py-3">Platform</th>
+                                <th scope="col" class="px-6 py-3">Campaign</th>
+                                <th scope="col" class="px-6 py-3 text-center">Spend</th>
+                                <th scope="col" class="px-6 py-3 text-center">Revenue</th>
+                                <th scope="col" class="px-6 py-3 text-center">ROAS</th>
+                                <th scope="col" class="px-6 py-3 text-center">Conversions</th>
+                                <th scope="col" class="px-6 py-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.AdsSpendList.OrderByDescending(e => e.SpendDate))
+                            {
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="px-6 py-4 text-gray-900 dark:text-white">@entry.SpendDate.ToString("MMM dd, yyyy")</td>
+                                    <td class="px-6 py-4">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                            @entry.Platform
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-900 dark:text-white">@(entry.CampaignName ?? "N/A")</td>
+                                    <td class="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">@entry.Amount.ToString("C2")</td>
+                                    <td class="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">@(entry.Revenue?.ToString("C2") ?? "N/A")</td>
+                                    <td class="px-6 py-4 text-center">
+                                        @if (entry.ROAS.HasValue)
+                                        {
+                                            var roasClass = entry.ROAS >= 2 ? "text-green-600" : entry.ROAS >= 1 ? "text-orange-500" : "text-red-600";
+                                            <span class="font-semibold @roasClass">@entry.ROAS.Value.ToString("F2")x</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-400">N/A</span>
+                                        }
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">@(entry.Conversions?.ToString() ?? "N/A")</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@entry.Id" onsubmit="return confirm('Are you sure you want to delete this entry?');" class="inline">
+                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-br from-red-500 to-rose-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg dark:focus:ring-red-800">
+                                                <i class="fas fa-trash me-1"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-                <div class="flex-auto p-6 px-0 pb-2">
-                    @if (Model.AdsSpendList.Any())
-                    {
-                        <div class="overflow-x-auto">
-                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40">
-                                <thead class="align-bottom">
-                                    <tr>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Date</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Platform</th>
-                                        <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Campaign</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Spend</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Revenue</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">ROAS</th>
-                                        <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Conversions</th>
-                                        <th class="px-6 py-3 font-semibold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var entry in Model.AdsSpendList.OrderByDescending(e => e.SpendDate))
-                                    {
-                                        <tr>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 px-2">@entry.SpendDate.ToString("MMM dd, yyyy")</span>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="bg-gradient-to-tl from-blue-600 to-cyan-400 px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
-                                                    @entry.Platform
-                                                </span>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80 px-2">@(entry.CampaignName ?? "N/A")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@entry.Amount.ToString("C2")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@(entry.Revenue?.ToString("C2") ?? "N/A")</span>
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                @if (entry.ROAS.HasValue)
-                                                {
-                                                    var roasClass = entry.ROAS >= 2 ? "text-green-600" : entry.ROAS >= 1 ? "text-orange-500" : "text-red-600";
-                                                    <span class="text-sm font-semibold leading-tight @roasClass">@entry.ROAS.Value.ToString("F2")x</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-xs text-slate-400 dark:text-white dark:opacity-60">N/A</span>
-                                                }
-                                            </td>
-                                            <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <span class="text-sm font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80">@(entry.Conversions?.ToString() ?? "N/A")</span>
-                                            </td>
-                                            <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <form method="post" asp-page-handler="Delete" asp-route-id="@entry.Id" onsubmit="return confirm('Are you sure you want to delete this entry?');">
-                                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-tl from-red-600 to-rose-400 rounded-lg shadow-soft-sm hover:scale-102 hover:shadow-soft-xs transition-all" title="Delete">
-                                                            <i class="fas fa-trash me-1"></i> Delete
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-12">
-                            <i class="fas fa-ad fa-4x text-gray-300 mb-4"></i>
-                            <p class="text-gray-500 dark:text-gray-400">No ads spend entries for this period.</p>
-                            <p class="text-gray-400 dark:text-gray-500 text-sm">Add an entry above to start tracking your advertising performance.</p>
-                        </div>
-                    }
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <i class="fas fa-ad fa-4x text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400">No ads spend entries for this period.</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-500">Add an entry above to start tracking your advertising performance.</p>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>

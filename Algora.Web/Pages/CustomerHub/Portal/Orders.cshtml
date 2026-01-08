@@ -11,15 +11,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen font-sans">
     <div class="max-w-6xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-4">
-                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600 transition-colors">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -31,7 +42,7 @@
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
+            <div class="flex items-center p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
                 <i class="fas fa-exclamation-circle mr-2"></i>@Model.ErrorMessage
             </div>
         }
@@ -41,7 +52,7 @@
             <div class="bg-white rounded-2xl shadow p-8 text-center">
                 <i class="fas fa-user-slash text-4xl text-gray-300 mb-4"></i>
                 <p class="text-gray-500">Please access the portal first.</p>
-                <a href="/portal" class="inline-block mt-4 px-6 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700">Go to Portal</a>
+                <a href="/portal" class="inline-block mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity">Go to Portal</a>
             </div>
         }
         else if (Model.Orders.Count == 0)
@@ -65,7 +76,7 @@
                             @foreach (var item in Model.Orders)
                             {
                                 var isSelected = Model.SelectedOrder?.Order.Id == item.Order.Id;
-                                <a href="/portal/orders?Email=@Model.Email&OrderId=@item.Order.Id" class="block p-4 hover:bg-gray-50 @(isSelected ? "bg-purple-50 border-l-4 border-purple-600" : "")">
+                                <a href="/portal/orders?Email=@Model.Email&OrderId=@item.Order.Id" class="block p-4 hover:bg-gray-50 transition-colors @(isSelected ? "bg-purple-50 border-l-4 border-purple-600" : "")">
                                     <div class="flex justify-between items-start mb-2">
                                         <p class="font-medium text-gray-800">@item.Order.OrderNumber</p>
                                         <span class="text-xs px-2 py-1 rounded-full @Model.GetStatusColor(item.Order.FulfillmentStatus)">
@@ -108,11 +119,11 @@
                                         <h2 class="text-xl font-bold text-gray-800">Order @order.Order.OrderNumber</h2>
                                         <p class="text-sm text-gray-500">Placed on @order.Order.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")</p>
                                     </div>
-                                    <div class="text-right">
+                                    <div class="text-right flex gap-2">
                                         <span class="text-xs px-3 py-1 rounded-full @Model.GetStatusColor(order.Order.FulfillmentStatus)">
                                             @(order.Order.FulfillmentStatus ?? "Processing")
                                         </span>
-                                        <span class="text-xs px-3 py-1 rounded-full @Model.GetStatusColor(order.Order.FinancialStatus) ml-2">
+                                        <span class="text-xs px-3 py-1 rounded-full @Model.GetStatusColor(order.Order.FinancialStatus)">
                                             @(order.Order.FinancialStatus ?? "Pending")
                                         </span>
                                     </div>
@@ -203,7 +214,7 @@
                                                 </div>
                                                 @if (!string.IsNullOrEmpty(fulfillment.TrackingUrl))
                                                 {
-                                                    <a href="@fulfillment.TrackingUrl" target="_blank" class="px-4 py-2 text-sm font-medium text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50">
+                                                    <a href="@fulfillment.TrackingUrl" target="_blank" class="px-4 py-2 text-sm font-medium text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors">
                                                         <i class="fas fa-external-link-alt mr-1"></i>Track
                                                     </a>
                                                 }
@@ -214,7 +225,7 @@
                                                 <div class="flex items-center gap-2 p-3 bg-white rounded-lg">
                                                     <span class="text-sm text-gray-500">Tracking #:</span>
                                                     <span class="font-mono text-sm text-gray-800">@fulfillment.TrackingNumber</span>
-                                                    <button onclick="navigator.clipboard.writeText('@fulfillment.TrackingNumber')" class="text-purple-600 hover:text-purple-700" title="Copy">
+                                                    <button onclick="navigator.clipboard.writeText('@fulfillment.TrackingNumber')" class="text-purple-600 hover:text-purple-700 transition-colors" title="Copy">
                                                         <i class="fas fa-copy"></i>
                                                     </button>
                                                 </div>

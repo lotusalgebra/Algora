@@ -4,123 +4,116 @@
     ViewData["Title"] = "Upsell Offers";
 }
 
-@section css {
-    <link rel="stylesheet" href="~/css/datatable.css" asp-append-version="true" />
-}
-
-<div class="w-full px-6 py-6 mx-auto">
-    <div class="flex flex-wrap -mx-3">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <div>
-                            <h6 class="mb-0 dark:text-white">Upsell Offers</h6>
-                            <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
-                                <i class="fa fa-gift text-indigo-500 me-1"></i>
-                                <span class="font-semibold" id="total-count">0</span> configured offers
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <a href="/upsell" class="inline-block px-4 py-2 text-xs font-bold text-center uppercase align-middle transition-all border border-gray-300 rounded-lg cursor-pointer text-slate-500 hover:bg-gray-100 dark:text-white dark:border-white/40">
-                                <i class="fas fa-arrow-left me-2"></i> Back
-                            </a>
-                            <a href="/upsell/offers/create" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-plus me-2"></i> New Offer
-                            </a>
-                        </div>
-                    </div>
+<div class="p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-wrap items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Upsell Offers</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <i class="fa fa-gift text-indigo-500 me-1"></i>
+                        <span class="font-semibold" id="total-count">0</span> configured offers
+                    </p>
                 </div>
-
-                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        @Model.SuccessMessage
-                    </div>
-                }
-
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <div class="mx-6 mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        @Model.ErrorMessage
-                    </div>
-                }
-
-                <!-- Search Bar -->
-                <div class="px-6 pt-4">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div class="relative">
-                            <input type="text" id="search-input" placeholder="Search offers..."
-                                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white w-64">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
-                            <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <option value="10">10</option>
-                                <option value="25" selected>25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
-                        </div>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <a href="/upsell" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left me-2"></i> Back
+                    </a>
+                    <a href="/upsell/offers/create" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-green-500 to-lime-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg dark:focus:ring-green-800">
+                        <i class="fas fa-plus me-2"></i> New Offer
+                    </a>
                 </div>
+            </div>
+        </div>
 
-                <div class="flex-auto p-6 px-0 pb-0">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="text-center py-12">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-fuchsia-500"></div>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2">Loading offers...</p>
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="mx-6 mt-4 p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-700 dark:text-green-400" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                @Model.SuccessMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="mx-6 mt-4 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <!-- Search Bar -->
+        <div class="px-6 pt-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search offers..."
+                        class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white w-64">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Show</span>
+                    <select id="per-page" class="py-1 px-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">per page</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">Loading offers...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center py-12 hidden">
+                <i class="fas fa-gift fa-4x text-gray-300 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 mb-4">No upsell offers yet. Create your first offer to start increasing AOV.</p>
+                <a href="/upsell/offers/create" class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg dark:focus:ring-purple-800">
+                    <i class="fas fa-plus me-2"></i> Create First Offer
+                </a>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto" id="table-container" style="display: none;">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" id="offers-list">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 cursor-pointer" data-sort="0">Product <i class="fas fa-sort ms-1 text-xs"></i></th>
+                            <th scope="col" class="px-6 py-3">Trigger Products</th>
+                            <th scope="col" class="px-6 py-3 text-center">Discount</th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer" data-sort="3">Impressions <i class="fas fa-sort ms-1 text-xs"></i></th>
+                            <th scope="col" class="px-6 py-3 text-center">Clicks</th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer" data-sort="5">Conversions <i class="fas fa-sort ms-1 text-xs"></i></th>
+                            <th scope="col" class="px-6 py-3 text-center cursor-pointer" data-sort="6">Revenue <i class="fas fa-sort ms-1 text-xs"></i></th>
+                            <th scope="col" class="px-6 py-3 text-center">Status</th>
+                            <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4" style="display: none;">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> offers
                     </div>
-
-                    <!-- Empty State -->
-                    <div id="empty-state" class="text-center py-12 hidden">
-                        <i class="fas fa-gift fa-4x text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">No upsell offers yet. Create your first offer to start increasing AOV.</p>
-                        <a href="/upsell/offers/create" class="inline-block px-6 py-3 text-sm font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer bg-gradient-to-tl from-indigo-600 to-purple-400 shadow-soft-md">
-                            <i class="fas fa-plus me-2"></i> Create First Offer
-                        </a>
-                    </div>
-
-                    <!-- Table -->
-                    <div class="overflow-x-auto" id="table-container" style="display: none;">
-                        <table class="table items-center w-full mb-0 align-top border-gray-200 text-slate-500 dark:border-white/40" id="offers-list">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="0">Product <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Trigger Products</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Discount</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="3">Impressions <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Clicks</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="5">Conversions <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80 cursor-pointer" data-sort="6">Revenue <i class="fas fa-sort ms-1 text-xxs"></i></th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Status</th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70 dark:border-white/40 dark:text-white dark:opacity-80">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-body"></tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination-container" class="px-6 py-4 border-t border-gray-200 dark:border-white/10" style="display: none;">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-filtered">0</span> offers
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    <i class="fas fa-chevron-left me-1"></i> Previous
-                                </button>
-                                <div id="page-numbers" class="flex gap-1"></div>
-                                <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
-                                    Next <i class="fas fa-chevron-right ms-1"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <button id="prev-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                            <i class="fas fa-chevron-left me-1"></i> Previous
+                        </button>
+                        <div id="page-numbers" class="flex gap-1"></div>
+                        <button id="next-btn" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                            Next <i class="fas fa-chevron-right ms-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -195,44 +188,44 @@
 
             function renderTable(data) {
                 tableBody.innerHTML = data.map(o => `
-                    <tr>
-                        <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <div class="flex px-2 py-1">
-                                ${o.productImageUrl ? `<img src="${o.productImageUrl}" class="inline-flex items-center justify-center mr-4 text-sm h-9 w-9 rounded-xl object-cover" alt="">` : ''}
-                                <div class="flex flex-col justify-center">
-                                    <h6 class="mb-0 text-sm leading-normal dark:text-white">${escapeHtml(o.productTitle)}</h6>
-                                    <p class="mb-0 text-xs leading-tight text-slate-400 dark:text-white dark:opacity-80">$${o.productPrice}</p>
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                ${o.productImageUrl ? `<img src="${o.productImageUrl}" class="w-10 h-10 rounded-lg object-cover mr-3" alt="">` : ''}
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">${escapeHtml(o.productTitle)}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">$${o.productPrice}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40">
-                            <span class="text-xs text-slate-400 dark:text-white dark:opacity-80">${o.triggerCount > 0 ? o.triggerCount + ' products' : 'All products'}</span>
+                        <td class="px-6 py-4">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">${o.triggerCount > 0 ? o.triggerCount + ' products' : 'All products'}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            ${o.discountedPrice ? `<span class="text-sm font-semibold text-green-600">$${o.discountedPrice}</span>` : '<span class="text-sm text-slate-400">-</span>'}
+                        <td class="px-6 py-4 text-center">
+                            ${o.discountedPrice ? `<span class="text-sm font-semibold text-green-600">$${o.discountedPrice}</span>` : '<span class="text-sm text-gray-400">-</span>'}
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">${o.impressions}</span>
+                        <td class="px-6 py-4 text-center">
+                            <span class="font-semibold text-gray-900 dark:text-white">${o.impressions}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight dark:text-white">${o.clicks}</span>
+                        <td class="px-6 py-4 text-center">
+                            <span class="font-semibold text-gray-900 dark:text-white">${o.clicks}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight text-green-600">${o.conversions}</span>
+                        <td class="px-6 py-4 text-center">
+                            <span class="font-semibold text-green-600">${o.conversions}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="text-sm font-semibold leading-tight text-emerald-600">$${o.revenue}</span>
+                        <td class="px-6 py-4 text-center">
+                            <span class="font-semibold text-emerald-600">$${o.revenue}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
-                            <span class="bg-gradient-to-tl ${o.isActive ? 'from-green-600 to-lime-400' : 'from-gray-400 to-gray-600'} px-2.5 text-xxs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">${o.isActive ? 'Active' : 'Inactive'}</span>
+                        <td class="px-6 py-4 text-center">
+                            <span class="${o.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'} text-xs font-medium px-2.5 py-0.5 rounded">${o.isActive ? 'Active' : 'Inactive'}</span>
                         </td>
-                        <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap dark:border-white/40">
+                        <td class="px-6 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="/upsell/offers/edit/${o.id}" class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 hover:text-indigo-600" title="Edit">
+                                <a href="/upsell/offers/edit/${o.id}" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form method="post" action="/upsell/offers?handler=Delete&id=${o.id}" class="inline" onsubmit="return confirm('Delete this offer?');">
-                                    <button type="submit" class="text-xs font-semibold leading-tight text-slate-400 dark:text-white dark:opacity-80 hover:text-red-600" title="Delete">
+                                    <button type="submit" class="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -265,7 +258,7 @@
                     const btn = document.createElement('button');
                     btn.textContent = i;
                     btn.className = i === currentPage
-                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg'
+                        ? 'px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg'
                         : 'px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600';
                     btn.onclick = () => { currentPage = i; loadData(); };
                     pageNumbers.appendChild(btn);
@@ -307,8 +300,8 @@
                         sortColumn = col;
                         sortDirection = 'asc';
                     }
-                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xxs');
-                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xxs`;
+                    document.querySelectorAll('[data-sort] i').forEach(icon => icon.className = 'fas fa-sort ms-1 text-xs');
+                    this.querySelector('i').className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} ms-1 text-xs`;
                     loadData();
                 });
             });

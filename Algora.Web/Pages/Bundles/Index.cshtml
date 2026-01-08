@@ -10,7 +10,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(Model.Settings?.BundlePageTitle ?? "Product Bundles")</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9333ea',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 py-8">
@@ -26,7 +38,8 @@
         <!-- Error Message -->
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-xl bg-red-50 border border-red-200" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
                 @Model.ErrorMessage
             </div>
         }
@@ -38,19 +51,17 @@
                 @foreach (var bundle in Model.Bundles)
                 {
                     <a href="/bundles/@bundle.Slug" class="group">
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+                        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden">
                             <!-- Image -->
                             <div class="aspect-w-16 aspect-h-9 bg-gray-100">
                                 @if (!string.IsNullOrEmpty(bundle.ImageUrl))
                                 {
-                                    <img src="@bundle.ImageUrl" alt="@bundle.Name" class="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                                    <img src="@bundle.ImageUrl" alt="@bundle.Name" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                                 }
                                 else
                                 {
-                                    <div class="w-full h-48 flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-                                        <svg class="w-16 h-16 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                        </svg>
+                                    <div class="w-full h-48 flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+                                        <i class="fas fa-boxes text-4xl text-purple-300"></i>
                                     </div>
                                 }
                             </div>
@@ -58,7 +69,7 @@
                             <!-- Content -->
                             <div class="p-5">
                                 <div class="flex items-start justify-between mb-2">
-                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">@bundle.Name</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">@bundle.Name</h3>
                                     @if (bundle.BundleType == "mix_and_match")
                                     {
                                         <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">Build Your Own</span>
@@ -97,12 +108,14 @@
                                 <!-- Items count for fixed bundles -->
                                 @if (bundle.BundleType == "fixed" && bundle.Items.Any())
                                 {
-                                    <p class="text-xs text-gray-500 mt-3">Includes @bundle.Items.Count items</p>
+                                    <p class="text-xs text-gray-500 mt-3">
+                                        <i class="fas fa-box me-1"></i> Includes @bundle.Items.Count items
+                                    </p>
                                 }
                                 @if (bundle.BundleType == "mix_and_match" && bundle.MinItems.HasValue)
                                 {
                                     <p class="text-xs text-gray-500 mt-3">
-                                        Pick @bundle.MinItems@(bundle.MaxItems.HasValue && bundle.MaxItems != bundle.MinItems ? $"-{bundle.MaxItems}" : "") items
+                                        <i class="fas fa-hand-pointer me-1"></i> Pick @bundle.MinItems@(bundle.MaxItems.HasValue && bundle.MaxItems != bundle.MinItems ? $"-{bundle.MaxItems}" : "") items
                                     </p>
                                 }
                             </div>
@@ -114,9 +127,9 @@
         else
         {
             <div class="text-center py-16">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                    <i class="fas fa-boxes text-3xl text-gray-300"></i>
+                </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No bundles available</h3>
                 <p class="text-gray-500">Check back soon for special bundle offers!</p>
             </div>

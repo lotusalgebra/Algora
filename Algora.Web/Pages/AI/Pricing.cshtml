@@ -4,49 +4,67 @@
     ViewData["Title"] = "Pricing Optimizer";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
-                    <li class="breadcrumb-item active">Pricing Optimizer</li>
+            <nav class="flex mb-2" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/AI" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                            AI Tools
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Pricing Optimizer</span>
+                        </div>
+                    </li>
                 </ol>
             </nav>
-            <h1 class="h3 mb-0">Pricing Optimizer</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Pricing Optimizer</h1>
         </div>
     </div>
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Product Selection -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-box mr-2"></i>Select Product
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <input type="text" id="productSearch" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search products..." />
                     </div>
-                    <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                    <div id="productList" class="space-y-1 max-h-96 overflow-y-auto">
                         @foreach (var product in Model.Products)
                         {
-                            <a href="#" class="list-group-item list-group-item-action product-item"
+                            var marginClass = "";
+                            var marginText = "";
+                            if (product.CostOfGoodsSold.HasValue && product.CostOfGoodsSold > 0)
+                            {
+                                var margin = (product.Price - product.CostOfGoodsSold.Value) / product.Price * 100;
+                                marginClass = margin >= 40 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : margin >= 20 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                                marginText = $"{margin:F0}%";
+                            }
+                            <a href="#" class="product-item block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                                data-id="@product.Id"
                                data-title="@product.Title"
                                data-price="@product.Price"
                                data-cost="@product.CostOfGoodsSold"
                                data-inventory="@product.InventoryQuantity">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1 text-truncate" style="max-width: 180px;">@product.Title</h6>
-                                        <small class="text-muted">@product.Price.ToString("C")</small>
+                                <div class="flex justify-between items-center">
+                                    <div class="min-w-0 flex-1">
+                                        <h6 class="font-medium text-gray-900 dark:text-white text-sm truncate">@product.Title</h6>
+                                        <small class="text-gray-500 dark:text-gray-400">@product.Price.ToString("C")</small>
                                     </div>
-                                    @if (product.CostOfGoodsSold.HasValue && product.CostOfGoodsSold > 0)
+                                    @if (!string.IsNullOrEmpty(marginText))
                                     {
-                                        var margin = (product.Price - product.CostOfGoodsSold.Value) / product.Price * 100;
-                                        var marginClass = margin >= 40 ? "bg-success" : margin >= 20 ? "bg-warning" : "bg-danger";
-                                        <span class="badge @marginClass">@margin.ToString("F0")%</span>
+                                        <span class="@marginClass text-xs font-medium px-2.5 py-0.5 rounded ml-2">@marginText</span>
                                     }
                                 </div>
                             </a>
@@ -57,106 +75,101 @@
         </div>
 
         <!-- Pricing Panel -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Pricing Analysis</h5>
-                    <button type="button" id="analyzeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
-                        <i class="fas fa-magic me-2"></i>Analyze Pricing
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-dollar-sign mr-2"></i>Pricing Analysis
+                    </h5>
+                    <button type="button" id="analyzeBtn" disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-magic mr-2"></i>Analyze Pricing
                     </button>
                 </div>
-                <div class="card-body">
-                    <div id="noProductSelected" class="text-center py-5">
-                        <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Select a product to analyze its pricing</p>
+                <div class="p-6">
+                    <div id="noProductSelected" class="text-center py-12">
+                        <i class="fas fa-tags text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">Select a product to analyze its pricing</p>
                     </div>
 
-                    <div id="pricingPanel" class="d-none">
+                    <div id="pricingPanel" class="hidden">
                         <!-- Product Info -->
-                        <div class="mb-4 p-3 bg-light rounded">
-                            <h5 id="selectedProductTitle" class="mb-1"></h5>
-                            <div class="d-flex gap-4 text-muted">
-                                <span><i class="fas fa-tag me-1"></i>Current: <strong id="currentPrice"></strong></span>
-                                <span><i class="fas fa-box me-1"></i>Stock: <span id="inventory"></span></span>
-                                <span><i class="fas fa-percent me-1"></i>Margin: <span id="currentMargin"></span></span>
+                        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h5 id="selectedProductTitle" class="font-semibold text-gray-900 dark:text-white mb-2"></h5>
+                            <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
+                                <span><i class="fas fa-tag mr-1"></i>Current: <strong id="currentPrice"></strong></span>
+                                <span><i class="fas fa-box mr-1"></i>Stock: <span id="inventory"></span></span>
+                                <span><i class="fas fa-percent mr-1"></i>Margin: <span id="currentMargin"></span></span>
                             </div>
                         </div>
 
                         <!-- Loading -->
-                        <div id="loadingPanel" class="text-center py-4 d-none">
-                            <div class="spinner-border text-danger" role="status"></div>
-                            <p class="text-muted mt-2">Analyzing pricing...</p>
+                        <div id="loadingPanel" class="text-center py-8 hidden">
+                            <div role="status">
+                                <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-red-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 mt-4">Analyzing pricing...</p>
                         </div>
 
                         <!-- Suggestion Panel -->
-                        <div id="suggestionPanel" class="d-none">
+                        <div id="suggestionPanel" class="hidden">
                             <!-- Price Comparison -->
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <div class="card bg-light border-0">
-                                        <div class="card-body text-center">
-                                            <small class="text-muted">Current Price</small>
-                                            <h3 id="displayCurrentPrice" class="mb-0"></h3>
-                                        </div>
-                                    </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+                                    <small class="text-gray-500 dark:text-gray-400">Current Price</small>
+                                    <h3 id="displayCurrentPrice" class="text-2xl font-bold text-gray-900 dark:text-white"></h3>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-success text-white border-0">
-                                        <div class="card-body text-center">
-                                            <small class="text-white-50">Suggested Price</small>
-                                            <h3 id="suggestedPrice" class="mb-0"></h3>
-                                            <small id="priceChange" class="text-white-50"></small>
-                                        </div>
-                                    </div>
+                                <div class="bg-green-500 rounded-lg p-4 text-center text-white">
+                                    <small class="text-green-100">Suggested Price</small>
+                                    <h3 id="suggestedPrice" class="text-2xl font-bold"></h3>
+                                    <small id="priceChange" class="text-green-100"></small>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                        <div class="card-body text-center text-white">
-                                            <small class="text-white-50">New Margin</small>
-                                            <h3 id="suggestedMargin" class="mb-0"></h3>
-                                        </div>
-                                    </div>
+                                <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg p-4 text-center text-white">
+                                    <small class="text-purple-100">New Margin</small>
+                                    <h3 id="suggestedMargin" class="text-2xl font-bold"></h3>
                                 </div>
                             </div>
 
                             <!-- Price Range -->
-                            <div class="mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Suggested Price Range</label>
-                                <div class="d-flex align-items-center gap-3">
-                                    <span id="minPrice" class="badge bg-secondary fs-6"></span>
-                                    <div class="flex-grow-1">
-                                        <div class="progress" style="height: 8px;">
-                                            <div id="priceRangeBar" class="progress-bar bg-success" role="progressbar"></div>
+                            <div class="mb-6">
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Suggested Price Range</label>
+                                <div class="flex items-center gap-3">
+                                    <span id="minPrice" class="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-gray-300"></span>
+                                    <div class="flex-grow">
+                                        <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                            <div id="priceRangeBar" class="bg-green-500 h-2 rounded-full transition-all duration-300"></div>
                                         </div>
                                     </div>
-                                    <span id="maxPrice" class="badge bg-secondary fs-6"></span>
+                                    <span id="maxPrice" class="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-gray-300"></span>
                                 </div>
                             </div>
 
                             <!-- Confidence -->
-                            <div class="mb-4">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">AI Confidence</label>
-                                    <span id="confidenceBadge" class="badge"></span>
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="text-sm font-medium text-gray-900 dark:text-white">AI Confidence</label>
+                                    <span id="confidenceBadge" class="bg-gray-100 text-gray-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"></span>
                                 </div>
-                                <div class="progress" style="height: 10px;">
-                                    <div id="confidenceBar" class="progress-bar" role="progressbar"></div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div id="confidenceBar" class="bg-gray-400 h-2.5 rounded-full transition-all duration-300"></div>
                                 </div>
                             </div>
 
                             <!-- Reasoning -->
-                            <div class="mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Analysis</label>
-                                <div id="reasoning" class="p-3 bg-light rounded"></div>
+                            <div class="mb-6">
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Analysis</label>
+                                <div id="reasoning" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300"></div>
                             </div>
 
                             <!-- Actions -->
-                            <div class="d-flex gap-2">
-                                <button type="button" id="applyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-check me-2"></i>Apply Suggested Price
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" id="applyBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                                    <i class="fas fa-check mr-2"></i>Apply Suggested Price
                                 </button>
-                                <button type="button" id="reanalyzeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                    <i class="fas fa-redo me-2"></i>Re-analyze
+                                <button type="button" id="reanalyzeBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                                    <i class="fas fa-redo mr-2"></i>Re-analyze
                                 </button>
                             </div>
                         </div>
@@ -164,7 +177,7 @@
                 </div>
             </div>
 
-            <div id="alertContainer" class="mt-3"></div>
+            <div id="alertContainer" class="mt-4"></div>
         </div>
     </div>
 </div>
@@ -194,13 +207,13 @@
             productItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    productItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    productItems.forEach(i => i.classList.remove('bg-purple-50', 'dark:bg-purple-900/20'));
+                    this.classList.add('bg-purple-50', 'dark:bg-purple-900/20');
 
                     selectedProductId = this.dataset.id;
-                    document.getElementById('noProductSelected').classList.add('d-none');
-                    document.getElementById('pricingPanel').classList.remove('d-none');
-                    document.getElementById('suggestionPanel').classList.add('d-none');
+                    document.getElementById('noProductSelected').classList.add('hidden');
+                    document.getElementById('pricingPanel').classList.remove('hidden');
+                    document.getElementById('suggestionPanel').classList.add('hidden');
 
                     document.getElementById('selectedProductTitle').textContent = this.dataset.title;
                     document.getElementById('currentPrice').textContent = formatCurrency(parseFloat(this.dataset.price));
@@ -222,8 +235,8 @@
             async function analyzePricing() {
                 if (!selectedProductId) return;
 
-                document.getElementById('loadingPanel').classList.remove('d-none');
-                document.getElementById('suggestionPanel').classList.add('d-none');
+                document.getElementById('loadingPanel').classList.remove('hidden');
+                document.getElementById('suggestionPanel').classList.add('hidden');
                 analyzeBtn.disabled = true;
 
                 try {
@@ -241,15 +254,15 @@
                     if (result.success) {
                         currentSuggestionId = result.data.suggestionId;
                         displaySuggestion(result.data);
-                        document.getElementById('suggestionPanel').classList.remove('d-none');
+                        document.getElementById('suggestionPanel').classList.remove('hidden');
                         showAlert('Pricing analysis complete!', 'success');
                     } else {
-                        showAlert(result.error || 'Failed to analyze pricing', 'danger');
+                        showAlert(result.error || 'Failed to analyze pricing', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 } finally {
-                    document.getElementById('loadingPanel').classList.add('d-none');
+                    document.getElementById('loadingPanel').classList.add('hidden');
                     analyzeBtn.disabled = false;
                 }
             }
@@ -270,27 +283,25 @@
                 document.getElementById('minPrice').textContent = data.minPrice ? formatCurrency(data.minPrice) : '-';
                 document.getElementById('maxPrice').textContent = data.maxPrice ? formatCurrency(data.maxPrice) : '-';
 
-                // Price range bar
                 if (data.minPrice && data.maxPrice) {
                     const range = data.maxPrice - data.minPrice;
                     const position = ((data.suggestedPrice - data.minPrice) / range * 100);
                     document.getElementById('priceRangeBar').style.width = position + '%';
                 }
 
-                // Confidence
                 const conf = data.confidence;
                 document.getElementById('confidenceBar').style.width = conf + '%';
                 const confBadge = document.getElementById('confidenceBadge');
                 confBadge.textContent = conf + '%';
                 if (conf >= 80) {
-                    confBadge.className = 'badge bg-success';
-                    document.getElementById('confidenceBar').className = 'progress-bar bg-success';
+                    confBadge.className = 'bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300';
+                    document.getElementById('confidenceBar').className = 'bg-green-500 h-2.5 rounded-full transition-all duration-300';
                 } else if (conf >= 50) {
-                    confBadge.className = 'badge bg-warning';
-                    document.getElementById('confidenceBar').className = 'progress-bar bg-warning';
+                    confBadge.className = 'bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300';
+                    document.getElementById('confidenceBar').className = 'bg-yellow-500 h-2.5 rounded-full transition-all duration-300';
                 } else {
-                    confBadge.className = 'badge bg-danger';
-                    document.getElementById('confidenceBar').className = 'progress-bar bg-danger';
+                    confBadge.className = 'bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300';
+                    document.getElementById('confidenceBar').className = 'bg-red-500 h-2.5 rounded-full transition-all duration-300';
                 }
 
                 document.getElementById('reasoning').textContent = data.reasoning || 'No detailed reasoning provided.';
@@ -316,7 +327,6 @@
 
                     if (result.success) {
                         showAlert('Price updated successfully!', 'success');
-                        // Update the product item
                         const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
                         if (productItem) {
                             const newPrice = document.getElementById('suggestedPrice').textContent;
@@ -324,10 +334,10 @@
                             productItem.querySelector('small').textContent = newPrice;
                         }
                     } else {
-                        showAlert(result.error || 'Failed to apply price', 'danger');
+                        showAlert(result.error || 'Failed to apply price', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 }
             });
 
@@ -338,12 +348,19 @@
 
         function showAlert(message, type) {
             const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show`;
-            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            container.innerHTML = '';
-            container.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 dark:bg-gray-800 dark:text-green-400' : 'bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500';
+
+            container.innerHTML = `
+                <div class="flex items-center p-4 mb-4 text-sm rounded-lg ${bgColor}" role="alert">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            setTimeout(() => container.innerHTML = '', 5000);
         }
     </script>
 }

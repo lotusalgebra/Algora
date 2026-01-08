@@ -4,88 +4,88 @@
     ViewData["Title"] = "Image Alt-Text Generator";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
-                    <li class="breadcrumb-item active">Alt-Text Generator</li>
+            <nav class="flex mb-2" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/AI" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                            AI Tools
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Alt-Text Generator</span>
+                        </div>
+                    </li>
                 </ol>
             </nav>
-            <h1 class="h3 mb-0">Image Alt-Text Generator</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Image Alt-Text Generator</h1>
         </div>
-        <div>
-            <button type="button" id="bulkGenerateBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
-                <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Missing Alt-Text
-            </button>
-        </div>
+        <button type="button" id="bulkGenerateBtn" disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate Missing Alt-Text
+        </button>
     </div>
 
     <!-- Stats -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="mb-0">@Model.TotalProducts</h3>
-                    <small class="text-muted">Total Products</small>
-                </div>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <h3 class="text-3xl font-bold text-gray-900 dark:text-white">@Model.TotalProducts</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Total Products</p>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="mb-0 text-success">@Model.WithAltText</h3>
-                    <small class="text-muted">With Alt-Text</small>
-                </div>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <h3 class="text-3xl font-bold text-green-600 dark:text-green-400">@Model.WithAltText</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">With Alt-Text</p>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="mb-0 text-warning">@Model.MissingAltText</h3>
-                    <small class="text-muted">Missing Alt-Text</small>
-                </div>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <h3 class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">@Model.MissingAltText</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Missing Alt-Text</p>
         </div>
     </div>
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Product List -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0"><i class="fas fa-images me-2"></i>Products</h5>
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-images mr-2"></i>Products
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <input type="text" id="productSearch" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search products..." />
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="showMissingOnly">
-                        <label class="form-check-label" for="showMissingOnly">
-                            Show only products missing alt-text
-                        </label>
+                    <div class="flex items-center mb-4">
+                        <input id="showMissingOnly" type="checkbox" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="showMissingOnly" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Show only products missing alt-text</label>
                     </div>
-                    <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                    <div id="productList" class="space-y-1 max-h-96 overflow-y-auto">
                         @foreach (var product in Model.Products)
                         {
-                            <a href="#" class="list-group-item list-group-item-action product-item"
+                            <a href="#" class="product-item block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                                data-id="@product.Id"
                                data-title="@product.Title"
                                data-has-alt="@(product.HasAltText ? "true" : "false")">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1 text-truncate" style="max-width: 200px;">@product.Title</h6>
-                                        <small class="text-muted">@product.ImageCount image(s)</small>
+                                <div class="flex justify-between items-center">
+                                    <div class="min-w-0 flex-1">
+                                        <h6 class="font-medium text-gray-900 dark:text-white text-sm truncate">@product.Title</h6>
+                                        <small class="text-gray-500 dark:text-gray-400">@product.ImageCount image(s)</small>
                                     </div>
                                     @if (product.HasAltText)
                                     {
-                                        <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium p-1.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                                            <i class="fas fa-check"></i>
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-warning"><i class="fas fa-exclamation"></i></span>
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium p-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
+                                            <i class="fas fa-exclamation"></i>
+                                        </span>
                                     }
                                 </div>
                             </a>
@@ -96,36 +96,43 @@
         </div>
 
         <!-- Alt-Text Panel -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-image me-2"></i>Image Alt-Text</h5>
-                    <button type="button" id="generateBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
-                        <i class="fas fa-magic me-2"></i>Generate Alt-Text
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-image mr-2"></i>Image Alt-Text
+                    </h5>
+                    <button type="button" id="generateBtn" disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-magic mr-2"></i>Generate Alt-Text
                     </button>
                 </div>
-                <div class="card-body">
-                    <div id="noProductSelected" class="text-center py-5">
-                        <i class="fas fa-image fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Select a product to view and edit alt-text</p>
+                <div class="p-6">
+                    <div id="noProductSelected" class="text-center py-12">
+                        <i class="fas fa-image text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">Select a product to view and edit alt-text</p>
                     </div>
 
-                    <div id="altTextPanel" class="d-none">
-                        <div class="mb-4 p-3 bg-light rounded">
-                            <h5 id="selectedProductTitle" class="mb-0"></h5>
+                    <div id="altTextPanel" class="hidden">
+                        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h5 id="selectedProductTitle" class="font-semibold text-gray-900 dark:text-white"></h5>
                         </div>
 
-                        <div id="loadingPanel" class="text-center py-4 d-none">
-                            <div class="spinner-border text-info" role="status"></div>
-                            <p class="text-muted mt-2">Generating alt-text with AI...</p>
+                        <div id="loadingPanel" class="text-center py-8 hidden">
+                            <div role="status">
+                                <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 mt-4">Generating alt-text with AI...</p>
                         </div>
 
-                        <div id="imagesContainer" class="row g-4"></div>
+                        <div id="imagesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
             </div>
 
-            <div id="alertContainer" class="mt-3"></div>
+            <div id="alertContainer" class="mt-4"></div>
         </div>
     </div>
 </div>
@@ -161,12 +168,12 @@
             productItems.forEach(item => {
                 item.addEventListener('click', async function(e) {
                     e.preventDefault();
-                    productItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    productItems.forEach(i => i.classList.remove('bg-purple-50', 'dark:bg-purple-900/20'));
+                    this.classList.add('bg-purple-50', 'dark:bg-purple-900/20');
 
                     selectedProductId = this.dataset.id;
-                    document.getElementById('noProductSelected').classList.add('d-none');
-                    document.getElementById('altTextPanel').classList.remove('d-none');
+                    document.getElementById('noProductSelected').classList.add('hidden');
+                    document.getElementById('altTextPanel').classList.remove('hidden');
                     document.getElementById('selectedProductTitle').textContent = this.dataset.title;
 
                     generateBtn.disabled = false;
@@ -177,7 +184,7 @@
 
             async function loadProductImages(productId) {
                 const container = document.getElementById('imagesContainer');
-                container.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-secondary"></div></div>';
+                container.innerHTML = '<div class="col-span-2 text-center py-8"><div role="status"><svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg></div></div>';
 
                 try {
                     const response = await fetch(`/AI/AltText?handler=GetImages&productId=${productId}`);
@@ -185,22 +192,18 @@
 
                     if (data.success && data.images.length > 0) {
                         container.innerHTML = data.images.map((img, idx) => `
-                            <div class="col-md-6">
-                                <div class="card h-100">
-                                    <img src="${img.url || '/images/no-image.png'}" class="card-img-top" alt="${img.altText || ''}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body">
-                                        <div class="mb-2">
-                                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80 small">Alt-Text</label>
-                                            <textarea class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none alt-text-input" data-image-id="${img.id}" rows="3" placeholder="Describe this image...">${img.altText || ''}</textarea>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 generate-single-btn" data-image-id="${img.id}">
-                                                <i class="fas fa-magic"></i> Generate
-                                            </button>
-                                            <button class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 save-single-btn" data-image-id="${img.id}">
-                                                <i class="fas fa-save"></i> Save
-                                            </button>
-                                        </div>
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                <img src="${img.url || '/images/no-image.png'}" class="w-full h-48 object-cover" alt="${img.altText || ''}">
+                                <div class="p-4">
+                                    <label class="block mb-2 text-xs font-medium text-gray-900 dark:text-white">Alt-Text</label>
+                                    <textarea class="alt-text-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white mb-3" data-image-id="${img.id}" rows="3" placeholder="Describe this image...">${img.altText || ''}</textarea>
+                                    <div class="flex gap-2">
+                                        <button class="generate-single-btn flex-1 inline-flex justify-center items-center px-3 py-2 text-xs font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800" data-image-id="${img.id}">
+                                            <i class="fas fa-magic mr-1"></i> Generate
+                                        </button>
+                                        <button class="save-single-btn flex-1 inline-flex justify-center items-center px-3 py-2 text-xs font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700" data-image-id="${img.id}">
+                                            <i class="fas fa-save mr-1"></i> Save
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -214,10 +217,10 @@
                             btn.addEventListener('click', () => saveSingleAltText(btn.dataset.imageId));
                         });
                     } else {
-                        container.innerHTML = '<div class="col-12 text-center py-4"><p class="text-muted">No images found for this product</p></div>';
+                        container.innerHTML = '<div class="col-span-2 text-center py-8"><p class="text-gray-500 dark:text-gray-400">No images found for this product</p></div>';
                     }
                 } catch (error) {
-                    container.innerHTML = `<div class="col-12"><div class="alert alert-danger">${error.message}</div></div>`;
+                    container.innerHTML = `<div class="col-span-2"><div class="flex items-center p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">${error.message}</div></div>`;
                 }
             }
 
@@ -227,7 +230,7 @@
                 const originalHtml = btn.innerHTML;
 
                 btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                btn.innerHTML = '<svg aria-hidden="true" class="inline w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" opacity="0.4"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>';
 
                 try {
                     const response = await fetch('/AI/AltText?handler=Generate', {
@@ -244,10 +247,10 @@
                         textarea.value = result.altText;
                         showAlert('Alt-text generated!', 'success');
                     } else {
-                        showAlert(result.error || 'Failed to generate', 'danger');
+                        showAlert(result.error || 'Failed to generate', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 } finally {
                     btn.disabled = false;
                     btn.innerHTML = originalHtml;
@@ -272,17 +275,17 @@
                     if (result.success) {
                         showAlert('Alt-text saved!', 'success');
                     } else {
-                        showAlert(result.error || 'Failed to save', 'danger');
+                        showAlert(result.error || 'Failed to save', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 }
             }
 
             generateBtn.addEventListener('click', async function() {
                 if (!selectedProductId) return;
 
-                document.getElementById('loadingPanel').classList.remove('d-none');
+                document.getElementById('loadingPanel').classList.remove('hidden');
                 generateBtn.disabled = true;
 
                 try {
@@ -300,12 +303,12 @@
                         await loadProductImages(selectedProductId);
                         showAlert(`Generated alt-text for ${result.count} images!`, 'success');
                     } else {
-                        showAlert(result.error || 'Failed to generate', 'danger');
+                        showAlert(result.error || 'Failed to generate', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 } finally {
-                    document.getElementById('loadingPanel').classList.add('d-none');
+                    document.getElementById('loadingPanel').classList.add('hidden');
                     generateBtn.disabled = false;
                 }
             });
@@ -313,12 +316,19 @@
 
         function showAlert(message, type) {
             const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show`;
-            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            container.innerHTML = '';
-            container.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 dark:bg-gray-800 dark:text-green-400' : 'bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500';
+
+            container.innerHTML = `
+                <div class="flex items-center p-4 mb-4 text-sm rounded-lg ${bgColor}" role="alert">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            setTimeout(() => container.innerHTML = '', 5000);
         }
     </script>
 }

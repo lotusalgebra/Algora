@@ -4,16 +4,16 @@
     ViewData["Title"] = "Chat Conversation";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
+<div class="p-4">
     <!-- Back Button and Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
-            <a href="/customer-hub/inbox/live-chat" class="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+            <a href="/customer-hub/inbox/live-chat" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                 <i class="fas fa-arrow-left me-2"></i> Back to Live Chat
             </a>
             <div>
-                <h5 class="font-bold dark:text-white">Chat Conversation #@Model.Conversation?.Id</h5>
-                <p class="text-sm text-slate-400">@(Model.Conversation?.CustomerName ?? Model.Conversation?.CustomerEmail ?? "Anonymous Customer")</p>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Chat Conversation #@Model.Conversation?.Id</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">@(Model.Conversation?.CustomerName ?? Model.Conversation?.CustomerEmail ?? "Anonymous Customer")</p>
             </div>
         </div>
         @if (Model.Conversation != null)
@@ -22,7 +22,7 @@
                 @if (string.IsNullOrEmpty(Model.Conversation.AssignedAgentEmail))
                 {
                     <form method="post" asp-page-handler="Assign" asp-route-id="@Model.Conversation.Id">
-                        <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                        <button type="submit" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-blue-600 to-cyan-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300">
                             <i class="fas fa-user-plus me-2"></i> Assign to Me
                         </button>
                     </form>
@@ -30,7 +30,7 @@
                 @if (Model.Conversation.Status != "resolved")
                 {
                     <form method="post" asp-page-handler="Resolve" asp-route-id="@Model.Conversation.Id">
-                        <button type="submit" class="inline-block px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-green-600 to-lime-400 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
+                        <button type="submit" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-600 to-lime-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300">
                             <i class="fas fa-check me-2"></i> Resolve
                         </button>
                     </form>
@@ -42,50 +42,50 @@
     <!-- Alerts -->
     @if (!string.IsNullOrEmpty(Model.SuccessMessage))
     {
-        <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+        <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
             <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
         </div>
     }
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+        <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i>@Model.ErrorMessage
         </div>
     }
 
     @if (Model.Conversation != null)
     {
-        <div class="grid grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Chat Messages Column -->
-            <div class="col-span-12 lg:col-span-8">
-                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
                     <!-- Chat Header -->
-                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="inline-block w-10 h-10 text-center rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 flex-shrink-0">
-                                    <i class="fas fa-comments text-lg relative top-2.5 text-white"></i>
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-comments text-lg text-white"></i>
                                 </div>
-                                <div>
-                                    <span class="@(Model.Conversation.Status == "escalated" ? "bg-orange-100 text-orange-700" : Model.Conversation.Status == "resolved" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700") text-xs font-semibold px-2 py-1 rounded uppercase">
+                                <div class="flex items-center gap-2">
+                                    <span class="@(Model.Conversation.Status == "escalated" ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300" : Model.Conversation.Status == "resolved" ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300") text-xs font-semibold px-2 py-1 rounded uppercase">
                                         @Model.Conversation.Status
                                     </span>
                                     @if (Model.Conversation.IsEscalated)
                                     {
-                                        <span class="bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded uppercase ms-2">
+                                        <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 text-xs font-semibold px-2 py-1 rounded uppercase">
                                             ESCALATED
                                         </span>
                                     }
                                 </div>
                             </div>
-                            <div class="text-xs text-slate-400">
+                            <div class="text-xs text-gray-400">
                                 Started @Model.Conversation.CreatedAt.ToString("MMM d, yyyy h:mm tt")
                             </div>
                         </div>
                     </div>
 
                     <!-- Messages Container -->
-                    <div class="p-4 overflow-y-auto" style="max-height: 500px;" id="messages-container">
+                    <div class="p-4 overflow-y-auto max-h-[500px]" id="messages-container">
                         @foreach (var message in Model.Conversation.Messages)
                         {
                             var isUser = message.Role.ToLower() == "user";
@@ -100,7 +100,7 @@
                                                 <i class="@Model.GetRoleIcon(message.Role) text-xs"></i>
                                             </div>
                                         </div>
-                                        <div class="@(isUser ? "bg-fuchsia-500 text-white" : Model.GetRoleColor(message.Role)) rounded-2xl px-4 py-3 max-w-[80%] @(isUser ? "rounded-tr-none" : "rounded-tl-none")">
+                                        <div class="@(isUser ? "bg-purple-500 text-white" : Model.GetRoleColor(message.Role)) rounded-2xl px-4 py-3 max-w-[80%] @(isUser ? "rounded-tr-none" : "rounded-tl-none")">
                                             <div class="text-xs opacity-75 mb-1">
                                                 @Model.GetRoleDisplayName(message.Role) - @message.CreatedAt.ToString("h:mm tt")
                                             </div>
@@ -120,7 +120,7 @@
                                 }
                                 else
                                 {
-                                    <div class="inline-block bg-amber-50 text-amber-700 rounded-lg px-4 py-2 text-sm">
+                                    <div class="inline-block bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 rounded-lg px-4 py-2 text-sm">
                                         <i class="fas fa-info-circle me-2"></i>@message.Content
                                     </div>
                                 }
@@ -131,11 +131,11 @@
                     <!-- Reply Form -->
                     @if (Model.Conversation.Status != "resolved")
                     {
-                        <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
                             <form method="post" asp-page-handler="SendReply" asp-route-id="@Model.Conversation.Id">
                                 <div class="flex gap-3">
-                                    <textarea asp-for="ReplyMessage" rows="2" placeholder="Type your message..." class="flex-grow px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white resize-none"></textarea>
-                                    <button type="submit" class="px-6 py-3 text-sm font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-xl hover:opacity-90 transition-opacity">
+                                    <textarea asp-for="ReplyMessage" rows="2" placeholder="Type your message..." class="flex-grow bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white resize-none"></textarea>
+                                    <button type="submit" class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
                                         <i class="fas fa-paper-plane me-2"></i> Send
                                     </button>
                                 </div>
@@ -144,7 +144,7 @@
                     }
                     else
                     {
-                        <div class="p-4 border-t border-gray-100 dark:border-gray-800 text-center text-slate-400 text-sm">
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-center text-gray-400 text-sm">
                             <i class="fas fa-check-circle me-2"></i> This conversation has been resolved.
                         </div>
                     }
@@ -152,103 +152,99 @@
             </div>
 
             <!-- Customer Info Column -->
-            <div class="col-span-12 lg:col-span-4">
-                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
-                        <h6 class="font-bold text-slate-700 dark:text-white">Customer Details</h6>
+            <div class="space-y-6">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="font-semibold text-gray-900 dark:text-white">Customer Details</h6>
                     </div>
-                    <div class="p-4">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-xs font-bold text-slate-400 uppercase">Name</label>
-                                <p class="text-sm text-slate-700 dark:text-white">@(Model.Conversation.CustomerName ?? "Not provided")</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-slate-400 uppercase">Email</label>
-                                <p class="text-sm text-slate-700 dark:text-white">@(Model.Conversation.CustomerEmail ?? "Not provided")</p>
-                            </div>
-                            @if (!string.IsNullOrEmpty(Model.Conversation.CurrentPageUrl))
-                            {
-                                <div>
-                                    <label class="text-xs font-bold text-slate-400 uppercase">Current Page</label>
-                                    <p class="text-sm text-blue-600 truncate">
-                                        <a href="@Model.Conversation.CurrentPageUrl" target="_blank" class="hover:underline">
-                                            @Model.Conversation.CurrentPageUrl
-                                        </a>
-                                    </p>
-                                </div>
-                            }
-                            @if (!string.IsNullOrEmpty(Model.Conversation.PrimaryIntent))
-                            {
-                                <div>
-                                    <label class="text-xs font-bold text-slate-400 uppercase">Primary Intent</label>
-                                    <p class="text-sm text-slate-700 dark:text-white capitalize">@Model.Conversation.PrimaryIntent.Replace("_", " ")</p>
-                                </div>
-                            }
+                    <div class="p-4 space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase">Name</label>
+                            <p class="text-sm text-gray-700 dark:text-white">@(Model.Conversation.CustomerName ?? "Not provided")</p>
                         </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
+                            <p class="text-sm text-gray-700 dark:text-white">@(Model.Conversation.CustomerEmail ?? "Not provided")</p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Conversation.CurrentPageUrl))
+                        {
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase">Current Page</label>
+                                <p class="text-sm text-purple-600 dark:text-purple-400 truncate">
+                                    <a href="@Model.Conversation.CurrentPageUrl" target="_blank" class="hover:underline">
+                                        @Model.Conversation.CurrentPageUrl
+                                    </a>
+                                </p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Conversation.PrimaryIntent))
+                        {
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase">Primary Intent</label>
+                                <p class="text-sm text-gray-700 dark:text-white capitalize">@Model.Conversation.PrimaryIntent.Replace("_", " ")</p>
+                            </div>
+                        }
                     </div>
                 </div>
 
                 <!-- Escalation Info -->
                 @if (Model.Conversation.IsEscalated)
                 {
-                    <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl mt-4">
-                        <div class="p-4 border-b border-gray-100 dark:border-gray-800 bg-orange-50 rounded-t-2xl">
-                            <h6 class="font-bold text-orange-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-orange-50 dark:bg-orange-900/20 rounded-t-lg">
+                            <h6 class="font-semibold text-orange-700 dark:text-orange-400">
                                 <i class="fas fa-exclamation-triangle me-2"></i> Escalation Info
                             </h6>
                         </div>
-                        <div class="p-4">
-                            <div class="space-y-4">
-                                @if (Model.Conversation.EscalatedAt.HasValue)
-                                {
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-400 uppercase">Escalated At</label>
-                                        <p class="text-sm text-slate-700 dark:text-white">@Model.Conversation.EscalatedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
-                                    </div>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.Conversation.EscalationReason))
-                                {
-                                    <div>
-                                        <label class="text-xs font-bold text-slate-400 uppercase">Reason</label>
-                                        <p class="text-sm text-slate-700 dark:text-white">@Model.Conversation.EscalationReason</p>
-                                    </div>
-                                }
+                        <div class="p-4 space-y-4">
+                            @if (Model.Conversation.EscalatedAt.HasValue)
+                            {
                                 <div>
-                                    <label class="text-xs font-bold text-slate-400 uppercase">Assigned Agent</label>
-                                    <p class="text-sm text-slate-700 dark:text-white">@(Model.Conversation.AssignedAgentEmail ?? "Not yet assigned")</p>
+                                    <label class="text-xs font-bold text-gray-400 uppercase">Escalated At</label>
+                                    <p class="text-sm text-gray-700 dark:text-white">@Model.Conversation.EscalatedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
                                 </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Conversation.EscalationReason))
+                            {
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase">Reason</label>
+                                    <p class="text-sm text-gray-700 dark:text-white">@Model.Conversation.EscalationReason</p>
+                                </div>
+                            }
+                            <div>
+                                <label class="text-xs font-bold text-gray-400 uppercase">Assigned Agent</label>
+                                <p class="text-sm text-gray-700 dark:text-white">@(Model.Conversation.AssignedAgentEmail ?? "Not yet assigned")</p>
                             </div>
                         </div>
                     </div>
                 }
 
                 <!-- Conversation Stats -->
-                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl mt-4">
-                    <div class="p-4 border-b border-gray-100 dark:border-gray-800">
-                        <h6 class="font-bold text-slate-700 dark:text-white">Conversation Stats</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="font-semibold text-gray-900 dark:text-white">Conversation Stats</h6>
                     </div>
                     <div class="p-4">
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center p-3 bg-slate-50 rounded-xl dark:bg-gray-800">
-                                <div class="text-2xl font-bold text-fuchsia-600">@Model.Conversation.Messages.Count</div>
-                                <div class="text-xs text-slate-400">Messages</div>
+                            <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="text-2xl font-bold text-purple-600">@Model.Conversation.Messages.Count</div>
+                                <div class="text-xs text-gray-400">Messages</div>
                             </div>
-                            <div class="text-center p-3 bg-slate-50 rounded-xl dark:bg-gray-800">
+                            <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                 <div class="text-2xl font-bold text-blue-600">@Model.Conversation.Messages.Count(m => m.Role.ToLower() == "user")</div>
-                                <div class="text-xs text-slate-400">Customer Msgs</div>
+                                <div class="text-xs text-gray-400">Customer Msgs</div>
                             </div>
                         </div>
                         @if (Model.Conversation.Rating.HasValue)
                         {
-                            <div class="mt-4 text-center p-3 bg-slate-50 rounded-xl dark:bg-gray-800">
+                            <div class="mt-4 text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                 <div class="text-2xl font-bold text-amber-500">
                                     @for (int i = 1; i <= 5; i++)
                                     {
                                         <i class="fas fa-star @(i <= Model.Conversation.Rating.Value ? "text-amber-400" : "text-gray-300")"></i>
                                     }
                                 </div>
-                                <div class="text-xs text-slate-400">Customer Rating</div>
+                                <div class="text-xs text-gray-400">Customer Rating</div>
                             </div>
                         }
                     </div>
@@ -258,12 +254,10 @@
     }
     else
     {
-        <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-            <div class="flex-auto p-6 text-center">
-                <i class="fas fa-exclamation-circle fa-4x text-red-300 mb-4"></i>
-                <h6 class="mb-2 dark:text-white">Conversation Not Found</h6>
-                <p class="text-sm text-gray-500 dark:text-gray-400">The conversation you're looking for doesn't exist or you don't have access to it.</p>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <i class="fas fa-exclamation-circle text-6xl text-red-300 dark:text-red-600 mb-4"></i>
+            <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Conversation Not Found</h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400">The conversation you're looking for doesn't exist or you don't have access to it.</p>
         </div>
     }
 </div>

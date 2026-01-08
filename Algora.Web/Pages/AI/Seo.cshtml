@@ -4,34 +4,47 @@
     ViewData["Title"] = "SEO Meta Tag Optimizer";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/AI">AI Tools</a></li>
-                    <li class="breadcrumb-item active">SEO Optimizer</li>
+            <nav class="flex mb-2" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="/AI" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                            AI Tools
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">SEO Optimizer</span>
+                        </div>
+                    </li>
                 </ol>
             </nav>
-            <h1 class="h3 mb-0">SEO Meta Tag Optimizer</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">SEO Meta Tag Optimizer</h1>
         </div>
     </div>
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Product Selection -->
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent">
-                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Select Product</h5>
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-box mr-2"></i>Select Product
+                    </h5>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <input type="text" id="productSearch" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Search products..." />
+                <div class="p-6">
+                    <div class="mb-4">
+                        <input type="text" id="productSearch" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Search products..." />
                     </div>
-                    <div id="productList" class="list-group list-group-flush" style="max-height: 500px; overflow-y: auto;">
+                    <div id="productList" class="space-y-1 max-h-96 overflow-y-auto">
                         @foreach (var product in Model.Products)
                         {
-                            <a href="#" class="list-group-item list-group-item-action product-item"
+                            var scoreClass = product.SeoScore >= 80 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : product.SeoScore >= 50 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                            <a href="#" class="product-item block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                                data-id="@product.Id"
                                data-title="@product.Title"
                                data-description="@product.Description"
@@ -39,19 +52,18 @@
                                data-vendor="@product.Vendor"
                                data-tags="@product.Tags"
                                data-seo-score="@product.SeoScore">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1 text-truncate" style="max-width: 200px;">@product.Title</h6>
-                                        <small class="text-muted">@(product.Vendor ?? "No vendor")</small>
+                                <div class="flex justify-between items-center">
+                                    <div class="min-w-0 flex-1">
+                                        <h6 class="font-medium text-gray-900 dark:text-white text-sm truncate">@product.Title</h6>
+                                        <small class="text-gray-500 dark:text-gray-400">@(product.Vendor ?? "No vendor")</small>
                                     </div>
                                     @if (product.SeoScore > 0)
                                     {
-                                        var scoreClass = product.SeoScore >= 80 ? "bg-success" : product.SeoScore >= 50 ? "bg-warning" : "bg-danger";
-                                        <span class="badge @scoreClass">@product.SeoScore</span>
+                                        <span class="@scoreClass text-xs font-medium px-2.5 py-0.5 rounded ml-2">@product.SeoScore</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">No SEO</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 ml-2">No SEO</span>
                                     }
                                 </div>
                             </a>
@@ -62,92 +74,103 @@
         </div>
 
         <!-- SEO Optimization Panel -->
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO Optimization</h5>
-                    <button type="button" id="optimizeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85" disabled>
-                        <i class="fas fa-magic me-2"></i>Optimize with AI
+        <div class="lg:col-span-2">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <i class="fas fa-search mr-2"></i>SEO Optimization
+                    </h5>
+                    <button type="button" id="optimizeBtn" disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-magic mr-2"></i>Optimize with AI
                     </button>
                 </div>
-                <div class="card-body">
-                    <div id="noProductSelected" class="text-center py-5">
-                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Select a product to optimize its SEO</p>
+                <div class="p-6">
+                    <div id="noProductSelected" class="text-center py-12">
+                        <i class="fas fa-search text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">Select a product to optimize its SEO</p>
                     </div>
 
-                    <div id="seoPanel" class="d-none">
+                    <div id="seoPanel" class="hidden">
                         <!-- Product Info -->
-                        <div class="mb-4 p-3 bg-light rounded">
-                            <h5 id="selectedProductTitle" class="mb-1"></h5>
-                            <p class="text-muted mb-0" id="selectedProductMeta"></p>
+                        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <h5 id="selectedProductTitle" class="font-semibold text-gray-900 dark:text-white mb-1"></h5>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm" id="selectedProductMeta"></p>
                         </div>
 
                         <!-- SEO Score -->
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="mb-0">SEO Score</h6>
-                                <span id="seoScoreBadge" class="badge bg-secondary fs-5">--</span>
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h6 class="text-sm font-medium text-gray-900 dark:text-white">SEO Score</h6>
+                                <span id="seoScoreBadge" class="bg-gray-100 text-gray-800 text-lg font-bold px-3 py-1 rounded dark:bg-gray-700 dark:text-gray-300">--</span>
                             </div>
-                            <div class="progress" style="height: 10px;">
-                                <div id="seoScoreBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                <div id="seoScoreBar" class="bg-gray-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <small id="seoScoreExplanation" class="text-muted"></small>
+                            <small id="seoScoreExplanation" class="text-gray-500 dark:text-gray-400"></small>
                         </div>
 
                         <!-- Loading -->
-                        <div id="loadingPanel" class="text-center py-4 d-none">
-                            <div class="spinner-border text-success" role="status"></div>
-                            <p class="text-muted mt-2">Analyzing and optimizing SEO...</p>
+                        <div id="loadingPanel" class="text-center py-8 hidden">
+                            <div role="status">
+                                <svg aria-hidden="true" class="inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-green-500" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 dark:text-gray-400 mt-4">Analyzing and optimizing SEO...</p>
                         </div>
 
                         <!-- Meta Title -->
                         <div class="mb-4" id="metaTitleSection">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80 d-flex justify-content-between">
-                                <span><i class="fas fa-heading me-2"></i>Meta Title</span>
-                                <small class="text-muted"><span id="metaTitleCount">0</span>/60 characters</small>
+                            <label class="flex justify-between mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                <span><i class="fas fa-heading mr-2"></i>Meta Title</span>
+                                <small class="text-gray-500 dark:text-gray-400 font-normal"><span id="metaTitleCount">0</span>/60 characters</small>
                             </label>
-                            <input type="text" id="metaTitle" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" maxlength="60" placeholder="Enter meta title..." />
-                            <small class="text-muted">The title that appears in search engine results</small>
+                            <input type="text" id="metaTitle" maxlength="60" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter meta title..." />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">The title that appears in search engine results</p>
                         </div>
 
                         <!-- Meta Description -->
                         <div class="mb-4" id="metaDescSection">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80 d-flex justify-content-between">
-                                <span><i class="fas fa-align-left me-2"></i>Meta Description</span>
-                                <small class="text-muted"><span id="metaDescCount">0</span>/155 characters</small>
+                            <label class="flex justify-between mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                <span><i class="fas fa-align-left mr-2"></i>Meta Description</span>
+                                <small class="text-gray-500 dark:text-gray-400 font-normal"><span id="metaDescCount">0</span>/155 characters</small>
                             </label>
-                            <textarea id="metaDescription" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" rows="3" maxlength="155" placeholder="Enter meta description..."></textarea>
-                            <small class="text-muted">A compelling description shown in search results</small>
+                            <textarea id="metaDescription" rows="3" maxlength="155" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter meta description..."></textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">A compelling description shown in search results</p>
                         </div>
 
                         <!-- Focus Keyword -->
                         <div class="mb-4" id="focusKeywordSection">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80"><i class="fas fa-key me-2"></i>Focus Keyword</label>
-                            <input type="text" id="focusKeyword" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Primary keyword phrase..." />
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                <i class="fas fa-key mr-2"></i>Focus Keyword
+                            </label>
+                            <input type="text" id="focusKeyword" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Primary keyword phrase..." />
                         </div>
 
                         <!-- Keywords -->
-                        <div class="mb-4" id="keywordsSection">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80"><i class="fas fa-tags me-2"></i>Related Keywords</label>
-                            <div id="keywordTags" class="d-flex flex-wrap gap-2 mb-2"></div>
-                            <input type="text" id="keywordsInput" class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" placeholder="Comma-separated keywords..." />
+                        <div class="mb-6" id="keywordsSection">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                <i class="fas fa-tags mr-2"></i>Related Keywords
+                            </label>
+                            <div id="keywordTags" class="flex flex-wrap gap-2 mb-2"></div>
+                            <input type="text" id="keywordsInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Comma-separated keywords..." />
                         </div>
 
                         <!-- Action Buttons -->
-                        <div id="actionButtons" class="d-flex gap-2 d-none">
-                            <button type="button" id="applyBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-check me-2"></i>Save SEO Data
+                        <div id="actionButtons" class="hidden flex flex-wrap gap-2">
+                            <button type="button" id="applyBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                                <i class="fas fa-check mr-2"></i>Save SEO Data
                             </button>
-                            <button type="button" id="reoptimizeBtn" class="inline-block px-6 py-3 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer ease-soft-in leading-pro tracking-tight-soft bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85">
-                                <i class="fas fa-redo me-2"></i>Re-optimize
+                            <button type="button" id="reoptimizeBtn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+                                <i class="fas fa-redo mr-2"></i>Re-optimize
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="alertContainer" class="mt-3"></div>
+            <div id="alertContainer" class="mt-4"></div>
         </div>
     </div>
 </div>
@@ -186,22 +209,20 @@
             productItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    productItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+                    productItems.forEach(i => i.classList.remove('bg-purple-50', 'dark:bg-purple-900/20'));
+                    this.classList.add('bg-purple-50', 'dark:bg-purple-900/20');
 
                     selectedProductId = this.dataset.id;
-                    document.getElementById('noProductSelected').classList.add('d-none');
-                    document.getElementById('seoPanel').classList.remove('d-none');
+                    document.getElementById('noProductSelected').classList.add('hidden');
+                    document.getElementById('seoPanel').classList.remove('hidden');
 
                     document.getElementById('selectedProductTitle').textContent = this.dataset.title;
                     document.getElementById('selectedProductMeta').textContent =
                         `${this.dataset.vendor || 'No vendor'} • ${this.dataset.type || 'No type'}`;
 
-                    // Update SEO score
                     const seoScore = parseInt(this.dataset.seoScore) || 0;
                     updateSeoScore(seoScore);
 
-                    // Clear fields
                     metaTitle.value = '';
                     metaDescription.value = '';
                     document.getElementById('focusKeyword').value = '';
@@ -211,9 +232,8 @@
                     document.getElementById('metaDescCount').textContent = '0';
 
                     optimizeBtn.disabled = false;
-                    document.getElementById('actionButtons').classList.add('d-none');
+                    document.getElementById('actionButtons').classList.add('hidden');
 
-                    // Load existing SEO data if available
                     loadExistingSeoData(selectedProductId);
                 });
             });
@@ -231,7 +251,7 @@
                         updateSeoScore(data.data.seoScore || 0, data.data.seoScoreExplanation);
                         document.getElementById('metaTitleCount').textContent = metaTitle.value.length;
                         document.getElementById('metaDescCount').textContent = metaDescription.value.length;
-                        document.getElementById('actionButtons').classList.remove('d-none');
+                        document.getElementById('actionButtons').classList.remove('hidden');
                     }
                 } catch (error) {
                     console.error('Error loading SEO data:', error);
@@ -241,8 +261,8 @@
             async function optimizeSeo() {
                 if (!selectedProductId) return;
 
-                document.getElementById('loadingPanel').classList.remove('d-none');
-                document.getElementById('actionButtons').classList.add('d-none');
+                document.getElementById('loadingPanel').classList.remove('hidden');
+                document.getElementById('actionButtons').classList.add('hidden');
                 optimizeBtn.disabled = true;
 
                 try {
@@ -266,15 +286,15 @@
                         updateSeoScore(result.data.seoScore || 0, result.data.seoScoreExplanation);
                         document.getElementById('metaTitleCount').textContent = metaTitle.value.length;
                         document.getElementById('metaDescCount').textContent = metaDescription.value.length;
-                        document.getElementById('actionButtons').classList.remove('d-none');
+                        document.getElementById('actionButtons').classList.remove('hidden');
                         showAlert('SEO optimized successfully!', 'success');
                     } else {
-                        showAlert(result.error || 'Failed to optimize SEO', 'danger');
+                        showAlert(result.error || 'Failed to optimize SEO', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 } finally {
-                    document.getElementById('loadingPanel').classList.add('d-none');
+                    document.getElementById('loadingPanel').classList.add('hidden');
                     optimizeBtn.disabled = false;
                 }
             }
@@ -299,22 +319,23 @@
 
                     if (result.success) {
                         showAlert('SEO data saved successfully!', 'success');
-                        // Update the product item badge
                         const productItem = document.querySelector(`.product-item[data-id="${selectedProductId}"]`);
                         if (productItem) {
                             const score = parseInt(document.getElementById('seoScoreBadge').textContent) || 0;
                             productItem.dataset.seoScore = score;
-                            const badge = productItem.querySelector('.badge');
+                            const badge = productItem.querySelector('span:last-child');
                             if (badge) {
-                                badge.className = `badge ${score >= 80 ? 'bg-success' : score >= 50 ? 'bg-warning' : 'bg-danger'}`;
+                                badge.className = score >= 80 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 text-xs font-medium px-2.5 py-0.5 rounded ml-2' :
+                                                  score >= 50 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 text-xs font-medium px-2.5 py-0.5 rounded ml-2' :
+                                                  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 text-xs font-medium px-2.5 py-0.5 rounded ml-2';
                                 badge.textContent = score;
                             }
                         }
                     } else {
-                        showAlert(result.error || 'Failed to save SEO data', 'danger');
+                        showAlert(result.error || 'Failed to save SEO data', 'error');
                     }
                 } catch (error) {
-                    showAlert('Error: ' + error.message, 'danger');
+                    showAlert('Error: ' + error.message, 'error');
                 }
             });
 
@@ -327,14 +348,14 @@
                 scoreBar.style.width = `${score}%`;
 
                 if (score >= 80) {
-                    scoreBadge.className = 'badge bg-success fs-5';
-                    scoreBar.className = 'progress-bar bg-success';
+                    scoreBadge.className = 'bg-green-100 text-green-800 text-lg font-bold px-3 py-1 rounded dark:bg-green-900 dark:text-green-300';
+                    scoreBar.className = 'bg-green-500 h-2.5 rounded-full transition-all duration-300';
                 } else if (score >= 50) {
-                    scoreBadge.className = 'badge bg-warning fs-5';
-                    scoreBar.className = 'progress-bar bg-warning';
+                    scoreBadge.className = 'bg-yellow-100 text-yellow-800 text-lg font-bold px-3 py-1 rounded dark:bg-yellow-900 dark:text-yellow-300';
+                    scoreBar.className = 'bg-yellow-500 h-2.5 rounded-full transition-all duration-300';
                 } else {
-                    scoreBadge.className = 'badge bg-danger fs-5';
-                    scoreBar.className = 'progress-bar bg-danger';
+                    scoreBadge.className = 'bg-red-100 text-red-800 text-lg font-bold px-3 py-1 rounded dark:bg-red-900 dark:text-red-300';
+                    scoreBar.className = 'bg-red-500 h-2.5 rounded-full transition-all duration-300';
                 }
 
                 scoreExpl.textContent = explanation;
@@ -343,19 +364,26 @@
             function updateKeywordTags(keywords) {
                 const container = document.getElementById('keywordTags');
                 container.innerHTML = keywords.map(k =>
-                    `<span class="badge bg-secondary">${k}</span>`
+                    `<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">${k}</span>`
                 ).join('');
             }
         });
 
         function showAlert(message, type) {
             const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show`;
-            alert.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-            container.innerHTML = '';
-            container.appendChild(alert);
-            setTimeout(() => alert.remove(), 5000);
+            const bgColor = type === 'success' ? 'bg-green-50 text-green-800 dark:bg-gray-800 dark:text-green-400' : 'bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500';
+
+            container.innerHTML = `
+                <div class="flex items-center p-4 mb-4 text-sm rounded-lg ${bgColor}" role="alert">
+                    <i class="fas ${iconClass} mr-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 hover:bg-gray-200 dark:hover:bg-gray-700" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            setTimeout(() => container.innerHTML = '', 5000);
         }
     </script>
 }

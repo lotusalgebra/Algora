@@ -11,15 +11,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen font-sans">
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-4">
-                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600 transition-colors">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -31,13 +42,13 @@
 
         @if (!string.IsNullOrEmpty(Model.SuccessMessage))
         {
-            <div class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-xl">
+            <div class="flex items-center p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-xl">
                 <i class="fas fa-check-circle mr-2"></i>@Model.SuccessMessage
             </div>
         }
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <div class="p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
+            <div class="flex items-center p-4 mb-6 text-sm text-red-700 bg-red-100 rounded-xl">
                 <i class="fas fa-exclamation-circle mr-2"></i>@Model.ErrorMessage
             </div>
         }
@@ -100,7 +111,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-@Math.Min(4, Model.Tiers.Count) gap-4">
                         @foreach (var tier in Model.Tiers)
                         {
-                            <div class="text-center p-4 rounded-xl border border-gray-200">
+                            <div class="text-center p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
                                 <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center" style="background-color: @(tier.Color ?? "#6b7280")">
                                     <i class="@(tier.Icon ?? "fas fa-medal") text-white"></i>
                                 </div>
@@ -203,7 +214,7 @@
                             @foreach (var reward in Model.AvailableRewards.Take(6))
                             {
                                 var canRedeem = Model.Membership.PointsBalance >= reward.PointsCost;
-                                <div class="p-4 rounded-xl border @(canRedeem ? "border-purple-200 bg-purple-50" : "border-gray-200") relative">
+                                <div class="p-4 rounded-xl border @(canRedeem ? "border-purple-200 bg-purple-50" : "border-gray-200") relative hover:shadow-md transition-shadow">
                                     @if (canRedeem)
                                     {
                                         <span class="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full"></span>
@@ -242,7 +253,7 @@
                     <div class="divide-y divide-gray-100">
                         @foreach (var entry in Model.PointsHistory)
                         {
-                            <div class="p-4 flex items-center justify-between">
+                            <div class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <i class="@Model.GetPointsTypeIcon(entry.Type) text-lg"></i>
                                     <div>
@@ -269,7 +280,7 @@
                     <p class="text-white/80 text-sm mb-4">Share your code and you both earn @Model.Program.ReferralBonus @Model.Program.PointsName.ToLower()!</p>
                     <div class="bg-white rounded-xl p-4 inline-flex items-center gap-3">
                         <span class="font-mono text-lg font-bold text-gray-800">@Model.Membership.ReferralCode</span>
-                        <button onclick="navigator.clipboard.writeText('@Model.Membership.ReferralCode')" class="text-purple-600 hover:text-purple-700">
+                        <button onclick="navigator.clipboard.writeText('@Model.Membership.ReferralCode')" class="text-purple-600 hover:text-purple-700 transition-colors">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>

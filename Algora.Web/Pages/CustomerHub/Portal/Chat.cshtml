@@ -14,8 +14,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .chat-container { height: calc(100vh - 200px); min-height: 400px; }
         .message-bubble { max-width: 80%; }
@@ -25,12 +36,12 @@
         @@keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen font-sans">
     <div class="max-w-2xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-4">
-                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600">
+                <a href="/portal?Email=@Model.Email" class="w-10 h-10 bg-white rounded-full shadow flex items-center justify-center text-gray-500 hover:text-purple-600 transition-colors">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div>
@@ -79,16 +90,16 @@
             <!-- Input -->
             <div class="border-t border-gray-100 p-4">
                 <div class="flex gap-3">
-                    <input type="text" id="messageInput" class="flex-grow px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Type your message..." />
+                    <input type="text" id="messageInput" class="flex-grow px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all" placeholder="Type your message..." />
                     <button id="sendBtn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl hover:opacity-90 transition-opacity">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
                 <div class="flex justify-between mt-3">
-                    <button id="escalateBtn" class="text-sm text-gray-500 hover:text-purple-600">
+                    <button id="escalateBtn" class="text-sm text-gray-500 hover:text-purple-600 transition-colors">
                         <i class="fas fa-headset mr-1"></i> Talk to a human
                     </button>
-                    <button id="endChatBtn" class="text-sm text-gray-500 hover:text-purple-600">
+                    <button id="endChatBtn" class="text-sm text-gray-500 hover:text-purple-600 transition-colors">
                         <i class="fas fa-times-circle mr-1"></i> End chat
                     </button>
                 </div>
@@ -100,14 +111,14 @@
             <div class="bg-white rounded-2xl p-6 max-w-sm mx-4">
                 <h3 class="text-lg font-semibold text-center mb-4">Was this helpful?</h3>
                 <div class="flex justify-center gap-4 mb-4">
-                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50" data-helpful="true">
+                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all" data-helpful="true">
                         <i class="fas fa-thumbs-up text-2xl text-green-500"></i>
                     </button>
-                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-red-500 hover:bg-red-50" data-helpful="false">
+                    <button class="feedback-btn p-4 rounded-xl border-2 border-gray-200 hover:border-red-500 hover:bg-red-50 transition-all" data-helpful="false">
                         <i class="fas fa-thumbs-down text-2xl text-red-500"></i>
                     </button>
                 </div>
-                <button id="skipFeedback" class="w-full text-sm text-gray-500 hover:text-purple-600">Skip</button>
+                <button id="skipFeedback" class="w-full text-sm text-gray-500 hover:text-purple-600 transition-colors">Skip</button>
             </div>
         </div>
     </div>
@@ -183,7 +194,7 @@
                             ${actions && actions.length ? `
                                 <div class="flex flex-wrap gap-2 mt-3">
                                     ${actions.map(a => `
-                                        <a href="${a.value}" class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm hover:bg-opacity-30">
+                                        <a href="${a.value}" class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm hover:bg-opacity-30 transition-all">
                                             ${a.label}
                                         </a>
                                     `).join('')}
