@@ -83,6 +83,11 @@
                     </button>
                 </li>
                 <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="templates-tab" data-tabs-target="#templates" type="button" role="tab">
+                        <i class="fas fa-file-code me-2"></i> Templates
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
                     <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="subscribers-tab" data-tabs-target="#subscribers" type="button" role="tab">
                         <i class="fas fa-users me-2"></i> Subscribers
                     </button>
@@ -168,6 +173,61 @@
                         <p class="text-gray-500 dark:text-gray-400 mb-4">No campaigns yet. Create your first email campaign to get started.</p>
                         <button onclick="openCampaignModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
                             <i class="fas fa-plus me-2"></i> Create Campaign
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Templates Tab -->
+            <div class="hidden p-6" id="templates" role="tabpanel">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Reusable email templates for campaigns and automations</p>
+                    <button onclick="openTemplateModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg hover:bg-gradient-to-bl">
+                        <i class="fas fa-plus me-2"></i> Create Template
+                    </button>
+                </div>
+                @if (Model.Templates.Any())
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach (var template in Model.Templates)
+                        {
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900 dark:text-white">@template.Name</h4>
+                                    <span class="px-2 py-0.5 text-xs font-medium rounded @(template.IsActive ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300")">
+                                        @(template.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 truncate">@template.Subject</p>
+                                <div class="flex items-center justify-between text-xs text-gray-500">
+                                    <span class="px-2 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 rounded">@template.TemplateType</span>
+                                    <span>Created @template.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                </div>
+                                <div class="flex gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                    <button onclick="editTemplate(@template.Id)" class="flex-1 px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-400">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button onclick="duplicateTemplate(@template.Id)" class="flex-1 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400">
+                                        <i class="fas fa-copy me-1"></i> Duplicate
+                                    </button>
+                                    <form method="post" asp-page-handler="DeleteTemplate" class="flex-1">
+                                        <input type="hidden" name="templateId" value="@template.Id" />
+                                        <button type="submit" onclick="return confirm('Delete this template?')" class="w-full px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400">
+                                            <i class="fas fa-trash me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-file-code text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No email templates yet. Create reusable templates for your campaigns.</p>
+                        <button onclick="openTemplateModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg hover:bg-gradient-to-bl">
+                            <i class="fas fa-plus me-2"></i> Create Template
                         </button>
                     </div>
                 }
@@ -362,6 +422,64 @@
     </div>
 </div>
 
+<!-- Create Email Template Modal -->
+<div id="templateModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create Email Template</h3>
+                <button type="button" onclick="closeTemplateModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="CreateTemplate">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Template Name</label>
+                        <input type="text" name="templateName" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Welcome Email" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Template Type</label>
+                        <select name="templateType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="marketing">Marketing</option>
+                            <option value="transactional">Transactional</option>
+                            <option value="welcome">Welcome</option>
+                            <option value="order_confirmation">Order Confirmation</option>
+                            <option value="shipping">Shipping Update</option>
+                            <option value="abandoned_cart">Abandoned Cart</option>
+                            <option value="review_request">Review Request</option>
+                            <option value="newsletter">Newsletter</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Subject Line</label>
+                    <input type="text" name="subject" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="{{customer_name}}, check out what's new!" />
+                    <p class="mt-1 text-xs text-gray-500">Use {{variable}} for dynamic content</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Preview Text</label>
+                    <input type="text" name="previewText" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="This text appears in email previews" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Email Body (HTML)</label>
+                    <textarea name="body" rows="10" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono" placeholder="<html>
+<body>
+  <h1>Hello {{customer_name}}</h1>
+  <p>Thank you for your order!</p>
+</body>
+</html>"></textarea>
+                    <p class="mt-1 text-xs text-gray-500">Available variables: {{customer_name}}, {{customer_email}}, {{order_number}}, {{shop_name}}, {{shop_url}}</p>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeTemplateModal()" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg hover:bg-gradient-to-bl">Create Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Create Campaign Modal -->
 <div id="campaignModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -450,6 +568,32 @@
 
         function openListModal() {
             alert('Create list modal coming soon!');
+        }
+
+        function openTemplateModal() {
+            document.getElementById('templateModal').classList.remove('hidden');
+            document.getElementById('templateModal').classList.add('flex');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.add('hidden');
+            document.getElementById('templateModal').classList.remove('flex');
+        }
+
+        function editTemplate(templateId) {
+            alert('Edit template ' + templateId + ' - coming soon!');
+        }
+
+        function duplicateTemplate(templateId) {
+            if (confirm('Duplicate this template?')) {
+                // Submit form to duplicate
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.innerHTML = `<input type="hidden" name="templateId" value="${templateId}" />`;
+                form.action = '?handler=DuplicateTemplate';
+                document.body.appendChild(form);
+                form.submit();
+            }
         }
     </script>
 }

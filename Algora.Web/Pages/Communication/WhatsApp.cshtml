@@ -21,6 +21,20 @@
         </div>
     </div>
 
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@Model.ErrorMessage
+        </div>
+    }
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
@@ -124,8 +138,18 @@
                                         </td>
                                         <td class="px-6 py-4">@template.Language</td>
                                         <td class="px-6 py-4 text-center">
-                                            <button class="text-purple-600 hover:text-purple-800 dark:text-purple-400 me-2"><i class="fas fa-edit"></i></button>
-                                            <button class="text-red-600 hover:text-red-800 dark:text-red-400"><i class="fas fa-trash"></i></button>
+                                            @if (template.Status == "PENDING" || template.Status == "DRAFT")
+                                            {
+                                                <form method="post" asp-page-handler="SubmitTemplate" class="inline">
+                                                    <input type="hidden" name="templateId" value="@template.Id" />
+                                                    <button type="submit" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 me-2" title="Submit for Approval"><i class="fas fa-paper-plane"></i></button>
+                                                </form>
+                                            }
+                                            <button class="text-purple-600 hover:text-purple-800 dark:text-purple-400 me-2" title="Edit"><i class="fas fa-edit"></i></button>
+                                            <form method="post" asp-page-handler="DeleteTemplate" class="inline">
+                                                <input type="hidden" name="templateId" value="@template.Id" />
+                                                <button type="submit" onclick="return confirm('Delete this template?')" class="text-red-600 hover:text-red-800 dark:text-red-400" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 }
@@ -271,7 +295,7 @@
 
 <!-- Template Modal -->
 <div id="templateModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div class="p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create WhatsApp Template</h3>
@@ -280,22 +304,50 @@
                 </button>
             </div>
             <form method="post" asp-page-handler="CreateTemplate">
-                <div class="mb-4">
-                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Template Name</label>
-                    <input type="text" name="templateName" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Template Name</label>
+                        <input type="text" name="templateName" required pattern="[a-z_]+" title="Lowercase letters and underscores only" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="order_confirmation" />
+                        <p class="mt-1 text-xs text-gray-500">Lowercase letters and underscores only</p>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Language</label>
+                        <select name="language" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="en">English (en)</option>
+                            <option value="en_US">English US (en_US)</option>
+                            <option value="en_GB">English UK (en_GB)</option>
+                            <option value="es">Spanish (es)</option>
+                            <option value="fr">French (fr)</option>
+                            <option value="de">German (de)</option>
+                            <option value="pt_BR">Portuguese BR (pt_BR)</option>
+                            <option value="hi">Hindi (hi)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="mb-4">
                     <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Category</label>
                     <select name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <option value="MARKETING">Marketing</option>
-                        <option value="UTILITY">Utility</option>
-                        <option value="AUTHENTICATION">Authentication</option>
+                        <option value="MARKETING">Marketing - Promotional content, offers, updates</option>
+                        <option value="UTILITY">Utility - Order updates, shipping notifications</option>
+                        <option value="AUTHENTICATION">Authentication - OTP, verification codes</option>
                     </select>
                 </div>
                 <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Header Text (Optional)</label>
+                    <input type="text" name="headerText" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Your Order Update" />
+                </div>
+                <div class="mb-4">
                     <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Message Body</label>
-                    <textarea name="body" rows="4" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Hello {{1}}, your order {{2}} is confirmed."></textarea>
-                    <p class="mt-1 text-xs text-gray-500">Use {{1}}, {{2}}, etc. for variables</p>
+                    <textarea name="body" rows="5" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Hello {{1}}, your order {{2}} has been confirmed. Expected delivery: {{3}}."></textarea>
+                    <p class="mt-1 text-xs text-gray-500">Use {{1}}, {{2}}, etc. for variables. Max 1024 characters.</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Footer Text (Optional)</label>
+                    <input type="text" name="footerText" maxlength="60" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Reply STOP to unsubscribe" />
+                    <p class="mt-1 text-xs text-gray-500">Max 60 characters</p>
+                </div>
+                <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-yellow-800 dark:text-yellow-300"><i class="fas fa-info-circle me-2"></i>Templates must be approved by Meta before use. Review usually takes 24-48 hours.</p>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeTemplateModal()" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>

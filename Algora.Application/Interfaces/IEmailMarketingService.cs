@@ -54,4 +54,14 @@ public interface IEmailMarketingService
     Task<bool> ActivateAutomationAsync(int automationId);
     Task<bool> DeactivateAutomationAsync(int automationId);
     Task<bool> EnrollInAutomationAsync(int automationId, string email, int? customerId = null);
+
+    // ===== Template Management =====
+    Task<EmailTemplateDto?> GetTemplateAsync(int templateId);
+    Task<IEnumerable<EmailTemplateDto>> GetTemplatesAsync(string shopDomain);
+    Task<EmailTemplateDto> CreateTemplateAsync(string shopDomain, CreateEmailTemplateDto dto);
+    Task<EmailTemplateDto> UpdateTemplateAsync(int templateId, UpdateEmailTemplateDto dto);
+    Task<bool> DeleteTemplateAsync(int templateId);
+    Task<bool> ActivateTemplateAsync(int templateId);
+    Task<bool> DeactivateTemplateAsync(int templateId);
+    Task<EmailTemplateDto?> DuplicateTemplateAsync(int templateId);
 }

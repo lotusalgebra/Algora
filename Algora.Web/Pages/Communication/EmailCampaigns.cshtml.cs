@@ -21,6 +21,7 @@ public class EmailCampaignsModel : PageModel
     public decimal AvgClickRate { get; set; }
 
     public List<EmailCampaignDto> Campaigns { get; set; } = new();
+    public List<EmailTemplateDto> Templates { get; set; } = new();
     public List<EmailSubscriberViewModel> Subscribers { get; set; } = new();
     public List<EmailListViewModel> Lists { get; set; } = new();
     public List<EmailAutomationViewModel> Automations { get; set; } = new();
@@ -71,6 +72,9 @@ public class EmailCampaignsModel : PageModel
                 TriggerType = a.TriggerType,
                 IsActive = a.IsActive
             }).ToList();
+
+            // Load templates
+            Templates = (await _emailService.GetTemplatesAsync(shopDomain)).ToList();
 
             // Calculate stats
             CampaignsSent = Campaigns.Count(c => c.Status == "Sent");
@@ -186,6 +190,65 @@ public class EmailCampaignsModel : PageModel
     {
         // TODO: Save settings via ICommunicationSettingsService
         TempData["Success"] = "Email settings saved successfully!";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateTemplateAsync(string templateName, string templateType, string subject, string? previewText, string body)
+    {
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var dto = new CreateEmailTemplateDto
+            {
+                Name = templateName,
+                Subject = subject,
+                PreviewText = previewText,
+                Body = body,
+                TemplateType = templateType
+            };
+
+            await _emailService.CreateTemplateAsync(shopDomain, dto);
+            TempData["Success"] = $"Template '{templateName}' created successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error creating template: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteTemplateAsync(int templateId)
+    {
+        try
+        {
+            await _emailService.DeleteTemplateAsync(templateId);
+            TempData["Success"] = "Template deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting template: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDuplicateTemplateAsync(int templateId)
+    {
+        try
+        {
+            var duplicate = await _emailService.DuplicateTemplateAsync(templateId);
+            if (duplicate != null)
+            {
+                TempData["Success"] = $"Template duplicated as '{duplicate.Name}'!";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error duplicating template: {ex.Message}";
+        }
+
         return RedirectToPage();
     }
 

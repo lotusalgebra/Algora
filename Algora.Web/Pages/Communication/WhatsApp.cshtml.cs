@@ -1,3 +1,5 @@
+using Algora.WhatsApp.DTOs;
+using Algora.WhatsApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -5,6 +7,16 @@ namespace Algora.Web.Pages.Communication;
 
 public class WhatsAppModel : PageModel
 {
+    private readonly IWhatsAppService _whatsAppService;
+
+    public WhatsAppModel(IWhatsAppService whatsAppService)
+    {
+        _whatsAppService = whatsAppService;
+    }
+
+    public string? SuccessMessage { get; set; }
+    public string? ErrorMessage { get; set; }
+
     public int TemplateCount { get; set; }
     public int CampaignCount { get; set; }
     public int MessagesSent { get; set; }
@@ -17,10 +29,66 @@ public class WhatsAppModel : PageModel
     [BindProperty]
     public WhatsAppSettingsViewModel Settings { get; set; } = new();
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
-        // TODO: Load from WhatsApp service when integrated
-        // For now, show demo data
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            // Load templates from service
+            var templates = await _whatsAppService.GetTemplatesAsync(shopDomain);
+            Templates = templates.Select(t => new WhatsAppTemplateViewModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Category = t.Category,
+                Status = t.Status,
+                Language = t.Language
+            }).ToList();
+            TemplateCount = Templates.Count;
+
+            // Load campaigns from service
+            var campaigns = await _whatsAppService.GetCampaignsAsync(shopDomain);
+            Campaigns = campaigns.Select(c => new WhatsAppCampaignViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                TemplateName = c.TemplateName ?? "",
+                TotalRecipients = c.TotalRecipients,
+                TotalSent = c.TotalSent,
+                TotalDelivered = c.TotalDelivered,
+                Status = c.Status
+            }).ToList();
+            CampaignCount = Campaigns.Count;
+
+            // Load conversations from service
+            var conversations = await _whatsAppService.GetConversationsAsync(shopDomain, "Open");
+            Conversations = conversations.Items.Select(c => new WhatsAppConversationViewModel
+            {
+                Id = c.Id,
+                CustomerName = c.CustomerName ?? "Unknown",
+                PhoneNumber = c.PhoneNumber,
+                LastMessageAt = c.LastMessageAt ?? c.CreatedAt,
+                Status = c.Status
+            }).ToList();
+            ActiveConversations = conversations.TotalCount;
+
+            // Load message stats
+            var messages = await _whatsAppService.GetMessagesAsync(shopDomain, 1, 1);
+            MessagesSent = messages.TotalCount;
+        }
+        catch (Exception)
+        {
+            // Load demo data if service fails
+            LoadDemoData();
+        }
+
+        SuccessMessage = TempData["Success"]?.ToString();
+        ErrorMessage = TempData["Error"]?.ToString();
+    }
+
+    private void LoadDemoData()
+    {
         TemplateCount = 3;
         CampaignCount = 2;
         MessagesSent = 1250;
@@ -28,22 +96,22 @@ public class WhatsAppModel : PageModel
 
         Templates = new List<WhatsAppTemplateViewModel>
         {
-            new() { Name = "order_confirmation", Category = "UTILITY", Status = "APPROVED", Language = "en" },
-            new() { Name = "shipping_update", Category = "UTILITY", Status = "APPROVED", Language = "en" },
-            new() { Name = "promotional_offer", Category = "MARKETING", Status = "PENDING", Language = "en" }
+            new() { Id = 1, Name = "order_confirmation", Category = "UTILITY", Status = "APPROVED", Language = "en" },
+            new() { Id = 2, Name = "shipping_update", Category = "UTILITY", Status = "APPROVED", Language = "en" },
+            new() { Id = 3, Name = "promotional_offer", Category = "MARKETING", Status = "PENDING", Language = "en" }
         };
 
         Campaigns = new List<WhatsAppCampaignViewModel>
         {
-            new() { Name = "Holiday Sale 2024", TemplateName = "promotional_offer", TotalRecipients = 500, TotalSent = 485, TotalDelivered = 478, Status = "Sent" },
-            new() { Name = "New Year Promo", TemplateName = "promotional_offer", TotalRecipients = 1000, TotalSent = 0, TotalDelivered = 0, Status = "Scheduled" }
+            new() { Id = 1, Name = "Holiday Sale 2024", TemplateName = "promotional_offer", TotalRecipients = 500, TotalSent = 485, TotalDelivered = 478, Status = "Sent" },
+            new() { Id = 2, Name = "New Year Promo", TemplateName = "promotional_offer", TotalRecipients = 1000, TotalSent = 0, TotalDelivered = 0, Status = "Scheduled" }
         };
 
         Conversations = new List<WhatsAppConversationViewModel>
         {
-            new() { CustomerName = "John Doe", PhoneNumber = "+1 234 567 8901", LastMessageAt = DateTime.Now.AddMinutes(-15), Status = "Open" },
-            new() { CustomerName = "Jane Smith", PhoneNumber = "+1 234 567 8902", LastMessageAt = DateTime.Now.AddHours(-2), Status = "Open" },
-            new() { CustomerName = "Bob Wilson", PhoneNumber = "+1 234 567 8903", LastMessageAt = DateTime.Now.AddDays(-1), Status = "Closed" }
+            new() { Id = 1, CustomerName = "John Doe", PhoneNumber = "+1 234 567 8901", LastMessageAt = DateTime.Now.AddMinutes(-15), Status = "Open" },
+            new() { Id = 2, CustomerName = "Jane Smith", PhoneNumber = "+1 234 567 8902", LastMessageAt = DateTime.Now.AddHours(-2), Status = "Open" },
+            new() { Id = 3, CustomerName = "Bob Wilson", PhoneNumber = "+1 234 567 8903", LastMessageAt = DateTime.Now.AddDays(-1), Status = "Closed" }
         };
     }
 
@@ -54,11 +122,67 @@ public class WhatsAppModel : PageModel
         return RedirectToPage();
     }
 
-    public IActionResult OnPostCreateTemplate(string templateName, string category, string body)
+    public async Task<IActionResult> OnPostCreateTemplateAsync(string templateName, string category, string body, string? language, string? headerText, string? footerText)
     {
-        // TODO: Create template via WhatsApp service
-        TempData["Success"] = $"Template '{templateName}' created successfully!";
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var dto = new CreateWhatsAppTemplateDto
+            {
+                Name = templateName,
+                Category = category,
+                Body = body,
+                Language = language ?? "en",
+                HeaderType = string.IsNullOrEmpty(headerText) ? null : "text",
+                HeaderContent = headerText,
+                Footer = footerText
+            };
+
+            await _whatsAppService.CreateTemplateAsync(shopDomain, dto);
+            TempData["Success"] = $"Template '{templateName}' created successfully! It will be submitted to Meta for approval.";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error creating template: {ex.Message}";
+        }
+
         return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteTemplateAsync(int templateId)
+    {
+        try
+        {
+            await _whatsAppService.DeleteTemplateAsync(templateId);
+            TempData["Success"] = "Template deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting template: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostSubmitTemplateAsync(int templateId)
+    {
+        try
+        {
+            await _whatsAppService.SubmitTemplateForApprovalAsync(templateId);
+            TempData["Success"] = "Template submitted to Meta for approval!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error submitting template: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    private string GetShopDomain()
+    {
+        return User.FindFirst("shop_domain")?.Value ?? "demo.myshopify.com";
     }
 }
 

@@ -414,6 +414,111 @@ public class EmailMarketingService(AppDbContext db, ILogger<EmailMarketingServic
 
     #endregion
 
+    #region Templates
+
+    public async Task<EmailTemplateDto?> GetTemplateAsync(int templateId)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId);
+        return entity is null ? null : MapTemplateToDto(entity);
+    }
+
+    public async Task<IEnumerable<EmailTemplateDto>> GetTemplatesAsync(string shopDomain)
+        => await db.EmailTemplates.AsNoTracking()
+            .Where(t => t.ShopDomain == shopDomain)
+            .OrderBy(t => t.Name)
+            .Select(t => MapTemplateToDto(t))
+            .ToListAsync();
+
+    public async Task<EmailTemplateDto> CreateTemplateAsync(string shopDomain, CreateEmailTemplateDto dto)
+    {
+        var entity = new EmailTemplate
+        {
+            ShopDomain = shopDomain,
+            Name = dto.Name,
+            Subject = dto.Subject,
+            Body = dto.Body,
+            TemplateType = dto.TemplateType,
+            IsActive = true
+        };
+        db.EmailTemplates.Add(entity);
+        await db.SaveChangesAsync();
+        logger.LogInformation("Created email template {Name} for {Shop}", dto.Name, shopDomain);
+        return MapTemplateToDto(entity);
+    }
+
+    public async Task<EmailTemplateDto> UpdateTemplateAsync(int templateId, UpdateEmailTemplateDto dto)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId) ?? throw new InvalidOperationException($"Template {templateId} not found");
+        if (dto.Name is not null) entity.Name = dto.Name;
+        if (dto.Subject is not null) entity.Subject = dto.Subject;
+        if (dto.Body is not null) entity.Body = dto.Body;
+        if (dto.IsActive.HasValue) entity.IsActive = dto.IsActive.Value;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return MapTemplateToDto(entity);
+    }
+
+    public async Task<bool> DeleteTemplateAsync(int templateId)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId);
+        if (entity is null) return false;
+        db.EmailTemplates.Remove(entity);
+        await db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ActivateTemplateAsync(int templateId)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId);
+        if (entity is null) return false;
+        entity.IsActive = true;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeactivateTemplateAsync(int templateId)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId);
+        if (entity is null) return false;
+        entity.IsActive = false;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<EmailTemplateDto?> DuplicateTemplateAsync(int templateId)
+    {
+        var entity = await db.EmailTemplates.FindAsync(templateId);
+        if (entity is null) return null;
+        var duplicate = new EmailTemplate
+        {
+            ShopDomain = entity.ShopDomain,
+            Name = $"{entity.Name} (Copy)",
+            Subject = entity.Subject,
+            Body = entity.Body,
+            TemplateType = entity.TemplateType,
+            IsActive = false
+        };
+        db.EmailTemplates.Add(duplicate);
+        await db.SaveChangesAsync();
+        return MapTemplateToDto(duplicate);
+    }
+
+    private static EmailTemplateDto MapTemplateToDto(EmailTemplate e) => new()
+    {
+        Id = e.Id,
+        Name = e.Name,
+        Subject = e.Subject,
+        Body = e.Body,
+        TemplateType = e.TemplateType,
+        IsActive = e.IsActive,
+        CreatedAt = e.CreatedAt,
+        UpdatedAt = e.UpdatedAt
+    };
+
+    #endregion
+
     #region Mappers
 
     private static EmailSubscriberDto MapToDto(EmailSubscriber e) => new()
