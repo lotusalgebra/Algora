@@ -1,0 +1,455 @@
+@page "/communication/email-campaigns"
+@model Algora.Web.Pages.Communication.EmailCampaignsModel
+@{
+    ViewData["Title"] = "Email Campaigns";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Email Campaigns</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Create and manage email marketing campaigns</p>
+        </div>
+        <div class="flex gap-2">
+            <button type="button" onclick="openCampaignModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                <i class="fas fa-plus me-2"></i> New Campaign
+            </button>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
+        </div>
+    }
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Subscribers</p>
+                    <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400">@Model.TotalSubscribers.ToString("N0")</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
+                    <i class="fas fa-users text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Campaigns Sent</p>
+                    <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400">@Model.CampaignsSent</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-paper-plane text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Open Rate</p>
+                    <h3 class="text-2xl font-bold text-green-600 dark:text-green-400">@Model.AvgOpenRate.ToString("N1")%</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-lime-400 flex items-center justify-center">
+                    <i class="fas fa-envelope-open text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Click Rate</p>
+                    <h3 class="text-2xl font-bold text-orange-600 dark:text-orange-400">@Model.AvgClickRate.ToString("N1")%</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
+                    <i class="fas fa-mouse-pointer text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="emailTabs" role="tablist">
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="campaigns-tab" data-tabs-target="#campaigns" type="button" role="tab">
+                        <i class="fas fa-bullhorn me-2"></i> Campaigns
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="subscribers-tab" data-tabs-target="#subscribers" type="button" role="tab">
+                        <i class="fas fa-users me-2"></i> Subscribers
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="lists-tab" data-tabs-target="#lists" type="button" role="tab">
+                        <i class="fas fa-list me-2"></i> Lists
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="automations-tab" data-tabs-target="#automations" type="button" role="tab">
+                        <i class="fas fa-robot me-2"></i> Automations
+                    </button>
+                </li>
+                <li role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="settings-tab" data-tabs-target="#settings" type="button" role="tab">
+                        <i class="fas fa-cog me-2"></i> Settings
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div id="emailTabContent">
+            <!-- Campaigns Tab -->
+            <div class="hidden p-6" id="campaigns" role="tabpanel">
+                @if (Model.Campaigns.Any())
+                {
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Campaign</th>
+                                    <th scope="col" class="px-6 py-3">Subject</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Sent</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Opens</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Clicks</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var campaign in Model.Campaigns)
+                                {
+                                    var openRate = campaign.TotalSent > 0 ? (decimal)campaign.TotalOpened / campaign.TotalSent * 100 : 0;
+                                    var clickRate = campaign.TotalOpened > 0 ? (decimal)campaign.TotalClicked / campaign.TotalOpened * 100 : 0;
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@campaign.Name</td>
+                                        <td class="px-6 py-4 max-w-xs truncate">@campaign.Subject</td>
+                                        <td class="px-6 py-4 text-center">@campaign.TotalSent</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="text-green-600">@campaign.TotalOpened</span>
+                                            <span class="text-xs text-gray-400">(@openRate.ToString("N1")%)</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="text-blue-600">@campaign.TotalClicked</span>
+                                            <span class="text-xs text-gray-400">(@clickRate.ToString("N1")%)</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 text-xs font-medium rounded @(campaign.Status == "Sent" ? "bg-green-100 text-green-800" : campaign.Status == "Scheduled" ? "bg-blue-100 text-blue-800" : campaign.Status == "Draft" ? "bg-gray-100 text-gray-800" : "bg-yellow-100 text-yellow-800")">
+                                                @campaign.Status
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button class="text-purple-600 hover:text-purple-800 me-2" title="Edit"><i class="fas fa-edit"></i></button>
+                                            <button class="text-blue-600 hover:text-blue-800 me-2" title="Stats"><i class="fas fa-chart-bar"></i></button>
+                                            @if (campaign.Status == "Draft")
+                                            {
+                                                <form method="post" asp-page-handler="SendCampaign" class="inline">
+                                                    <input type="hidden" name="campaignId" value="@campaign.Id" />
+                                                    <button type="submit" class="text-green-600 hover:text-green-800" title="Send"><i class="fas fa-paper-plane"></i></button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-envelope text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No campaigns yet. Create your first email campaign to get started.</p>
+                        <button onclick="openCampaignModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
+                            <i class="fas fa-plus me-2"></i> Create Campaign
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Subscribers Tab -->
+            <div class="hidden p-6" id="subscribers" role="tabpanel">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="relative w-64">
+                        <input type="text" id="subscriberSearch" placeholder="Search subscribers..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button onclick="openSubscriberModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-green-500 to-teal-400 rounded-lg hover:bg-gradient-to-bl">
+                        <i class="fas fa-plus me-2"></i> Add Subscriber
+                    </button>
+                </div>
+                @if (Model.Subscribers.Any())
+                {
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Email</th>
+                                    <th scope="col" class="px-6 py-3">Name</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Subscribed</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sub in Model.Subscribers)
+                                {
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@sub.Email</td>
+                                        <td class="px-6 py-4">@sub.FirstName @sub.LastName</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 text-xs font-medium rounded @(sub.Status == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                                                @sub.Status
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm">@sub.SubscribedAt.ToString("MMM dd, yyyy")</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button class="text-purple-600 hover:text-purple-800 me-2"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-800"><i class="fas fa-ban"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-users text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">No subscribers yet.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Lists Tab -->
+            <div class="hidden p-6" id="lists" role="tabpanel">
+                <div class="flex justify-end mb-4">
+                    <button onclick="openListModal()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg hover:bg-gradient-to-bl">
+                        <i class="fas fa-plus me-2"></i> Create List
+                    </button>
+                </div>
+                @if (Model.Lists.Any())
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach (var list in Model.Lists)
+                        {
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900 dark:text-white">@list.Name</h4>
+                                    <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-ellipsis-v"></i></button>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">@list.Description</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-500">@list.SubscriberCount subscribers</span>
+                                    <span class="text-xs text-gray-400">Created @list.CreatedAt.ToString("MMM dd")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-list text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">No lists yet. Create a list to organize your subscribers.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Automations Tab -->
+            <div class="hidden p-6" id="automations" role="tabpanel">
+                <div class="flex justify-end mb-4">
+                    <button class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-orange-500 to-yellow-400 rounded-lg hover:bg-gradient-to-bl">
+                        <i class="fas fa-plus me-2"></i> Create Automation
+                    </button>
+                </div>
+                @if (Model.Automations.Any())
+                {
+                    <div class="space-y-4">
+                        @foreach (var automation in Model.Automations)
+                        {
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center text-white me-3">
+                                            <i class="fas fa-robot"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 dark:text-white">@automation.Name</h4>
+                                            <p class="text-sm text-gray-500">Trigger: @automation.TriggerType</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="px-2.5 py-0.5 text-xs font-medium rounded @(automation.IsActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800")">
+                                            @(automation.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                        <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-edit"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-robot text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">No automations yet. Create automated email workflows.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="hidden p-6" id="settings" role="tabpanel">
+                <form method="post" asp-page-handler="SaveSettings">
+                    <div class="max-w-2xl">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Email Settings</h3>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">From Name</label>
+                                <input type="text" asp-for="EmailSettings.FromName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Your Store" />
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">From Email</label>
+                                <input type="email" asp-for="EmailSettings.FromEmail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="hello@yourstore.com" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Reply-To Email</label>
+                            <input type="email" asp-for="EmailSettings.ReplyToEmail" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="support@yourstore.com" />
+                        </div>
+
+                        <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-4 mt-6">SMTP Settings</h4>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">SMTP Host</label>
+                                <input type="text" asp-for="EmailSettings.SmtpHost" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="smtp.example.com" />
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">SMTP Port</label>
+                                <input type="number" asp-for="EmailSettings.SmtpPort" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="587" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">SMTP Username</label>
+                                <input type="text" asp-for="EmailSettings.SmtpUsername" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">SMTP Password</label>
+                                <input type="password" asp-for="EmailSettings.SmtpPassword" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                            <i class="fas fa-save me-2"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Campaign Modal -->
+<div id="campaignModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create Email Campaign</h3>
+                <button type="button" onclick="closeCampaignModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="CreateCampaign">
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Campaign Name</label>
+                    <input type="text" name="name" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Summer Sale Campaign" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Subject Line</label>
+                    <input type="text" name="subject" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Don't miss our biggest sale!" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Preview Text</label>
+                    <input type="text" name="previewText" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Save up to 50% on selected items" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Email Body</label>
+                    <textarea name="body" rows="8" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono" placeholder="<html>...</html>"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Send To</label>
+                    <select name="listId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">All Subscribers</option>
+                        @foreach (var list in Model.Lists)
+                        {
+                            <option value="@list.Id">@list.Name (@list.SubscriberCount subscribers)</option>
+                        }
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeCampaignModal()" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" name="action" value="draft" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100">Save Draft</button>
+                    <button type="submit" name="action" value="send" class="px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">Send Now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('[role="tab"]');
+            const panels = document.querySelectorAll('[role="tabpanel"]');
+
+            tabs[0].classList.add('text-purple-600', 'border-purple-600');
+            tabs[0].setAttribute('aria-selected', 'true');
+            panels[0].classList.remove('hidden');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('text-purple-600', 'border-purple-600');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    panels.forEach(p => p.classList.add('hidden'));
+
+                    tab.classList.add('text-purple-600', 'border-purple-600');
+                    tab.setAttribute('aria-selected', 'true');
+                    document.querySelector(tab.dataset.tabsTarget).classList.remove('hidden');
+                });
+            });
+        });
+
+        function openCampaignModal() {
+            document.getElementById('campaignModal').classList.remove('hidden');
+            document.getElementById('campaignModal').classList.add('flex');
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaignModal').classList.add('hidden');
+            document.getElementById('campaignModal').classList.remove('flex');
+        }
+
+        function openSubscriberModal() {
+            alert('Add subscriber modal coming soon!');
+        }
+
+        function openListModal() {
+            alert('Create list modal coming soon!');
+        }
+    </script>
+}

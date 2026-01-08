@@ -1,0 +1,350 @@
+@page "/communication/whatsapp"
+@model Algora.Web.Pages.Communication.WhatsAppModel
+@{
+    ViewData["Title"] = "WhatsApp Business";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">WhatsApp Business</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Manage WhatsApp templates, campaigns, and conversations</p>
+        </div>
+        <div class="flex gap-2">
+            <button type="button" onclick="openTemplateModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-500 to-teal-400 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300">
+                <i class="fas fa-plus me-2"></i> New Template
+            </button>
+            <button type="button" onclick="openCampaignModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                <i class="fas fa-bullhorn me-2"></i> New Campaign
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Templates</p>
+                    <h3 class="text-2xl font-bold text-green-600 dark:text-green-400">@Model.TemplateCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-400 flex items-center justify-center">
+                    <i class="fas fa-file-alt text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Campaigns</p>
+                    <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400">@Model.CampaignCount</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center">
+                    <i class="fas fa-bullhorn text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Messages Sent</p>
+                    <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400">@Model.MessagesSent</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                    <i class="fas fa-paper-plane text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Conversations</p>
+                    <h3 class="text-2xl font-bold text-orange-600 dark:text-orange-400">@Model.ActiveConversations</h3>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
+                    <i class="fas fa-comments text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="whatsappTabs" role="tablist">
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="templates-tab" data-tabs-target="#templates" type="button" role="tab" aria-controls="templates" aria-selected="false">
+                        <i class="fas fa-file-alt me-2"></i> Templates
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="campaigns-tab" data-tabs-target="#campaigns" type="button" role="tab" aria-controls="campaigns" aria-selected="false">
+                        <i class="fas fa-bullhorn me-2"></i> Campaigns
+                    </button>
+                </li>
+                <li class="me-2" role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="conversations-tab" data-tabs-target="#conversations" type="button" role="tab" aria-controls="conversations" aria-selected="false">
+                        <i class="fas fa-comments me-2"></i> Conversations
+                    </button>
+                </li>
+                <li role="presentation">
+                    <button class="inline-flex items-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                        <i class="fas fa-cog me-2"></i> Settings
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div id="whatsappTabContent">
+            <!-- Templates Tab -->
+            <div class="hidden p-6" id="templates" role="tabpanel" aria-labelledby="templates-tab">
+                @if (Model.Templates.Any())
+                {
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Name</th>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3">Language</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var template in Model.Templates)
+                                {
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@template.Name</td>
+                                        <td class="px-6 py-4">@template.Category</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 text-xs font-medium rounded @(template.Status == "APPROVED" ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : template.Status == "PENDING" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300")">
+                                                @template.Status
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">@template.Language</td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button class="text-purple-600 hover:text-purple-800 dark:text-purple-400 me-2"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-800 dark:text-red-400"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fab fa-whatsapp text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No templates yet. Create your first WhatsApp template to get started.</p>
+                        <button onclick="openTemplateModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-500 to-teal-400 rounded-lg hover:bg-gradient-to-bl">
+                            <i class="fas fa-plus me-2"></i> Create Template
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Campaigns Tab -->
+            <div class="hidden p-6" id="campaigns" role="tabpanel" aria-labelledby="campaigns-tab">
+                @if (Model.Campaigns.Any())
+                {
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Campaign</th>
+                                    <th scope="col" class="px-6 py-3">Template</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Recipients</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Sent</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Delivered</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var campaign in Model.Campaigns)
+                                {
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@campaign.Name</td>
+                                        <td class="px-6 py-4">@campaign.TemplateName</td>
+                                        <td class="px-6 py-4 text-center">@campaign.TotalRecipients</td>
+                                        <td class="px-6 py-4 text-center">@campaign.TotalSent</td>
+                                        <td class="px-6 py-4 text-center text-green-600">@campaign.TotalDelivered</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2.5 py-0.5 text-xs font-medium rounded @(campaign.Status == "Sent" ? "bg-green-100 text-green-800" : campaign.Status == "Scheduled" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800")">
+                                                @campaign.Status
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400"><i class="fas fa-chart-bar"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-bullhorn text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">No campaigns yet. Create a campaign to send bulk WhatsApp messages.</p>
+                        <button onclick="openCampaignModal()" class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
+                            <i class="fas fa-plus me-2"></i> Create Campaign
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <!-- Conversations Tab -->
+            <div class="hidden p-6" id="conversations" role="tabpanel" aria-labelledby="conversations-tab">
+                @if (Model.Conversations.Any())
+                {
+                    <div class="space-y-4">
+                        @foreach (var conv in Model.Conversations)
+                        {
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-teal-400 flex items-center justify-center text-white font-bold">
+                                        @conv.CustomerName?.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div class="ms-3">
+                                        <p class="font-medium text-gray-900 dark:text-white">@conv.CustomerName</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">@conv.PhoneNumber</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">@conv.LastMessageAt.ToString("MMM dd, HH:mm")</p>
+                                    <span class="px-2.5 py-0.5 text-xs font-medium rounded @(conv.Status == "Open" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800")">
+                                        @conv.Status
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <i class="fas fa-comments text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                        <p class="text-gray-500 dark:text-gray-400">No conversations yet. Conversations will appear when customers message your WhatsApp Business number.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="hidden p-6" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                <form method="post" asp-page-handler="SaveSettings">
+                    <div class="max-w-2xl">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">WhatsApp Business API Settings</h3>
+
+                        <div class="mb-4">
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Phone Number ID</label>
+                            <input type="text" asp-for="Settings.PhoneNumberId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter your Phone Number ID" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Business Account ID</label>
+                            <input type="text" asp-for="Settings.BusinessAccountId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter your Business Account ID" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Access Token</label>
+                            <input type="password" asp-for="Settings.AccessToken" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter your Access Token" />
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Webhook Verify Token</label>
+                            <input type="text" asp-for="Settings.WebhookVerifyToken" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter webhook verify token" />
+                        </div>
+
+                        <button type="submit" class="inline-flex items-center px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                            <i class="fas fa-save me-2"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Modal -->
+<div id="templateModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create WhatsApp Template</h3>
+                <button type="button" onclick="closeTemplateModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="CreateTemplate">
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Template Name</label>
+                    <input type="text" name="templateName" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Category</label>
+                    <select name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="MARKETING">Marketing</option>
+                        <option value="UTILITY">Utility</option>
+                        <option value="AUTHENTICATION">Authentication</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Message Body</label>
+                    <textarea name="body" rows="4" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Hello {{1}}, your order {{2}} is confirmed."></textarea>
+                    <p class="mt-1 text-xs text-gray-500">Use {{1}}, {{2}}, etc. for variables</p>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeTemplateModal()" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-green-500 to-teal-400 rounded-lg hover:bg-gradient-to-bl">Create Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('[role="tab"]');
+            const panels = document.querySelectorAll('[role="tabpanel"]');
+
+            // Show first tab by default
+            tabs[0].classList.add('text-purple-600', 'border-purple-600');
+            tabs[0].setAttribute('aria-selected', 'true');
+            panels[0].classList.remove('hidden');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('text-purple-600', 'border-purple-600');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    panels.forEach(p => p.classList.add('hidden'));
+
+                    tab.classList.add('text-purple-600', 'border-purple-600');
+                    tab.setAttribute('aria-selected', 'true');
+                    document.querySelector(tab.dataset.tabsTarget).classList.remove('hidden');
+                });
+            });
+        });
+
+        function openTemplateModal() {
+            document.getElementById('templateModal').classList.remove('hidden');
+            document.getElementById('templateModal').classList.add('flex');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.add('hidden');
+            document.getElementById('templateModal').classList.remove('flex');
+        }
+
+        function openCampaignModal() {
+            alert('Campaign creation coming soon!');
+        }
+    </script>
+}

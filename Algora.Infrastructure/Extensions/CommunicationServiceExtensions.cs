@@ -9,10 +9,9 @@ public static class CommunicationServiceExtensions
     public static IServiceCollection AddCommunicationServices(this IServiceCollection services)
     {
         services.AddScoped<IEmailMarketingService, EmailMarketingService>();
-        // services.AddScoped<IWhatsAppService, WhatsAppService>();
-        // services.AddScoped<ISmsService, SmsService>();
-        // services.AddScoped<INotificationService, NotificationService>();
-        // services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();
+        services.AddScoped<ISmsService, SmsService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<ICommunicationSettingsService, CommunicationSettingsService>();
 
         return services;
     }
