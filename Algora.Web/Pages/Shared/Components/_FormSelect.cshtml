@@ -36,7 +36,14 @@
             class="bg-gray-50 border @borderClass text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
             @(required ? "required" : "")
             @(disabled ? "disabled" : "")>
-        <option value="" disabled @(string.IsNullOrEmpty(selectedValue) ? "selected" : "")>@placeholder</option>
+        @if (string.IsNullOrEmpty(selectedValue))
+        {
+            <option value="" disabled selected>@placeholder</option>
+        }
+        else
+        {
+            <option value="" disabled>@placeholder</option>
+        }
         @RenderBody()
     </select>
 
