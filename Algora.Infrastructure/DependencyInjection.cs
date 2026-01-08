@@ -71,6 +71,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailMarketingService, EmailMarketingService>();
         services.AddScoped<ISmsService, SmsService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<ICommunicationHistoryService, CommunicationHistoryService>();
 
         // ----- Template and PDF generation -----
         services.AddScoped<IInvoiceTemplateService, InvoiceTemplateService>();
