@@ -2,137 +2,91 @@
 @model EditModel
 @{
     ViewData["Title"] = "Edit Product";
+    ViewData["Breadcrumb"] = "Products / Edit";
 }
 
-<div class="w-full px-6 py-6 mx-auto">
-    <!-- Breadcrumb -->
-    <nav class="mb-4">
-        <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
-            <li class="leading-normal text-sm">
-                <a class="text-slate-500 dark:text-white/60" href="/products">Products</a>
-            </li>
-            <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/'] text-slate-700 dark:text-white" aria-current="page">
-                Edit Product
-            </li>
-        </ol>
-    </nav>
-
+<div class="p-4">
     <!-- Header -->
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="flex-none w-full max-w-full px-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h5 class="mb-0 font-bold dark:text-white">Edit Product</h5>
-                    <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Update product information and variants</p>
-                </div>
-                <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-                    <i class="fas fa-arrow-left me-2"></i> Back to Products
-                </a>
-            </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h5 class="text-xl font-semibold text-gray-900 dark:text-white">Edit Product</h5>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Update product information and variants</p>
         </div>
+        <a href="/products" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+            <i class="fas fa-arrow-left me-2"></i> Back to Products
+        </a>
     </div>
 
-    <!-- Error Message -->
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
-        <div class="mb-6 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            @Model.ErrorMessage
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-triangle flex-shrink-0 me-2"></i>
+            <span>@Model.ErrorMessage</span>
         </div>
     }
 
-    <!-- Form -->
     <form method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="Product.Id" />
 
-        <div class="flex flex-wrap -mx-3">
-            <!-- Left Column - Product Info -->
-            <div class="w-full max-w-full px-3 lg:w-8/12 lg:flex-none">
-                <!-- Product Information Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Product Information</h6>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Product Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Product Information</h6>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="flex flex-wrap -mx-3">
-                            <div class="w-full max-w-full px-3 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Title">
-                                    Product Title <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" asp-for="Product.Title"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Classic T-Shirt" />
-                                <span asp-validation-for="Product.Title" class="text-red-500 text-xs"></span>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Title <span class="text-red-500">*</span></label>
+                            <input type="text" asp-for="Product.Title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Classic T-Shirt" />
+                            <span asp-validation-for="Product.Title" class="mt-1 text-sm text-red-600"></span>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                            <textarea asp-for="Product.Description" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe your product..."></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Vendor</label>
+                                <input type="text" asp-for="Product.Vendor" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Nike" />
                             </div>
-
-                            <div class="w-full max-w-full px-3 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Description">
-                                    Description
-                                </label>
-                                <textarea asp-for="Product.Description" rows="4"
-                                          class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                          placeholder="Describe your product..."></textarea>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Type</label>
+                                <input type="text" asp-for="Product.ProductType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Clothing" />
                             </div>
-
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Vendor">
-                                    Vendor
-                                </label>
-                                <input type="text" asp-for="Product.Vendor"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Nike" />
-                            </div>
-
-                            <div class="w-full max-w-full px-3 sm:w-6/12 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_ProductType">
-                                    Product Type
-                                </label>
-                                <input type="text" asp-for="Product.ProductType"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Clothing" />
-                            </div>
-
-                            <div class="w-full max-w-full px-3 mb-4">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80" for="Product_Tags">
-                                    Tags <small class="font-normal text-slate-400">(comma-separated)</small>
-                                </label>
-                                <input type="text" asp-for="Product.Tags"
-                                       class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. summer, sale, new-arrival" />
-                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tags <span class="text-xs font-normal text-gray-500">(comma-separated)</span></label>
+                            <input type="text" asp-for="Product.Tags" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. summer, sale" />
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Images Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white"><i class="fas fa-images me-2 text-fuchsia-500"></i>Product Images</h6>
-                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Manage product images</p>
+                <!-- Product Images -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="text-lg font-semibold text-gray-900 dark:text-white"><i class="fas fa-images me-2 text-purple-500"></i>Product Images</h6>
                     </div>
-                    <div class="flex-auto p-6">
-                        <!-- Existing Images Gallery -->
+                    <div class="p-6 space-y-6">
                         @if (Model.ExistingImages.Any())
                         {
-                            <div class="mb-6">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                    <i class="fas fa-photo-film me-1"></i> Current Images (@Model.ExistingImages.Count)
-                                </label>
-                                <div id="existing-images-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><i class="fas fa-photo-film me-1"></i> Current Images (@Model.ExistingImages.Count)</label>
+                                <div id="existing-images-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                     @for (int i = 0; i < Model.ExistingImages.Count; i++)
                                     {
                                         var img = Model.ExistingImages[i];
                                         <div class="existing-image-item relative group" data-image-id="@img.Id">
-                                            <img src="@img.Src" alt="@(img.Alt ?? "Product image")"
-                                                 class="w-full h-28 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
-                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                                                <button type="button" class="delete-image-btn w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-600" title="Delete image">
-                                                    <i class="fas fa-trash"></i>
+                                            <img src="@img.Src" alt="@(img.Alt ?? "Product image")" class="w-full h-28 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                                <button type="button" class="delete-image-btn w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600" title="Delete">
+                                                    <i class="fas fa-trash text-sm"></i>
                                                 </button>
                                             </div>
                                             @if (i == 0)
                                             {
-                                                <span class="absolute top-1 left-1 bg-fuchsia-500 text-white text-xs px-2 py-0.5 rounded-full">Main</span>
+                                                <span class="absolute top-1 left-1 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full">Main</span>
                                             }
                                         </div>
                                     }
@@ -140,38 +94,21 @@
                                 <div id="deleted-images-container"></div>
                             </div>
                         }
-                        else
-                        {
-                            <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg text-center">
-                                <i class="fas fa-image text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
-                                <p class="text-sm text-slate-500 dark:text-slate-400">No images yet. Add images below.</p>
-                            </div>
-                        }
 
-                        <!-- File Upload Section -->
-                        <div class="mb-6">
-                            <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                <i class="fas fa-upload me-1"></i> Upload New Images
-                            </label>
-                            <div id="file-drop-zone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center cursor-pointer hover:border-fuchsia-400 transition-colors">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><i class="fas fa-upload me-1"></i> Upload New Images</label>
+                            <div id="file-drop-zone" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600">
                                 <input type="file" name="NewImageFiles" id="file-input" multiple accept="image/*" class="hidden" />
-                                <div class="text-gray-400 dark:text-gray-500">
-                                    <i class="fas fa-cloud-upload-alt text-4xl mb-3"></i>
-                                    <p class="text-sm">Drag & drop images here or <span class="text-fuchsia-500 font-semibold">click to browse</span></p>
-                                    <p class="text-xs text-slate-400 mt-1">Supports JPG, PNG, GIF, WebP (max 10MB each)</p>
-                                </div>
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-sm text-gray-500"><span class="font-semibold text-purple-600">Click to upload</span> or drag and drop</p>
                             </div>
-                            <!-- File Preview -->
-                            <div id="file-preview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4"></div>
+                            <div id="file-preview" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"></div>
                         </div>
 
-                        <!-- URL Input Section -->
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                             <div class="flex items-center justify-between mb-3">
-                                <label class="ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                    <i class="fas fa-link me-1"></i> Or Add Image URLs
-                                </label>
-                                <button type="button" id="add-image-url-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-blue-600 to-cyan-400 rounded-lg hover:scale-102 active:opacity-85">
+                                <label class="text-sm font-medium text-gray-900 dark:text-white"><i class="fas fa-link me-1"></i> Add Image URLs</label>
+                                <button type="button" id="add-image-url-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg hover:bg-gradient-to-br">
                                     <i class="fas fa-plus me-1"></i> Add URL
                                 </button>
                             </div>
@@ -180,140 +117,100 @@
                     </div>
                 </div>
 
-                <!-- Variants Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
+                <!-- Variants -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center justify-between">
-                            <h6 class="mb-0 dark:text-white">Variants</h6>
-                            <button type="button" id="add-variant-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg hover:scale-102 active:opacity-85">
+                            <h6 class="text-lg font-semibold text-gray-900 dark:text-white"><i class="fas fa-layer-group me-2 text-purple-500"></i>Variants</h6>
+                            <button type="button" id="add-variant-btn" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
                                 <i class="fas fa-plus me-1"></i> Add Variant
                             </button>
                         </div>
-                        <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">Manage product variants (sizes, colors, etc.)</p>
                     </div>
-                    <div class="flex-auto p-6" id="variants-container">
+                    <div class="p-6" id="variants-container">
                         @for (int i = 0; i < Model.Variants.Count; i++)
                         {
-                            <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4" data-index="@i">
+                            <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4" data-index="@i">
                                 <input type="hidden" name="Variants[@i].VariantId" value="@Model.Variants[i].VariantId" class="variant-id" />
                                 <input type="hidden" name="Variants[@i].IsNew" value="@Model.Variants[i].IsNew.ToString().ToLower()" class="variant-isnew" />
                                 <div class="flex items-center justify-between mb-4">
-                                    <span class="text-sm font-semibold dark:text-white">
+                                    <span class="text-sm font-semibold text-gray-900 dark:text-white">
                                         Variant @(i + 1)
                                         @if (!string.IsNullOrEmpty(Model.Variants[i].VariantId))
                                         {
-                                            <span class="text-xs text-slate-400 font-normal ml-2">(existing)</span>
+                                            <span class="text-xs text-gray-500 ms-2">(existing)</span>
                                         }
                                         else
                                         {
-                                            <span class="text-xs text-green-500 font-normal ml-2">(new)</span>
+                                            <span class="text-xs text-green-500 ms-2">(new)</span>
                                         }
                                     </span>
                                     @if (Model.Variants.Count > 1)
                                     {
-                                        <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm">
-                                            <i class="fas fa-trash"></i> Remove
-                                        </button>
+                                        <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm"><i class="fas fa-trash me-1"></i> Remove</button>
                                     }
                                 </div>
-                                <div class="flex flex-wrap -mx-3">
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Price</label>
-                                        <input type="number" step="0.01" name="Variants[@i].Price" value="@Model.Variants[i].Price"
-                                               class="variant-price focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="0.00" />
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                        <input type="number" step="0.01" name="Variants[@i].Price" value="@Model.Variants[i].Price" class="variant-price bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">SKU</label>
-                                        <input type="text" name="Variants[@i].Sku" value="@Model.Variants[i].Sku"
-                                               class="variant-sku focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="SKU-001" />
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SKU</label>
+                                        <input type="text" name="Variants[@i].Sku" value="@Model.Variants[i].Sku" class="variant-sku bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Title</label>
-                                        <input type="text" name="Variants[@i].Title" value="@Model.Variants[i].Title"
-                                               class="variant-title focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="e.g. Large / Blue" />
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                                        <input type="text" name="Variants[@i].Title" value="@Model.Variants[i].Title" class="variant-title bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Size (Option 1)</label>
-                                        <input type="text" name="Variants[@i].Option1" value="@Model.Variants[i].Option1"
-                                               class="variant-opt1 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="e.g. Medium" />
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Size (Option 1)</label>
+                                        <input type="text" name="Variants[@i].Option1" value="@Model.Variants[i].Option1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color (Option 2)</label>
-                                        <input type="text" name="Variants[@i].Option2" value="@Model.Variants[i].Option2"
-                                               class="variant-opt2 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="e.g. Blue" />
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Color (Option 2)</label>
+                                        <input type="text" name="Variants[@i].Option2" value="@Model.Variants[i].Option2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Material (Option 3)</label>
-                                        <input type="text" name="Variants[@i].Option3" value="@Model.Variants[i].Option3"
-                                               class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                               placeholder="e.g. Cotton" />
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Material (Option 3)</label>
+                                        <input type="text" name="Variants[@i].Option3" value="@Model.Variants[i].Option3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
                                     </div>
-                                    <div class="w-full max-w-full px-3 mb-3">
-                                        <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                            <i class="fas fa-image me-1 text-fuchsia-500"></i> Variant Image
-                                        </label>
+                                    <div class="sm:col-span-3">
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><i class="fas fa-image me-1 text-purple-500"></i> Variant Image</label>
                                         <div class="flex items-center gap-3">
-                                            <!-- Current Image Preview -->
                                             @if (!string.IsNullOrEmpty(Model.Variants[i].ImageSrc))
                                             {
-                                                <img src="@Model.Variants[i].ImageSrc" alt="Current variant image"
-                                                     class="variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-fuchsia-300 dark:border-fuchsia-600 shadow-sm" />
+                                                <img src="@Model.Variants[i].ImageSrc" class="variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-purple-300 shadow-sm" />
                                             }
                                             else
                                             {
-                                                <div class="variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
-                                                    <i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>
+                                                <div class="variant-image-preview w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+                                                    <i class="fas fa-image text-2xl text-gray-300"></i>
                                                 </div>
                                             }
-
                                             <div class="flex-1 space-y-2">
                                                 @if (Model.ExistingImages.Any())
                                                 {
-                                                    <!-- Select from existing images -->
-                                                    <select name="Variants[@i].ImageId"
-                                                            class="variant-image-select focus:shadow-soft-primary-outline dark:bg-gray-950 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-fuchsia-300 focus:outline-none">
+                                                    <select name="Variants[@i].ImageId" class="variant-image-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                                         <option value="">Select from product images...</option>
                                                         @foreach (var img in Model.ExistingImages)
                                                         {
                                                             var isSelected = Model.Variants[i].ImageId == img.Id;
-                                                            if (isSelected)
-                                                            {
-                                                                <option value="@img.Id" data-src="@img.Src" selected>
-                                                                    @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
-                                                                </option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="@img.Id" data-src="@img.Src">
-                                                                    @(img.Alt ?? $"Image {img.Position + 1}") (@(img.Width)x@(img.Height))
-                                                                </option>
-                                                            }
+                                                            if (isSelected) { <option value="@img.Id" data-src="@img.Src" selected>@(img.Alt ?? $"Image {img.Position + 1}")</option> }
+                                                            else { <option value="@img.Id" data-src="@img.Src">@(img.Alt ?? $"Image {img.Position + 1}")</option> }
                                                         }
                                                     </select>
                                                 }
                                                 else
                                                 {
                                                     <input type="hidden" name="Variants[@i].ImageId" value="" />
-                                                    <p class="text-xs text-slate-500 dark:text-slate-400 italic">
-                                                        <i class="fas fa-info-circle me-1"></i>
-                                                        Upload product images first, then assign to variants
-                                                    </p>
+                                                    <p class="text-xs text-gray-500 italic"><i class="fas fa-info-circle me-1"></i>Upload product images first</p>
                                                 }
-
-                                                <!-- Upload new images for this variant -->
-                                                <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
-                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" multiple class="variant-file-input sr-only" data-variant-index="@i" />
-                                                    <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                        <i class="fas fa-images me-1 text-fuchsia-500"></i>
-                                                        Click to upload images (multiple)
-                                                    </span>
+                                                <label class="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600">
+                                                    <input type="file" name="VariantImageFiles[@i]" accept="image/*" multiple class="variant-file-input hidden" data-variant-index="@i" />
+                                                    <span class="text-xs text-gray-500"><i class="fas fa-cloud-upload-alt me-1 text-purple-500"></i> Upload variant images</span>
                                                 </label>
-                                                <div class="variant-upload-preview mt-2" style="display:none;"></div>
+                                                <div class="variant-upload-preview" style="display:none;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -325,56 +222,49 @@
             </div>
 
             <!-- Right Column - Actions -->
-            <div class="w-full max-w-full px-3 lg:w-4/12 lg:flex-none">
+            <div class="space-y-6">
                 <!-- Actions Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl sticky top-6">
-                    <div class="p-6 pb-0 mb-0 border-b-0 rounded-t-2xl">
-                        <h6 class="mb-0 dark:text-white">Actions</h6>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md sticky top-6">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h6 class="text-lg font-semibold text-gray-900 dark:text-white">Actions</h6>
                     </div>
-                    <div class="flex-auto p-6">
-                        <div class="flex flex-col gap-3">
-                            <button type="submit" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-white uppercase transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 bg-gradient-to-tl from-purple-700 to-pink-500 shadow-soft-md bg-150 bg-x-25">
-                                <i class="fas fa-save me-2"></i> Update Product
-                            </button>
-                            <a href="/products/delete/@Model.Product.Id" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-                                <i class="fas fa-trash me-2"></i> Delete Product
-                            </a>
-                            <a href="/products" class="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-bold text-center uppercase transition-all border border-solid rounded-lg cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-100 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700">
-                                <i class="fas fa-times me-2"></i> Cancel
-                            </a>
-                        </div>
+                    <div class="p-6 space-y-3">
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300">
+                            <i class="fas fa-save me-2"></i> Update Product
+                        </button>
+                        <a href="/products/delete/@Model.Product.Id" class="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-red-700 bg-white border border-red-500 rounded-lg hover:bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/20">
+                            <i class="fas fa-trash me-2"></i> Delete Product
+                        </a>
+                        <a href="/products" class="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </a>
                     </div>
                 </div>
 
-                <!-- Product Thumbnail Card -->
                 @if (Model.ExistingImages.Any())
                 {
-                    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border dark:bg-gray-950 dark:shadow-soft-dark-xl">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
                         <div class="p-4">
                             <div class="flex items-center gap-4">
-                                <div class="w-24 h-24 rounded-xl overflow-hidden border-2 border-fuchsia-300 dark:border-fuchsia-600 shadow-soft-md flex-shrink-0">
-                                    <img src="@Model.ExistingImages.First().Src"
-                                         alt="@(Model.ExistingImages.First().Alt ?? "Product thumbnail")"
-                                         class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform"
-                                         onclick="openImageModal('@Model.ExistingImages.First().Src', '@(Model.ExistingImages.First().Alt ?? "Product thumbnail")')" />
+                                <div class="w-24 h-24 rounded-lg overflow-hidden border-2 border-purple-300 shadow-md flex-shrink-0">
+                                    <img src="@Model.ExistingImages.First().Src" class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform" onclick="openImageModal('@Model.ExistingImages.First().Src', '@(Model.ExistingImages.First().Alt ?? "")')" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h6 class="font-bold text-sm dark:text-white truncate">@Model.Product.Title</h6>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">@Model.ExistingImages.Count image(s)</p>
+                                    <h6 class="font-semibold text-sm text-gray-900 dark:text-white truncate">@Model.Product.Title</h6>
+                                    <p class="text-xs text-gray-500">@Model.ExistingImages.Count image(s)</p>
                                     @if (Model.ExistingImages.Count > 1)
                                     {
                                         <div class="flex gap-1 mt-2">
                                             @foreach (var img in Model.ExistingImages.Skip(1).Take(4))
                                             {
-                                                <div class="w-8 h-8 rounded overflow-hidden border border-slate-200 dark:border-slate-700">
-                                                    <img src="@img.Src" alt="" class="w-full h-full object-cover cursor-pointer"
-                                                         onclick="openImageModal('@img.Src', '@(img.Alt ?? "")')" />
+                                                <div class="w-8 h-8 rounded overflow-hidden border border-gray-200 dark:border-gray-700">
+                                                    <img src="@img.Src" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('@img.Src', '@(img.Alt ?? "")')" />
                                                 </div>
                                             }
                                             @if (Model.ExistingImages.Count > 5)
                                             {
-                                                <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                                    <span class="text-xs text-slate-500">+@(Model.ExistingImages.Count - 5)</span>
+                                                <div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                                    <span class="text-xs text-gray-500">+@(Model.ExistingImages.Count - 5)</span>
                                                 </div>
                                             }
                                         </div>
@@ -386,11 +276,11 @@
                 }
 
                 <!-- Product Info Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-cyan-500 to-blue-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                    <div class="flex-auto p-6">
+                <div class="bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg shadow-md">
+                    <div class="p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-info-circle text-white text-xl me-3"></i>
-                            <h6 class="mb-0 text-white">Product Info</h6>
+                            <h6 class="font-semibold text-white">Product Info</h6>
                         </div>
                         <div class="space-y-2 text-white/80 text-sm">
                             <div class="flex justify-between">
@@ -406,49 +296,32 @@
                 </div>
 
                 <!-- AI Assistant Card -->
-                <div class="relative flex flex-col min-w-0 mb-6 break-words bg-gradient-to-tl from-purple-700 to-pink-500 border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                    <div class="flex-auto p-6">
+                <div class="bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg shadow-md">
+                    <div class="p-6">
                         <div class="flex items-center mb-4">
                             <i class="fas fa-wand-magic-sparkles text-white text-xl me-3"></i>
-                            <h6 class="mb-0 text-white">AI Assistant</h6>
+                            <h6 class="font-semibold text-white">AI Assistant</h6>
                         </div>
-
-                        <!-- Provider Selection -->
                         <div class="mb-4">
                             <label class="text-xs text-white/80 mb-1 block">Text Provider</label>
-                            <select id="ai-text-provider" class="w-full text-sm rounded-lg border-0 bg-white/20 text-white placeholder:text-white/60 p-2 focus:ring-2 focus:ring-white/50">
+                            <select id="ai-text-provider" class="w-full text-sm rounded-lg border-0 bg-white/20 text-white p-2 focus:ring-2 focus:ring-white/50">
                                 <option value="openai" class="text-gray-800">OpenAI GPT-4</option>
                                 <option value="anthropic" class="text-gray-800">Claude (Anthropic)</option>
                                 <option value="gemini" class="text-gray-800">Google Gemini</option>
                             </select>
                         </div>
-
-                        <div class="flex flex-col gap-2">
-                            <button type="button" id="ai-generate-title" class="inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-purple-600 bg-white rounded-lg hover:bg-white/90 transition-all">
-                                <i class="fas fa-heading me-2"></i>
-                                <span>Generate Title</span>
-                                <span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
+                        <div class="space-y-2">
+                            <button type="button" id="ai-generate-title" class="w-full inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-purple-600 bg-white rounded-lg hover:bg-white/90">
+                                <i class="fas fa-heading me-2"></i><span>Generate Title</span><span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
                             </button>
-
-                            <button type="button" id="ai-generate-description" class="inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-purple-600 bg-white rounded-lg hover:bg-white/90 transition-all">
-                                <i class="fas fa-align-left me-2"></i>
-                                <span>Generate Description</span>
-                                <span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
+                            <button type="button" id="ai-generate-description" class="w-full inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-purple-600 bg-white rounded-lg hover:bg-white/90">
+                                <i class="fas fa-align-left me-2"></i><span>Generate Description</span><span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
                             </button>
-
-                            <button type="button" id="ai-generate-all" class="inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-white/20 rounded-lg hover:bg-white/30 transition-all border border-white/30">
-                                <i class="fas fa-magic me-2"></i>
-                                <span>Generate All</span>
-                                <span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
+                            <button type="button" id="ai-generate-all" class="w-full inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-white/20 rounded-lg hover:bg-white/30 border border-white/30">
+                                <i class="fas fa-magic me-2"></i><span>Generate All</span><span class="ai-spinner hidden ms-2"><i class="fas fa-spinner fa-spin"></i></span>
                             </button>
                         </div>
-
-                        <p class="text-xs text-white/60 mt-3">
-                            <i class="fas fa-info-circle me-1"></i>
-                            AI will use product details to generate SEO-optimized content.
-                        </p>
-
-                        <!-- AI Result Message -->
+                        <p class="text-xs text-white/60 mt-3"><i class="fas fa-info-circle me-1"></i>AI will use product details to generate SEO-optimized content.</p>
                         <div id="ai-result-message" class="hidden mt-3 p-2 rounded-lg text-xs"></div>
                     </div>
                 </div>
@@ -460,9 +333,7 @@
 <!-- Image Modal -->
 <div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="closeImageModal()">
     <div class="relative max-w-4xl max-h-[90vh] mx-4">
-        <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors">
-            <i class="fas fa-times text-2xl"></i>
-        </button>
+        <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-gray-300"><i class="fas fa-times text-2xl"></i></button>
         <img id="modalImage" src="" alt="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()" />
         <p id="modalCaption" class="text-center text-white mt-3 text-sm"></p>
     </div>
@@ -470,36 +341,28 @@
 
 @section Scripts {
     <script>
-        // Image modal functions
         function openImageModal(src, alt) {
             const modal = document.getElementById('imageModal');
-            const image = document.getElementById('modalImage');
-            const caption = document.getElementById('modalCaption');
-            image.src = src;
-            image.alt = alt;
-            caption.textContent = alt;
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalImage').alt = alt;
+            document.getElementById('modalCaption').textContent = alt;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
         }
 
         function closeImageModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('imageModal').classList.remove('flex');
             document.body.style.overflow = '';
         }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeImageModal();
-        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeImageModal(); });
 
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('variants-container');
             const addBtn = document.getElementById('add-variant-btn');
             const productId = @Model.Product.Id;
-
-            // ===== Image Management Functions =====
             const fileDropZone = document.getElementById('file-drop-zone');
             const fileInput = document.getElementById('file-input');
             const filePreview = document.getElementById('file-preview');
@@ -511,51 +374,23 @@
             let selectedFiles = new DataTransfer();
             let urlInputIndex = 0;
 
-            // File upload handling
+            // File upload
             if (fileDropZone) {
                 fileDropZone.addEventListener('click', () => fileInput.click());
-
-                fileDropZone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    fileDropZone.classList.add('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-                });
-
-                fileDropZone.addEventListener('dragleave', (e) => {
-                    e.preventDefault();
-                    fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-                });
-
-                fileDropZone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    fileDropZone.classList.remove('border-fuchsia-400', 'bg-fuchsia-50', 'dark:bg-fuchsia-900/20');
-                    handleFiles(e.dataTransfer.files);
-                });
+                fileDropZone.addEventListener('dragover', (e) => { e.preventDefault(); fileDropZone.classList.add('border-purple-400', 'bg-purple-50'); });
+                fileDropZone.addEventListener('dragleave', (e) => { e.preventDefault(); fileDropZone.classList.remove('border-purple-400', 'bg-purple-50'); });
+                fileDropZone.addEventListener('drop', (e) => { e.preventDefault(); fileDropZone.classList.remove('border-purple-400', 'bg-purple-50'); handleFiles(e.dataTransfer.files); });
             }
-
-            if (fileInput) {
-                fileInput.addEventListener('change', (e) => {
-                    handleFiles(e.target.files);
-                });
-            }
+            if (fileInput) fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
             function handleFiles(files) {
                 for (const file of files) {
-                    if (!file.type.startsWith('image/')) {
-                        alert(`${file.name} is not an image file.`);
-                        continue;
-                    }
-                    if (file.size > 10 * 1024 * 1024) {
-                        alert(`${file.name} is too large (max 10MB).`);
-                        continue;
-                    }
+                    if (!file.type.startsWith('image/')) { alert(`${file.name} is not an image.`); continue; }
+                    if (file.size > 10 * 1024 * 1024) { alert(`${file.name} is too large.`); continue; }
                     selectedFiles.items.add(file);
                 }
-                updateFileInput();
-                renderPreviews();
-            }
-
-            function updateFileInput() {
                 if (fileInput) fileInput.files = selectedFiles.files;
+                renderPreviews();
             }
 
             function renderPreviews() {
@@ -567,15 +402,7 @@
                     reader.onload = (e) => {
                         const preview = document.createElement('div');
                         preview.className = 'relative group';
-                        preview.innerHTML = `
-                            <img src="${e.target.result}" alt="${file.name}"
-                                 class="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
-                            <button type="button" data-index="${i}"
-                                    class="remove-file-btn absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <p class="text-xs text-slate-500 truncate mt-1">${file.name}</p>
-                        `;
+                        preview.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" /><button type="button" data-index="${i}" class="remove-file-btn absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs"><i class="fas fa-times"></i></button><p class="text-xs text-gray-500 truncate mt-1">${file.name}</p>`;
                         filePreview.appendChild(preview);
                         preview.querySelector('.remove-file-btn').addEventListener('click', () => removeFile(i));
                     };
@@ -585,219 +412,99 @@
 
             function removeFile(index) {
                 const dt = new DataTransfer();
-                for (let i = 0; i < selectedFiles.files.length; i++) {
-                    if (i !== index) dt.items.add(selectedFiles.files[i]);
-                }
+                for (let i = 0; i < selectedFiles.files.length; i++) { if (i !== index) dt.items.add(selectedFiles.files[i]); }
                 selectedFiles = dt;
-                updateFileInput();
+                if (fileInput) fileInput.files = selectedFiles.files;
                 renderPreviews();
             }
 
-            // Add URL input handling
+            // Add URL input
             if (addImageUrlBtn) {
                 addImageUrlBtn.addEventListener('click', () => {
                     const urlRow = document.createElement('div');
                     urlRow.className = 'url-row flex items-center gap-3 mb-3';
-                    urlRow.innerHTML = `
-                        <div class="flex-1">
-                            <input type="url" name="NewImageUrls[${urlInputIndex}]"
-                                   class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                   placeholder="https://example.com/image.jpg" />
-                        </div>
-                        <button type="button" class="remove-url-btn text-red-500 hover:text-red-700 p-2" title="Remove">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    `;
+                    urlRow.innerHTML = `<input type="url" name="NewImageUrls[${urlInputIndex}]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com/image.jpg" /><button type="button" class="remove-url-btn text-red-500 hover:text-red-700 p-2"><i class="fas fa-trash"></i></button>`;
                     urlInputsContainer.appendChild(urlRow);
                     urlInputIndex++;
-
-                    urlRow.querySelector('.remove-url-btn').addEventListener('click', () => {
-                        urlRow.remove();
-                        reindexUrlInputs();
-                    });
+                    urlRow.querySelector('.remove-url-btn').addEventListener('click', () => { urlRow.remove(); reindexUrlInputs(); });
                 });
             }
 
             function reindexUrlInputs() {
-                const urlRows = urlInputsContainer.querySelectorAll('.url-row');
-                urlRows.forEach((row, idx) => {
-                    row.querySelector('input').name = `NewImageUrls[${idx}]`;
-                });
-                urlInputIndex = urlRows.length;
+                urlInputsContainer?.querySelectorAll('.url-row').forEach((row, idx) => { row.querySelector('input').name = `NewImageUrls[${idx}]`; });
+                urlInputIndex = urlInputsContainer?.querySelectorAll('.url-row').length || 0;
             }
 
-            // Delete existing image handling
-            if (existingImagesGallery) {
-                existingImagesGallery.querySelectorAll('.delete-image-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const imageItem = this.closest('.existing-image-item');
-                        const imageId = imageItem.dataset.imageId;
-
-                        // Add hidden input for deleted image
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = `DeleteImageIds[${deletedImagesContainer.children.length}]`;
-                        hiddenInput.value = imageId;
-                        deletedImagesContainer.appendChild(hiddenInput);
-
-                        // Visually mark as deleted
-                        imageItem.classList.add('opacity-30');
-                        imageItem.querySelector('.delete-image-btn').disabled = true;
-                        imageItem.querySelector('.delete-image-btn').classList.add('cursor-not-allowed');
-
-                        // Add undo button
-                        const undoBtn = document.createElement('button');
-                        undoBtn.type = 'button';
-                        undoBtn.className = 'undo-delete-btn absolute bottom-1 left-1 right-1 bg-orange-500 text-white text-xs py-1 rounded';
-                        undoBtn.innerHTML = '<i class="fas fa-undo me-1"></i>Undo';
-                        undoBtn.onclick = () => {
-                            hiddenInput.remove();
-                            imageItem.classList.remove('opacity-30');
-                            imageItem.querySelector('.delete-image-btn').disabled = false;
-                            imageItem.querySelector('.delete-image-btn').classList.remove('cursor-not-allowed');
-                            undoBtn.remove();
-                            reindexDeleteInputs();
-                        };
-                        imageItem.appendChild(undoBtn);
-                    });
+            // Delete existing image
+            existingImagesGallery?.querySelectorAll('.delete-image-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const imageItem = this.closest('.existing-image-item');
+                    const imageId = imageItem.dataset.imageId;
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = `DeleteImageIds[${deletedImagesContainer.children.length}]`;
+                    hiddenInput.value = imageId;
+                    deletedImagesContainer.appendChild(hiddenInput);
+                    imageItem.classList.add('opacity-30');
+                    this.disabled = true;
+                    const undoBtn = document.createElement('button');
+                    undoBtn.type = 'button';
+                    undoBtn.className = 'undo-delete-btn absolute bottom-1 left-1 right-1 bg-orange-500 text-white text-xs py-1 rounded';
+                    undoBtn.innerHTML = '<i class="fas fa-undo me-1"></i>Undo';
+                    undoBtn.onclick = () => { hiddenInput.remove(); imageItem.classList.remove('opacity-30'); btn.disabled = false; undoBtn.remove(); };
+                    imageItem.appendChild(undoBtn);
                 });
-            }
+            });
 
-            function reindexDeleteInputs() {
-                const inputs = deletedImagesContainer.querySelectorAll('input');
-                inputs.forEach((input, idx) => {
-                    input.name = `DeleteImageIds[${idx}]`;
-                });
-            }
-
-            // ===== Variant Image Selection =====
-            function initVariantImageSelect(select) {
+            // Variant image select
+            document.querySelectorAll('.variant-image-select').forEach(select => {
                 select.addEventListener('change', function() {
                     const variantRow = this.closest('.variant-row');
                     const preview = variantRow.querySelector('.variant-image-preview');
                     const selectedOption = this.options[this.selectedIndex];
                     const imgSrc = selectedOption.dataset.src;
-
                     if (imgSrc && preview) {
-                        if (preview.tagName === 'IMG') {
-                            preview.src = imgSrc;
-                        } else {
-                            // Replace div placeholder with img
-                            const img = document.createElement('img');
-                            img.src = imgSrc;
-                            img.alt = 'Variant image';
-                            img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-fuchsia-300 dark:border-fuchsia-600 shadow-sm';
-                            preview.replaceWith(img);
-                        }
-                    } else if (preview && preview.tagName === 'IMG') {
-                        // Replace img with placeholder div
-                        const placeholder = document.createElement('div');
-                        placeholder.className = 'variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center';
-                        placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
-                        preview.replaceWith(placeholder);
+                        if (preview.tagName === 'IMG') { preview.src = imgSrc; }
+                        else { const img = document.createElement('img'); img.src = imgSrc; img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-purple-300 shadow-sm'; preview.replaceWith(img); }
                     }
                 });
-            }
-            document.querySelectorAll('.variant-image-select').forEach(initVariantImageSelect);
+            });
 
-            // ===== Variant Image Upload (Multiple) =====
-            function initVariantFileInput(fileInput) {
-                const variantRow = fileInput.closest('.variant-row');
-                const label = fileInput.closest('.variant-upload-label');
-                const previewContainer = label ? label.nextElementSibling : null;
-
-                fileInput.addEventListener('change', function() {
+            // Variant file input
+            document.querySelectorAll('.variant-file-input').forEach(input => {
+                input.addEventListener('change', function() {
                     const files = Array.from(this.files);
                     if (!files.length) return;
-
-                    // Validate all files
-                    for (const file of files) {
-                        if (!file.type.startsWith('image/')) {
-                            alert(`${file.name} is not an image file.`);
-                            this.value = '';
-                            return;
-                        }
-                        if (file.size > 10 * 1024 * 1024) {
-                            alert(`${file.name} is too large (max 10MB).`);
-                            this.value = '';
-                            return;
-                        }
-                    }
-
-                    // Show previews for all files
+                    const variantRow = this.closest('.variant-row');
+                    const previewContainer = this.closest('label').nextElementSibling;
                     if (previewContainer) {
                         previewContainer.innerHTML = '';
                         previewContainer.style.display = 'block';
-
                         files.forEach((file, idx) => {
                             const reader = new FileReader();
-                            reader.onload = function(e) {
+                            reader.onload = (e) => {
                                 const previewItem = document.createElement('div');
-                                previewItem.className = 'flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-2';
-                                previewItem.innerHTML = `
-                                    <img src="${e.target.result}" class="w-10 h-10 object-cover rounded" />
-                                    <div class="flex-1">
-                                        <p class="text-xs font-medium text-green-700 dark:text-green-300">${file.name}</p>
-                                        <p class="text-xs text-green-600 dark:text-green-400">${idx === 0 ? 'Primary (will be set as variant image)' : 'Additional image'}</p>
-                                    </div>
-                                `;
+                                previewItem.className = 'flex items-center gap-2 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 mb-2';
+                                previewItem.innerHTML = `<img src="${e.target.result}" class="w-10 h-10 object-cover rounded" /><div class="flex-1"><p class="text-xs font-medium text-green-700">${file.name}</p><p class="text-xs text-green-600">${idx === 0 ? 'Primary' : 'Additional'}</p></div>`;
                                 previewContainer.appendChild(previewItem);
-
-                                // Update main preview with first image
                                 if (idx === 0 && variantRow) {
                                     const mainPreview = variantRow.querySelector('.variant-image-preview');
                                     if (mainPreview) {
-                                        if (mainPreview.tagName === 'IMG') {
-                                            mainPreview.src = e.target.result;
-                                            mainPreview.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
-                                        } else {
-                                            const img = document.createElement('img');
-                                            img.src = e.target.result;
-                                            img.alt = 'New variant image';
-                                            img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 dark:border-green-500 shadow-sm';
-                                            mainPreview.replaceWith(img);
-                                        }
+                                        if (mainPreview.tagName === 'IMG') { mainPreview.src = e.target.result; mainPreview.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 shadow-sm'; }
+                                        else { const img = document.createElement('img'); img.src = e.target.result; img.className = 'variant-image-preview w-16 h-16 object-cover rounded-lg border-2 border-green-400 shadow-sm'; mainPreview.replaceWith(img); }
                                     }
                                 }
                             };
                             reader.readAsDataURL(file);
                         });
-
-                        // Add clear all button
-                        const clearBtn = document.createElement('button');
-                        clearBtn.type = 'button';
-                        clearBtn.className = 'text-xs text-red-500 hover:text-red-700 mt-1';
-                        clearBtn.innerHTML = '<i class="fas fa-times me-1"></i>Clear all';
-                        clearBtn.onclick = function(evt) {
-                            evt.preventDefault();
-                            fileInput.value = '';
-                            previewContainer.innerHTML = '';
-                            previewContainer.style.display = 'none';
-
-                            if (variantRow) {
-                                const mainPreview = variantRow.querySelector('.variant-image-preview');
-                                if (mainPreview && mainPreview.tagName === 'IMG') {
-                                    const placeholder = document.createElement('div');
-                                    placeholder.className = 'variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center';
-                                    placeholder.innerHTML = '<i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>';
-                                    mainPreview.replaceWith(placeholder);
-                                }
-                            }
-                        };
-                        previewContainer.appendChild(clearBtn);
                     }
                 });
-            }
+            });
 
-            // Initialize all variant file inputs
-            document.querySelectorAll('.variant-file-input').forEach(initVariantFileInput);
-
-            // ===== AI Generation Functions =====
+            // AI generation
             function showAiMessage(message, isSuccess) {
                 const msgDiv = document.getElementById('ai-result-message');
-                msgDiv.className = isSuccess
-                    ? 'mt-3 p-2 rounded-lg text-xs bg-green-100 text-green-800'
-                    : 'mt-3 p-2 rounded-lg text-xs bg-red-100 text-red-800';
+                msgDiv.className = isSuccess ? 'mt-3 p-2 rounded-lg text-xs bg-green-100 text-green-800' : 'mt-3 p-2 rounded-lg text-xs bg-red-100 text-red-800';
                 msgDiv.textContent = message;
                 msgDiv.classList.remove('hidden');
                 setTimeout(() => msgDiv.classList.add('hidden'), 5000);
@@ -806,210 +513,90 @@
             function setButtonLoading(button, loading) {
                 const spinner = button.querySelector('.ai-spinner');
                 button.disabled = loading;
-                if (loading) {
-                    spinner.classList.remove('hidden');
-                    button.classList.add('opacity-75');
-                } else {
-                    spinner.classList.add('hidden');
-                    button.classList.remove('opacity-75');
-                }
+                if (loading) { spinner.classList.remove('hidden'); button.classList.add('opacity-75'); }
+                else { spinner.classList.add('hidden'); button.classList.remove('opacity-75'); }
             }
 
             async function generateContent(type) {
                 const provider = document.getElementById('ai-text-provider').value;
                 const button = document.getElementById(`ai-generate-${type}`);
-
                 const titleInput = document.querySelector('[name="Product.Title"]');
                 const descInput = document.querySelector('[name="Product.Description"]');
                 const vendorInput = document.querySelector('[name="Product.Vendor"]');
                 const typeInput = document.querySelector('[name="Product.ProductType"]');
                 const tagsInput = document.querySelector('[name="Product.Tags"]');
 
-                const requestData = {
-                    productId: productId,
-                    provider: provider,
-                    currentTitle: titleInput?.value || '',
-                    vendor: vendorInput?.value || '',
-                    productType: typeInput?.value || '',
-                    tags: tagsInput?.value || ''
-                };
-
                 try {
                     setButtonLoading(button, true);
-
                     const response = await fetch(`/api/ai/generate/${type}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestData)
+                        body: JSON.stringify({ productId, provider, currentTitle: titleInput?.value || '', vendor: vendorInput?.value || '', productType: typeInput?.value || '', tags: tagsInput?.value || '' })
                     });
-
                     const result = await response.json();
-
                     if (result.success) {
-                        if (type === 'title' && titleInput) {
-                            titleInput.value = result.generatedText;
-                        } else if (type === 'description' && descInput) {
-                            descInput.value = result.generatedText;
-                        }
-                        showAiMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} generated successfully!`, true);
-                    } else {
-                        showAiMessage(result.error || 'Generation failed', false);
-                    }
-                } catch (error) {
-                    console.error('AI generation error:', error);
-                    showAiMessage('Failed to generate content. Check console for details.', false);
-                } finally {
-                    setButtonLoading(button, false);
-                }
+                        if (type === 'title' && titleInput) titleInput.value = result.generatedText;
+                        else if (type === 'description' && descInput) descInput.value = result.generatedText;
+                        showAiMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} generated!`, true);
+                    } else { showAiMessage(result.error || 'Generation failed', false); }
+                } catch (error) { showAiMessage('Failed to generate content.', false); }
+                finally { setButtonLoading(button, false); }
             }
 
             async function generateAll() {
                 const button = document.getElementById('ai-generate-all');
                 setButtonLoading(button, true);
-
-                try {
-                    await generateContent('title');
-                    await generateContent('description');
-                    showAiMessage('All content generated successfully!', true);
-                } finally {
-                    setButtonLoading(button, false);
-                }
+                try { await generateContent('title'); await generateContent('description'); showAiMessage('All content generated!', true); }
+                finally { setButtonLoading(button, false); }
             }
 
-            // AI button event listeners
             document.getElementById('ai-generate-title')?.addEventListener('click', () => generateContent('title'));
             document.getElementById('ai-generate-description')?.addEventListener('click', () => generateContent('description'));
             document.getElementById('ai-generate-all')?.addEventListener('click', generateAll);
 
-            // ===== Variant Functions =====
-
-            function updateVariantCount() {
-                const count = container.querySelectorAll('.variant-row').length;
-                document.getElementById('variant-count').textContent = count;
-            }
-
             // Add variant
-            addBtn.addEventListener('click', function() {
-                const variantRows = container.querySelectorAll('.variant-row');
-                const newIndex = variantRows.length;
+            function updateVariantCount() { document.getElementById('variant-count').textContent = container.querySelectorAll('.variant-row').length; }
 
+            addBtn.addEventListener('click', function() {
+                const newIndex = container.querySelectorAll('.variant-row').length;
                 const template = `
-                    <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4" data-index="${newIndex}">
+                    <div class="variant-row border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4" data-index="${newIndex}">
                         <input type="hidden" name="Variants[${newIndex}].VariantId" value="" class="variant-id" />
                         <input type="hidden" name="Variants[${newIndex}].IsNew" value="true" class="variant-isnew" />
                         <div class="flex items-center justify-between mb-4">
-                            <span class="text-sm font-semibold dark:text-white">
-                                Variant ${newIndex + 1}
-                                <span class="text-xs text-green-500 font-normal ml-2">(new)</span>
-                            </span>
-                            <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm">
-                                <i class="fas fa-trash"></i> Remove
-                            </button>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Variant ${newIndex + 1} <span class="text-xs text-green-500 ms-2">(new)</span></span>
+                            <button type="button" class="remove-variant-btn text-red-500 hover:text-red-700 text-sm"><i class="fas fa-trash me-1"></i> Remove</button>
                         </div>
-                        <div class="flex flex-wrap -mx-3">
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Price</label>
-                                <input type="number" step="0.01" name="Variants[${newIndex}].Price" value="0"
-                                       class="variant-price focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="0.00" />
-                            </div>
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">SKU</label>
-                                <input type="text" name="Variants[${newIndex}].Sku"
-                                       class="variant-sku focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="SKU-001" />
-                            </div>
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Title</label>
-                                <input type="text" name="Variants[${newIndex}].Title"
-                                       class="variant-title focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Large / Blue" />
-                            </div>
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Size (Option 1)</label>
-                                <input type="text" name="Variants[${newIndex}].Option1"
-                                       class="variant-opt1 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Medium" />
-                            </div>
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Color (Option 2)</label>
-                                <input type="text" name="Variants[${newIndex}].Option2"
-                                       class="variant-opt2 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Blue" />
-                            </div>
-                            <div class="w-full max-w-full px-3 sm:w-4/12 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Material (Option 3)</label>
-                                <input type="text" name="Variants[${newIndex}].Option3"
-                                       class="variant-opt3 focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-                                       placeholder="e.g. Cotton" />
-                            </div>
-                            <div class="w-full max-w-full px-3 mb-3">
-                                <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">
-                                    <i class="fas fa-image me-1 text-fuchsia-500"></i> Variant Image
-                                </label>
-                                <div class="flex items-center gap-3">
-                                    <div class="variant-image-preview w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
-                                        <i class="fas fa-image text-2xl text-slate-300 dark:text-slate-600"></i>
-                                    </div>
-                                    <div class="flex-1 space-y-2">
-                                        <input type="hidden" name="Variants[${newIndex}].ImageId" value="" />
-                                        <label class="variant-upload-label block border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 text-center cursor-pointer hover:border-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20 transition-all">
-                                            <input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input sr-only" data-variant-index="${newIndex}" />
-                                            <span class="text-xs text-slate-500 dark:text-slate-400">
-                                                <i class="fas fa-cloud-upload-alt me-1 text-fuchsia-500"></i>
-                                                Click to upload image
-                                            </span>
-                                        </label>
-                                        <div class="variant-upload-preview mt-2" style="display:none;"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label><input type="number" step="0.01" name="Variants[${newIndex}].Price" value="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">SKU</label><input type="text" name="Variants[${newIndex}].Sku" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label><input type="text" name="Variants[${newIndex}].Title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Size (Option 1)</label><input type="text" name="Variants[${newIndex}].Option1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Color (Option 2)</label><input type="text" name="Variants[${newIndex}].Option2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Material (Option 3)</label><input type="text" name="Variants[${newIndex}].Option3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" /></div>
+                            <div class="sm:col-span-3"><label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><i class="fas fa-image me-1 text-purple-500"></i> Variant Image</label><div class="flex items-center gap-3"><div class="variant-image-preview w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center"><i class="fas fa-image text-2xl text-gray-300"></i></div><div class="flex-1"><input type="hidden" name="Variants[${newIndex}].ImageId" value="" /><label class="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"><input type="file" name="VariantImageFiles[${newIndex}]" accept="image/*" class="variant-file-input hidden" data-variant-index="${newIndex}" /><span class="text-xs text-gray-500"><i class="fas fa-cloud-upload-alt me-1 text-purple-500"></i> Upload</span></label><div class="variant-upload-preview" style="display:none;"></div></div></div></div>
                         </div>
-                    </div>
-                `;
-
+                    </div>`;
                 container.insertAdjacentHTML('beforeend', template);
-
-                // Initialize the new variant's file input
-                const newVariant = container.querySelector(`.variant-row[data-index="${newIndex}"]`);
-                const newFileInput = newVariant.querySelector('.variant-file-input');
-                if (newFileInput) {
-                    initVariantFileInput(newFileInput);
-                }
-
                 updateRemoveButtons();
                 updateVariantCount();
             });
 
-            // Remove variant
             function updateRemoveButtons() {
                 container.querySelectorAll('.remove-variant-btn').forEach(btn => {
                     btn.onclick = function() {
                         const rows = container.querySelectorAll('.variant-row');
                         if (rows.length > 1) {
                             this.closest('.variant-row').remove();
-                            // Reindex remaining variants
                             container.querySelectorAll('.variant-row').forEach((row, idx) => {
                                 row.dataset.index = idx;
-                                const titleSpan = row.querySelector('.flex.items-center.justify-between span');
-                                if (titleSpan) {
-                                    const isNewBadge = titleSpan.querySelector('.text-green-500');
-                                    const existingBadge = titleSpan.querySelector('.text-slate-400');
-                                    const badge = isNewBadge ? '<span class="text-xs text-green-500 font-normal ml-2">(new)</span>' :
-                                                  existingBadge ? '<span class="text-xs text-slate-400 font-normal ml-2">(existing)</span>' : '';
-                                    titleSpan.innerHTML = `Variant ${idx + 1} ${badge}`;
-                                }
-                                row.querySelectorAll('input').forEach(input => {
-                                    const name = input.name;
-                                    input.name = name.replace(/Variants\[\d+\]/, `Variants[${idx}]`);
-                                });
+                                row.querySelectorAll('input, select').forEach(input => { input.name = input.name.replace(/Variants\[\d+\]/, `Variants[${idx}]`); });
                             });
                             updateVariantCount();
                         }
                     };
                 });
             }
-
             updateRemoveButtons();
         });
     </script>
