@@ -180,9 +180,9 @@ public record UpdateUpsellSettingsDto
     public string? LogoUrl { get; init; }
     public string? PrimaryColor { get; init; }
     public string? SecondaryColor { get; init; }
-    public bool? EnableAutoRecommendations { get; init; }
-    public bool? EnableAbTesting { get; init; }
-    public bool? TrackImpressions { get; init; }
+    public bool EnableAutoRecommendations { get; init; }
+    public bool EnableAbTesting { get; init; }
+    public bool TrackImpressions { get; init; }
 }
 
 /// <summary>
