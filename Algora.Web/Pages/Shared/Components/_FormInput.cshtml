@@ -1,0 +1,62 @@
+@* Form Input Component
+   Usage: <partial name="Components/_FormInput" model="new { Label = \"Email\", Name = \"email\", Type = \"email\", Placeholder = \"name@company.com\", Required = true }" />
+*@
+
+@{
+    var label = ViewData["Label"]?.ToString() ?? "";
+    var name = ViewData["Name"]?.ToString() ?? "";
+    var type = ViewData["Type"]?.ToString() ?? "text";
+    var placeholder = ViewData["Placeholder"]?.ToString() ?? "";
+    var value = ViewData["Value"]?.ToString() ?? "";
+    var required = ViewData["Required"] as bool? ?? false;
+    var disabled = ViewData["Disabled"] as bool? ?? false;
+    var helpText = ViewData["HelpText"]?.ToString() ?? "";
+    var errorText = ViewData["ErrorText"]?.ToString() ?? "";
+    var icon = ViewData["Icon"]?.ToString() ?? "";
+    var id = ViewData["Id"]?.ToString() ?? name;
+
+    var hasError = !string.IsNullOrEmpty(errorText);
+    var borderClass = hasError
+        ? "border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500"
+        : "border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:border-gray-600 dark:focus:ring-purple-500 dark:focus:border-purple-500";
+}
+
+<div class="mb-4">
+    @if (!string.IsNullOrEmpty(label))
+    {
+        <label for="@id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            @label
+            @if (required)
+            {
+                <span class="text-red-500">*</span>
+            }
+        </label>
+    }
+
+    <div class="relative">
+        @if (!string.IsNullOrEmpty(icon))
+        {
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <i class="fas @icon w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+        }
+
+        <input type="@type"
+               id="@id"
+               name="@name"
+               value="@value"
+               placeholder="@placeholder"
+               class="bg-gray-50 border @borderClass text-gray-900 text-sm rounded-lg block w-full @(!string.IsNullOrEmpty(icon) ? "ps-10" : "") p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
+               @(required ? "required" : "")
+               @(disabled ? "disabled" : "") />
+    </div>
+
+    @if (hasError)
+    {
+        <p class="mt-2 text-sm text-red-600 dark:text-red-500">@errorText</p>
+    }
+    else if (!string.IsNullOrEmpty(helpText))
+    {
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">@helpText</p>
+    }
+</div>

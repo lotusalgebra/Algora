@@ -5,77 +5,93 @@
     Layout = "_AuthLayout";
 }
 
-<main class="mt-0 transition-all duration-200 ease-soft-in-out">
-    <section>
-        <div class="relative flex items-center p-0 overflow-hidden bg-center bg-cover min-h-screen">
-            <div class="container z-10">
-                <div class="flex flex-wrap mt-0 -mx-3">
-                    <div class="flex flex-col w-full max-w-full px-3 mx-auto md:flex-0 shrink-0 md:w-6/12 lg:w-5/12 xl:w-4/12">
-                        <div class="relative flex flex-col min-w-0 mt-32 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                            <div class="p-6 pb-0 mb-0 bg-transparent border-b-0 rounded-t-2xl">
-                                <h3 class="relative z-10 font-bold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">Welcome back</h3>
-                                <p class="mb-0">Enter your email and password to sign in</p>
-                            </div>
-                            <div class="flex-auto p-6">
-                                <form method="post">
-                                    <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
-                                    
-                                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                                    {
-                                        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                                            @Model.ErrorMessage
-                                        </div>
-                                    }
-                                    
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Email</label>
-                                    <div class="mb-4">
-                                        <input asp-for="Input.Email" type="email" 
-                                               class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" 
-                                               placeholder="Email" />
-                                        <span asp-validation-for="Input.Email" class="text-red-500 text-xs"></span>
-                                    </div>
-                                    
-                                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">Password</label>
-                                    <div class="mb-4">
-                                        <input asp-for="Input.Password" type="password" 
-                                               class="focus:shadow-soft-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" 
-                                               placeholder="Password" />
-                                        <span asp-validation-for="Input.Password" class="text-red-500 text-xs"></span>
-                                    </div>
-                                    
-                                    <div class="min-h-6 mb-0.5 block pl-12">
-                                        <input asp-for="Input.RememberMe" id="rememberMe" 
-                                               class="mt-0.5 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.3 h-5 relative float-left -ml-12 w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right" 
-                                               type="checkbox" />
-                                        <label class="mb-2 ml-1 font-normal cursor-pointer select-none text-sm text-slate-700" for="rememberMe">Remember me</label>
-                                    </div>
-                                    
-                                    <div class="text-center">
-                                        <button type="submit" 
-                                                class="inline-block w-full px-6 py-3 mt-6 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-blue-600 to-cyan-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                                            Sign in
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="p-6 px-1 pt-0 text-center bg-transparent border-t-0 border-t-solid rounded-b-2xl lg:px-2">
-                                <p class="mx-auto mb-6 leading-normal text-sm">
-                                    Don't have an account?
-                                    <a asp-page="/Auth/Register" class="relative z-10 font-semibold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">Sign up</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-full max-w-full px-3 lg:flex-0 shrink-0 md:w-6/12">
-                        <div class="absolute top-0 hidden w-3/5 h-full -mr-32 overflow-hidden -skew-x-10 -right-40 rounded-bl-xl md:block">
-                            <div class="absolute inset-x-0 top-0 z-0 h-full -ml-16 bg-cover skew-x-10" style="background-image: url('/img/curved-images/curved6.jpg')"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div>
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h2>
+    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Enter your credentials to access your account</p>
+</div>
+
+<form method="post" class="mt-8 space-y-6">
+    <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4"></div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle flex-shrink-0 inline w-4 h-4 me-3"></i>
+            <span>@Model.ErrorMessage</span>
         </div>
-    </section>
-</main>
+    }
+
+    <!-- Email -->
+    <div>
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email address</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <i class="fas fa-envelope w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+            <input asp-for="Input.Email" type="email" id="email"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                   placeholder="name@company.com" />
+        </div>
+        <span asp-validation-for="Input.Email" class="mt-2 text-sm text-red-600 dark:text-red-500"></span>
+    </div>
+
+    <!-- Password -->
+    <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                <i class="fas fa-lock w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+            </div>
+            <input asp-for="Input.Password" type="password" id="password"
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                   placeholder="••••••••" />
+        </div>
+        <span asp-validation-for="Input.Password" class="mt-2 text-sm text-red-600 dark:text-red-500"></span>
+    </div>
+
+    <!-- Remember me & Forgot password -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            <input asp-for="Input.RememberMe" id="remember" type="checkbox"
+                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-purple-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-purple-600 dark:ring-offset-gray-800" />
+            <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+        </div>
+        <a href="#" class="text-sm font-medium text-purple-600 hover:underline dark:text-purple-500">Forgot password?</a>
+    </div>
+
+    <!-- Submit button -->
+    <button type="submit"
+            class="w-full text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-3 text-center">
+        Sign in to your account
+    </button>
+
+    <!-- Divider -->
+    <div class="flex items-center">
+        <div class="w-full h-0.5 bg-gray-200 dark:bg-gray-700"></div>
+        <div class="px-5 text-center text-gray-500 dark:text-gray-400">or</div>
+        <div class="w-full h-0.5 bg-gray-200 dark:bg-gray-700"></div>
+    </div>
+
+    <!-- Social login buttons -->
+    <div class="flex space-x-4">
+        <button type="button"
+                class="flex-1 text-gray-900 bg-white hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+            <i class="fab fa-google me-2"></i>
+            Google
+        </button>
+        <button type="button"
+                class="flex-1 text-gray-900 bg-white hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+            <i class="fab fa-microsoft me-2"></i>
+            Microsoft
+        </button>
+    </div>
+
+    <!-- Sign up link -->
+    <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
+        Don't have an account?
+        <a asp-page="/Auth/Register" class="font-medium text-purple-600 hover:underline dark:text-purple-500">Sign up</a>
+    </p>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,35 @@
+@* Alert Component
+   Usage: <partial name="Components/_Alert" model="new { Type = \"success\", Message = \"Operation completed successfully!\" }" />
+   Types: success, error, warning, info
+*@
+
+@{
+    var type = ViewData["Type"]?.ToString() ?? "info";
+    var message = ViewData["Message"]?.ToString() ?? "";
+    var dismissible = ViewData["Dismissible"] as bool? ?? true;
+    var id = ViewData["Id"]?.ToString() ?? $"alert-{Guid.NewGuid():N}";
+
+    var (bgClass, textClass, iconClass) = type switch
+    {
+        "success" => ("bg-green-50 dark:bg-gray-800", "text-green-800 dark:text-green-400", "fa-check-circle"),
+        "error" => ("bg-red-50 dark:bg-gray-800", "text-red-800 dark:text-red-400", "fa-exclamation-circle"),
+        "warning" => ("bg-yellow-50 dark:bg-gray-800", "text-yellow-800 dark:text-yellow-300", "fa-exclamation-triangle"),
+        _ => ("bg-blue-50 dark:bg-gray-800", "text-blue-800 dark:text-blue-400", "fa-info-circle")
+    };
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div id="@id" class="flex items-center p-4 mb-4 text-sm @textClass rounded-lg @bgClass" role="alert">
+        <i class="fas @iconClass flex-shrink-0 inline w-4 h-4 me-3"></i>
+        <span class="sr-only">@type</span>
+        <div class="flex-1">@message</div>
+        @if (dismissible)
+        {
+            <button type="button" class="ms-auto -mx-1.5 -my-1.5 @bgClass @textClass rounded-lg focus:ring-2 p-1.5 hover:bg-opacity-75 inline-flex items-center justify-center h-8 w-8" onclick="document.getElementById('@id').remove()">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times"></i>
+            </button>
+        }
+    </div>
+}

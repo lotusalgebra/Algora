@@ -1,0 +1,81 @@
+@* Pagination Component
+   Usage: <partial name="Components/_Pagination" model="new { CurrentPage = 1, TotalPages = 10, BaseUrl = \"/products\" }" />
+*@
+
+@{
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 1;
+    var baseUrl = ViewData["BaseUrl"]?.ToString() ?? "";
+    var totalItems = ViewData["TotalItems"] as int? ?? 0;
+    var pageSize = ViewData["PageSize"] as int? ?? 10;
+
+    var startItem = (currentPage - 1) * pageSize + 1;
+    var endItem = Math.Min(currentPage * pageSize, totalItems);
+
+    // Calculate which page numbers to show
+    var startPage = Math.Max(1, currentPage - 2);
+    var endPage = Math.Min(totalPages, currentPage + 2);
+
+    // Adjust if we're near the beginning or end
+    if (endPage - startPage < 4)
+    {
+        if (startPage == 1)
+            endPage = Math.Min(totalPages, 5);
+        else if (endPage == totalPages)
+            startPage = Math.Max(1, totalPages - 4);
+    }
+}
+
+<nav class="flex items-center justify-between pt-4" aria-label="Table navigation">
+    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        Showing <span class="font-semibold text-gray-900 dark:text-white">@startItem-@endItem</span> of <span class="font-semibold text-gray-900 dark:text-white">@totalItems</span>
+    </span>
+    <ul class="inline-flex -space-x-px text-sm h-8">
+        <!-- Previous -->
+        <li>
+            @if (currentPage > 1)
+            {
+                <a href="@baseUrl?page=@(currentPage - 1)" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </a>
+            }
+            else
+            {
+                <span class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-300 bg-white border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600 cursor-not-allowed">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </span>
+            }
+        </li>
+
+        <!-- Page Numbers -->
+        @for (var i = startPage; i <= endPage; i++)
+        {
+            <li>
+                @if (i == currentPage)
+                {
+                    <span class="flex items-center justify-center px-3 h-8 text-white bg-gradient-to-br from-purple-600 to-pink-500 border border-purple-500">@i</span>
+                }
+                else
+                {
+                    <a href="@baseUrl?page=@i" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">@i</a>
+                }
+            </li>
+        }
+
+        <!-- Next -->
+        <li>
+            @if (currentPage < totalPages)
+            {
+                <a href="@baseUrl?page=@(currentPage + 1)" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </a>
+            }
+            else
+            {
+                <span class="flex items-center justify-center px-3 h-8 leading-tight text-gray-300 bg-white border border-gray-300 rounded-e-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-600 cursor-not-allowed">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </span>
+            }
+        </li>
+    </ul>
+</nav>

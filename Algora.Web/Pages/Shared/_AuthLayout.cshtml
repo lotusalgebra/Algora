@@ -2,20 +2,96 @@
     Layout = null;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Algora</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="~/css/nucleo-icons.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/nucleo-svg.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/algora.web.css" asp-append-version="true" />
-    @await RenderSectionAsync("css", required: false)
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Flowbite CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        .gradient-text {
+            background: linear-gradient(to right, #7c3aed, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="m-0 font-sans antialiased font-normal text-left leading-default text-base dark:bg-slate-950 bg-gray-50 text-slate-500 dark:text-white/80">
-    @RenderBody()
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen flex">
+        <!-- Left Side - Form -->
+        <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+            <div class="mx-auto w-full max-w-sm lg:w-96">
+                <!-- Logo -->
+                <div class="flex items-center mb-8">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 me-3">
+                        <i class="fas fa-cube text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold gradient-text">Algora</span>
+                </div>
+
+                @RenderBody()
+            </div>
+        </div>
+
+        <!-- Right Side - Image/Branding -->
+        <div class="hidden lg:block relative w-0 flex-1">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-500">
+                <div class="absolute inset-0 flex flex-col items-center justify-center p-12 text-white">
+                    <div class="max-w-md text-center">
+                        <i class="fas fa-cube text-6xl mb-6 opacity-90"></i>
+                        <h2 class="text-3xl font-bold mb-4">Welcome to Algora</h2>
+                        <p class="text-lg opacity-90">Your complete e-commerce management platform. Manage orders, products, inventory, and more from one place.</p>
+                    </div>
+                    <!-- Decorative circles -->
+                    <div class="absolute top-10 left-10 w-20 h-20 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-20 right-20 w-32 h-32 rounded-full bg-white/10"></div>
+                    <div class="absolute top-1/4 right-10 w-16 h-16 rounded-full bg-white/5"></div>
+                    <div class="absolute bottom-1/4 left-20 w-24 h-24 rounded-full bg-white/5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flowbite JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+
+    <!-- Theme detection -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

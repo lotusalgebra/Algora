@@ -1,0 +1,51 @@
+@* Form Select Component
+   Usage: <partial name="Components/_FormSelect" model="new { Label = \"Status\", Name = \"status\", Options = new[] { new { Value = \"active\", Text = \"Active\" } } }" />
+*@
+
+@{
+    var label = ViewData["Label"]?.ToString() ?? "";
+    var name = ViewData["Name"]?.ToString() ?? "";
+    var selectedValue = ViewData["SelectedValue"]?.ToString() ?? "";
+    var required = ViewData["Required"] as bool? ?? false;
+    var disabled = ViewData["Disabled"] as bool? ?? false;
+    var helpText = ViewData["HelpText"]?.ToString() ?? "";
+    var errorText = ViewData["ErrorText"]?.ToString() ?? "";
+    var placeholder = ViewData["Placeholder"]?.ToString() ?? "Select an option";
+    var id = ViewData["Id"]?.ToString() ?? name;
+
+    var hasError = !string.IsNullOrEmpty(errorText);
+    var borderClass = hasError
+        ? "border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500"
+        : "border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:border-gray-600 dark:focus:ring-purple-500 dark:focus:border-purple-500";
+}
+
+<div class="mb-4">
+    @if (!string.IsNullOrEmpty(label))
+    {
+        <label for="@id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            @label
+            @if (required)
+            {
+                <span class="text-red-500">*</span>
+            }
+        </label>
+    }
+
+    <select id="@id"
+            name="@name"
+            class="bg-gray-50 border @borderClass text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
+            @(required ? "required" : "")
+            @(disabled ? "disabled" : "")>
+        <option value="" disabled @(string.IsNullOrEmpty(selectedValue) ? "selected" : "")>@placeholder</option>
+        @RenderBody()
+    </select>
+
+    @if (hasError)
+    {
+        <p class="mt-2 text-sm text-red-600 dark:text-red-500">@errorText</p>
+    }
+    else if (!string.IsNullOrEmpty(helpText))
+    {
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">@helpText</p>
+    }
+</div>

@@ -1,0 +1,36 @@
+@* Card Component
+   Usage: <partial name="Components/_Card" model="new { Title = \"Card Title\", Subtitle = \"Optional subtitle\" }">
+            <p>Card content here</p>
+          </partial>
+*@
+
+@{
+    var title = ViewData["Title"]?.ToString() ?? "";
+    var subtitle = ViewData["Subtitle"]?.ToString() ?? "";
+    var padding = ViewData["Padding"]?.ToString() ?? "p-6"; // p-4, p-6, p-8
+    var noPadding = ViewData["NoPadding"] as bool? ?? false;
+    var headerAction = ViewData["HeaderAction"]?.ToString() ?? ""; // HTML for header action button
+}
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    @if (!string.IsNullOrEmpty(title))
+    {
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">@title</h3>
+                @if (!string.IsNullOrEmpty(subtitle))
+                {
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">@subtitle</p>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(headerAction))
+            {
+                @Html.Raw(headerAction)
+            }
+        </div>
+    }
+
+    <div class="@(noPadding ? "" : padding)">
+        @RenderBody()
+    </div>
+</div>

@@ -1,443 +1,513 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Algora.Web</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous"></script>
-    <script src="~/js/popper.min.js"></script>
-    <!-- Nucleo Icons -->
-    <link rel="stylesheet" href="~/css/nucleo-icons.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/nucleo-svg.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Algora</title>
 
-    <link rel="stylesheet" href="~/css/algora.web.css" asp-append-version="true" />
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    @await RenderSectionAsync("css", required: false)
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        primary: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7c3aed',
+                            800: '#6b21a8',
+                            900: '#581c87'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Flowbite CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Sidebar active state */
+        .sidebar-item.active {
+            background: linear-gradient(to right, #7c3aed, #ec4899);
+            color: white;
+        }
+        .sidebar-item.active i { color: white; }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(to right, #7c3aed, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="m-0 font-sans antialiased font-normal text-left leading-default text-base dark:bg-slate-950 bg-gray-50 text-slate-500 dark:text-white/80">
-    <main class="ease-soft-in-out xl:ml-68 relative h-full max-h-screen rounded-xl transition-all duration-200 ps ps--active-y">
-        <!-- sidenav  -->
-        <aside mini="false" class="dark:bg-gray-950 ease-soft-in-out z-990 dark: fixed inset-y-0 left-0 my-4 xl:ml-4 block w-full -translate-x-full flex-wrap items-center justify-between rounded-2xl border-0 bg-white p-0 shadow-none transition-all duration-200 xl:translate-x-0 xl:bg-transparent ps max-w-64 overflow-y-auto" id="sidenav-main">
-            <!-- header -->
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    <!-- Mobile Menu Button -->
+    <button data-drawer-target="sidebar" data-drawer-toggle="sidebar" aria-controls="sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        <span class="sr-only">Open sidebar</span>
+        <i class="fas fa-bars w-6 h-6"></i>
+    </button>
 
-            <div class="h-20">
-                <!-- x i -->
-                <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times text-slate-400 dark:text-white xl:hidden" aria-hidden="true" sidenav-close-btn=""></i>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+        <div class="h-full px-3 py-4 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <!-- Logo -->
+            <a href="/dashboard" class="flex items-center ps-2.5 mb-5">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 me-3">
+                    <i class="fas fa-cube text-white text-sm"></i>
+                </div>
+                <span class="self-center text-xl font-bold whitespace-nowrap dark:text-white gradient-text">Algora</span>
+            </a>
 
-                <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700 dark:text-white" href="/dashboard">
-                    <img src="~/img/logo-ct-dark.png" class="inline-block h-full max-w-full transition-all duration-200 ease-soft-in-out max-h-8 dark:hidden" alt="main_logo">
-                    <img src="~/img/logo-ct-dark.png" class="hidden h-full max-w-full transition-all duration-200 ease-soft-in-out max-h-8 dark:inline-block" alt="main_logo">
+            <ul class="space-y-2 font-medium">
+                <!-- MAIN Section -->
+                <li class="pt-2">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Main</span>
+                </li>
+                <li>
+                    <a href="/dashboard" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+                            <i class="fas fa-home text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">Dashboard</span>
+                    </a>
+                </li>
 
-                    <span class="ml-1 font-semibold transition-all duration-200 ease-soft-in-out opacity-100">Algora</span>
-                </a>
+                <!-- COMMERCE Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Commerce</span>
+                </li>
+                <li>
+                    <a href="/orders" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-shopping-cart text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="ms-3">Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/products" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-box text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="ms-3">Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/bundles/admin" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-layer-group text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="ms-3">Bundles</span>
+                    </a>
+                </li>
+
+                <!-- MARKETING Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Marketing</span>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-marketing" data-collapse-toggle="dropdown-marketing">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-bullhorn text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Marketing</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-marketing" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/upsell" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Upsell</a>
+                        </li>
+                        <li>
+                            <a href="/reviews/admin" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Reviews</a>
+                        </li>
+                        <li>
+                            <a href="/analytics" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Analytics</a>
+                        </li>
+                        <li>
+                            <a href="/abandoned-checkouts" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Abandoned Carts</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- AI TOOLS Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">AI Tools</span>
+                </li>
+                <li>
+                    <a href="/ai" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">AI Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-ai" data-collapse-toggle="dropdown-ai">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-wand-magic-sparkles text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">AI Tools</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-ai" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/ai/descriptions" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Descriptions</a>
+                        </li>
+                        <li>
+                            <a href="/ai/seo" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">SEO Optimizer</a>
+                        </li>
+                        <li>
+                            <a href="/ai/pricing" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Pricing AI</a>
+                        </li>
+                        <li>
+                            <a href="/ai/alttext" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Alt Text</a>
+                        </li>
+                        <li>
+                            <a href="/ai/chatbot" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Chatbot</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- OPERATIONS Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Operations</span>
+                </li>
+                <li>
+                    <a href="/operations" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400">
+                            <i class="fas fa-cogs text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">Operations</span>
+                    </a>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-operations" data-collapse-toggle="dropdown-operations">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-boxes-stacked text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Manage</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-operations" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/operations/suppliers" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Suppliers</a>
+                        </li>
+                        <li>
+                            <a href="/operations/purchaseorders" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Purchase Orders</a>
+                        </li>
+                        <li>
+                            <a href="/operations/locations" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Locations</a>
+                        </li>
+                        <li>
+                            <a href="/operations/barcodes" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Barcodes</a>
+                        </li>
+                        <li>
+                            <a href="/operations/packing-slips" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Packing Slips</a>
+                        </li>
+                        <li>
+                            <a href="/operations/label-designer" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Label Designer</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- INVENTORY Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Inventory</span>
+                </li>
+                <li>
+                    <a href="/inventory" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-lime-400">
+                            <i class="fas fa-chart-bar text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">Predictions</span>
+                    </a>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-inventory" data-collapse-toggle="dropdown-inventory">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-warehouse text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Inventory</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-inventory" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/inventory/alerts" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Alerts</a>
+                        </li>
+                        <li>
+                            <a href="/inventory/settings" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Settings</a>
+                        </li>
+                        <li>
+                            <a href="/operations/thresholds" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Thresholds</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- CUSTOMER HUB Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Customer Hub</span>
+                </li>
+                <li>
+                    <a href="/customer-hub" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-400">
+                            <i class="fas fa-users text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-customerhub" data-collapse-toggle="dropdown-customerhub">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-headset text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Support</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-customerhub" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/customer-hub/inbox" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Unified Inbox</a>
+                        </li>
+                        <li>
+                            <a href="/customer-hub/inbox/live-chat" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Live Chat</a>
+                        </li>
+                        <li>
+                            <a href="/customer-hub/exchanges" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Exchanges</a>
+                        </li>
+                        <li>
+                            <a href="/customer-hub/loyalty" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Loyalty Program</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- RETURNS Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Returns</span>
+                </li>
+                <li>
+                    <a href="/returns" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-slate-500 to-slate-400">
+                            <i class="fas fa-undo text-white text-sm"></i>
+                        </div>
+                        <span class="ms-3">Returns</span>
+                    </a>
+                </li>
+
+                <!-- ADMIN Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Admin</span>
+                </li>
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-admin" data-collapse-toggle="dropdown-admin">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-rose-400">
+                            <i class="fas fa-shield-halved text-white text-sm"></i>
+                        </div>
+                        <span class="flex-1 ms-3 text-left whitespace-nowrap">Admin</span>
+                        <i class="fas fa-chevron-down w-3 h-3"></i>
+                    </button>
+                    <ul id="dropdown-admin" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="/admin/clients" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Clients</a>
+                        </li>
+                        <li>
+                            <a href="/admin/plan-features" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Plan Features</a>
+                        </li>
+                        <li>
+                            <a href="/admin/plan-requests" class="flex items-center w-full p-2 pl-11 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Plan Requests</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- SETTINGS Section -->
+                <li class="pt-4">
+                    <span class="px-3 text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">Settings</span>
+                </li>
+                <li>
+                    <a href="/account/profile" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-user text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="ms-3">Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/plans" class="sidebar-item flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700">
+                            <i class="fas fa-credit-card text-gray-500 dark:text-gray-400 text-sm"></i>
+                        </div>
+                        <span class="ms-3">Plans & Billing</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="sm:ml-64">
+        <!-- Top Navbar -->
+        <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2.5">
+            <div class="flex flex-wrap justify-between items-center">
+                <!-- Breadcrumb -->
+                <div class="flex items-center">
+                    <nav class="flex" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <li class="inline-flex items-center">
+                                <a href="/dashboard" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-purple-600 dark:text-gray-400 dark:hover:text-white">
+                                    <i class="fas fa-home w-3 h-3 me-2.5"></i>
+                                    Home
+                                </a>
+                            </li>
+                            @if (ViewData["Breadcrumb"] != null)
+                            {
+                                <li>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-chevron-right w-3 h-3 text-gray-400 mx-1"></i>
+                                        <span class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">@ViewData["Breadcrumb"]</span>
+                                    </div>
+                                </li>
+                            }
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Right side buttons -->
+                <div class="flex items-center gap-3">
+                    <!-- Dark mode toggle -->
+                    <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i id="theme-toggle-dark-icon" class="hidden fas fa-moon w-5 h-5"></i>
+                        <i id="theme-toggle-light-icon" class="hidden fas fa-sun w-5 h-5"></i>
+                    </button>
+
+                    <!-- Notifications -->
+                    <button type="button" class="relative text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <i class="fas fa-bell w-5 h-5"></i>
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">3</span>
+                    </button>
+
+                    <!-- User menu -->
+                    <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                        <span class="sr-only">Open user menu</span>
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white text-sm font-medium">
+                            A
+                        </div>
+                    </button>
+
+                    <!-- User dropdown menu -->
+                    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+                        <div class="px-4 py-3">
+                            <span class="block text-sm text-gray-900 dark:text-white">Admin User</span>
+                            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">admin@algora.com</span>
+                        </div>
+                        <ul class="py-2" aria-labelledby="user-menu-button">
+                            <li>
+                                <a href="/account/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+                            </li>
+                            <li>
+                                <a href="/plans" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Billing</a>
+                            </li>
+                            <li>
+                                <a href="/auth/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+        </nav>
 
-            <!-- //---------hr----------// -->
+        <!-- Page Content -->
+        <main class="p-4">
+            @RenderBody()
+        </main>
+    </div>
 
-            <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent">
-
-            <div class="items-center block w-full h-auto grow basis-full" id="sidenav-collapse-main">
-                <!-- Algora Module Navigation -->
-
-                <ul class="flex flex-col pl-0 mb-0 list-none">
-                    <!-- MAIN Section -->
-                    <li class="w-full mt-2">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">MAIN</h6>
-                    </li>
-
-                    <!-- Dashboard -->
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-medium text-slate-700 transition-all dark:text-white dark:opacity-80" href="/dashboard">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-purple-700 to-pink-500 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-home text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Dashboard</span>
-                        </a>
-                    </li>
-
-                    <!-- COMMERCE Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">COMMERCE</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/orders">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-shopping-cart text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Orders</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/products">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-box text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Products</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/bundles/admin">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-layer-group text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Bundles</span>
-                        </a>
-                    </li>
-
-                    <!-- MARKETING Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">MARKETING</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/upsell">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-arrow-up text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Upsell</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/reviews/admin">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-star text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Reviews</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/analytics">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-chart-line text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Analytics</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/abandoned-checkouts">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-shopping-basket text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Abandoned Carts</span>
-                        </a>
-                    </li>
-
-                    <!-- AI TOOLS Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">AI TOOLS</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-blue-600 to-cyan-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-robot text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">AI Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai/descriptions">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-file-alt text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Descriptions</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai/seo">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-search text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">SEO Optimizer</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai/pricing">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-tag text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Pricing AI</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai/alttext">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-image text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Alt Text</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/ai/chatbot">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-comments text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Chatbot</span>
-                        </a>
-                    </li>
-
-                    <!-- OPERATIONS Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">OPERATIONS</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-orange-500 to-yellow-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-cogs text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Operations Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/suppliers">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-truck text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Suppliers</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/purchaseorders">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-clipboard-list text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Purchase Orders</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/locations">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-warehouse text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Locations</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/barcodes">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-barcode text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Barcodes</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/packing-slips">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-file-invoice text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Packing Slips</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/label-designer">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-tags text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Label Designer</span>
-                        </a>
-                    </li>
-
-                    <!-- INVENTORY Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">INVENTORY</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/inventory">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-green-600 to-lime-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-chart-bar text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Predictions</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/inventory/alerts">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-bell text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Alerts</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/inventory/settings">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-cog text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Settings</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/operations/thresholds">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-exclamation-triangle text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Thresholds</span>
-                        </a>
-                    </li>
-
-                    <!-- CUSTOMER HUB Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">CUSTOMER HUB</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/customer-hub">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-red-500 to-rose-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-users text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/customer-hub/inbox">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-inbox text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Unified Inbox</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/customer-hub/inbox/live-chat">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-comments text-xs text-purple-600"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Live Chat</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/customer-hub/exchanges">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-exchange-alt text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Exchanges</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/customer-hub/loyalty">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-gift text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Loyalty Program</span>
-                        </a>
-                    </li>
-
-                    <!-- RETURNS Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">RETURNS</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/returns">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-slate-600 to-slate-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-undo text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Returns Dashboard</span>
-                        </a>
-                    </li>
-
-                    <!-- ADMIN Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">ADMIN</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/admin/clients">
-                            <div class="stroke-none shadow-soft-sm bg-gradient-to-tl from-red-600 to-rose-400 mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center text-white">
-                                <i class="fas fa-users text-xs"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Clients</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/admin/plan-features">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-puzzle-piece text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Plan Features</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/admin/plan-requests">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-exchange-alt text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Plan Requests</span>
-                        </a>
-                    </li>
-
-                    <!-- SETTINGS Section -->
-                    <li class="w-full mt-4">
-                        <h6 class="pl-6 ml-2 font-bold leading-tight uppercase text-xs opacity-60 dark:text-white">SETTINGS</h6>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/account/profile">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-user text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Account</span>
-                        </a>
-                    </li>
-
-                    <li class="mt-0.5 w-full">
-                        <a class="ease-soft-in-out text-sm py-2.7 my-0 mx-4 flex items-center whitespace-nowrap px-4 font-medium text-slate-500 transition-all dark:text-white dark:opacity-80" href="/plans">
-                            <div class="stroke-none shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center p-2.5 text-center">
-                                <i class="fas fa-credit-card text-xs text-slate-700"></i>
-                            </div>
-                            <span class="ml-1 duration-300 pointer-events-none ease-soft opacity-100">Plans & Billing</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </aside>
-        <!-- end sidenav -->
-        @RenderBody()
-
-    </main>
-
-    <!-- Modal container - rendered outside main to avoid stacking context issues -->
+    <!-- Modal container -->
     @await RenderSectionAsync("Modals", required: false)
 
-    <!-- plugin for charts  -->
-    <script src="~/js/plugins/chartjs.min.js" asp-append-version="true"></script>
+    <!-- Flowbite JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
-    <!-- github button -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="~/js/plugins/perfect-scrollbar.min.js" asp-append-version="true"></script>
-    <!-- main script file  -->
-    <script src="~/js/algora.web.js" asp-append-version="true"></script>
-    <script src="~/js/nav-pills.js" asp-append-version="true"></script>
+    <!-- Dark mode toggle script -->
+    <script>
+        // Check theme on load
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-toggle-light-icon').classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+        }
 
-    <script src="~/js/sidenav.js" asp-append-version="true"></script>
+        // Toggle theme
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden');
+            document.getElementById('theme-toggle-light-icon').classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+
+        // Highlight current page in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const sidebarLinks = document.querySelectorAll('.sidebar-item');
+
+            sidebarLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && currentPath === href.toLowerCase()) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

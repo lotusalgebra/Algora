@@ -1,0 +1,58 @@
+@* Button Component
+   Usage: <partial name="Components/_Button" model="new { Text = \"Save\", Type = \"primary\", Icon = \"fa-save\" }" />
+   Types: primary, secondary, danger, success, outline
+*@
+
+@{
+    var text = ViewData["Text"]?.ToString() ?? "Button";
+    var type = ViewData["Type"]?.ToString() ?? "primary";
+    var icon = ViewData["Icon"]?.ToString() ?? "";
+    var size = ViewData["Size"]?.ToString() ?? "md"; // sm, md, lg
+    var href = ViewData["Href"]?.ToString() ?? "";
+    var disabled = ViewData["Disabled"] as bool? ?? false;
+    var fullWidth = ViewData["FullWidth"] as bool? ?? false;
+    var id = ViewData["Id"]?.ToString() ?? "";
+    var onclick = ViewData["OnClick"]?.ToString() ?? "";
+
+    var colorClass = type switch
+    {
+        "primary" => "text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800",
+        "secondary" => "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700",
+        "danger" => "text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800",
+        "success" => "text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800",
+        "outline" => "text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900",
+        _ => "text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800"
+    };
+
+    var sizeClass = size switch
+    {
+        "lg" => "px-6 py-3 text-base",
+        "sm" => "px-3 py-1.5 text-xs",
+        _ => "px-5 py-2.5 text-sm"
+    };
+
+    var widthClass = fullWidth ? "w-full" : "";
+    var disabledClass = disabled ? "opacity-50 cursor-not-allowed" : "";
+    var baseClass = $"inline-flex items-center justify-center font-medium rounded-lg transition-all {colorClass} {sizeClass} {widthClass} {disabledClass}";
+}
+
+@if (!string.IsNullOrEmpty(href))
+{
+    <a href="@href" class="@baseClass" @(disabled ? "aria-disabled=true" : "")>
+        @if (!string.IsNullOrEmpty(icon))
+        {
+            <i class="fas @icon me-2"></i>
+        }
+        @text
+    </a>
+}
+else
+{
+    <button type="button" class="@baseClass" @(disabled ? "disabled" : "") @(!string.IsNullOrEmpty(id) ? $"id=\"{id}\"" : "") @(!string.IsNullOrEmpty(onclick) ? $"onclick=\"{onclick}\"" : "")>
+        @if (!string.IsNullOrEmpty(icon))
+        {
+            <i class="fas @icon me-2"></i>
+        }
+        @text
+    </button>
+}

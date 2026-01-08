@@ -1,0 +1,50 @@
+@* Stat Card Component
+   Usage: <partial name="Components/_StatCard" model="new { Title = \"Revenue\", Value = \"$12,500\", Change = \"+12%\", ChangeType = \"up\", Icon = \"fa-dollar-sign\", IconGradient = \"from-purple-600 to-pink-500\" }" />
+*@
+
+@{
+    var title = ViewData["Title"]?.ToString() ?? "Metric";
+    var value = ViewData["Value"]?.ToString() ?? "0";
+    var change = ViewData["Change"]?.ToString() ?? "";
+    var changeType = ViewData["ChangeType"]?.ToString() ?? "up"; // up, down, neutral
+    var icon = ViewData["Icon"]?.ToString() ?? "fa-chart-line";
+    var iconGradient = ViewData["IconGradient"]?.ToString() ?? "from-purple-600 to-pink-500";
+
+    var changeColorClass = changeType switch
+    {
+        "up" => "text-green-500",
+        "down" => "text-red-500",
+        _ => "text-gray-500"
+    };
+
+    var changeIcon = changeType switch
+    {
+        "up" => "fa-arrow-up",
+        "down" => "fa-arrow-down",
+        _ => ""
+    };
+}
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+    <div class="flex items-center justify-between">
+        <div class="flex-1">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">@title</p>
+            <div class="flex items-baseline mt-1">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@value</h3>
+                @if (!string.IsNullOrEmpty(change))
+                {
+                    <span class="ml-2 text-sm font-medium @changeColorClass flex items-center">
+                        @if (!string.IsNullOrEmpty(changeIcon))
+                        {
+                            <i class="fas @changeIcon text-xs mr-1"></i>
+                        }
+                        @change
+                    </span>
+                }
+            </div>
+        </div>
+        <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br @iconGradient">
+            <i class="fas @icon text-white text-lg"></i>
+        </div>
+    </div>
+</div>
