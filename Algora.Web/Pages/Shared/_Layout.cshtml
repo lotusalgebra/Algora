@@ -33,6 +33,10 @@
                             800: '#5b21b6',
                             900: '#4c1d95'
                         }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 27px 0 rgba(0, 0, 0, 0.05)',
+                        'soft-xl': '0 23px 45px -11px rgba(0, 0, 0, 0.25)'
                     }
                 }
             }
@@ -50,67 +54,160 @@
 
     <style>
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
         .dark ::-webkit-scrollbar-thumb { background: #334155; }
         .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* Sidebar styling */
-        .nav-item {
-            transition: all 0.15s ease;
-        }
-        .nav-item:hover {
-            background-color: rgba(139, 92, 246, 0.08);
-        }
-        .dark .nav-item:hover {
-            background-color: rgba(139, 92, 246, 0.15);
-        }
-        .nav-item.active {
-            background-color: rgba(139, 92, 246, 0.12);
-            color: #7c3aed;
+        /* Soft UI sidebar styles */
+        .sidenav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.625rem 1rem;
+            margin: 0.125rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+            color: #67748e;
+            text-decoration: none;
+            font-size: 0.875rem;
             font-weight: 500;
         }
-        .dark .nav-item.active {
-            background-color: rgba(139, 92, 246, 0.2);
-            color: #a78bfa;
+        .dark .sidenav-item {
+            color: #94a3b8;
         }
-        .nav-item.active .nav-icon {
+        .sidenav-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dark .sidenav-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .sidenav-item.active {
+            background-color: #fff;
+            box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+        }
+        .dark .sidenav-item.active {
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: none;
+        }
+        .sidenav-item .icon-shape {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            background: linear-gradient(310deg, #f8f9fa, #fff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            color: #67748e;
+            transition: all 0.15s ease-in-out;
+        }
+        .dark .sidenav-item .icon-shape {
+            background: linear-gradient(310deg, #1e293b, #334155);
+            color: #94a3b8;
+        }
+        .sidenav-item.active .icon-shape {
+            background: linear-gradient(310deg, #7c3aed, #a855f7);
+            color: #fff;
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.4);
+        }
+        .dark .sidenav-item.active .icon-shape {
+            background: linear-gradient(310deg, #7c3aed, #a855f7);
+            color: #fff;
+        }
+        .sidenav-item.active .nav-text {
+            color: #344767;
+            font-weight: 600;
+        }
+        .dark .sidenav-item.active .nav-text {
+            color: #f1f5f9;
+        }
+
+        /* Dropdown items */
+        .sidenav-dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem 0.5rem 3.5rem;
+            margin: 0 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.15s ease-in-out;
+            color: #67748e;
+            font-size: 0.8125rem;
+            font-weight: 400;
+        }
+        .dark .sidenav-dropdown-item {
+            color: #94a3b8;
+        }
+        .sidenav-dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #344767;
+        }
+        .dark .sidenav-dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+        }
+        .sidenav-dropdown-item.active {
             color: #7c3aed;
+            font-weight: 600;
         }
-        .dark .nav-item.active .nav-icon {
+        .dark .sidenav-dropdown-item.active {
             color: #a78bfa;
+        }
+        .sidenav-dropdown-item::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #dee2e6;
+            margin-right: 0.75rem;
+            transition: all 0.15s ease-in-out;
+        }
+        .dark .sidenav-dropdown-item::before {
+            background-color: #475569;
+        }
+        .sidenav-dropdown-item.active::before {
+            background-color: #7c3aed;
+        }
+
+        /* Section headers */
+        .sidenav-title {
+            padding: 1rem 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #344767;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            opacity: 0.6;
+        }
+        .dark .sidenav-title {
+            color: #94a3b8;
         }
 
         /* Dropdown animation */
-        .nav-dropdown {
+        .sidenav-collapse {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.2s ease-out;
+            transition: max-height 0.35s ease;
         }
-        .nav-dropdown.open {
+        .sidenav-collapse.show {
             max-height: 500px;
         }
 
-        /* Section divider */
-        .nav-section {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #94a3b8;
-            padding: 1rem 1rem 0.5rem;
+        /* Chevron rotation */
+        .collapse-chevron {
+            transition: transform 0.35s ease;
         }
-        .dark .nav-section {
-            color: #64748b;
+        .collapse-chevron.rotated {
+            transform: rotate(90deg);
         }
     </style>
 
     @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("css", required: false)
 </head>
-<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
+<body class="font-sans antialiased bg-gray-100 dark:bg-slate-900">
     @{
         var currentPath = Context.Request.Path.ToString().ToLower();
         bool IsActive(string path) => currentPath == path.ToLower() || currentPath.StartsWith(path.ToLower() + "/");
@@ -124,188 +221,233 @@
     </button>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-60 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-        <div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+        <div class="h-full flex flex-col bg-white dark:bg-slate-850 dark:bg-opacity-95 shadow-soft dark:shadow-none border-r-0 dark:border-r dark:border-slate-700" style="background: linear-gradient(195deg, rgb(66, 66, 74), rgb(25, 25, 25));">
             <!-- Logo -->
-            <div class="flex items-center h-16 px-4 border-b border-gray-100 dark:border-gray-800">
+            <div class="flex items-center p-6 pb-4">
                 <a href="/dashboard" class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                        <i class="fas fa-cube text-white text-sm"></i>
+                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                        <i class="fas fa-cube text-slate-800 text-sm"></i>
                     </div>
-                    <span class="text-lg font-semibold text-gray-900 dark:text-white">Algora</span>
+                    <div>
+                        <span class="text-sm font-semibold text-white tracking-wide">Algora Dashboard</span>
+                    </div>
                 </a>
             </div>
 
+            <hr class="h-px mx-4 my-1 bg-gradient-to-r from-transparent via-white/30 to-transparent border-0">
+
             <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto py-4 px-3">
+            <nav class="flex-1 overflow-y-auto py-4">
                 <!-- Dashboard -->
-                <a href="/dashboard" class="nav-item @(IsActive("/dashboard") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-th-large w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Dashboard</span>
+                <a href="/dashboard" class="sidenav-item @(IsActive("/dashboard") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/dashboard") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-tv text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm font-medium">Dashboard</span>
                 </a>
 
                 <!-- Commerce Section -->
-                <div class="nav-section mt-4">Commerce</div>
-                <a href="/orders" class="nav-item @(IsActive("/orders") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-shopping-bag w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Orders</span>
+                <p class="sidenav-title text-white/50 mt-4">Commerce</p>
+
+                <a href="/orders" class="sidenav-item @(IsActive("/orders") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/orders") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-shopping-cart text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Orders</span>
                 </a>
-                <a href="/products" class="nav-item @(IsActive("/products") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-box w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Products</span>
+
+                <a href="/products" class="sidenav-item @(IsActive("/products") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/products") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-box text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Products</span>
                 </a>
-                <a href="/bundles/admin" class="nav-item @(IsActive("/bundles") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-boxes-stacked w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Bundles</span>
+
+                <a href="/bundles/admin" class="sidenav-item @(IsActive("/bundles") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/bundles") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-boxes-stacked text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Bundles</span>
                 </a>
 
                 <!-- Communication Section -->
-                <div class="nav-section mt-4">Communication</div>
-                <a href="/communication/history" class="nav-item @(IsActive("/communication/history") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-clock-rotate-left w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>History</span>
-                </a>
-                <a href="/communication/email-campaigns" class="nav-item @(IsActive("/communication/email-campaigns") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-envelope w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Email Campaigns</span>
-                </a>
-                <a href="/communication/sms" class="nav-item @(IsActive("/communication/sms") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-comment-sms w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>SMS</span>
-                </a>
-                <a href="/communication/whatsapp" class="nav-item @(IsActive("/communication/whatsapp") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fab fa-whatsapp w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>WhatsApp</span>
-                </a>
+                <p class="sidenav-title text-white/50 mt-4">Communication</p>
+
+                <button onclick="toggleCollapse('comm')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/communication") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/communication") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-comments text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Messages</span>
+                    <i id="comm-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/communication") ? "rotated" : "")"></i>
+                </button>
+                <div id="comm-collapse" class="sidenav-collapse @(IsInSection("/communication") ? "show" : "")">
+                    <a href="/communication/history" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/history") ? "active !text-white font-semibold" : "")">History</a>
+                    <a href="/communication/email-campaigns" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/email-campaigns") ? "active !text-white font-semibold" : "")">Email Campaigns</a>
+                    <a href="/communication/sms" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/sms") ? "active !text-white font-semibold" : "")">SMS</a>
+                    <a href="/communication/whatsapp" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/communication/whatsapp") ? "active !text-white font-semibold" : "")">WhatsApp</a>
+                </div>
 
                 <!-- Marketing Section -->
-                <div class="nav-section mt-4">Marketing</div>
-                <button onclick="toggleNav('marketing')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <div class="flex items-center gap-3">
-                        <i class="nav-icon fas fa-bullhorn w-4 text-gray-400 dark:text-gray-500"></i>
-                        <span>Marketing</span>
-                    </div>
-                    <i id="marketing-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "rotate-90" : "")"></i>
+                <p class="sidenav-title text-white/50 mt-4">Marketing</p>
+
+                <button onclick="toggleCollapse('marketing')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-bullhorn text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Marketing</span>
+                    <i id="marketing-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "rotated" : "")"></i>
                 </button>
-                <div id="marketing-dropdown" class="nav-dropdown @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "open" : "") pl-7 space-y-0.5">
-                    <a href="/upsell" class="nav-item @(IsActive("/upsell") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Upsell</a>
-                    <a href="/reviews/admin" class="nav-item @(IsInSection("/reviews") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Reviews</a>
-                    <a href="/analytics" class="nav-item @(IsActive("/analytics") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Analytics</a>
-                    <a href="/abandoned-checkouts" class="nav-item @(IsInSection("/abandoned") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Abandoned Carts</a>
+                <div id="marketing-collapse" class="sidenav-collapse @(IsInSection("/upsell") || IsInSection("/reviews") || IsInSection("/analytics") || IsInSection("/abandoned") ? "show" : "")">
+                    <a href="/upsell" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/upsell") ? "active !text-white font-semibold" : "")">Upsell</a>
+                    <a href="/reviews/admin" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsInSection("/reviews") ? "active !text-white font-semibold" : "")">Reviews</a>
+                    <a href="/analytics" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/analytics") ? "active !text-white font-semibold" : "")">Analytics</a>
+                    <a href="/abandoned-checkouts" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsInSection("/abandoned") ? "active !text-white font-semibold" : "")">Abandoned Carts</a>
                 </div>
 
                 <!-- AI Tools Section -->
-                <div class="nav-section mt-4">AI Tools</div>
-                <a href="/ai" class="nav-item @(currentPath == "/ai" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-sparkles w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>AI Dashboard</span>
+                <p class="sidenav-title text-white/50 mt-4">AI Tools</p>
+
+                <a href="/ai" class="sidenav-item @(currentPath == "/ai" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/ai" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-robot text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">AI Dashboard</span>
                 </a>
-                <button onclick="toggleNav('ai')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <div class="flex items-center gap-3">
-                        <i class="nav-icon fas fa-wand-magic-sparkles w-4 text-gray-400 dark:text-gray-500"></i>
-                        <span>AI Tools</span>
-                    </div>
-                    <i id="ai-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/ai/") ? "rotate-90" : "")"></i>
+
+                <button onclick="toggleCollapse('ai')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/ai/") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/ai/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">AI Tools</span>
+                    <i id="ai-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/ai/") ? "rotated" : "")"></i>
                 </button>
-                <div id="ai-dropdown" class="nav-dropdown @(IsInSection("/ai/") ? "open" : "") pl-7 space-y-0.5">
-                    <a href="/ai/descriptions" class="nav-item @(IsActive("/ai/descriptions") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Descriptions</a>
-                    <a href="/ai/seo" class="nav-item @(IsActive("/ai/seo") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">SEO Optimizer</a>
-                    <a href="/ai/pricing" class="nav-item @(IsActive("/ai/pricing") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Pricing AI</a>
-                    <a href="/ai/alttext" class="nav-item @(IsActive("/ai/alttext") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Alt Text</a>
-                    <a href="/ai/chatbot" class="nav-item @(IsActive("/ai/chatbot") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Chatbot</a>
+                <div id="ai-collapse" class="sidenav-collapse @(IsInSection("/ai/") ? "show" : "")">
+                    <a href="/ai/descriptions" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/descriptions") ? "active !text-white font-semibold" : "")">Descriptions</a>
+                    <a href="/ai/seo" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/seo") ? "active !text-white font-semibold" : "")">SEO Optimizer</a>
+                    <a href="/ai/pricing" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/pricing") ? "active !text-white font-semibold" : "")">Pricing AI</a>
+                    <a href="/ai/alttext" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/alttext") ? "active !text-white font-semibold" : "")">Alt Text</a>
+                    <a href="/ai/chatbot" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/ai/chatbot") ? "active !text-white font-semibold" : "")">Chatbot</a>
                 </div>
 
                 <!-- Operations Section -->
-                <div class="nav-section mt-4">Operations</div>
-                <a href="/operations" class="nav-item @(currentPath == "/operations" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-gauge-high w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Overview</span>
+                <p class="sidenav-title text-white/50 mt-4">Operations</p>
+
+                <a href="/operations" class="sidenav-item @(currentPath == "/operations" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/operations" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-gauge-high text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Overview</span>
                 </a>
-                <button onclick="toggleNav('ops')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <div class="flex items-center gap-3">
-                        <i class="nav-icon fas fa-truck w-4 text-gray-400 dark:text-gray-500"></i>
-                        <span>Supply Chain</span>
-                    </div>
-                    <i id="ops-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/operations/") ? "rotate-90" : "")"></i>
+
+                <button onclick="toggleCollapse('ops')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/operations/") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/operations/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-truck text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Supply Chain</span>
+                    <i id="ops-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/operations/") ? "rotated" : "")"></i>
                 </button>
-                <div id="ops-dropdown" class="nav-dropdown @(IsInSection("/operations/") ? "open" : "") pl-7 space-y-0.5">
-                    <a href="/operations/suppliers" class="nav-item @(IsActive("/operations/suppliers") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Suppliers</a>
-                    <a href="/operations/purchaseorders" class="nav-item @(IsActive("/operations/purchaseorders") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Purchase Orders</a>
-                    <a href="/operations/locations" class="nav-item @(IsActive("/operations/locations") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Locations</a>
-                    <a href="/operations/barcodes" class="nav-item @(IsActive("/operations/barcodes") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Barcodes</a>
-                    <a href="/operations/packing-slips" class="nav-item @(IsActive("/operations/packing-slips") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Packing Slips</a>
-                    <a href="/operations/label-designer" class="nav-item @(IsActive("/operations/label-designer") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Label Designer</a>
+                <div id="ops-collapse" class="sidenav-collapse @(IsInSection("/operations/") ? "show" : "")">
+                    <a href="/operations/suppliers" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/suppliers") ? "active !text-white font-semibold" : "")">Suppliers</a>
+                    <a href="/operations/purchaseorders" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/purchaseorders") ? "active !text-white font-semibold" : "")">Purchase Orders</a>
+                    <a href="/operations/locations" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/locations") ? "active !text-white font-semibold" : "")">Locations</a>
+                    <a href="/operations/barcodes" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/barcodes") ? "active !text-white font-semibold" : "")">Barcodes</a>
+                    <a href="/operations/packing-slips" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/packing-slips") ? "active !text-white font-semibold" : "")">Packing Slips</a>
+                    <a href="/operations/label-designer" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/operations/label-designer") ? "active !text-white font-semibold" : "")">Label Designer</a>
                 </div>
 
                 <!-- Inventory Section -->
-                <div class="nav-section mt-4">Inventory</div>
-                <a href="/inventory" class="nav-item @(currentPath == "/inventory" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-chart-line w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Predictions</span>
-                </a>
-                <a href="/inventory/alerts" class="nav-item @(IsActive("/inventory/alerts") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-bell w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Alerts</span>
-                </a>
-                <a href="/inventory/settings" class="nav-item @(IsActive("/inventory/settings") ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-sliders w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Settings</span>
-                </a>
+                <p class="sidenav-title text-white/50 mt-4">Inventory</p>
+
+                <button onclick="toggleCollapse('inv')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/inventory") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/inventory") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-warehouse text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Inventory</span>
+                    <i id="inv-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/inventory") ? "rotated" : "")"></i>
+                </button>
+                <div id="inv-collapse" class="sidenav-collapse @(IsInSection("/inventory") ? "show" : "")">
+                    <a href="/inventory" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(currentPath == "/inventory" ? "active !text-white font-semibold" : "")">Predictions</a>
+                    <a href="/inventory/alerts" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/inventory/alerts") ? "active !text-white font-semibold" : "")">Alerts</a>
+                    <a href="/inventory/settings" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/inventory/settings") ? "active !text-white font-semibold" : "")">Settings</a>
+                </div>
 
                 <!-- Customer Hub Section -->
-                <div class="nav-section mt-4">Customer Hub</div>
-                <a href="/customer-hub" class="nav-item @(currentPath == "/customer-hub" ? "active" : "") flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-users w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Overview</span>
+                <p class="sidenav-title text-white/50 mt-4">Customer Hub</p>
+
+                <a href="/customer-hub" class="sidenav-item @(currentPath == "/customer-hub" ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(currentPath == "/customer-hub" ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-users text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Overview</span>
                 </a>
-                <button onclick="toggleNav('hub')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <div class="flex items-center gap-3">
-                        <i class="nav-icon fas fa-headset w-4 text-gray-400 dark:text-gray-500"></i>
-                        <span>Support</span>
-                    </div>
-                    <i id="hub-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/customer-hub/") ? "rotate-90" : "")"></i>
+
+                <button onclick="toggleCollapse('hub')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/customer-hub/") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/customer-hub/") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-headset text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Support</span>
+                    <i id="hub-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/customer-hub/") ? "rotated" : "")"></i>
                 </button>
-                <div id="hub-dropdown" class="nav-dropdown @(IsInSection("/customer-hub/") ? "open" : "") pl-7 space-y-0.5">
-                    <a href="/customer-hub/inbox" class="nav-item @(IsActive("/customer-hub/inbox") && !currentPath.Contains("live-chat") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Unified Inbox</a>
-                    <a href="/customer-hub/inbox/live-chat" class="nav-item @(IsActive("/customer-hub/inbox/live-chat") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Live Chat</a>
-                    <a href="/customer-hub/exchanges" class="nav-item @(IsActive("/customer-hub/exchanges") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Exchanges</a>
-                    <a href="/customer-hub/loyalty" class="nav-item @(IsActive("/customer-hub/loyalty") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Loyalty Program</a>
+                <div id="hub-collapse" class="sidenav-collapse @(IsInSection("/customer-hub/") ? "show" : "")">
+                    <a href="/customer-hub/inbox" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/inbox") && !currentPath.Contains("live-chat") ? "active !text-white font-semibold" : "")">Unified Inbox</a>
+                    <a href="/customer-hub/inbox/live-chat" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/inbox/live-chat") ? "active !text-white font-semibold" : "")">Live Chat</a>
+                    <a href="/customer-hub/exchanges" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/exchanges") ? "active !text-white font-semibold" : "")">Exchanges</a>
+                    <a href="/customer-hub/loyalty" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/customer-hub/loyalty") ? "active !text-white font-semibold" : "")">Loyalty Program</a>
                 </div>
 
                 <!-- Returns -->
-                <a href="/returns" class="nav-item @(IsInSection("/returns") ? "active" : "") flex items-center gap-3 px-3 py-2 mt-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <i class="nav-icon fas fa-rotate-left w-4 text-gray-400 dark:text-gray-500"></i>
-                    <span>Returns</span>
+                <a href="/returns" class="sidenav-item @(IsInSection("/returns") ? "active" : "") mx-4 my-1 mt-2 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/returns") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-rotate-left text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Returns</span>
                 </a>
 
                 <!-- Admin Section -->
-                <div class="nav-section mt-4">Admin</div>
-                <button onclick="toggleNav('admin')" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    <div class="flex items-center gap-3">
-                        <i class="nav-icon fas fa-shield-halved w-4 text-gray-400 dark:text-gray-500"></i>
-                        <span>Administration</span>
-                    </div>
-                    <i id="admin-chevron" class="fas fa-chevron-right text-[10px] text-gray-400 transition-transform @(IsInSection("/admin") ? "rotate-90" : "")"></i>
+                <p class="sidenav-title text-white/50 mt-4">Admin</p>
+
+                <button onclick="toggleCollapse('admin')" class="sidenav-item w-full mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white @(IsInSection("/admin") ? "active" : "")">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsInSection("/admin") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-shield-halved text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Administration</span>
+                    <i id="admin-chevron" class="fas fa-chevron-right text-[10px] text-white/50 collapse-chevron @(IsInSection("/admin") ? "rotated" : "")"></i>
                 </button>
-                <div id="admin-dropdown" class="nav-dropdown @(IsInSection("/admin") ? "open" : "") pl-7 space-y-0.5">
-                    <a href="/admin/clients" class="nav-item @(IsActive("/admin/clients") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Clients</a>
-                    <a href="/admin/plan-features" class="nav-item @(IsActive("/admin/plan-features") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Plan Features</a>
-                    <a href="/admin/plan-requests" class="nav-item @(IsActive("/admin/plan-requests") ? "active" : "") flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400">Plan Requests</a>
+                <div id="admin-collapse" class="sidenav-collapse @(IsInSection("/admin") ? "show" : "")">
+                    <a href="/admin/clients" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/clients") ? "active !text-white font-semibold" : "")">Clients</a>
+                    <a href="/admin/plan-features" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/plan-features") ? "active !text-white font-semibold" : "")">Plan Features</a>
+                    <a href="/admin/plan-requests" class="sidenav-dropdown-item text-white/60 hover:text-white hover:bg-white/10 @(IsActive("/admin/plan-requests") ? "active !text-white font-semibold" : "")">Plan Requests</a>
                 </div>
+
+                <!-- Settings Section -->
+                <p class="sidenav-title text-white/50 mt-4">Settings</p>
+
+                <a href="/account/profile" class="sidenav-item @(IsActive("/account") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/account") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-user text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Account</span>
+                </a>
+
+                <a href="/plans" class="sidenav-item @(IsActive("/plans") ? "active" : "") mx-4 my-1 bg-transparent hover:bg-white/10 text-white/80 hover:text-white">
+                    <span class="icon-shape !bg-gradient-to-tl @(IsActive("/plans") ? "from-purple-700 to-pink-500" : "from-slate-600 to-slate-700") !text-white">
+                        <i class="fas fa-credit-card text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Plans & Billing</span>
+                </a>
             </nav>
 
-            <!-- User Section -->
-            <div class="border-t border-gray-100 dark:border-gray-800 p-3">
-                <div class="flex items-center gap-3 px-2 py-2">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shadow-lg shadow-purple-500/20">
-                        A
+            <!-- User Card -->
+            <div class="p-4">
+                <div class="bg-gradient-to-tl from-purple-700 to-pink-500 rounded-xl p-4 text-center">
+                    <div class="w-12 h-12 mx-auto bg-white rounded-xl flex items-center justify-center shadow-lg mb-3">
+                        <i class="fas fa-rocket text-purple-600"></i>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Admin User</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@algora.com</p>
-                    </div>
-                    <a href="/account/profile" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <i class="fas fa-cog text-sm"></i>
+                    <h6 class="text-white text-sm font-semibold mb-1">Need Help?</h6>
+                    <p class="text-white/70 text-xs mb-3">Check our docs</p>
+                    <a href="/docs" class="block w-full py-2 px-4 bg-white rounded-lg text-slate-800 text-xs font-semibold hover:bg-gray-100 transition-colors">
+                        Documentation
                     </a>
                 </div>
             </div>
@@ -313,16 +455,16 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="sm:ml-60">
+    <div class="sm:ml-64">
         <!-- Top Navbar -->
-        <nav class="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-            <div class="flex items-center justify-between h-14 px-4">
+        <nav class="sticky top-0 z-30 backdrop-blur-lg bg-white/70 dark:bg-slate-900/70 shadow-sm">
+            <div class="flex items-center justify-between h-16 px-6">
                 <!-- Breadcrumb -->
                 <div class="flex items-center">
                     <nav class="flex" aria-label="Breadcrumb">
                         <ol class="inline-flex items-center space-x-2">
                             <li class="inline-flex items-center">
-                                <a href="/dashboard" class="inline-flex items-center text-sm text-gray-500 hover:text-violet-600 dark:text-gray-400 dark:hover:text-violet-400">
+                                <a href="/dashboard" class="inline-flex items-center text-sm text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400 transition-colors">
                                     <i class="fas fa-home text-xs me-2"></i>
                                     Home
                                 </a>
@@ -331,8 +473,8 @@
                             {
                                 <li>
                                     <div class="flex items-center">
-                                        <i class="fas fa-chevron-right text-[10px] text-gray-400 mx-2"></i>
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">@ViewData["Breadcrumb"]</span>
+                                        <span class="text-slate-400 mx-2">/</span>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-200">@ViewData["Breadcrumb"]</span>
                                     </div>
                                 </li>
                             }
@@ -341,23 +483,32 @@
                 </div>
 
                 <!-- Right side buttons -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
+                    <!-- Search -->
+                    <button type="button" class="p-2.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                        <i class="fas fa-search text-sm"></i>
+                    </button>
+
                     <!-- Dark mode toggle -->
-                    <button id="theme-toggle" type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    <button id="theme-toggle" type="button" class="p-2.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                         <i id="theme-toggle-dark-icon" class="hidden fas fa-moon text-sm"></i>
                         <i id="theme-toggle-light-icon" class="hidden fas fa-sun text-sm"></i>
                     </button>
 
                     <!-- Notifications -->
-                    <button type="button" class="relative p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                    <button type="button" class="relative p-2.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                         <i class="fas fa-bell text-sm"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
 
-                    <!-- Help -->
-                    <button type="button" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                        <i class="fas fa-question-circle text-sm"></i>
-                    </button>
+                    <!-- Profile dropdown -->
+                    <div class="relative ml-2">
+                        <button type="button" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center text-white text-sm font-semibold shadow-md">
+                                A
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -398,17 +549,17 @@
             }
         });
 
-        // Navigation dropdown toggle
-        function toggleNav(name) {
-            const dropdown = document.getElementById(name + '-dropdown');
+        // Collapse toggle
+        function toggleCollapse(name) {
+            const collapse = document.getElementById(name + '-collapse');
             const chevron = document.getElementById(name + '-chevron');
 
-            if (dropdown.classList.contains('open')) {
-                dropdown.classList.remove('open');
-                chevron.classList.remove('rotate-90');
+            if (collapse.classList.contains('show')) {
+                collapse.classList.remove('show');
+                chevron.classList.remove('rotated');
             } else {
-                dropdown.classList.add('open');
-                chevron.classList.add('rotate-90');
+                collapse.classList.add('show');
+                chevron.classList.add('rotated');
             }
         }
     </script>
