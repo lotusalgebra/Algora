@@ -168,7 +168,7 @@
                                         }
                                         else if (offer.DiscountType == "fixed" && offer.DiscountValue > 0)
                                         {
-                                            <span class="font-semibold text-green-600">$@offer.DiscountValue.Value.ToString("N2")</span>
+                                            <span class="font-semibold text-green-600">$@(offer.DiscountValue.Value.ToString("N2"))</span>
                                         }
                                         else
                                         {
