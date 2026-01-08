@@ -348,7 +348,7 @@ public class EmailMarketingService(AppDbContext db, ILogger<EmailMarketingServic
 
     public async Task<EmailAutomationDto> CreateAutomationAsync(string shopDomain, CreateEmailAutomationDto dto)
     {
-        var entity = new EmailAutomation { ShopDomain = shopDomain, Name = dto.Name, Description = dto.Description, TriggerType = dto.TriggerType, TriggerConditions = dto.TriggerConditions, IsActive = false };
+        var entity = new EmailAutomation { ShopDomain = shopDomain, Name = dto.Name, Description = dto.Description, TriggerType = dto.TriggerType, TriggerConditions = dto.TriggerConditions, IsActive = false, Revenue = 0, TotalEnrolled = 0, TotalCompleted = 0 };
         foreach (var s in dto.Steps)
             entity.Steps.Add(new EmailAutomationStep { StepOrder = s.StepOrder, StepType = s.StepType, Subject = s.Subject, Body = s.Body, EmailTemplateId = s.EmailTemplateId, DelayMinutes = s.DelayMinutes, Conditions = s.Conditions, IsActive = true });
         db.EmailAutomations.Add(entity);

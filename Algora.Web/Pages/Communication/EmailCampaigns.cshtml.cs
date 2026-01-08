@@ -290,6 +290,186 @@ public class EmailCampaignsModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostCreateSubscriberAsync(string email, string? firstName, string? lastName, string? phone, int? listId, string? tags)
+    {
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var dto = new CreateEmailSubscriberDto
+            {
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Phone = phone,
+                Tags = tags,
+                Source = "manual",
+                EmailOptIn = true
+            };
+
+            var subscriber = await _emailService.CreateSubscriberAsync(shopDomain, dto);
+
+            if (listId.HasValue)
+            {
+                await _emailService.AddSubscriberToListAsync(listId.Value, subscriber.Id);
+            }
+
+            TempData["Success"] = $"Subscriber '{email}' added successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error adding subscriber: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUnsubscribeAsync(int subscriberId)
+    {
+        try
+        {
+            var subscriber = await _emailService.GetSubscriberByIdAsync(subscriberId);
+            if (subscriber != null)
+            {
+                await _emailService.UnsubscribeAsync(subscriber.ShopDomain, subscriber.Email, "Manual unsubscribe");
+                TempData["Success"] = "Subscriber unsubscribed successfully!";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error unsubscribing: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateListAsync(string listName, string? description, bool doubleOptIn = false)
+    {
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var dto = new CreateEmailListDto
+            {
+                Name = listName,
+                Description = description,
+                DoubleOptIn = doubleOptIn
+            };
+
+            await _emailService.CreateListAsync(shopDomain, dto);
+            TempData["Success"] = $"List '{listName}' created successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error creating list: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteListAsync(int listId)
+    {
+        try
+        {
+            await _emailService.DeleteListAsync(listId);
+            TempData["Success"] = "List deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting list: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostCreateAutomationAsync(
+        string automationName,
+        string? automationDescription,
+        string triggerType,
+        string stepSubject,
+        string stepBody,
+        int delayValue = 0,
+        string delayUnit = "hours")
+    {
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var delayMinutes = delayUnit switch
+            {
+                "minutes" => delayValue,
+                "hours" => delayValue * 60,
+                "days" => delayValue * 60 * 24,
+                _ => delayValue * 60
+            };
+
+            var dto = new CreateEmailAutomationDto
+            {
+                Name = automationName,
+                Description = automationDescription,
+                TriggerType = triggerType,
+                Steps = new List<CreateEmailAutomationStepDto>
+                {
+                    new()
+                    {
+                        StepOrder = 1,
+                        StepType = "email",
+                        Subject = stepSubject,
+                        Body = stepBody,
+                        DelayMinutes = delayMinutes
+                    }
+                }
+            };
+
+            await _emailService.CreateAutomationAsync(shopDomain, dto);
+            TempData["Success"] = $"Automation '{automationName}' created successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error creating automation: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostToggleAutomationAsync(int automationId, bool activate)
+    {
+        try
+        {
+            if (activate)
+            {
+                await _emailService.ActivateAutomationAsync(automationId);
+                TempData["Success"] = "Automation activated!";
+            }
+            else
+            {
+                await _emailService.DeactivateAutomationAsync(automationId);
+                TempData["Success"] = "Automation deactivated!";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error toggling automation: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteAutomationAsync(int automationId)
+    {
+        try
+        {
+            await _emailService.DeleteAutomationAsync(automationId);
+            TempData["Success"] = "Automation deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting automation: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
     private string GetShopDomain()
     {
         return User.FindFirst("shop_domain")?.Value ?? "demo.myshopify.com";
