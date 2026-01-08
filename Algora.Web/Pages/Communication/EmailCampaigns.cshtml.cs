@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Communication;
 
+[IgnoreAntiforgeryToken]
 public class EmailCampaignsModel : PageModel
 {
     private readonly IEmailMarketingService _emailService;
@@ -33,48 +34,21 @@ public class EmailCampaignsModel : PageModel
     {
         var shopDomain = GetShopDomain();
 
+        // Load templates first (independent of other data)
         try
         {
-            // Load campaigns
+            Templates = (await _emailService.GetTemplatesAsync(shopDomain)).ToList();
+        }
+        catch (Exception)
+        {
+            Templates = new List<EmailTemplateDto>();
+        }
+
+        // Load campaigns
+        try
+        {
             var campaignsResult = await _emailService.GetCampaignsAsync(shopDomain, 1, 50);
             Campaigns = campaignsResult.Items.ToList();
-
-            // Load subscribers
-            var subscribersResult = await _emailService.GetSubscribersAsync(shopDomain, 1, 50);
-            TotalSubscribers = subscribersResult.TotalCount;
-            Subscribers = subscribersResult.Items.Select(s => new EmailSubscriberViewModel
-            {
-                Id = s.Id,
-                Email = s.Email,
-                FirstName = s.FirstName,
-                LastName = s.LastName,
-                Status = s.Status,
-                SubscribedAt = s.CreatedAt
-            }).ToList();
-
-            // Load lists
-            var lists = await _emailService.GetListsAsync(shopDomain);
-            Lists = lists.Select(l => new EmailListViewModel
-            {
-                Id = l.Id,
-                Name = l.Name,
-                Description = l.Description,
-                SubscriberCount = l.SubscriberCount,
-                CreatedAt = l.CreatedAt
-            }).ToList();
-
-            // Load automations
-            var automations = await _emailService.GetAutomationsAsync(shopDomain);
-            Automations = automations.Select(a => new EmailAutomationViewModel
-            {
-                Id = a.Id,
-                Name = a.Name,
-                TriggerType = a.TriggerType,
-                IsActive = a.IsActive
-            }).ToList();
-
-            // Load templates
-            Templates = (await _emailService.GetTemplatesAsync(shopDomain)).ToList();
 
             // Calculate stats
             CampaignsSent = Campaigns.Count(c => c.Status == "Sent");
@@ -94,16 +68,69 @@ public class EmailCampaignsModel : PageModel
         }
         catch (Exception)
         {
-            // Load demo data if service fails
-            LoadDemoData();
+            LoadDemoCampaigns();
+        }
+
+        // Load subscribers
+        try
+        {
+            var subscribersResult = await _emailService.GetSubscribersAsync(shopDomain, 1, 50);
+            TotalSubscribers = subscribersResult.TotalCount;
+            Subscribers = subscribersResult.Items.Select(s => new EmailSubscriberViewModel
+            {
+                Id = s.Id,
+                Email = s.Email,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                Status = s.Status,
+                SubscribedAt = s.CreatedAt
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            LoadDemoSubscribers();
+        }
+
+        // Load lists
+        try
+        {
+            var lists = await _emailService.GetListsAsync(shopDomain);
+            Lists = lists.Select(l => new EmailListViewModel
+            {
+                Id = l.Id,
+                Name = l.Name,
+                Description = l.Description,
+                SubscriberCount = l.SubscriberCount,
+                CreatedAt = l.CreatedAt
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            LoadDemoLists();
+        }
+
+        // Load automations
+        try
+        {
+            var automations = await _emailService.GetAutomationsAsync(shopDomain);
+            Automations = automations.Select(a => new EmailAutomationViewModel
+            {
+                Id = a.Id,
+                Name = a.Name,
+                TriggerType = a.TriggerType,
+                IsActive = a.IsActive
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            LoadDemoAutomations();
         }
 
         SuccessMessage = TempData["Success"]?.ToString();
     }
 
-    private void LoadDemoData()
+    private void LoadDemoCampaigns()
     {
-        TotalSubscribers = 2500;
         CampaignsSent = 12;
         AvgOpenRate = 24.5m;
         AvgClickRate = 3.2m;
@@ -114,6 +141,11 @@ public class EmailCampaignsModel : PageModel
             new() { Id = 2, Name = "Holiday Sale", Subject = "Up to 50% Off Everything!", Status = "Sent", TotalSent = 2000, TotalOpened = 480, TotalClicked = 120 },
             new() { Id = 3, Name = "New Arrivals", Subject = "Check Out What's New", Status = "Draft", TotalSent = 0, TotalOpened = 0, TotalClicked = 0 }
         };
+    }
+
+    private void LoadDemoSubscribers()
+    {
+        TotalSubscribers = 2500;
 
         Subscribers = new List<EmailSubscriberViewModel>
         {
@@ -121,13 +153,19 @@ public class EmailCampaignsModel : PageModel
             new() { Id = 2, Email = "jane@example.com", FirstName = "Jane", LastName = "Smith", Status = "Active", SubscribedAt = DateTime.Now.AddMonths(-2) },
             new() { Id = 3, Email = "bob@example.com", FirstName = "Bob", LastName = "Wilson", Status = "Unsubscribed", SubscribedAt = DateTime.Now.AddMonths(-6) }
         };
+    }
 
+    private void LoadDemoLists()
+    {
         Lists = new List<EmailListViewModel>
         {
             new() { Id = 1, Name = "Newsletter", Description = "General newsletter subscribers", SubscriberCount = 1500, CreatedAt = DateTime.Now.AddMonths(-12) },
             new() { Id = 2, Name = "VIP Customers", Description = "High-value customers", SubscriberCount = 250, CreatedAt = DateTime.Now.AddMonths(-6) }
         };
+    }
 
+    private void LoadDemoAutomations()
+    {
         Automations = new List<EmailAutomationViewModel>
         {
             new() { Id = 1, Name = "Welcome Series", TriggerType = "subscription", IsActive = true },
