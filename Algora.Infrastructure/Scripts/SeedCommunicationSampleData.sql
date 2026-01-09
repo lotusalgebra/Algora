@@ -3,7 +3,8 @@
 -- Shop Domain: demo.myshopify.com
 -- =============================================
 
-DECLARE @ShopDomain NVARCHAR(200) = 'demo.myshopify.com';
+-- Change this to your shop domain
+DECLARE @ShopDomain NVARCHAR(200) = 'devlotusalgebra.myshopify.com';
 
 -- =============================================
 -- EMAIL TEMPLATES
