@@ -1,0 +1,301 @@
+@page "/communication/history/{channel}/{id:int}"
+@model Algora.Web.Pages.Communication.HistoryDetailsModel
+@{
+    ViewData["Title"] = "Message Details";
+    ViewData["Breadcrumb"] = "Message Details";
+}
+
+<div class="mb-6">
+    <a href="/communication/history" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">
+        <i class="fas fa-arrow-left me-2"></i> Back to History
+    </a>
+</div>
+
+@if (Model.Item == null)
+{
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-12 border border-gray-200 dark:border-gray-700 text-center">
+        <i class="fas fa-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Message Not Found</h2>
+        <p class="text-gray-500 dark:text-gray-400">The requested message could not be found.</p>
+    </div>
+}
+else
+{
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Message Content Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        @if (Model.Item.Channel == "email")
+                        {
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                <i class="fas fa-envelope text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Email Message</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">@Model.Item.Type</p>
+                            </div>
+                        }
+                        else if (Model.Item.Channel == "sms")
+                        {
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <i class="fas fa-comment-sms text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">SMS Message</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">@Model.Item.Type</p>
+                            </div>
+                        }
+                        else if (Model.Item.Channel == "whatsapp")
+                        {
+                            <div class="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                <i class="fab fa-whatsapp text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">WhatsApp Message</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">@Model.Item.Type</p>
+                            </div>
+                        }
+                    </div>
+                    @{
+                        var statusColor = Model.Item.Status switch
+                        {
+                            "delivered" => "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+                            "sent" => "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+                            "opened" => "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+                            "clicked" => "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
+                            "failed" or "bounced" => "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+                            "pending" => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+                            _ => "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400"
+                        };
+                    }
+                    <span class="px-3 py-1.5 rounded-full text-sm font-medium @statusColor capitalize">
+                        @Model.Item.Status
+                    </span>
+                </div>
+
+                <div class="p-6">
+                    @if (!string.IsNullOrEmpty(Model.Item.Subject))
+                    {
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Subject</label>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">@Model.Item.Subject</p>
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Message Content</label>
+                        @if (Model.Item.Channel == "email" && !string.IsNullOrEmpty(Model.Item.Body))
+                        {
+                            <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                <div class="prose dark:prose-invert max-w-none text-sm">
+                                    @Html.Raw(Model.Item.Body)
+                                </div>
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(Model.Item.Preview))
+                        {
+                            <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">@Model.Item.Preview</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-gray-500 dark:text-gray-400 italic">No content available</p>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Item.ErrorMessage))
+                    {
+                        <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-exclamation-circle text-red-600 dark:text-red-400 mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-medium text-red-800 dark:text-red-400">Delivery Error</h4>
+                                    <p class="text-sm text-red-700 dark:text-red-300 mt-1">@Model.Item.ErrorMessage</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                <div class="flex flex-wrap gap-3">
+                    @if (Model.Item.Status == "failed" || Model.Item.Status == "bounced")
+                    {
+                        <form method="post" asp-page-handler="Resend" asp-route-channel="@Model.Item.Channel" asp-route-id="@Model.Item.Id">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">
+                                <i class="fas fa-redo me-2"></i> Resend Message
+                            </button>
+                        </form>
+                    }
+                    <a href="/communication/history" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                        <i class="fas fa-arrow-left me-2"></i> Back to History
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Recipient Info -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-4">Recipient</h3>
+
+                <div class="space-y-4">
+                    @if (!string.IsNullOrEmpty(Model.Item.RecipientName))
+                    {
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                <span class="text-sm font-medium text-purple-600 dark:text-purple-400">@Model.Item.RecipientName[0]</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white">@Model.Item.RecipientName</p>
+                                @if (!string.IsNullOrEmpty(Model.Item.RecipientEmail))
+                                {
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">@Model.Item.RecipientEmail</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Item.RecipientEmail))
+                    {
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                            <span class="text-gray-700 dark:text-gray-300">@Model.Item.RecipientEmail</span>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Item.RecipientPhone))
+                    {
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-phone text-gray-400"></i>
+                            <span class="text-gray-700 dark:text-gray-300">@Model.Item.RecipientPhone</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-4">Timeline</h3>
+
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-plus text-xs text-gray-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">Created</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">@Model.Item.CreatedAt.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                        </div>
+                    </div>
+
+                    @if (Model.Item.SentAt.HasValue)
+                    {
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-paper-plane text-xs text-blue-600 dark:text-blue-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Sent</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">@Model.Item.SentAt.Value.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.Item.DeliveredAt.HasValue)
+                    {
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-xs text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Delivered</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">@Model.Item.DeliveredAt.Value.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.Item.OpenedAt.HasValue)
+                    {
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope-open text-xs text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Opened</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">@Model.Item.OpenedAt.Value.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.Item.ClickedAt.HasValue)
+                    {
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-mouse-pointer text-xs text-indigo-600 dark:text-indigo-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">Clicked</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">@Model.Item.ClickedAt.Value.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Campaign Info -->
+            @if (!string.IsNullOrEmpty(Model.Item.CampaignName))
+            {
+                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-4">Campaign</h3>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                            <i class="fas fa-bullhorn text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white">@Model.Item.CampaignName</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 capitalize">@Model.Item.Type campaign</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Message Details -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-4">Details</h3>
+
+                <dl class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Message ID</dt>
+                        <dd class="text-gray-900 dark:text-white font-mono">#@Model.Item.Id</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Channel</dt>
+                        <dd class="text-gray-900 dark:text-white capitalize">@Model.Item.Channel</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Type</dt>
+                        <dd class="text-gray-900 dark:text-white capitalize">@Model.Item.Type</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500 dark:text-gray-400">Direction</dt>
+                        <dd class="text-gray-900 dark:text-white capitalize">@Model.Item.Direction</dd>
+                    </div>
+                    @if (Model.Item.RelatedId.HasValue)
+                    {
+                        <div class="flex justify-between">
+                            <dt class="text-gray-500 dark:text-gray-400">Related ID</dt>
+                            <dd class="text-gray-900 dark:text-white font-mono">#@Model.Item.RelatedId</dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+}

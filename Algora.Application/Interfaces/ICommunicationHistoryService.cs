@@ -21,4 +21,14 @@ public interface ICommunicationHistoryService
     /// Gets a single communication history item by ID and channel.
     /// </summary>
     Task<CommunicationHistoryItemDto?> GetByIdAsync(string shopDomain, int id, string channel);
+
+    /// <summary>
+    /// Gets detailed message information including full body content.
+    /// </summary>
+    Task<CommunicationHistoryItemDto?> GetMessageDetailsAsync(string shopDomain, string channel, int id);
+
+    /// <summary>
+    /// Resends a failed message.
+    /// </summary>
+    Task ResendMessageAsync(string shopDomain, string channel, int id);
 }

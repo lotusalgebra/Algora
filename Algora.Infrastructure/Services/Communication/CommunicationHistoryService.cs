@@ -346,4 +346,151 @@ public class CommunicationHistoryService : ICommunicationHistoryService
                 return null;
         }
     }
+
+    public async Task<CommunicationHistoryItemDto?> GetMessageDetailsAsync(string shopDomain, string channel, int id)
+    {
+        switch (channel.ToLower())
+        {
+            case "email":
+                var email = await _db.EmailCampaignRecipients
+                    .Include(r => r.EmailCampaign)
+                    .Where(r => r.Id == id && r.EmailCampaign.ShopDomain == shopDomain)
+                    .FirstOrDefaultAsync();
+
+                if (email == null) return null;
+
+                return new CommunicationHistoryItemDto
+                {
+                    Id = email.Id,
+                    Channel = "email",
+                    Type = "campaign",
+                    Direction = "outbound",
+                    RecipientEmail = email.Email,
+                    Subject = email.EmailCampaign.Subject,
+                    Preview = email.EmailCampaign.PreviewText,
+                    Body = email.EmailCampaign.Body,
+                    Status = email.Status,
+                    CreatedAt = email.CreatedAt,
+                    SentAt = email.SentAt,
+                    DeliveredAt = email.DeliveredAt,
+                    OpenedAt = email.OpenedAt,
+                    ClickedAt = email.ClickedAt,
+                    CampaignName = email.EmailCampaign.Name,
+                    ErrorMessage = email.ErrorMessage,
+                    RelatedId = email.EmailCampaignId
+                };
+
+            case "sms":
+                var sms = await _db.SmsMessages
+                    .Include(s => s.Template)
+                    .Where(s => s.Id == id && s.ShopDomain == shopDomain)
+                    .FirstOrDefaultAsync();
+
+                if (sms == null) return null;
+
+                return new CommunicationHistoryItemDto
+                {
+                    Id = sms.Id,
+                    Channel = "sms",
+                    Type = sms.TemplateId.HasValue ? "template" : "direct",
+                    Direction = "outbound",
+                    RecipientPhone = sms.PhoneNumber,
+                    Preview = sms.Body.Length > 100 ? sms.Body.Substring(0, 100) + "..." : sms.Body,
+                    Body = sms.Body,
+                    Status = sms.Status,
+                    CreatedAt = sms.CreatedAt,
+                    SentAt = sms.SentAt,
+                    DeliveredAt = sms.DeliveredAt,
+                    TemplateName = sms.Template?.Name,
+                    ErrorMessage = sms.ErrorMessage
+                };
+
+            case "whatsapp":
+                var whatsapp = await _db.ConversationMessages
+                    .Include(m => m.ConversationThread)
+                    .Where(m => m.Id == id && m.ConversationThread.ShopDomain == shopDomain && m.Channel == "whatsapp")
+                    .FirstOrDefaultAsync();
+
+                if (whatsapp == null) return null;
+
+                return new CommunicationHistoryItemDto
+                {
+                    Id = whatsapp.Id,
+                    Channel = "whatsapp",
+                    Type = whatsapp.SenderType == "agent" ? "reply" : "direct",
+                    Direction = whatsapp.Direction,
+                    RecipientName = whatsapp.ConversationThread.CustomerName,
+                    RecipientPhone = whatsapp.ConversationThread.CustomerPhone,
+                    Preview = whatsapp.Content.Length > 100 ? whatsapp.Content.Substring(0, 100) + "..." : whatsapp.Content,
+                    Body = whatsapp.Content,
+                    Status = whatsapp.Status,
+                    CreatedAt = whatsapp.SentAt,
+                    SentAt = whatsapp.SentAt,
+                    DeliveredAt = whatsapp.DeliveredAt
+                };
+
+            default:
+                return null;
+        }
+    }
+
+    public async Task ResendMessageAsync(string shopDomain, string channel, int id)
+    {
+        switch (channel.ToLower())
+        {
+            case "email":
+                var email = await _db.EmailCampaignRecipients
+                    .Include(r => r.EmailCampaign)
+                    .Where(r => r.Id == id && r.EmailCampaign.ShopDomain == shopDomain)
+                    .FirstOrDefaultAsync();
+
+                if (email == null)
+                    throw new InvalidOperationException("Email message not found");
+
+                // Reset status to pending for resend
+                email.Status = "pending";
+                email.SentAt = null;
+                email.DeliveredAt = null;
+                email.ErrorMessage = null;
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("Email {Id} queued for resend to {Email}", id, email.Email);
+                break;
+
+            case "sms":
+                var sms = await _db.SmsMessages
+                    .Where(s => s.Id == id && s.ShopDomain == shopDomain)
+                    .FirstOrDefaultAsync();
+
+                if (sms == null)
+                    throw new InvalidOperationException("SMS message not found");
+
+                // Reset status to pending for resend
+                sms.Status = "pending";
+                sms.SentAt = null;
+                sms.DeliveredAt = null;
+                sms.ErrorMessage = null;
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("SMS {Id} queued for resend to {Phone}", id, sms.PhoneNumber);
+                break;
+
+            case "whatsapp":
+                var whatsapp = await _db.ConversationMessages
+                    .Include(m => m.ConversationThread)
+                    .Where(m => m.Id == id && m.ConversationThread.ShopDomain == shopDomain && m.Channel == "whatsapp")
+                    .FirstOrDefaultAsync();
+
+                if (whatsapp == null)
+                    throw new InvalidOperationException("WhatsApp message not found");
+
+                // Reset status to pending for resend
+                whatsapp.Status = "pending";
+                whatsapp.DeliveredAt = null;
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("WhatsApp message {Id} queued for resend", id);
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unknown channel: {channel}");
+        }
+    }
 }

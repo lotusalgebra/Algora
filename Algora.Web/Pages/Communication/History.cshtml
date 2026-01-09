@@ -127,6 +127,7 @@
                     <th class="px-4 py-3">Sent At</th>
                     <th class="px-4 py-3">Delivered</th>
                     <th class="px-4 py-3">Opened</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
             </thead>
             <tbody id="historyTableBody">
@@ -221,12 +222,17 @@
                                 <span>-</span>
                             }
                         </td>
+                        <td class="px-4 py-3 text-right">
+                            <a href="/communication/history/@item.Channel/@item.Id" class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-purple-600 bg-purple-100 rounded-lg hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:hover:bg-purple-900/50">
+                                <i class="fas fa-eye me-1.5"></i> View
+                            </a>
+                        </td>
                     </tr>
                 }
                 @if (!Model.History.Items.Any())
                 {
                     <tr>
-                        <td colspan="8" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="9" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                             <i class="fas fa-inbox text-4xl mb-3 opacity-50"></i>
                             <p>No communication history found</p>
                             <p class="text-sm mt-1">Start sending emails, SMS, or WhatsApp messages to see them here</p>

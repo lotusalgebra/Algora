@@ -14,6 +14,7 @@ public class CommunicationHistoryItemDto
     public string? RecipientName { get; set; }
     public string? Subject { get; set; }
     public string? Preview { get; set; }
+    public string? Body { get; set; } // Full message body for details view
     public string Status { get; set; } = string.Empty; // pending, sent, delivered, opened, clicked, failed, bounced
     public DateTime CreatedAt { get; set; }
     public DateTime? SentAt { get; set; }
