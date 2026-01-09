@@ -180,6 +180,68 @@ public class WhatsAppModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostCreateCampaignAsync(string campaignName, int templateId, string audienceType, string scheduleType, DateTime? scheduledAt)
+    {
+        var shopDomain = GetShopDomain();
+
+        try
+        {
+            var dto = new Algora.WhatsApp.DTOs.CreateWhatsAppCampaignDto
+            {
+                Name = campaignName,
+                TemplateId = templateId,
+                ScheduledAt = scheduleType == "scheduled" ? scheduledAt : null
+            };
+
+            await _whatsAppService.CreateCampaignAsync(shopDomain, dto);
+
+            if (scheduleType == "scheduled" && scheduledAt.HasValue)
+            {
+                TempData["Success"] = $"Campaign '{campaignName}' scheduled for {scheduledAt:MMM dd, yyyy HH:mm}!";
+            }
+            else
+            {
+                TempData["Success"] = $"Campaign '{campaignName}' created successfully! Go to Campaigns tab to send it.";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error creating campaign: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostSendCampaignAsync(int campaignId)
+    {
+        try
+        {
+            await _whatsAppService.SendCampaignAsync(campaignId);
+            TempData["Success"] = "Campaign is being sent!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error sending campaign: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteCampaignAsync(int campaignId)
+    {
+        try
+        {
+            await _whatsAppService.DeleteCampaignAsync(campaignId);
+            TempData["Success"] = "Campaign deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error deleting campaign: {ex.Message}";
+        }
+
+        return RedirectToPage();
+    }
+
     private string GetShopDomain()
     {
         return User.FindFirst("shop_domain")?.Value ?? "demo.myshopify.com";

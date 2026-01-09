@@ -201,7 +201,21 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400"><i class="fas fa-chart-bar"></i></button>
+                                            <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 me-2" title="View Stats"><i class="fas fa-chart-bar"></i></button>
+                                            @if (campaign.Status == "Draft" || campaign.Status == "Scheduled")
+                                            {
+                                                <form method="post" asp-page-handler="SendCampaign" class="inline">
+                                                    <input type="hidden" name="campaignId" value="@campaign.Id" />
+                                                    <button type="submit" onclick="return confirm('Send this campaign now?')" class="text-green-600 hover:text-green-800 dark:text-green-400 me-2" title="Send Now"><i class="fas fa-paper-plane"></i></button>
+                                                </form>
+                                            }
+                                            @if (campaign.Status != "Sent" && campaign.Status != "Sending")
+                                            {
+                                                <form method="post" asp-page-handler="DeleteCampaign" class="inline">
+                                                    <input type="hidden" name="campaignId" value="@campaign.Id" />
+                                                    <button type="submit" onclick="return confirm('Delete this campaign?')" class="text-red-600 hover:text-red-800 dark:text-red-400" title="Delete"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -358,6 +372,66 @@
     </div>
 </div>
 
+<!-- Campaign Modal -->
+<div id="campaignModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create WhatsApp Campaign</h3>
+                <button type="button" onclick="closeCampaignModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="CreateCampaign">
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Campaign Name</label>
+                    <input type="text" name="campaignName" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g., Holiday Sale 2024" />
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Select Template</label>
+                    <select name="templateId" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">-- Select an approved template --</option>
+                        @foreach (var template in Model.Templates.Where(t => t.Status == "APPROVED"))
+                        {
+                            <option value="@template.Id">@template.Name (@template.Category)</option>
+                        }
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Only approved templates can be used in campaigns</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Audience</label>
+                        <select name="audienceType" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="all">All Customers with Phone</option>
+                            <option value="recent">Recent Customers (30 days)</option>
+                            <option value="loyal">Repeat Customers</option>
+                            <option value="abandoned">Abandoned Cart</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Schedule</label>
+                        <select name="scheduleType" id="scheduleType" onchange="toggleScheduleDateTime()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="now">Send Immediately</option>
+                            <option value="scheduled">Schedule for Later</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="scheduleDateTimeContainer" class="mb-4 hidden">
+                    <label class="block mb-2 text-sm font-bold text-gray-700 dark:text-white">Scheduled Date & Time</label>
+                    <input type="datetime-local" name="scheduledAt" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                </div>
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-blue-800 dark:text-blue-300"><i class="fas fa-info-circle me-2"></i>WhatsApp charges per message. Estimated cost will be shown before sending.</p>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeCampaignModal()" class="px-4 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                    <button type="submit" class="px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl">Create Campaign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Initialize tabs
@@ -396,7 +470,23 @@
         }
 
         function openCampaignModal() {
-            alert('Campaign creation coming soon!');
+            document.getElementById('campaignModal').classList.remove('hidden');
+            document.getElementById('campaignModal').classList.add('flex');
+        }
+
+        function closeCampaignModal() {
+            document.getElementById('campaignModal').classList.add('hidden');
+            document.getElementById('campaignModal').classList.remove('flex');
+        }
+
+        function toggleScheduleDateTime() {
+            const scheduleType = document.getElementById('scheduleType').value;
+            const container = document.getElementById('scheduleDateTimeContainer');
+            if (scheduleType === 'scheduled') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
         }
     </script>
 }
