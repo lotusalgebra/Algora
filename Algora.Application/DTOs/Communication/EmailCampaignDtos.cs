@@ -7,12 +7,14 @@ public record EmailCampaignDto
     public string Name { get; init; } = string.Empty;
     public string Subject { get; init; } = string.Empty;
     public string? PreviewText { get; init; }
+    public string Body { get; init; } = string.Empty;
     public string? FromName { get; init; }
     public string? FromEmail { get; init; }
     public string CampaignType { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
     public int? SegmentId { get; init; }
     public string? SegmentName { get; init; }
+    public int? ListId { get; init; }
     public DateTime? ScheduledAt { get; init; }
     public DateTime? SentAt { get; init; }
     public int TotalRecipients { get; init; }

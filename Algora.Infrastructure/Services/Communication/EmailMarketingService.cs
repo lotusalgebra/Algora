@@ -543,7 +543,7 @@ public class EmailMarketingService(AppDbContext db, ILogger<EmailMarketingServic
     private static EmailCampaignDto MapToDto(EmailCampaign e) => new()
     {
         Id = e.Id, ShopDomain = e.ShopDomain, Name = e.Name, Subject = e.Subject, PreviewText = e.PreviewText,
-        FromName = e.FromName, FromEmail = e.FromEmail, CampaignType = e.CampaignType, Status = e.Status,
+        Body = e.Body, FromName = e.FromName, FromEmail = e.FromEmail, CampaignType = e.CampaignType, Status = e.Status,
         SegmentId = e.SegmentId, SegmentName = e.Segment?.Name, ScheduledAt = e.ScheduledAt, SentAt = e.SentAt,
         TotalRecipients = e.TotalRecipients, TotalSent = e.TotalSent, TotalDelivered = e.TotalDelivered,
         TotalOpened = e.TotalOpened, TotalClicked = e.TotalClicked, CreatedAt = e.CreatedAt
