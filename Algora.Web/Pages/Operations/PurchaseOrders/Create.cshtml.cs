@@ -1,6 +1,7 @@
 using Algora.Application.DTOs.Operations;
 using Algora.Application.Interfaces;
 using Algora.Infrastructure.Data;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Algora.Web.Pages.Operations.PurchaseOrders;
 
 [Authorize]
+[RequireFeature(FeatureCodes.PurchaseOrders)]
 public class CreateModel : PageModel
 {
     private readonly IPurchaseOrderService _purchaseOrderService;
