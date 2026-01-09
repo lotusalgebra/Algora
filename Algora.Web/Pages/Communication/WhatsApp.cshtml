@@ -252,11 +252,16 @@
                                         <p class="text-sm text-gray-500 dark:text-gray-400">@conv.PhoneNumber</p>
                                     </div>
                                 </div>
-                                <div class="text-right">
+                                <div class="text-right flex flex-col items-end gap-2">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">@conv.LastMessageAt.ToString("MMM dd, HH:mm")</p>
-                                    <span class="px-2.5 py-0.5 text-xs font-medium rounded @(conv.Status == "Open" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800")">
-                                        @conv.Status
-                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2.5 py-0.5 text-xs font-medium rounded @(conv.Status == "Open" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800")">
+                                            @conv.Status
+                                        </span>
+                                        <a href="/communication/history/whatsapp/@conv.Id" class="px-2.5 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-lg hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400">
+                                            <i class="fas fa-eye me-1"></i> View
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         }

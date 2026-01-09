@@ -139,6 +139,6 @@ public class HistoryModel : PageModel
 
     private string GetShopDomain()
     {
-        return User.FindFirst("shop_domain")?.Value ?? "demo.myshopify.com";
+        return User.FindFirst("shop_domain")?.Value ?? "devlotusalgebra.myshopify.com";
     }
 }
