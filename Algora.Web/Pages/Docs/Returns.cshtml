@@ -1,0 +1,132 @@
+@page "/docs/returns"
+@model Algora.Web.Pages.Docs.ReturnsModel
+@{
+    ViewData["Title"] = "Returns Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Returns";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-red-600 to-orange-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-rotate-left text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Returns Management</h1>
+                <p class="text-slate-600 dark:text-slate-400">Process returns and refunds</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Dashboard -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-chart-pie text-purple-500 mr-2"></i>Returns Dashboard
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Overview of return activity:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Total returns this period</li>
+                <li>Returns by reason breakdown</li>
+                <li>Most returned products</li>
+                <li>Return rate percentage</li>
+                <li>Processing time metrics</li>
+            </ul>
+        </section>
+
+        <!-- Processing Returns -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-tasks text-blue-500 mr-2"></i>Processing Returns
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Return workflow:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Request Received:</strong> Customer submits return request</li>
+                <li><strong>Review:</strong> Verify eligibility based on policy</li>
+                <li><strong>Approve/Reject:</strong> Make decision on return</li>
+                <li><strong>Generate Label:</strong> Create return shipping label</li>
+                <li><strong>Receive Item:</strong> Mark when item received at warehouse</li>
+                <li><strong>Inspect:</strong> Check item condition</li>
+                <li><strong>Process Refund:</strong> Issue refund or store credit</li>
+                <li><strong>Complete:</strong> Close the return</li>
+            </ol>
+        </section>
+
+        <!-- Return Reasons -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-list-check text-green-500 mr-2"></i>Return Reasons
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Configure return reason codes:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Create custom reason codes</li>
+                <li>Set which reasons require photos</li>
+                <li>Configure automatic approval per reason</li>
+                <li>Track returns by reason for insights</li>
+            </ul>
+            <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                <h4 class="font-medium text-slate-800 dark:text-white mb-2">Common Reasons:</h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-600 rounded-full text-sm">Wrong Size</span>
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-600 rounded-full text-sm">Defective</span>
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-600 rounded-full text-sm">Not as Described</span>
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-600 rounded-full text-sm">Changed Mind</span>
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-600 rounded-full text-sm">Wrong Item</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-cog text-slate-500 mr-2"></i>Return Settings
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Configure your return policy:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Return Window:</strong> Days allowed for returns (e.g., 30 days)</li>
+                <li><strong>Restocking Fee:</strong> Percentage to deduct (optional)</li>
+                <li><strong>Free Returns:</strong> Who pays shipping</li>
+                <li><strong>Refund Method:</strong> Original payment or store credit</li>
+                <li><strong>Auto-Approval:</strong> Automatically approve certain returns</li>
+            </ul>
+        </section>
+
+        <!-- Customer Portal -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-user text-orange-500 mr-2"></i>Customer Return Portal
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Self-service return portal for customers:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Request Return:</strong> Customer selects order and items</li>
+                <li><strong>Select Reason:</strong> Choose from configured reasons</li>
+                <li><strong>Upload Photos:</strong> If required for the reason</li>
+                <li><strong>Track Status:</strong> Check return progress</li>
+                <li><strong>Download Label:</strong> Get return shipping label</li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/customer-hub" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Customer Hub
+        </a>
+        <a href="/docs/analytics" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Analytics <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

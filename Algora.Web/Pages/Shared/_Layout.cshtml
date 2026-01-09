@@ -429,6 +429,16 @@
                     </span>
                     <span class="nav-text text-sm">Plans & Billing</span>
                 </a>
+
+                <!-- Help Section -->
+                <p class="sidenav-title mt-4">Help</p>
+
+                <a href="/docs" class="sidenav-item @(IsInSection("/docs") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/docs") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
+                        <i class="fas fa-book text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Documentation</span>
+                </a>
             </nav>
 
             <!-- User Card - Hidden on small screens -->

@@ -1,0 +1,156 @@
+@page "/docs/customer-hub"
+@model Algora.Web.Pages.Docs.CustomerHubModel
+@{
+    ViewData["Title"] = "Customer Hub Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Customer Hub";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-sky-600 to-blue-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-users text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Customer Hub</h1>
+                <p class="text-slate-600 dark:text-slate-400">Support, exchanges, and loyalty</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Unified Inbox -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-inbox text-purple-500 mr-2"></i>Unified Inbox
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                All customer messages in one place:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Email, SMS, WhatsApp messages combined</li>
+                <li>Filter by channel, status, or priority</li>
+                <li>Assign conversations to team members</li>
+                <li>AI-powered response suggestions</li>
+                <li>Quick reply templates</li>
+                <li>Conversation history per customer</li>
+            </ul>
+        </section>
+
+        <!-- Live Chat -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-message text-green-500 mr-2"></i>Live Chat
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Real-time chat support with customers:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>View active chat sessions</li>
+                <li>AI chatbot handles initial inquiries</li>
+                <li>"Talk to Human" escalation button</li>
+                <li>Agent takes over escalated chats</li>
+                <li>Mark conversations as resolved</li>
+            </ul>
+        </section>
+
+        <!-- Exchanges -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-exchange text-orange-500 mr-2"></i>Exchange Management
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Process product exchanges:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2 mb-4">
+                <li>Customer requests exchange (or create manually)</li>
+                <li>Verify order eligibility</li>
+                <li>Select items to exchange and reason</li>
+                <li>Choose replacement items</li>
+                <li>Process exchange workflow:
+                    <ul class="list-disc list-inside ml-6 mt-2">
+                        <li>Approve request</li>
+                        <li>Receive returned item</li>
+                        <li>Ship replacement</li>
+                        <li>Complete exchange</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Loyalty Program -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-crown text-yellow-500 mr-2"></i>Loyalty Program
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Reward repeat customers with points and perks:
+            </p>
+
+            <h4 class="font-medium text-slate-800 dark:text-white mb-2">Program Settings:</h4>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2 mb-4">
+                <li>Points per dollar spent</li>
+                <li>Bonus points for actions (signup, review, referral)</li>
+                <li>Points expiration policy</li>
+                <li>Tier thresholds and benefits</li>
+            </ul>
+
+            <h4 class="font-medium text-slate-800 dark:text-white mb-2">Tiers:</h4>
+            <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="text-center p-3 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                    <i class="fas fa-medal text-slate-400 mb-1"></i>
+                    <p class="text-xs font-medium">Bronze</p>
+                </div>
+                <div class="text-center p-3 bg-slate-200 dark:bg-slate-600 rounded-lg">
+                    <i class="fas fa-medal text-gray-400 mb-1"></i>
+                    <p class="text-xs font-medium">Silver</p>
+                </div>
+                <div class="text-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                    <i class="fas fa-medal text-yellow-500 mb-1"></i>
+                    <p class="text-xs font-medium">Gold</p>
+                </div>
+                <div class="text-center p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <i class="fas fa-gem text-purple-500 mb-1"></i>
+                    <p class="text-xs font-medium">Platinum</p>
+                </div>
+            </div>
+
+            <h4 class="font-medium text-slate-800 dark:text-white mb-2">Rewards Catalog:</h4>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Create rewards (discounts, free shipping, free products)</li>
+                <li>Set points required for redemption</li>
+                <li>Limit availability by tier</li>
+                <li>Track redemption history</li>
+            </ul>
+        </section>
+
+        <!-- Customer Portal -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-user-circle text-blue-500 mr-2"></i>Customer Portal
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Self-service portal for customers:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Orders:</strong> View order history and tracking</li>
+                <li><strong>Chat:</strong> AI chatbot support with escalation</li>
+                <li><strong>Loyalty:</strong> Check points balance and redeem rewards</li>
+                <li><strong>Returns:</strong> Initiate return requests</li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/inventory" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Inventory
+        </a>
+        <a href="/docs/returns" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Returns <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

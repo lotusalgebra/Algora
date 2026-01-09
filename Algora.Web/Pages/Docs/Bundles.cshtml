@@ -1,0 +1,101 @@
+@page "/docs/bundles"
+@model Algora.Web.Pages.Docs.BundlesModel
+@{
+    ViewData["Title"] = "Bundles Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Bundles";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-orange-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-boxes-stacked text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Product Bundles</h1>
+                <p class="text-slate-600 dark:text-slate-400">Create and manage product bundles</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Overview</h2>
+            <p class="text-slate-600 dark:text-slate-400">
+                Bundles allow you to sell multiple products together at a discounted price.
+                Increase average order value by offering curated product combinations.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Bundle Types</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">
+                        <i class="fas fa-box text-orange-500 mr-2"></i>Fixed Bundles
+                    </h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Pre-configured bundles with specific products. Customers buy the entire bundle as-is.
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">
+                        <i class="fas fa-shuffle text-blue-500 mr-2"></i>Mix & Match
+                    </h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Customers choose products from a selection. "Pick any 3 for $X" style bundles.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Creating a Bundle</h2>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Go to <strong>Commerce > Bundles > Admin</strong></li>
+                <li>Click <strong>Create Bundle</strong></li>
+                <li>Enter bundle name and description</li>
+                <li>Select bundle type (Fixed or Mix & Match)</li>
+                <li>Add products to the bundle</li>
+                <li>Set bundle price or discount percentage</li>
+                <li>Configure availability dates (optional)</li>
+                <li>Save and activate the bundle</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Bundle Analytics</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Track bundle performance with detailed analytics:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Total bundle revenue</li>
+                <li>Units sold per bundle</li>
+                <li>Conversion rate</li>
+                <li>Most popular bundles</li>
+                <li>Revenue by time period</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Bundle Builder</h2>
+            <p class="text-slate-600 dark:text-slate-400">
+                The public Bundle Builder (<code class="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">/bundles/builder</code>)
+                provides an interactive interface for customers to create their own bundles from available products.
+            </p>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/products" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Products
+        </a>
+        <a href="/docs/communication" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Communication <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

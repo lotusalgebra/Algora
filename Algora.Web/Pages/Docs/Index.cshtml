@@ -1,0 +1,176 @@
+@page "/docs"
+@model Algora.Web.Pages.Docs.IndexModel
+@{
+    ViewData["Title"] = "Documentation";
+    ViewData["Breadcrumb"] = "Documentation";
+}
+
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Algora Documentation</h1>
+        <p class="text-slate-600 dark:text-slate-400">Complete guide to using all features of the Algora platform</p>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl p-6 mb-8 text-white">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-rocket text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold mb-2">Quick Start Guide</h2>
+                <p class="text-white/80 mb-4">New to Algora? Start here to learn the basics and get your store set up in minutes.</p>
+                <a href="/docs/getting-started" class="inline-flex items-center gap-2 bg-white text-purple-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-play"></i>
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Module Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dashboard -->
+        <a href="/docs/dashboard" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-purple-700 to-pink-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-tv text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Dashboard</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Overview of your store performance, sales metrics, and key statistics.</p>
+        </a>
+
+        <!-- Orders -->
+        <a href="/docs/orders" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-shopping-cart text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Orders Management</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Manage orders, track fulfillment, generate invoices, and process shipments.</p>
+        </a>
+
+        <!-- Products -->
+        <a href="/docs/products" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-green-600 to-emerald-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-box text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Products</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Add, edit, and manage your product catalog with variants and images.</p>
+        </a>
+
+        <!-- Bundles -->
+        <a href="/docs/bundles" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-orange-600 to-amber-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-boxes-stacked text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Bundles</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Create product bundles, mix-and-match offers, and bundle discounts.</p>
+        </a>
+
+        <!-- Communication -->
+        <a href="/docs/communication" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-indigo-600 to-violet-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-comments text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Communication</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Email campaigns, SMS messaging, and WhatsApp Business integration.</p>
+        </a>
+
+        <!-- Marketing -->
+        <a href="/docs/marketing" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-rose-600 to-pink-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-bullhorn text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Marketing</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Upsells, cross-sells, A/B testing, reviews, and abandoned cart recovery.</p>
+        </a>
+
+        <!-- AI Tools -->
+        <a href="/docs/ai-tools" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-fuchsia-600 to-purple-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-robot text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">AI Tools</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">AI-powered descriptions, SEO optimization, pricing suggestions, and chatbot.</p>
+        </a>
+
+        <!-- Operations -->
+        <a href="/docs/operations" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-slate-600 to-gray-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-truck text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Operations</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Suppliers, purchase orders, locations, barcodes, and label design.</p>
+        </a>
+
+        <!-- Inventory -->
+        <a href="/docs/inventory" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-teal-600 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-warehouse text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Inventory</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Stock predictions, low stock alerts, and inventory management.</p>
+        </a>
+
+        <!-- Customer Hub -->
+        <a href="/docs/customer-hub" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-sky-600 to-blue-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-users text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Customer Hub</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Unified inbox, live chat, exchanges, and loyalty program management.</p>
+        </a>
+
+        <!-- Returns -->
+        <a href="/docs/returns" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-red-600 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-rotate-left text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Returns</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Process returns, manage refunds, and configure return policies.</p>
+        </a>
+
+        <!-- Analytics -->
+        <a href="/docs/analytics" class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-soft hover:shadow-lg transition-shadow group">
+            <div class="w-12 h-12 bg-gradient-to-tl from-yellow-600 to-amber-500 rounded-lg flex items-center justify-center mb-4">
+                <i class="fas fa-chart-line text-white text-lg"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400">Analytics</h3>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">Revenue reports, product performance, customer lifetime value, and ad spend.</p>
+        </a>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-12 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-6">
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Need More Help?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-book text-purple-600 dark:text-purple-400"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium text-slate-800 dark:text-white">API Documentation</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Integrate with our REST API</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-headset text-green-600 dark:text-green-400"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium text-slate-800 dark:text-white">Support</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Contact our support team</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-video text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium text-slate-800 dark:text-white">Video Tutorials</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Watch step-by-step guides</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

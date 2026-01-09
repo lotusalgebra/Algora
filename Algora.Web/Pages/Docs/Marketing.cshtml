@@ -1,0 +1,130 @@
+@page "/docs/marketing"
+@model Algora.Web.Pages.Docs.MarketingModel
+@{
+    ViewData["Title"] = "Marketing Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Marketing";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-rose-600 to-pink-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-bullhorn text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Marketing</h1>
+                <p class="text-slate-600 dark:text-slate-400">Upsells, reviews, and cart recovery</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Upsell -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-arrow-trend-up text-green-500 mr-2"></i>Upsell & Cross-Sell
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Increase average order value with targeted upsell offers:
+            </p>
+            <h4 class="font-medium text-slate-800 dark:text-white mb-2">Creating Upsell Offers:</h4>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2 mb-4">
+                <li>Go to <strong>Marketing > Upsell > Offers</strong></li>
+                <li>Click <strong>Create Offer</strong></li>
+                <li>Select trigger product (when customer adds this)</li>
+                <li>Choose upsell product (suggest this instead/additionally)</li>
+                <li>Set discount (optional)</li>
+                <li>Configure display timing (cart, checkout, post-purchase)</li>
+            </ol>
+            <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                <h4 class="font-medium text-slate-800 dark:text-white mb-2">Offer Types:</h4>
+                <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                    <li><strong>In-Cart Upsell:</strong> Show when product added to cart</li>
+                    <li><strong>Checkout Upsell:</strong> Display during checkout</li>
+                    <li><strong>Post-Purchase:</strong> Offer after order completion</li>
+                    <li><strong>Cross-Sell:</strong> Suggest complementary products</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- A/B Testing -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-flask text-purple-500 mr-2"></i>A/B Testing (Experiments)
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Test different upsell strategies to find what works best:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Create experiments with variant offers</li>
+                <li>Split traffic automatically</li>
+                <li>Track conversion rates per variant</li>
+                <li>Statistical significance calculation</li>
+                <li>Auto-select winner after test period</li>
+            </ul>
+        </section>
+
+        <!-- Product Affinities -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-link text-blue-500 mr-2"></i>Product Affinities
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                AI analyzes purchase patterns to identify products frequently bought together:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Confidence Score:</strong> How likely products are bought together</li>
+                <li><strong>Lift:</strong> How much more likely vs. random chance</li>
+                <li><strong>Co-occurrences:</strong> Number of times bought together</li>
+                <li>Use insights to create targeted upsell offers</li>
+            </ul>
+        </section>
+
+        <!-- Reviews -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-star text-yellow-500 mr-2"></i>Reviews Management
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Collect and display customer reviews:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Auto-Request:</strong> Automatically email customers for reviews</li>
+                <li><strong>Import:</strong> Import reviews from other platforms</li>
+                <li><strong>Moderation:</strong> Approve or reject reviews before display</li>
+                <li><strong>Display:</strong> Show reviews on product pages</li>
+                <li><strong>Analytics:</strong> Track average ratings and review volume</li>
+            </ul>
+        </section>
+
+        <!-- Abandoned Carts -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-cart-shopping text-orange-500 mr-2"></i>Abandoned Cart Recovery
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Recover lost sales from abandoned checkouts:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>View abandoned checkouts list</li>
+                <li>See cart contents and customer info</li>
+                <li>Send recovery emails manually or automatically</li>
+                <li>Offer discount codes to incentivize completion</li>
+                <li>Track recovery rate and revenue</li>
+            </ol>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/communication" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Communication
+        </a>
+        <a href="/docs/ai-tools" class="text-purple-600 dark:text-purple-400 hover:underline">
+            AI Tools <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

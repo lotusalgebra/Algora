@@ -1,0 +1,126 @@
+@page "/docs/inventory"
+@model Algora.Web.Pages.Docs.InventoryModel
+@{
+    ViewData["Title"] = "Inventory Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Inventory";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-teal-600 to-cyan-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-warehouse text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Inventory Management</h1>
+                <p class="text-slate-600 dark:text-slate-400">Stock predictions and alerts</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Predictions -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-chart-line text-purple-500 mr-2"></i>Inventory Predictions
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                AI-powered inventory forecasting helps you avoid stockouts:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Daily Sales Rate</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Average units sold per day based on historical data
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Days Until Stockout</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Estimated days until inventory reaches zero
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Reorder Quantity</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Suggested quantity to order based on lead time
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Status Indicators</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Color-coded status: Healthy, Low, Critical, Out of Stock
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-bell text-orange-500 mr-2"></i>Inventory Alerts
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Get notified when stock levels need attention:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Low Stock Alert:</strong> Product below threshold</li>
+                <li><strong>Critical Alert:</strong> Stockout imminent (days left < lead time)</li>
+                <li><strong>Out of Stock:</strong> Zero inventory</li>
+                <li><strong>Overstock Alert:</strong> Excess inventory (optional)</li>
+            </ul>
+            <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                    <strong>Email Notifications:</strong> Configure email alerts in Settings to receive notifications automatically.
+                </p>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-cog text-slate-500 mr-2"></i>Inventory Settings
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Configure inventory thresholds and notifications:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Global Threshold:</strong> Default low stock level for all products</li>
+                <li><strong>Per-Product Thresholds:</strong> Custom thresholds for specific products</li>
+                <li><strong>Lead Time:</strong> Default supplier lead time in days</li>
+                <li><strong>Safety Stock:</strong> Buffer quantity to maintain</li>
+                <li><strong>Notification Email:</strong> Where to send alerts</li>
+            </ul>
+        </section>
+
+        <!-- Thresholds -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-sliders text-blue-500 mr-2"></i>Product Thresholds
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Set custom reorder points per product:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Go to <strong>Inventory > Thresholds</strong></li>
+                <li>Search for the product</li>
+                <li>Set minimum stock level</li>
+                <li>Set reorder quantity</li>
+                <li>Optionally enable auto-PO creation</li>
+            </ol>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/operations" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Operations
+        </a>
+        <a href="/docs/customer-hub" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Customer Hub <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

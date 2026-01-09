@@ -1,0 +1,115 @@
+@page "/docs/products"
+@model Algora.Web.Pages.Docs.ProductsModel
+@{
+    ViewData["Title"] = "Products Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Products";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>
+        Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-green-600 to-emerald-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-box text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Products</h1>
+                <p class="text-slate-600 dark:text-slate-400">Manage your product catalog</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Overview</h2>
+            <p class="text-slate-600 dark:text-slate-400">
+                Products sync automatically from your Shopify store. You can view details, edit information,
+                and manage images directly from Algora.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Product List</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">Features of the product list:</p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Search:</strong> Find products by title, SKU, or vendor</li>
+                <li><strong>Filter:</strong> Filter by status, product type, or vendor</li>
+                <li><strong>Sort:</strong> Sort by title, price, inventory, or date</li>
+                <li><strong>Thumbnail preview:</strong> Quick product image preview</li>
+                <li><strong>Stock status:</strong> See inventory levels at a glance</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Product Details</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">View complete product information:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Basic Info</h4>
+                    <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                        <li>Title and description</li>
+                        <li>Vendor and product type</li>
+                        <li>Tags and collections</li>
+                        <li>SEO metadata</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Variants</h4>
+                    <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                        <li>Size, color, material options</li>
+                        <li>Individual SKUs per variant</li>
+                        <li>Variant-specific pricing</li>
+                        <li>Inventory per variant</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Managing Images</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">Product image management features:</p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Upload:</strong> Drag and drop or click to upload new images</li>
+                <li><strong>Gallery:</strong> View all product images in a gallery</li>
+                <li><strong>Variant images:</strong> Assign specific images to variants</li>
+                <li><strong>Alt text:</strong> Add SEO-friendly alt text (or use AI to generate)</li>
+                <li><strong>Delete:</strong> Remove unwanted images with undo option</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Create/Edit Products</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">When creating or editing products:</p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Enter basic product information (title, description)</li>
+                <li>Set pricing (price, compare at price)</li>
+                <li>Configure variants if needed</li>
+                <li>Upload product images</li>
+                <li>Set inventory levels</li>
+                <li>Add SEO metadata</li>
+                <li>Save to sync with Shopify</li>
+            </ol>
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-lightbulb text-blue-500 mt-1"></i>
+                    <p class="text-slate-700 dark:text-slate-300 text-sm">
+                        <strong>Tip:</strong> Use the <a href="/docs/ai-tools" class="text-purple-600 underline">AI Tools</a> to generate product descriptions and SEO metadata automatically!
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/orders" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Orders
+        </a>
+        <a href="/docs/bundles" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Bundles <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

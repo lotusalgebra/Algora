@@ -1,0 +1,148 @@
+@page "/docs/operations"
+@model Algora.Web.Pages.Docs.OperationsModel
+@{
+    ViewData["Title"] = "Operations Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Operations";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-slate-600 to-gray-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-truck text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Operations</h1>
+                <p class="text-slate-600 dark:text-slate-400">Supply chain and logistics management</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Suppliers -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-building text-blue-500 mr-2"></i>Supplier Management
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Manage your product suppliers and their catalogs:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Add supplier contact information</li>
+                <li>Track lead times per supplier</li>
+                <li>View supplier product catalog</li>
+                <li>Monitor order history and total spent</li>
+                <li>Set preferred suppliers per product</li>
+            </ul>
+        </section>
+
+        <!-- Purchase Orders -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-file-invoice text-green-500 mr-2"></i>Purchase Orders
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Create and track purchase orders:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2 mb-4">
+                <li>Create PO from supplier or low stock alert</li>
+                <li>Add products with quantities and prices</li>
+                <li>Set expected delivery date</li>
+                <li>Track PO status (Draft, Sent, Partial, Complete)</li>
+                <li>Receive inventory when goods arrive</li>
+            </ol>
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                    <strong>Automation:</strong> POs can be auto-created when inventory falls below thresholds.
+                </p>
+            </div>
+        </section>
+
+        <!-- Locations -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-location-dot text-red-500 mr-2"></i>Locations/Warehouses
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Manage multiple warehouse and store locations:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Add warehouse addresses</li>
+                <li>Track inventory per location</li>
+                <li>View total products and quantities</li>
+                <li>Set fulfillment priorities</li>
+            </ul>
+        </section>
+
+        <!-- Barcodes -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-barcode text-purple-500 mr-2"></i>Barcode Generator
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Generate barcodes for products:
+            </p>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-sm">
+                    <strong>Formats:</strong> EAN-13, UPC-A, Code128, QR Code
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-sm">
+                    <strong>Labels:</strong> Avery sheets, thermal rolls
+                </div>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Select products and variants</li>
+                <li>Choose barcode format</li>
+                <li>Select label size (Avery 5160, thermal 4x6, etc.)</li>
+                <li>Print or download PDF</li>
+            </ul>
+        </section>
+
+        <!-- Packing Slips -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-clipboard-list text-orange-500 mr-2"></i>Packing Slips
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Generate professional packing slips for shipments:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Select orders to generate slips</li>
+                <li>Include order barcode for scanning</li>
+                <li>Ship-to and bill-to addresses</li>
+                <li>Item list with quantities</li>
+                <li>Bulk generate for multiple orders</li>
+            </ul>
+        </section>
+
+        <!-- Label Designer -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-palette text-pink-500 mr-2"></i>Label Designer
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Design custom product labels with drag-and-drop:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Drag fields onto canvas (title, SKU, price, barcode)</li>
+                <li>Customize fonts, sizes, and positions</li>
+                <li>Choose from standard label sizes</li>
+                <li>Save templates for reuse</li>
+                <li>Batch print with product data</li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/ai-tools" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>AI Tools
+        </a>
+        <a href="/docs/inventory" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Inventory <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

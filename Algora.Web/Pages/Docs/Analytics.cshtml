@@ -1,0 +1,153 @@
+@page "/docs/analytics"
+@model Algora.Web.Pages.Docs.AnalyticsModel
+@{
+    ViewData["Title"] = "Analytics Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Analytics";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-yellow-600 to-amber-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-chart-line text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Analytics & Reports</h1>
+                <p class="text-slate-600 dark:text-slate-400">Data-driven insights for your business</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Overview -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-gauge-high text-purple-500 mr-2"></i>Analytics Dashboard
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Comprehensive analytics for your store performance:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Revenue Trends</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Daily, weekly, monthly revenue with comparison to previous periods
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Cost Breakdown</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Product costs, shipping, fees, and profit margins
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Order Metrics</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Order count, average order value, conversion rates
+                    </p>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Customer Stats</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        New vs returning customers, customer count trends
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Analytics -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-box text-blue-500 mr-2"></i>Product Analytics
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Detailed insights per product:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Top selling products by revenue</li>
+                <li>Top selling products by quantity</li>
+                <li>Product performance over time</li>
+                <li>Profit margin analysis</li>
+                <li>Inventory turnover rates</li>
+                <li>Product views to purchase conversion</li>
+            </ul>
+        </section>
+
+        <!-- CLV -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-user-dollar text-green-500 mr-2"></i>Customer Lifetime Value (CLV)
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Understand customer value:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Average CLV:</strong> Mean lifetime value across all customers</li>
+                <li><strong>CLV Distribution:</strong> Breakdown by customer segments</li>
+                <li><strong>Top Customers:</strong> Highest value customers</li>
+                <li><strong>Cohort Analysis:</strong> CLV by customer acquisition date</li>
+                <li><strong>Prediction:</strong> Estimated future value per customer</li>
+            </ul>
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                    <strong>Tip:</strong> Use CLV data to identify your best customers for loyalty rewards and targeted marketing.
+                </p>
+            </div>
+        </section>
+
+        <!-- Ad Spend -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-bullseye text-red-500 mr-2"></i>Ad Spend & ROAS
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Track advertising performance:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Total Ad Spend:</strong> Combined spending across platforms</li>
+                <li><strong>ROAS:</strong> Return on Ad Spend (revenue / ad cost)</li>
+                <li><strong>CPA:</strong> Cost per acquisition</li>
+                <li><strong>Platform Breakdown:</strong> Performance by ad platform</li>
+                <li><strong>Campaign Tracking:</strong> Results per campaign</li>
+            </ul>
+            <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                <h4 class="font-medium text-slate-800 dark:text-white mb-2">Supported Platforms:</h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">Facebook</span>
+                    <span class="px-3 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-full text-sm">Instagram</span>
+                    <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-sm">Google</span>
+                    <span class="px-3 py-1 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded-full text-sm">TikTok</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">
+                <i class="fas fa-file-export text-orange-500 mr-2"></i>Export Reports
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Export data for external analysis:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>CSV export for all analytics views</li>
+                <li>Date range selection</li>
+                <li>Filter by product, customer, or channel</li>
+                <li>Scheduled reports (email delivery)</li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/returns" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Returns
+        </a>
+        <a href="/docs" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Back to Documentation <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

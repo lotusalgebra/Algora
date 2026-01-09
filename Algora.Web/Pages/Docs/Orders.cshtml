@@ -1,0 +1,141 @@
+@page "/docs/orders"
+@model Algora.Web.Pages.Docs.OrdersModel
+@{
+    ViewData["Title"] = "Orders Documentation";
+    ViewData["Breadcrumb"] = "Documentation / Orders";
+}
+
+<div class="max-w-4xl mx-auto">
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>
+        Back to Documentation
+    </a>
+
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-tl from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-shopping-cart text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 dark:text-white">Orders Management</h1>
+                <p class="text-slate-600 dark:text-slate-400">Process, track, and fulfill customer orders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 space-y-8">
+        <!-- Overview -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Overview</h2>
+            <p class="text-slate-600 dark:text-slate-400">
+                The Orders module syncs all orders from your Shopify store and provides powerful tools for managing them.
+                You can view order details, update fulfillment status, generate invoices, and export data.
+            </p>
+        </section>
+
+        <!-- Orders List -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Orders List</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Access all your orders at <code class="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">/orders</code>
+            </p>
+            <h4 class="font-medium text-slate-800 dark:text-white mb-2">Features:</h4>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>Search:</strong> Find orders by order number, customer name, or email</li>
+                <li><strong>Filter:</strong> Filter by status (Pending, Fulfilled, Cancelled, Refunded)</li>
+                <li><strong>Sort:</strong> Sort by date, order number, or total amount</li>
+                <li><strong>Export:</strong> Download orders as CSV for reporting</li>
+                <li><strong>Pagination:</strong> Navigate through large order lists efficiently</li>
+            </ul>
+        </section>
+
+        <!-- Order Details -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Order Details</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Click any order to view complete details including:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Customer Information</h4>
+                    <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                        <li>Name, email, and phone</li>
+                        <li>Shipping address</li>
+                        <li>Billing address</li>
+                        <li>Order notes</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">Order Contents</h4>
+                    <ul class="text-sm text-slate-600 dark:text-slate-400 space-y-1">
+                        <li>Line items with variants</li>
+                        <li>Quantities and prices</li>
+                        <li>Discounts applied</li>
+                        <li>Tax and shipping costs</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fulfillment -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Order Fulfillment</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Update order status and add tracking information:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Go to Order Details and click <strong>"Edit Status"</strong></li>
+                <li>Select the new fulfillment status</li>
+                <li>Add tracking number and carrier (optional)</li>
+                <li>Customer receives automatic notification</li>
+            </ol>
+            <div class="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
+                    <p class="text-slate-700 dark:text-slate-300 text-sm">
+                        <strong>Note:</strong> Status changes sync back to Shopify automatically.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Invoices -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Invoices</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Generate professional invoices for any order:
+            </p>
+            <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li><strong>View Invoice:</strong> See invoice in browser with print option</li>
+                <li><strong>Download PDF:</strong> Get a downloadable PDF invoice</li>
+                <li>Invoices include your store logo and details</li>
+                <li>Tax breakdown and totals calculated automatically</li>
+            </ul>
+        </section>
+
+        <!-- Create Order -->
+        <section>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-white mb-4">Create Manual Orders</h2>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">
+                Create orders manually for phone orders or special requests:
+            </p>
+            <ol class="list-decimal list-inside text-slate-600 dark:text-slate-400 space-y-2">
+                <li>Click <strong>"Create Order"</strong> from the orders list</li>
+                <li>Enter customer details (or select existing customer)</li>
+                <li>Add products with quantities</li>
+                <li>Apply discounts if needed</li>
+                <li>Set shipping address and method</li>
+                <li>Submit to create the order</li>
+            </ol>
+        </section>
+    </div>
+
+    <div class="mt-8 flex justify-between">
+        <a href="/docs/dashboard" class="text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400">
+            <i class="fas fa-arrow-left mr-2"></i>Dashboard
+        </a>
+        <a href="/docs/products" class="text-purple-600 dark:text-purple-400 hover:underline">
+            Products <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</div>

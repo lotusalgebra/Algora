@@ -1,0 +1,188 @@
+@page "/docs/getting-started"
+@model Algora.Web.Pages.Docs.GettingStartedModel
+@{
+    ViewData["Title"] = "Getting Started";
+    ViewData["Breadcrumb"] = "Documentation / Getting Started";
+}
+
+<div class="max-w-4xl mx-auto">
+    <!-- Back Link -->
+    <a href="/docs" class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 mb-6">
+        <i class="fas fa-arrow-left"></i>
+        Back to Documentation
+    </a>
+
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Getting Started with Algora</h1>
+        <p class="text-slate-600 dark:text-slate-400">Learn the basics and set up your store in minutes</p>
+    </div>
+
+    <!-- Content -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8">
+        <!-- Step 1 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <span class="text-purple-600 dark:text-purple-400 font-bold">1</span>
+                </div>
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Connect Your Shopify Store</h2>
+            </div>
+            <div class="ml-14">
+                <p class="text-slate-600 dark:text-slate-400 mb-4">
+                    Algora integrates seamlessly with your Shopify store. After installation, your products, orders, and customers will automatically sync.
+                </p>
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+                    <h4 class="font-medium text-slate-800 dark:text-white mb-2">What gets synced:</h4>
+                    <ul class="list-disc list-inside text-slate-600 dark:text-slate-400 space-y-1">
+                        <li>All your products with variants and images</li>
+                        <li>Order history and customer data</li>
+                        <li>Inventory levels across locations</li>
+                        <li>Customer reviews and feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <span class="text-purple-600 dark:text-purple-400 font-bold">2</span>
+                </div>
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Explore Your Dashboard</h2>
+            </div>
+            <div class="ml-14">
+                <p class="text-slate-600 dark:text-slate-400 mb-4">
+                    Your dashboard provides a real-time overview of your store's performance. Here you'll find key metrics like sales, orders, and revenue.
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+                        <i class="fas fa-chart-line text-green-500 mb-2"></i>
+                        <h4 class="font-medium text-slate-800 dark:text-white">Sales Overview</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Track daily, weekly, and monthly revenue</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+                        <i class="fas fa-shopping-bag text-blue-500 mb-2"></i>
+                        <h4 class="font-medium text-slate-800 dark:text-white">Recent Orders</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Quick access to latest orders</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="mb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <span class="text-purple-600 dark:text-purple-400 font-bold">3</span>
+                </div>
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Set Up Key Features</h2>
+            </div>
+            <div class="ml-14">
+                <p class="text-slate-600 dark:text-slate-400 mb-4">
+                    Configure the features that matter most to your business:
+                </p>
+                <div class="space-y-3">
+                    <a href="/docs/inventory" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-warehouse text-teal-500"></i>
+                        <div>
+                            <h4 class="font-medium text-slate-800 dark:text-white">Inventory Alerts</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Never run out of stock with smart predictions</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-400 ml-auto"></i>
+                    </a>
+                    <a href="/docs/marketing" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-bullhorn text-pink-500"></i>
+                        <div>
+                            <h4 class="font-medium text-slate-800 dark:text-white">Upsell Offers</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Increase AOV with smart recommendations</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-400 ml-auto"></i>
+                    </a>
+                    <a href="/docs/ai-tools" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-robot text-purple-500"></i>
+                        <div>
+                            <h4 class="font-medium text-slate-800 dark:text-white">AI Content Generation</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Generate product descriptions with AI</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-400 ml-auto"></i>
+                    </a>
+                    <a href="/docs/customer-hub" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-headset text-blue-500"></i>
+                        <div>
+                            <h4 class="font-medium text-slate-800 dark:text-white">Customer Support</h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Unified inbox for all customer messages</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-400 ml-auto"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div>
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <span class="text-purple-600 dark:text-purple-400 font-bold">4</span>
+                </div>
+                <h2 class="text-xl font-semibold text-slate-800 dark:text-white">Choose Your Plan</h2>
+            </div>
+            <div class="ml-14">
+                <p class="text-slate-600 dark:text-slate-400 mb-4">
+                    Select a plan that fits your business needs. All plans include core features with varying limits.
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 dark:text-white">Free</h4>
+                        <p class="text-2xl font-bold text-purple-600">$0</p>
+                        <p class="text-xs text-slate-500">100 orders/mo</p>
+                    </div>
+                    <div class="text-center p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 dark:text-white">Basic</h4>
+                        <p class="text-2xl font-bold text-purple-600">$99</p>
+                        <p class="text-xs text-slate-500">500 orders/mo</p>
+                    </div>
+                    <div class="text-center p-4 border border-purple-500 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 dark:text-white">Premium</h4>
+                        <p class="text-2xl font-bold text-purple-600">$199</p>
+                        <p class="text-xs text-slate-500">2000 orders/mo</p>
+                    </div>
+                    <div class="text-center p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 dark:text-white">Enterprise</h4>
+                        <p class="text-2xl font-bold text-purple-600">$299</p>
+                        <p class="text-xs text-slate-500">Unlimited</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="/plans" class="text-purple-600 dark:text-purple-400 hover:underline font-medium">
+                        View full plan comparison <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="mt-8 p-6 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-800/50 rounded-xl">
+        <h3 class="text-lg font-semibold text-slate-800 dark:text-white mb-4">Recommended Next Steps</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="/docs/orders" class="flex items-center gap-3 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400">
+                <i class="fas fa-check-circle text-green-500"></i>
+                Learn about order management
+            </a>
+            <a href="/docs/products" class="flex items-center gap-3 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400">
+                <i class="fas fa-check-circle text-green-500"></i>
+                Manage your product catalog
+            </a>
+            <a href="/docs/ai-tools" class="flex items-center gap-3 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400">
+                <i class="fas fa-check-circle text-green-500"></i>
+                Try AI-powered tools
+            </a>
+            <a href="/docs/analytics" class="flex items-center gap-3 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400">
+                <i class="fas fa-check-circle text-green-500"></i>
+                Explore analytics and reports
+            </a>
+        </div>
+    </div>
+</div>
