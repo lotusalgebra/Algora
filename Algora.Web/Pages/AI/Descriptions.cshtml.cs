@@ -2,12 +2,16 @@ using Algora.Application.DTOs.AI;
 using Algora.Application.Interfaces;
 using Algora.Application.Interfaces.AI;
 using Algora.Infrastructure.Data;
+using Algora.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Algora.Web.Pages.AI;
 
+[Authorize]
+[RequireFeature(FeatureCodes.AiDescriptions)]
 public class DescriptionsModel : PageModel
 {
     private readonly AppDbContext _context;

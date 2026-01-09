@@ -1,5 +1,6 @@
 using Algora.Application.DTOs.CustomerHub;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Algora.Web.Pages.CustomerHub.Exchanges;
 
 [Authorize]
+[RequireFeature(FeatureCodes.Exchanges)]
 public class IndexModel : PageModel
 {
     private readonly IExchangeService _exchangeService;

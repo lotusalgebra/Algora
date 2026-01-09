@@ -2,7 +2,9 @@ using Algora.Application.Interfaces;
 using Algora.Infrastructure;
 using Algora.WhatsApp;
 using Algora.Web.Services;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -28,13 +30,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
+// Add authorization with dynamic feature policy provider
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, FeaturePolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, FeatureAuthorizationHandler>();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
-// Seed default plans on startup
+// Seed default plans and features on startup
 using (var scope = app.Services.CreateScope())
 {
     var planService = scope.ServiceProvider.GetRequiredService<IPlanService>();
     await planService.SeedDefaultPlansAsync();
+
+    var featureService = scope.ServiceProvider.GetRequiredService<IPlanFeatureService>();
+    await featureService.SeedDefaultFeaturesAsync();
 }
 
 if (app.Environment.IsDevelopment())

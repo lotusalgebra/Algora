@@ -1,6 +1,7 @@
 using Algora.Application.DTOs;
 using Algora.Application.DTOs.Common;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Algora.Web.Pages.Orders;
 
 [Authorize]
+[RequireFeature(FeatureCodes.Orders)]
 public class IndexModel : PageModel
 {
     private readonly IShopifyOrderService _orderService;

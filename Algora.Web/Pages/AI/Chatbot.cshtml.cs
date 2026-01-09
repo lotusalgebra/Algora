@@ -1,12 +1,16 @@
 using Algora.Application.Interfaces;
 using Algora.Domain.Entities;
 using Algora.Infrastructure.Data;
+using Algora.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Algora.Web.Pages.AI;
 
+[Authorize]
+[RequireFeature(FeatureCodes.AiChatbot)]
 public class ChatbotModel : PageModel
 {
     private readonly AppDbContext _db;

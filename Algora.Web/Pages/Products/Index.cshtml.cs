@@ -1,6 +1,7 @@
 using Algora.Application.DTOs.Common;
 using Algora.Core.Models;
 using Algora.Infrastructure.Services;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Algora.Web.Pages.Products;
 
 [Authorize]
+[RequireFeature(FeatureCodes.Products)]
 public class IndexModel : PageModel
 {
     private readonly ShopifyProductGraphService _productService;

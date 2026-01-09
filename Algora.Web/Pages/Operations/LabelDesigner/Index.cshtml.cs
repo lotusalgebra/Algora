@@ -1,6 +1,7 @@
 using Algora.Application.DTOs.Operations;
 using Algora.Application.Interfaces;
 using Algora.Infrastructure.Data;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Algora.Web.Pages.Operations.LabelDesigner;
 
 [Authorize]
+[RequireFeature(FeatureCodes.LabelDesigner)]
 [IgnoreAntiforgeryToken]
 public class IndexModel : PageModel
 {

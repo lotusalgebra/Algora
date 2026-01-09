@@ -1,10 +1,14 @@
 using Algora.Application.DTOs.Communication;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Communication;
 
+[Authorize]
+[RequireFeature(FeatureCodes.EmailCampaigns)]
 [IgnoreAntiforgeryToken]
 public class EmailCampaignsModel : PageModel
 {

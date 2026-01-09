@@ -1,5 +1,6 @@
 using Algora.Application.DTOs.Analytics;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Algora.Web.Pages.Analytics;
 
 [Authorize]
+[RequireFeature(FeatureCodes.AdvancedReports)]
 public class IndexModel : PageModel
 {
     private readonly IAnalyticsService _analyticsService;

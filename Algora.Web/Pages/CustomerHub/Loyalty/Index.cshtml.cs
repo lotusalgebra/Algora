@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.CustomerHub;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.CustomerHub.Loyalty;
 
 [Authorize]
+[RequireFeature(FeatureCodes.LoyaltyProgram)]
 public class IndexModel : PageModel
 {
     private readonly ILoyaltyService _loyaltyService;

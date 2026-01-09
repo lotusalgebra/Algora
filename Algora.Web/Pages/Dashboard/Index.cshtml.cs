@@ -1,17 +1,20 @@
 using Algora.Core.Models;
+using Algora.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 
 namespace Algora.Web.Pages.Dashboard
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         public DashboardViewModel Dashboard { get; set; } = new();
 
         public void OnGet()
         {
-            // Sample data — replace with real data retrieval
+            // Sample data ï¿½ replace with real data retrieval
             Dashboard.TodaysMoney = 53000m;
             Dashboard.TodaysUsers = 2300;
             Dashboard.NewClients = 3462;

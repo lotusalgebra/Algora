@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.Reviews;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Reviews.Admin;
 
 [Authorize]
+[RequireFeature(FeatureCodes.Reviews)]
 public class IndexModel : PageModel
 {
     private readonly IReviewService _reviewService;

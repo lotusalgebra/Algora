@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.Operations;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Operations;
 
 [Authorize]
+[RequireFeature(FeatureCodes.SupplierManagement)]
 public class IndexModel : PageModel
 {
     private readonly ISupplierService _supplierService;

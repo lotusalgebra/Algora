@@ -1,9 +1,12 @@
 using Algora.Application.DTOs.AI;
 using Algora.Application.Interfaces.AI;
+using Algora.Web.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.AI;
 
+[Authorize]
 public class IndexModel : PageModel
 {
     private readonly IAiContentService _aiContentService;

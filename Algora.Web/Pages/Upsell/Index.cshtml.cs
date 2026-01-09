@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.Upsell;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Upsell;
 
 [Authorize]
+[RequireFeature(FeatureCodes.UpsellOffers)]
 public class IndexModel : PageModel
 {
     private readonly IUpsellRecommendationService _recommendationService;

@@ -96,5 +96,97 @@ BEGIN
 END
 GO
 
+-- Add Returns feature
+IF NOT EXISTS (SELECT 1 FROM [dbo].[PlanFeatures] WHERE [Code] = 'returns')
+BEGIN
+    INSERT INTO [dbo].[PlanFeatures] ([Code], [Name], [Description], [Category], [IconClass], [SortOrder])
+    VALUES ('returns', 'Returns Management', 'Process customer returns and refunds', 'Returns', 'fas fa-undo', 1);
+    PRINT 'Added Returns feature';
+END
+GO
+
+-- Add Reviews feature
+IF NOT EXISTS (SELECT 1 FROM [dbo].[PlanFeatures] WHERE [Code] = 'reviews')
+BEGIN
+    INSERT INTO [dbo].[PlanFeatures] ([Code], [Name], [Description], [Category], [IconClass], [SortOrder])
+    VALUES ('reviews', 'Product Reviews', 'Collect and manage product reviews', 'Reviews', 'fas fa-star', 1);
+    PRINT 'Added Reviews feature';
+END
+GO
+
+-- Add Customer Management feature
+IF NOT EXISTS (SELECT 1 FROM [dbo].[PlanFeatures] WHERE [Code] = 'customers')
+BEGIN
+    INSERT INTO [dbo].[PlanFeatures] ([Code], [Name], [Description], [Category], [IconClass], [SortOrder])
+    VALUES ('customers', 'Customer Management', 'View and manage customer data', 'Commerce', 'fas fa-users', 5);
+    PRINT 'Added Customers feature';
+END
+GO
+
+-- Add Packing Slips feature
+IF NOT EXISTS (SELECT 1 FROM [dbo].[PlanFeatures] WHERE [Code] = 'packing_slips')
+BEGIN
+    INSERT INTO [dbo].[PlanFeatures] ([Code], [Name], [Description], [Category], [IconClass], [SortOrder])
+    VALUES ('packing_slips', 'Packing Slips', 'Generate packing slips for orders', 'Operations', 'fas fa-file-alt', 5);
+    PRINT 'Added Packing Slips feature';
+END
+GO
+
+-- Add Live Chat feature
+IF NOT EXISTS (SELECT 1 FROM [dbo].[PlanFeatures] WHERE [Code] = 'live_chat')
+BEGIN
+    INSERT INTO [dbo].[PlanFeatures] ([Code], [Name], [Description], [Category], [IconClass], [SortOrder])
+    VALUES ('live_chat', 'Live Chat Support', 'Real-time customer support chat', 'Customer Hub', 'fas fa-headset', 4);
+    PRINT 'Added Live Chat feature';
+END
+GO
+
+-- Assign new features to Basic plan
+DECLARE @BasicPlanIdNew INT = (SELECT Id FROM [dbo].[Plans] WHERE [Name] = 'Basic');
+IF @BasicPlanIdNew IS NOT NULL
+BEGIN
+    INSERT INTO [dbo].[PlanFeatureAssignments] ([PlanId], [PlanFeatureId], [AssignedBy])
+    SELECT @BasicPlanIdNew, Id, 'system'
+    FROM [dbo].[PlanFeatures]
+    WHERE [Code] IN ('returns', 'reviews', 'customers')
+    AND NOT EXISTS (
+        SELECT 1 FROM [dbo].[PlanFeatureAssignments]
+        WHERE PlanId = @BasicPlanIdNew AND PlanFeatureId = [PlanFeatures].Id
+    );
+    PRINT 'Assigned new features to Basic plan';
+END
+GO
+
+-- Assign new features to Premium plan
+DECLARE @PremiumPlanIdNew INT = (SELECT Id FROM [dbo].[Plans] WHERE [Name] = 'Premium');
+IF @PremiumPlanIdNew IS NOT NULL
+BEGIN
+    INSERT INTO [dbo].[PlanFeatureAssignments] ([PlanId], [PlanFeatureId], [AssignedBy])
+    SELECT @PremiumPlanIdNew, Id, 'system'
+    FROM [dbo].[PlanFeatures]
+    WHERE [Code] IN ('returns', 'reviews', 'customers', 'packing_slips')
+    AND NOT EXISTS (
+        SELECT 1 FROM [dbo].[PlanFeatureAssignments]
+        WHERE PlanId = @PremiumPlanIdNew AND PlanFeatureId = [PlanFeatures].Id
+    );
+    PRINT 'Assigned new features to Premium plan';
+END
+GO
+
+-- Assign all new features to Enterprise plan
+DECLARE @EnterprisePlanIdNew INT = (SELECT Id FROM [dbo].[Plans] WHERE [Name] = 'Enterprise');
+IF @EnterprisePlanIdNew IS NOT NULL
+BEGIN
+    INSERT INTO [dbo].[PlanFeatureAssignments] ([PlanId], [PlanFeatureId], [AssignedBy])
+    SELECT @EnterprisePlanIdNew, pf.Id, 'system'
+    FROM [dbo].[PlanFeatures] pf
+    WHERE NOT EXISTS (
+        SELECT 1 FROM [dbo].[PlanFeatureAssignments] pfa
+        WHERE pfa.PlanId = @EnterprisePlanIdNew AND pfa.PlanFeatureId = pf.Id
+    );
+    PRINT 'Assigned all features to Enterprise plan';
+END
+GO
+
 PRINT 'Commerce and Inventory features migration complete';
 GO

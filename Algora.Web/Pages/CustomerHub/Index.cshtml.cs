@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.CustomerHub;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.CustomerHub;
 
 [Authorize]
+[RequireFeature(FeatureCodes.UnifiedInbox)]
 public class IndexModel : PageModel
 {
     private readonly IUnifiedInboxService _inboxService;

@@ -1,11 +1,13 @@
 using Algora.Application.DTOs.Returns;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Algora.Web.Pages.Returns;
 
 [Authorize]
+[RequireFeature(FeatureCodes.Returns)]
 public class IndexModel : PageModel
 {
     private readonly IReturnService _returnService;

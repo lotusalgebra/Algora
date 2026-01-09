@@ -1,6 +1,7 @@
 using Algora.Application.DTOs.Common;
 using Algora.Application.DTOs.Inventory;
 using Algora.Application.Interfaces;
+using Algora.Web.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Algora.Web.Pages.Inventory;
 
 [Authorize]
+[RequireFeature(FeatureCodes.InventoryPredictions)]
 public class IndexModel : PageModel
 {
     private readonly IInventoryPredictionService _predictionService;
