@@ -298,6 +298,31 @@
                     <a href="/abandoned-checkouts" class="sidenav-dropdown-item @(IsInSection("/abandoned") ? "active" : "")">Abandoned Carts</a>
                 </div>
 
+                <!-- Reports Section -->
+                <p class="sidenav-title mt-4">Reports</p>
+
+                <a href="/reports" class="sidenav-item @(currentPath == "/reports" ? "active" : "")">
+                    <span class="icon-shape @(currentPath == "/reports" ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
+                        <i class="fas fa-chart-pie text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Dashboard</span>
+                </a>
+
+                <button onclick="toggleCollapse('reports')" class="sidenav-item w-full @(IsInSection("/reports/") ? "active" : "")">
+                    <span class="icon-shape @(IsInSection("/reports/") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
+                        <i class="fas fa-chart-bar text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm flex-1 text-left">Detailed Reports</span>
+                    <i id="reports-chevron" class="fas fa-chevron-right text-[10px] text-slate-400 dark:text-white/50 collapse-chevron @(IsInSection("/reports/") ? "rotated" : "")"></i>
+                </button>
+                <div id="reports-collapse" class="sidenav-collapse @(IsInSection("/reports/") ? "show" : "")">
+                    <a href="/reports/sales" class="sidenav-dropdown-item @(IsActive("/reports/sales") ? "active" : "")">Sales</a>
+                    <a href="/reports/products" class="sidenav-dropdown-item @(IsActive("/reports/products") ? "active" : "")">Products</a>
+                    <a href="/reports/customers" class="sidenav-dropdown-item @(IsActive("/reports/customers") ? "active" : "")">Customers</a>
+                    <a href="/reports/financial" class="sidenav-dropdown-item @(IsActive("/reports/financial") ? "active" : "")">Financial</a>
+                    <a href="/reports/advertising" class="sidenav-dropdown-item @(IsActive("/reports/advertising") ? "active" : "")">Advertising</a>
+                </div>
+
                 <!-- AI Tools Section -->
                 <p class="sidenav-title mt-4">AI Tools</p>
 

@@ -1,0 +1,239 @@
+@page
+@model Algora.Web.Pages.Reports.SalesModel
+@{
+    ViewData["Title"] = "Sales Report";
+}
+
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">Sales Report</h4>
+                <p class="text-sm text-secondary mb-0">Revenue and order analytics</p>
+            </div>
+            <a href="/reports/sales?handler=Export&format=csv&StartDate=@Model.StartDate.ToString("yyyy-MM-dd")&EndDate=@Model.EndDate.ToString("yyyy-MM-dd")"
+               class="btn bg-gradient-success btn-sm">
+                <i class="fas fa-download me-2"></i>Export CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Date Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body py-3">
+                    <form method="get" class="d-flex align-items-center gap-3 flex-wrap">
+                        <div>
+                            <label class="form-label text-xs mb-1">Start Date</label>
+                            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+                        </div>
+                        <div>
+                            <label class="form-label text-xs mb-1">End Date</label>
+                            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+                        </div>
+                        <div>
+                            <label class="form-label text-xs mb-1">Period</label>
+                            <select name="Period" class="form-select form-select-sm">
+                                <option value="day" selected="@(Model.Period == "day")">Daily</option>
+                                <option value="week" selected="@(Model.Period == "week")">Weekly</option>
+                                <option value="month" selected="@(Model.Period == "month")">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="align-self-end">
+                            <button type="submit" class="btn bg-gradient-primary btn-sm">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Revenue</p>
+                    <h4 class="font-weight-bolder text-primary">$@Model.Report.TotalRevenue.ToString("N0")</h4>
+                    <span class="text-@(Model.Report.RevenueGrowthPercent >= 0 ? "success" : "danger") text-xs">
+                        <i class="fas fa-arrow-@(Model.Report.RevenueGrowthPercent >= 0 ? "up" : "down")"></i>
+                        @Math.Abs(Model.Report.RevenueGrowthPercent).ToString("N1")% vs previous
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Orders</p>
+                    <h4 class="font-weight-bolder text-success">@Model.Report.TotalOrders</h4>
+                    <span class="text-@(Model.Report.OrderGrowthPercent >= 0 ? "success" : "danger") text-xs">
+                        <i class="fas fa-arrow-@(Model.Report.OrderGrowthPercent >= 0 ? "up" : "down")"></i>
+                        @Math.Abs(Model.Report.OrderGrowthPercent)% vs previous
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Average Order Value</p>
+                    <h4 class="font-weight-bolder text-info">$@Model.Report.AverageOrderValue.ToString("N2")</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body p-3">
+                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Discounts</p>
+                    <h4 class="font-weight-bolder text-warning">$@Model.Report.TotalDiscounts.ToString("N0")</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Breakdown -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-gradient-light">
+                <div class="card-body p-3 text-center">
+                    <p class="text-xs mb-0">Subtotal</p>
+                    <h6 class="mb-0">$@Model.Report.TotalSubtotal.ToString("N0")</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-gradient-light">
+                <div class="card-body p-3 text-center">
+                    <p class="text-xs mb-0">Tax</p>
+                    <h6 class="mb-0">$@Model.Report.TotalTax.ToString("N0")</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-gradient-light">
+                <div class="card-body p-3 text-center">
+                    <p class="text-xs mb-0">Shipping</p>
+                    <h6 class="mb-0">$@Model.Report.TotalShipping.ToString("N0")</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card bg-gradient-light">
+                <div class="card-body p-3 text-center">
+                    <p class="text-xs mb-0">Discounts</p>
+                    <h6 class="mb-0 text-danger">-$@Model.Report.TotalDiscounts.ToString("N0")</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-lg-0 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6>Revenue Trend</h6>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="revenueChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header pb-0">
+                    <h6>Orders by Status</h6>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="statusChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Period Data Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6>Sales by Period</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Period</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Revenue</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Orders</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">AOV</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Growth</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var period in Model.PeriodData)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="text-xs font-weight-bold">@period.Period</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-weight-bold text-success">$@period.Revenue.ToString("N0")</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs">@period.Orders</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs">$@period.AverageOrderValue.ToString("N2")</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-gradient-@(period.GrowthPercent >= 0 ? "success" : "danger")">
+                                                @(period.GrowthPercent >= 0 ? "+" : "")@period.GrowthPercent.ToString("N1")%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        new Chart(document.getElementById('revenueChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => $"'{d.Label}'")))],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => d.Value)))],
+                    borderColor: 'rgb(94, 114, 228)',
+                    backgroundColor: 'rgba(94, 114, 228, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        new Chart(document.getElementById('statusChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Keys.Select(k => $"'{k}'")))],
+                datasets: [{
+                    data: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Values))],
+                    backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    </script>
+}
