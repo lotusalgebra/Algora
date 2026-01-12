@@ -4,291 +4,277 @@
     ViewData["Title"] = "Reports Dashboard";
 }
 
-<div class="container-fluid py-4">
+<div class="space-y-6">
     <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h4 class="mb-1">Reports Dashboard</h4>
-            <p class="text-sm text-secondary mb-0">Analyze your shop performance</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Reports Dashboard</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Analyze your shop performance</p>
         </div>
     </div>
 
     <!-- Date Filter -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body py-3">
-                    <form method="get" class="d-flex align-items-center gap-3 flex-wrap">
-                        <div>
-                            <label class="form-label text-xs mb-1">Start Date</label>
-                            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div>
-                            <label class="form-label text-xs mb-1">End Date</label>
-                            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div class="align-self-end">
-                            <button type="submit" class="btn bg-gradient-primary btn-sm">Apply</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+        <form method="get" class="flex flex-wrap items-end gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
             </div>
-        </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                Apply
+            </button>
+        </form>
     </div>
 
     <!-- KPI Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Revenue</p>
-                                <h5 class="font-weight-bolder mb-0">
-                                    $@Model.Dashboard.TotalRevenue.ToString("N0")
-                                    <span class="text-@(Model.Dashboard.RevenueGrowth >= 0 ? "success" : "danger") text-sm font-weight-bolder">
-                                        @(Model.Dashboard.RevenueGrowth >= 0 ? "+" : "")@Model.Dashboard.RevenueGrowth.ToString("N1")%
-                                    </span>
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="fas fa-dollar-sign text-lg opacity-10"></i>
-                            </div>
-                        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Revenue -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">$@Model.Dashboard.TotalRevenue.ToString("N0")</h3>
+                        <span class="ml-2 text-sm font-medium @(Model.Dashboard.RevenueGrowth >= 0 ? "text-green-500" : "text-red-500") flex items-center">
+                            <i class="fas fa-arrow-@(Model.Dashboard.RevenueGrowth >= 0 ? "up" : "down") text-xs mr-1"></i>
+                            @Math.Abs(Model.Dashboard.RevenueGrowth).ToString("N1")%
+                        </span>
                     </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+                    <i class="fas fa-dollar-sign text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Orders</p>
-                                <h5 class="font-weight-bolder mb-0">
-                                    @Model.Dashboard.TotalOrders
-                                    <span class="text-@(Model.Dashboard.OrderGrowth >= 0 ? "success" : "danger") text-sm font-weight-bolder">
-                                        @(Model.Dashboard.OrderGrowth >= 0 ? "+" : "")@Model.Dashboard.OrderGrowth%
-                                    </span>
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                                <i class="fas fa-shopping-cart text-lg opacity-10"></i>
-                            </div>
-                        </div>
+
+        <!-- Orders -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Orders</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Dashboard.TotalOrders</h3>
+                        <span class="ml-2 text-sm font-medium @(Model.Dashboard.OrderGrowth >= 0 ? "text-green-500" : "text-red-500") flex items-center">
+                            <i class="fas fa-arrow-@(Model.Dashboard.OrderGrowth >= 0 ? "up" : "down") text-xs mr-1"></i>
+                            @Math.Abs(Model.Dashboard.OrderGrowth)%
+                        </span>
                     </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
+                    <i class="fas fa-shopping-cart text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Customers</p>
-                                <h5 class="font-weight-bolder mb-0">
-                                    @Model.Dashboard.TotalCustomers
-                                    <span class="text-@(Model.Dashboard.CustomerGrowth >= 0 ? "success" : "danger") text-sm font-weight-bolder">
-                                        @(Model.Dashboard.CustomerGrowth >= 0 ? "+" : "")@Model.Dashboard.CustomerGrowth%
-                                    </span>
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
-                                <i class="fas fa-users text-lg opacity-10"></i>
-                            </div>
-                        </div>
+
+        <!-- Customers -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Customers</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Dashboard.TotalCustomers</h3>
+                        <span class="ml-2 text-sm font-medium @(Model.Dashboard.CustomerGrowth >= 0 ? "text-green-500" : "text-red-500") flex items-center">
+                            <i class="fas fa-arrow-@(Model.Dashboard.CustomerGrowth >= 0 ? "up" : "down") text-xs mr-1"></i>
+                            @Math.Abs(Model.Dashboard.CustomerGrowth)%
+                        </span>
                     </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-lime-400">
+                    <i class="fas fa-users text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6">
-            <div class="card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Avg Order</p>
-                                <h5 class="font-weight-bolder mb-0">
-                                    $@Model.Dashboard.AverageOrderValue.ToString("N2")
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
-                                <i class="fas fa-chart-line text-lg opacity-10"></i>
-                            </div>
-                        </div>
+
+        <!-- Avg Order -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Order Value</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">$@Model.Dashboard.AverageOrderValue.ToString("N2")</h3>
                     </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400">
+                    <i class="fas fa-chart-line text-white text-lg"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Charts Row -->
-    <div class="row mb-4">
-        <div class="col-lg-7 mb-lg-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Revenue Trend</h6>
-                </div>
-                <div class="card-body p-3">
-                    <div class="chart">
-                        <canvas id="revenueChart" class="chart-canvas" height="300"></canvas>
-                    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Revenue Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Revenue Trend</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
+                    @if (Model.Dashboard.RevenueSparkline.Any())
+                    {
+                        <canvas id="revenueChart"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No revenue data available</p>
+                    }
                 </div>
             </div>
         </div>
-        <div class="col-lg-5">
-            <div class="card h-100">
-                <div class="card-header pb-0">
-                    <h6>Orders Trend</h6>
-                </div>
-                <div class="card-body p-3">
-                    <div class="chart">
-                        <canvas id="ordersChart" class="chart-canvas" height="300"></canvas>
-                    </div>
+
+        <!-- Orders Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Orders Trend</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
+                    @if (Model.Dashboard.OrdersSparkline.Any())
+                    {
+                        <canvas id="ordersChart"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No orders data available</p>
+                    }
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Top Products & Customers -->
-    <div class="row">
-        <div class="col-lg-6 mb-lg-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between">
-                        <h6>Top Products</h6>
-                        <a href="/reports/products" class="text-xs text-primary">View All</a>
-                    </div>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Product</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Units</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Revenue</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var product in Model.Dashboard.TopProducts.Take(5))
-                                {
-                                    <tr>
-                                        <td class="ps-4">
-                                            <p class="text-xs font-weight-bold mb-0">@product.ProductTitle</p>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs">@product.TotalQuantitySold</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs font-weight-bold text-success">$@product.TotalRevenue.ToString("N0")</span>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Top Products -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Top Products</h3>
+                <a href="/reports/products" class="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Product</th>
+                            <th scope="col" class="px-6 py-3 text-center">Units</th>
+                            <th scope="col" class="px-6 py-3 text-right">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Dashboard.TopProducts.Take(5))
+                        {
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@product.ProductTitle</td>
+                                <td class="px-6 py-4 text-center">@product.TotalQuantitySold</td>
+                                <td class="px-6 py-4 text-right font-medium text-green-600">$@product.TotalRevenue.ToString("N0")</td>
+                            </tr>
+                        }
+                        @if (!Model.Dashboard.TopProducts.Any())
+                        {
+                            <tr class="bg-white dark:bg-gray-800">
+                                <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No product data available</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="d-flex justify-content-between">
-                        <h6>Top Customers</h6>
-                        <a href="/reports/customers" class="text-xs text-primary">View All</a>
-                    </div>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Orders</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Spent</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var customer in Model.Dashboard.TopCustomers.Take(5))
-                                {
-                                    <tr>
-                                        <td class="ps-4">
-                                            <p class="text-xs font-weight-bold mb-0">@customer.CustomerName</p>
-                                            <p class="text-xxs text-secondary mb-0">@customer.CustomerEmail</p>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs">@customer.TotalOrders</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs font-weight-bold text-success">$@customer.TotalSpent.ToString("N0")</span>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+
+        <!-- Top Customers -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Top Customers</h3>
+                <a href="/reports/customers" class="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400">
+                    View All <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Customer</th>
+                            <th scope="col" class="px-6 py-3 text-center">Orders</th>
+                            <th scope="col" class="px-6 py-3 text-right">Total Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in Model.Dashboard.TopCustomers.Take(5))
+                        {
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4">
+                                    <p class="font-medium text-gray-900 dark:text-white">@customer.CustomerName</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">@customer.CustomerEmail</p>
+                                </td>
+                                <td class="px-6 py-4 text-center">@customer.TotalOrders</td>
+                                <td class="px-6 py-4 text-right font-medium text-green-600">$@customer.TotalSpent.ToString("N0")</td>
+                            </tr>
+                        }
+                        @if (!Model.Dashboard.TopCustomers.Any())
+                        {
+                            <tr class="bg-white dark:bg-gray-800">
+                                <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No customer data available</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <!-- Quick Links -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Detailed Reports</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <a href="/reports/sales" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-chart-line me-2"></i>Sales
-                            </a>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <a href="/reports/products" class="btn btn-outline-success w-100">
-                                <i class="fas fa-box me-2"></i>Products
-                            </a>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <a href="/reports/customers" class="btn btn-outline-info w-100">
-                                <i class="fas fa-users me-2"></i>Customers
-                            </a>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <a href="/reports/financial" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-wallet me-2"></i>Financial
-                            </a>
-                        </div>
-                        <div class="col-md-2 col-sm-4 col-6 mb-3">
-                            <a href="/reports/advertising" class="btn btn-outline-danger w-100">
-                                <i class="fas fa-bullhorn me-2"></i>Advertising
-                            </a>
-                        </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Detailed Reports</h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <a href="/reports/sales" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center mb-3">
+                        <i class="fas fa-chart-line text-white text-lg"></i>
                     </div>
-                </div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Sales</span>
+                </a>
+                <a href="/reports/products" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-lime-400 flex items-center justify-center mb-3">
+                        <i class="fas fa-box text-white text-lg"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Products</span>
+                </a>
+                <a href="/reports/customers" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center mb-3">
+                        <i class="fas fa-users text-white text-lg"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Customers</span>
+                </a>
+                <a href="/reports/financial" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center mb-3">
+                        <i class="fas fa-wallet text-white text-lg"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Financial</span>
+                </a>
+                <a href="/reports/advertising" class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-rose-400 flex items-center justify-center mb-3">
+                        <i class="fas fa-bullhorn text-white text-lg"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">Advertising</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script>
-        // Revenue Chart
+<script>
+    @if (Model.Dashboard.RevenueSparkline.Any())
+    {
+        <text>
         new Chart(document.getElementById('revenueChart').getContext('2d'), {
             type: 'line',
             data: {
@@ -296,8 +282,8 @@
                 datasets: [{
                     label: 'Revenue',
                     data: [@Html.Raw(string.Join(",", Model.Dashboard.RevenueSparkline.Select(d => d.Value)))],
-                    borderColor: 'rgb(94, 114, 228)',
-                    backgroundColor: 'rgba(94, 114, 228, 0.1)',
+                    borderColor: 'rgb(147, 51, 234)',
+                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
                     tension: 0.4,
                     fill: true
                 }]
@@ -305,11 +291,19 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(156, 163, 175, 0.2)' } },
+                    x: { grid: { display: false } }
+                }
             }
         });
+        </text>
+    }
 
-        // Orders Chart
+    @if (Model.Dashboard.OrdersSparkline.Any())
+    {
+        <text>
         new Chart(document.getElementById('ordersChart').getContext('2d'), {
             type: 'bar',
             data: {
@@ -317,14 +311,21 @@
                 datasets: [{
                     label: 'Orders',
                     data: [@Html.Raw(string.Join(",", Model.Dashboard.OrdersSparkline.Select(d => d.Value)))],
-                    backgroundColor: 'rgba(45, 206, 137, 0.8)'
+                    backgroundColor: 'rgba(45, 206, 137, 0.8)',
+                    borderRadius: 8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(156, 163, 175, 0.2)' } },
+                    x: { grid: { display: false } }
+                }
             }
         });
-    </script>
+        </text>
+    }
+</script>
 }

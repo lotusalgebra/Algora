@@ -4,228 +4,266 @@
     ViewData["Title"] = "Advertising Report";
 }
 
-<div class="container-fluid py-4">
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div>
-                <h4 class="mb-1">Advertising Report</h4>
-                <p class="text-sm text-secondary mb-0">Ad spend, ROAS, and campaign performance</p>
-            </div>
-            <a href="/reports/advertising?handler=Export&format=csv&StartDate=@Model.StartDate.ToString("yyyy-MM-dd")&EndDate=@Model.EndDate.ToString("yyyy-MM-dd")"
-               class="btn bg-gradient-success btn-sm">
-                <i class="fas fa-download me-2"></i>Export CSV
-            </a>
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Advertising Report</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Ad spend, ROAS, and campaign performance</p>
         </div>
+        <a href="/reports/advertising?handler=Export&format=csv&StartDate=@Model.StartDate.ToString("yyyy-MM-dd")&EndDate=@Model.EndDate.ToString("yyyy-MM-dd")"
+           class="mt-4 sm:mt-0 text-white bg-gradient-to-br from-green-500 to-lime-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center">
+            <i class="fas fa-download me-2"></i>Export CSV
+        </a>
     </div>
 
     <!-- Date Filter -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body py-3">
-                    <form method="get" class="d-flex align-items-center gap-3 flex-wrap">
-                        <div>
-                            <label class="form-label text-xs mb-1">Start Date</label>
-                            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div>
-                            <label class="form-label text-xs mb-1">End Date</label>
-                            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div class="align-self-end">
-                            <button type="submit" class="btn bg-gradient-primary btn-sm">Apply</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+        <form method="get" class="flex flex-wrap items-end gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
             </div>
-        </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                Apply
+            </button>
+        </form>
     </div>
 
     <!-- KPI Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">Total Spend</p>
-                    <h4 class="font-weight-bolder text-danger">$@Model.Report.TotalSpend.ToString("N0")</h4>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <!-- Total Spend -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Spend</p>
+                    <h3 class="text-xl font-bold text-red-500 mt-1">$@Model.Report.TotalSpend.ToString("N0")</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-pink-500">
+                    <i class="fas fa-coins text-white text-sm"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">Revenue</p>
-                    <h4 class="font-weight-bolder text-success">$@Model.Report.TotalRevenue.ToString("N0")</h4>
+
+        <!-- Revenue -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Revenue</p>
+                    <h3 class="text-xl font-bold text-green-600 mt-1">$@Model.Report.TotalRevenue.ToString("N0")</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-lime-400">
+                    <i class="fas fa-dollar-sign text-white text-sm"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">ROAS</p>
-                    <h4 class="font-weight-bolder text-primary">@Model.Report.ROAS.ToString("N2")x</h4>
+
+        <!-- ROAS -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">ROAS</p>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">@Model.Report.ROAS.ToString("N2")x</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+                    <i class="fas fa-chart-pie text-white text-sm"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">Impressions</p>
-                    <h4 class="font-weight-bolder text-info">@Model.Report.TotalImpressions.ToString("N0")</h4>
+
+        <!-- Impressions -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Impressions</p>
+                    <h3 class="text-xl font-bold text-blue-500 mt-1">@Model.Report.TotalImpressions.ToString("N0")</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
+                    <i class="fas fa-eye text-white text-sm"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">CTR</p>
-                    <h4 class="font-weight-bolder text-warning">@Model.Report.CTR.ToString("N2")%</h4>
+
+        <!-- CTR -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">CTR</p>
+                    <h3 class="text-xl font-bold text-orange-500 mt-1">@Model.Report.CTR.ToString("N2")%</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400">
+                    <i class="fas fa-mouse-pointer text-white text-sm"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-sm-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 font-weight-bold">Conversions</p>
-                    <h4 class="font-weight-bolder text-success">@Model.Report.TotalConversions</h4>
+
+        <!-- Conversions -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Conversions</p>
+                    <h3 class="text-xl font-bold text-green-600 mt-1">@Model.Report.TotalConversions</h3>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-teal-400">
+                    <i class="fas fa-check-circle text-white text-sm"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts -->
-    <div class="row mb-4">
-        <div class="col-lg-8 mb-lg-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Spend vs Revenue Trend</h6>
-                </div>
-                <div class="card-body p-3">
-                    <canvas id="spendRevenueChart" height="300"></canvas>
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Spend vs Revenue Trend -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Spend vs Revenue Trend</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
+                    @if (Model.Report.SpendVsRevenueTrend.Any())
+                    {
+                        <canvas id="spendRevenueChart"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No data available</p>
+                    }
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header pb-0">
-                    <h6>Spend by Platform</h6>
-                </div>
-                <div class="card-body p-3">
-                    <canvas id="platformChart" height="300"></canvas>
+
+        <!-- Spend by Platform -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Spend by Platform</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
+                    @if (Model.Report.MetricsByPlatform.Any())
+                    {
+                        <canvas id="platformChart"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No platform data available</p>
+                    }
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Platform Breakdown Table -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Platform Performance</h6>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Platform</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Spend</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Revenue</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ROAS</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Impressions</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Clicks</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">CTR</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Conversions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var platform in Model.Report.MetricsByPlatform.Values)
-                                {
-                                    <tr>
-                                        <td class="ps-4">
-                                            <span class="text-xs font-weight-bold">@platform.Platform</span>
-                                        </td>
-                                        <td><span class="text-xs font-weight-bold text-danger">$@platform.Spend.ToString("N0")</span></td>
-                                        <td><span class="text-xs font-weight-bold text-success">$@platform.Revenue.ToString("N0")</span></td>
-                                        <td>
-                                            <span class="badge bg-gradient-@(platform.ROAS >= 3 ? "success" : platform.ROAS >= 1 ? "warning" : "danger")">
-                                                @platform.ROAS.ToString("N2")x
-                                            </span>
-                                        </td>
-                                        <td><span class="text-xs">@platform.Impressions.ToString("N0")</span></td>
-                                        <td><span class="text-xs">@platform.Clicks.ToString("N0")</span></td>
-                                        <td><span class="text-xs">@platform.CTR.ToString("N2")%</span></td>
-                                        <td><span class="text-xs">@platform.Conversions</span></td>
-                                    </tr>
+    <!-- Platform Performance Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Platform Performance</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Platform</th>
+                        <th scope="col" class="px-6 py-3 text-right">Spend</th>
+                        <th scope="col" class="px-6 py-3 text-right">Revenue</th>
+                        <th scope="col" class="px-6 py-3 text-center">ROAS</th>
+                        <th scope="col" class="px-6 py-3 text-right">Impressions</th>
+                        <th scope="col" class="px-6 py-3 text-right">Clicks</th>
+                        <th scope="col" class="px-6 py-3 text-right">CTR</th>
+                        <th scope="col" class="px-6 py-3 text-right">Conversions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var platform in Model.Report.MetricsByPlatform.Values)
+                    {
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@platform.Platform</td>
+                            <td class="px-6 py-4 text-right font-medium text-red-500">$@platform.Spend.ToString("N0")</td>
+                            <td class="px-6 py-4 text-right font-medium text-green-600">$@platform.Revenue.ToString("N0")</td>
+                            <td class="px-6 py-4 text-center">
+                                @{
+                                    var roasClass = platform.ROAS >= 3 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" :
+                                                    platform.ROAS >= 1 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" :
+                                                    "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
                                 }
-                                @if (!Model.Report.MetricsByPlatform.Any())
-                                {
-                                    <tr><td colspan="8" class="text-center text-xs text-secondary py-4">No advertising data in this period</td></tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                                <span class="@roasClass text-xs font-medium px-2.5 py-0.5 rounded">@platform.ROAS.ToString("N2")x</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">@platform.Impressions.ToString("N0")</td>
+                            <td class="px-6 py-4 text-right">@platform.Clicks.ToString("N0")</td>
+                            <td class="px-6 py-4 text-right">@platform.CTR.ToString("N2")%</td>
+                            <td class="px-6 py-4 text-right">@platform.Conversions</td>
+                        </tr>
+                    }
+                    @if (!Model.Report.MetricsByPlatform.Any())
+                    {
+                        <tr class="bg-white dark:bg-gray-800">
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No advertising data in this period</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Top Campaigns Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Top Campaigns</h6>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Platform</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Spend</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Revenue</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ROAS</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Conversions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var campaign in Model.TopCampaigns.Take(10))
-                                {
-                                    <tr>
-                                        <td class="ps-4">
-                                            <p class="text-xs font-weight-bold mb-0">@campaign.CampaignName</p>
-                                        </td>
-                                        <td><span class="badge bg-gradient-info">@campaign.Platform</span></td>
-                                        <td><span class="text-xs font-weight-bold text-danger">$@campaign.Spend.ToString("N0")</span></td>
-                                        <td><span class="text-xs font-weight-bold text-success">$@campaign.Revenue.ToString("N0")</span></td>
-                                        <td>
-                                            <span class="badge bg-gradient-@(campaign.ROAS >= 3 ? "success" : campaign.ROAS >= 1 ? "warning" : "danger")">
-                                                @campaign.ROAS.ToString("N2")x
-                                            </span>
-                                        </td>
-                                        <td><span class="text-xs">@campaign.Conversions</span></td>
-                                    </tr>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Top Campaigns</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Campaign</th>
+                        <th scope="col" class="px-6 py-3">Platform</th>
+                        <th scope="col" class="px-6 py-3 text-right">Spend</th>
+                        <th scope="col" class="px-6 py-3 text-right">Revenue</th>
+                        <th scope="col" class="px-6 py-3 text-center">ROAS</th>
+                        <th scope="col" class="px-6 py-3 text-right">Conversions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var campaign in Model.TopCampaigns.Take(10))
+                    {
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@campaign.CampaignName</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">@campaign.Platform</span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-medium text-red-500">$@campaign.Spend.ToString("N0")</td>
+                            <td class="px-6 py-4 text-right font-medium text-green-600">$@campaign.Revenue.ToString("N0")</td>
+                            <td class="px-6 py-4 text-center">
+                                @{
+                                    var campaignRoasClass = campaign.ROAS >= 3 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" :
+                                                            campaign.ROAS >= 1 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" :
+                                                            "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
                                 }
-                                @if (!Model.TopCampaigns.Any())
-                                {
-                                    <tr><td colspan="6" class="text-center text-xs text-secondary py-4">No campaigns in this period</td></tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                                <span class="@campaignRoasClass text-xs font-medium px-2.5 py-0.5 rounded">@campaign.ROAS.ToString("N2")x</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">@campaign.Conversions</td>
+                        </tr>
+                    }
+                    @if (!Model.TopCampaigns.Any())
+                    {
+                        <tr class="bg-white dark:bg-gray-800">
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No campaigns in this period</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script>
-        // Spend vs Revenue Trend Chart
+<script>
+    @if (Model.Report.SpendVsRevenueTrend.Any())
+    {
+        <text>
         new Chart(document.getElementById('spendRevenueChart').getContext('2d'), {
             type: 'line',
             data: {
@@ -249,20 +287,36 @@
                     }
                 ]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(156, 163, 175, 0.2)' } },
+                    x: { grid: { display: false } }
+                }
+            }
         });
+        </text>
+    }
 
-        // Platform Spend Chart
+    @if (Model.Report.MetricsByPlatform.Any())
+    {
+        <text>
         new Chart(document.getElementById('platformChart').getContext('2d'), {
             type: 'doughnut',
             data: {
                 labels: [@Html.Raw(string.Join(",", Model.Report.MetricsByPlatform.Keys.Select(k => $"'{k}'")))],
                 datasets: [{
                     data: [@Html.Raw(string.Join(",", Model.Report.MetricsByPlatform.Values.Select(v => v.Spend)))],
-                    backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef', '#172b4d']
+                    backgroundColor: ['rgb(147, 51, 234)', 'rgb(45, 206, 137)', 'rgb(251, 99, 64)', 'rgb(245, 54, 92)', 'rgb(17, 205, 239)', 'rgb(23, 43, 77)']
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
         });
-    </script>
+        </text>
+    }
+</script>
 }

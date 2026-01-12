@@ -4,164 +4,168 @@
     ViewData["Title"] = "Sales Report";
 }
 
-<div class="container-fluid py-4">
+<div class="space-y-6">
     <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <div>
-                <h4 class="mb-1">Sales Report</h4>
-                <p class="text-sm text-secondary mb-0">Revenue and order analytics</p>
-            </div>
-            <a href="/reports/sales?handler=Export&format=csv&StartDate=@Model.StartDate.ToString("yyyy-MM-dd")&EndDate=@Model.EndDate.ToString("yyyy-MM-dd")"
-               class="btn bg-gradient-success btn-sm">
-                <i class="fas fa-download me-2"></i>Export CSV
-            </a>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Sales Report</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Revenue and order analytics</p>
         </div>
+        <a href="/reports/sales?handler=Export&format=csv&StartDate=@Model.StartDate.ToString("yyyy-MM-dd")&EndDate=@Model.EndDate.ToString("yyyy-MM-dd")"
+           class="mt-4 sm:mt-0 text-white bg-gradient-to-br from-green-500 to-lime-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center">
+            <i class="fas fa-download me-2"></i>Export CSV
+        </a>
     </div>
 
     <!-- Date Filter -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body py-3">
-                    <form method="get" class="d-flex align-items-center gap-3 flex-wrap">
-                        <div>
-                            <label class="form-label text-xs mb-1">Start Date</label>
-                            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div>
-                            <label class="form-label text-xs mb-1">End Date</label>
-                            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
-                        </div>
-                        <div>
-                            <label class="form-label text-xs mb-1">Period</label>
-                            <select name="Period" class="form-select form-select-sm">
-                                <option value="day" selected="@(Model.Period == "day")">Daily</option>
-                                <option value="week" selected="@(Model.Period == "week")">Weekly</option>
-                                <option value="month" selected="@(Model.Period == "month")">Monthly</option>
-                            </select>
-                        </div>
-                        <div class="align-self-end">
-                            <button type="submit" class="btn bg-gradient-primary btn-sm">Apply</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+        <form method="get" class="flex flex-wrap items-end gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
             </div>
-        </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period</label>
+                <select name="Period" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="day" selected="@(Model.Period == "day")">Daily</option>
+                    <option value="week" selected="@(Model.Period == "week")">Weekly</option>
+                    <option value="month" selected="@(Model.Period == "month")">Monthly</option>
+                </select>
+            </div>
+            <button type="submit" class="text-white bg-gradient-to-br from-purple-600 to-pink-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                Apply
+            </button>
+        </form>
     </div>
 
     <!-- KPI Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Revenue</p>
-                    <h4 class="font-weight-bolder text-primary">$@Model.Report.TotalRevenue.ToString("N0")</h4>
-                    <span class="text-@(Model.Report.RevenueGrowthPercent >= 0 ? "success" : "danger") text-xs">
-                        <i class="fas fa-arrow-@(Model.Report.RevenueGrowthPercent >= 0 ? "up" : "down")"></i>
-                        @Math.Abs(Model.Report.RevenueGrowthPercent).ToString("N1")% vs previous
-                    </span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Revenue -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">$@Model.Report.TotalRevenue.ToString("N0")</h3>
+                        <span class="ml-2 text-sm font-medium @(Model.Report.RevenueGrowthPercent >= 0 ? "text-green-500" : "text-red-500") flex items-center">
+                            <i class="fas fa-arrow-@(Model.Report.RevenueGrowthPercent >= 0 ? "up" : "down") text-xs mr-1"></i>
+                            @Math.Abs(Model.Report.RevenueGrowthPercent).ToString("N1")%
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+                    <i class="fas fa-dollar-sign text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Orders</p>
-                    <h4 class="font-weight-bolder text-success">@Model.Report.TotalOrders</h4>
-                    <span class="text-@(Model.Report.OrderGrowthPercent >= 0 ? "success" : "danger") text-xs">
-                        <i class="fas fa-arrow-@(Model.Report.OrderGrowthPercent >= 0 ? "up" : "down")"></i>
-                        @Math.Abs(Model.Report.OrderGrowthPercent)% vs previous
-                    </span>
+
+        <!-- Orders -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</p>
+                    <div class="flex items-baseline mt-1">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">@Model.Report.TotalOrders</h3>
+                        <span class="ml-2 text-sm font-medium @(Model.Report.OrderGrowthPercent >= 0 ? "text-green-500" : "text-red-500") flex items-center">
+                            <i class="fas fa-arrow-@(Model.Report.OrderGrowthPercent >= 0 ? "up" : "down") text-xs mr-1"></i>
+                            @Math.Abs(Model.Report.OrderGrowthPercent)%
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
+                    <i class="fas fa-shopping-cart text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Average Order Value</p>
-                    <h4 class="font-weight-bolder text-info">$@Model.Report.AverageOrderValue.ToString("N2")</h4>
+
+        <!-- AOV -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Order Value</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">$@Model.Report.AverageOrderValue.ToString("N2")</h3>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-lime-400">
+                    <i class="fas fa-chart-line text-white text-lg"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6">
-            <div class="card">
-                <div class="card-body p-3">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Discounts</p>
-                    <h4 class="font-weight-bolder text-warning">$@Model.Report.TotalDiscounts.ToString("N0")</h4>
+
+        <!-- Discounts -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Discounts</p>
+                    <h3 class="text-2xl font-bold text-orange-500 mt-1">$@Model.Report.TotalDiscounts.ToString("N0")</h3>
+                </div>
+                <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-400">
+                    <i class="fas fa-tag text-white text-lg"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Revenue Breakdown -->
-    <div class="row mb-4">
-        <div class="col-md-3 col-6 mb-3">
-            <div class="card bg-gradient-light">
-                <div class="card-body p-3 text-center">
-                    <p class="text-xs mb-0">Subtotal</p>
-                    <h6 class="mb-0">$@Model.Report.TotalSubtotal.ToString("N0")</h6>
-                </div>
-            </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Subtotal</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">$@Model.Report.TotalSubtotal.ToString("N0")</p>
         </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="card bg-gradient-light">
-                <div class="card-body p-3 text-center">
-                    <p class="text-xs mb-0">Tax</p>
-                    <h6 class="mb-0">$@Model.Report.TotalTax.ToString("N0")</h6>
-                </div>
-            </div>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Tax</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">$@Model.Report.TotalTax.ToString("N0")</p>
         </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="card bg-gradient-light">
-                <div class="card-body p-3 text-center">
-                    <p class="text-xs mb-0">Shipping</p>
-                    <h6 class="mb-0">$@Model.Report.TotalShipping.ToString("N0")</h6>
-                </div>
-            </div>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Shipping</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">$@Model.Report.TotalShipping.ToString("N0")</p>
         </div>
-        <div class="col-md-3 col-6 mb-3">
-            <div class="card bg-gradient-light">
-                <div class="card-body p-3 text-center">
-                    <p class="text-xs mb-0">Discounts</p>
-                    <h6 class="mb-0 text-danger">-$@Model.Report.TotalDiscounts.ToString("N0")</h6>
-                </div>
-            </div>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Discounts</p>
+            <p class="text-lg font-bold text-red-500">-$@Model.Report.TotalDiscounts.ToString("N0")</p>
         </div>
     </div>
 
-    <!-- Charts -->
-    <div class="row mb-4">
-        <div class="col-lg-8 mb-lg-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Revenue Trend</h6>
-                </div>
-                <div class="card-body p-3">
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Revenue Chart -->
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Revenue Trend</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
                     @if (Model.Report.DailyRevenue.Any())
                     {
-                        <canvas id="revenueChart" height="300"></canvas>
+                        <canvas id="revenueChart"></canvas>
                     }
                     else
                     {
-                        <p class="text-center text-xs text-secondary py-4">No revenue data available</p>
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No revenue data available</p>
                     }
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header pb-0">
-                    <h6>Orders by Status</h6>
-                </div>
-                <div class="card-body p-3">
+
+        <!-- Orders by Status -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Orders by Status</h3>
+            </div>
+            <div class="p-6">
+                <div style="height: 300px;">
                     @if (Model.Report.OrdersByStatus.Any())
                     {
-                        <canvas id="statusChart" height="300"></canvas>
+                        <canvas id="statusChart"></canvas>
                     }
                     else
                     {
-                        <p class="text-center text-xs text-secondary py-4">No order status data available</p>
+                        <p class="text-center text-gray-500 dark:text-gray-400 py-12">No order status data available</p>
                     }
                 </div>
             </div>
@@ -169,99 +173,97 @@
     </div>
 
     <!-- Period Data Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <h6>Sales by Period</h6>
-                </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                    <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Period</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Revenue</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Orders</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">AOV</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Growth</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var period in Model.PeriodData)
-                                {
-                                    <tr>
-                                        <td class="ps-4">
-                                            <span class="text-xs font-weight-bold">@period.Period</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs font-weight-bold text-success">$@period.Revenue.ToString("N0")</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs">@period.Orders</span>
-                                        </td>
-                                        <td>
-                                            <span class="text-xs">$@period.AverageOrderValue.ToString("N2")</span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gradient-@(period.GrowthPercent >= 0 ? "success" : "danger")">
-                                                @(period.GrowthPercent >= 0 ? "+" : "")@period.GrowthPercent.ToString("N1")%
-                                            </span>
-                                        </td>
-                                    </tr>
-                                }
-                                @if (!Model.PeriodData.Any())
-                                {
-                                    <tr><td colspan="5" class="text-center text-xs text-secondary py-4">No sales data in this period</td></tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Sales by Period</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Period</th>
+                        <th scope="col" class="px-6 py-3 text-right">Revenue</th>
+                        <th scope="col" class="px-6 py-3 text-center">Orders</th>
+                        <th scope="col" class="px-6 py-3 text-right">AOV</th>
+                        <th scope="col" class="px-6 py-3 text-center">Growth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var period in Model.PeriodData)
+                    {
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">@period.Period</td>
+                            <td class="px-6 py-4 text-right font-medium text-green-600">$@period.Revenue.ToString("N0")</td>
+                            <td class="px-6 py-4 text-center">@period.Orders</td>
+                            <td class="px-6 py-4 text-right">$@period.AverageOrderValue.ToString("N2")</td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="@(period.GrowthPercent >= 0 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300") text-xs font-medium px-2.5 py-0.5 rounded">
+                                    @(period.GrowthPercent >= 0 ? "+" : "")@period.GrowthPercent.ToString("N1")%
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.PeriodData.Any())
+                    {
+                        <tr class="bg-white dark:bg-gray-800">
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No sales data in this period</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script>
-        @if (Model.Report.DailyRevenue.Any())
-        {
-            <text>
-            new Chart(document.getElementById('revenueChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => $"'{d.Label}'")))],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => d.Value)))],
-                        borderColor: 'rgb(94, 114, 228)',
-                        backgroundColor: 'rgba(94, 114, 228, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-            </text>
-        }
+<script>
+    @if (Model.Report.DailyRevenue.Any())
+    {
+        <text>
+        new Chart(document.getElementById('revenueChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => $"'{d.Label}'")))],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => d.Value)))],
+                    borderColor: 'rgb(147, 51, 234)',
+                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(156, 163, 175, 0.2)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        </text>
+    }
 
-        @if (Model.Report.OrdersByStatus.Any())
-        {
-            <text>
-            new Chart(document.getElementById('statusChart').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Keys.Select(k => $"'{k}'")))],
-                    datasets: [{
-                        data: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Values))],
-                        backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-            </text>
-        }
-    </script>
+    @if (Model.Report.OrdersByStatus.Any())
+    {
+        <text>
+        new Chart(document.getElementById('statusChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Keys.Select(k => $"'{k}'")))],
+                datasets: [{
+                    data: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Values))],
+                    backgroundColor: ['rgb(147, 51, 234)', 'rgb(45, 206, 137)', 'rgb(251, 99, 64)', 'rgb(245, 54, 92)', 'rgb(17, 205, 239)']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        </text>
+    }
+</script>
 }
