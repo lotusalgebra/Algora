@@ -30,6 +30,10 @@ public class IndexModel : PageModel
         if (string.IsNullOrEmpty(shopDomain))
             return RedirectToPage("/Auth/Login");
 
+        // Ensure valid date range
+        if (EndDate < StartDate)
+            (StartDate, EndDate) = (EndDate, StartDate);
+
         try
         {
             var request = new DateRangeRequest(StartDate, EndDate);

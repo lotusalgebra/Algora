@@ -86,7 +86,14 @@
                     <h6>Customer Acquisition Trend</h6>
                 </div>
                 <div class="card-body p-3">
-                    <canvas id="acquisitionChart" height="300"></canvas>
+                    @if (Model.Report.CustomerAcquisitionTrend.Any())
+                    {
+                        <canvas id="acquisitionChart" height="300"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-secondary py-4">No acquisition data available</p>
+                    }
                 </div>
             </div>
         </div>
@@ -96,7 +103,14 @@
                     <h6>Customer Segments</h6>
                 </div>
                 <div class="card-body p-3">
-                    <canvas id="segmentChart" height="300"></canvas>
+                    @if (Model.Report.CustomersBySegment.Any())
+                    {
+                        <canvas id="segmentChart" height="300"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-secondary py-4">No segment data available</p>
+                    }
                 </div>
             </div>
         </div>
@@ -151,32 +165,42 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
-        new Chart(document.getElementById('acquisitionChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [@Html.Raw(string.Join(",", Model.Report.CustomerAcquisitionTrend.Select(d => $"'{d.Label}'")))],
-                datasets: [{
-                    label: 'New Customers',
-                    data: [@Html.Raw(string.Join(",", Model.Report.CustomerAcquisitionTrend.Select(d => d.Value)))],
-                    borderColor: 'rgb(45, 206, 137)',
-                    backgroundColor: 'rgba(45, 206, 137, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        @if (Model.Report.CustomerAcquisitionTrend.Any())
+        {
+            <text>
+            new Chart(document.getElementById('acquisitionChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Report.CustomerAcquisitionTrend.Select(d => $"'{d.Label}'")))],
+                    datasets: [{
+                        label: 'New Customers',
+                        data: [@Html.Raw(string.Join(",", Model.Report.CustomerAcquisitionTrend.Select(d => d.Value)))],
+                        borderColor: 'rgb(45, 206, 137)',
+                        backgroundColor: 'rgba(45, 206, 137, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            </text>
+        }
 
-        new Chart(document.getElementById('segmentChart').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: [@Html.Raw(string.Join(",", Model.Report.CustomersBySegment.Keys.Select(k => $"'{k}'")))],
-                datasets: [{
-                    data: [@Html.Raw(string.Join(",", Model.Report.CustomersBySegment.Values))],
-                    backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        @if (Model.Report.CustomersBySegment.Any())
+        {
+            <text>
+            new Chart(document.getElementById('segmentChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Report.CustomersBySegment.Keys.Select(k => $"'{k}'")))],
+                    datasets: [{
+                        data: [@Html.Raw(string.Join(",", Model.Report.CustomersBySegment.Values))],
+                        backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            </text>
+        }
     </script>
 }

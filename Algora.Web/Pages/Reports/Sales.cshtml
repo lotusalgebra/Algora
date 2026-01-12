@@ -138,7 +138,14 @@
                     <h6>Revenue Trend</h6>
                 </div>
                 <div class="card-body p-3">
-                    <canvas id="revenueChart" height="300"></canvas>
+                    @if (Model.Report.DailyRevenue.Any())
+                    {
+                        <canvas id="revenueChart" height="300"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-secondary py-4">No revenue data available</p>
+                    }
                 </div>
             </div>
         </div>
@@ -148,7 +155,14 @@
                     <h6>Orders by Status</h6>
                 </div>
                 <div class="card-body p-3">
-                    <canvas id="statusChart" height="300"></canvas>
+                    @if (Model.Report.OrdersByStatus.Any())
+                    {
+                        <canvas id="statusChart" height="300"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-center text-xs text-secondary py-4">No order status data available</p>
+                    }
                 </div>
             </div>
         </div>
@@ -196,6 +210,10 @@
                                         </td>
                                     </tr>
                                 }
+                                @if (!Model.PeriodData.Any())
+                                {
+                                    <tr><td colspan="5" class="text-center text-xs text-secondary py-4">No sales data in this period</td></tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -208,32 +226,42 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
-        new Chart(document.getElementById('revenueChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => $"'{d.Label}'")))],
-                datasets: [{
-                    label: 'Revenue',
-                    data: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => d.Value)))],
-                    borderColor: 'rgb(94, 114, 228)',
-                    backgroundColor: 'rgba(94, 114, 228, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        @if (Model.Report.DailyRevenue.Any())
+        {
+            <text>
+            new Chart(document.getElementById('revenueChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => $"'{d.Label}'")))],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [@Html.Raw(string.Join(",", Model.Report.DailyRevenue.Select(d => d.Value)))],
+                        borderColor: 'rgb(94, 114, 228)',
+                        backgroundColor: 'rgba(94, 114, 228, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            </text>
+        }
 
-        new Chart(document.getElementById('statusChart').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Keys.Select(k => $"'{k}'")))],
-                datasets: [{
-                    data: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Values))],
-                    backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        @if (Model.Report.OrdersByStatus.Any())
+        {
+            <text>
+            new Chart(document.getElementById('statusChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Keys.Select(k => $"'{k}'")))],
+                    datasets: [{
+                        data: [@Html.Raw(string.Join(",", Model.Report.OrdersByStatus.Values))],
+                        backgroundColor: ['#5e72e4', '#2dce89', '#fb6340', '#f5365c', '#11cdef']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            </text>
+        }
     </script>
 }

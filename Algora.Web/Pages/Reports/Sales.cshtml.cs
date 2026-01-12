@@ -34,6 +34,10 @@ public class SalesModel : PageModel
         if (string.IsNullOrEmpty(shopDomain))
             return RedirectToPage("/Auth/Login");
 
+        // Ensure valid date range
+        if (EndDate < StartDate)
+            (StartDate, EndDate) = (EndDate, StartDate);
+
         try
         {
             var request = new DateRangeRequest(StartDate, EndDate);
@@ -58,6 +62,10 @@ public class SalesModel : PageModel
         var shopDomain = _shopContext.ShopDomain;
         if (string.IsNullOrEmpty(shopDomain))
             return RedirectToPage("/Auth/Login");
+
+        // Ensure valid date range
+        if (EndDate < StartDate)
+            (StartDate, EndDate) = (EndDate, StartDate);
 
         var request = new DateRangeRequest(StartDate, EndDate);
         var data = await _reportingService.ExportSalesReportAsync(shopDomain, request, format);

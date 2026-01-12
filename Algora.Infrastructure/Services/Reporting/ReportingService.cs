@@ -318,18 +318,31 @@ public class ReportingService : IReportingService
             .Where(o => o.ShopDomain == shopDomain && o.OrderDate >= request.StartDate && o.OrderDate <= request.EndDate)
             .ToListAsync();
 
-        var newCustomerIds = orders
+        // Get all customer IDs who placed orders in the current period
+        var currentPeriodCustomerIds = orders
             .Where(o => o.CustomerId.HasValue)
-            .GroupBy(o => o.CustomerId!.Value)
-            .Where(g => g.Count() == 1)
-            .Select(g => g.Key)
+            .Select(o => o.CustomerId!.Value)
+            .Distinct()
             .ToList();
 
-        var returningCustomerIds = orders
-            .Where(o => o.CustomerId.HasValue)
-            .GroupBy(o => o.CustomerId!.Value)
-            .Where(g => g.Count() > 1)
-            .Select(g => g.Key)
+        // Get customers who had orders BEFORE the current period (returning customers)
+        var customersWithPriorOrders = await _context.Orders
+            .Where(o => o.ShopDomain == shopDomain &&
+                        o.CustomerId.HasValue &&
+                        currentPeriodCustomerIds.Contains(o.CustomerId!.Value) &&
+                        o.OrderDate < request.StartDate)
+            .Select(o => o.CustomerId!.Value)
+            .Distinct()
+            .ToListAsync();
+
+        // New customers = those in current period who had NO orders before
+        var newCustomerIds = currentPeriodCustomerIds
+            .Except(customersWithPriorOrders)
+            .ToList();
+
+        // Returning customers = those in current period who HAD orders before
+        var returningCustomerIds = currentPeriodCustomerIds
+            .Intersect(customersWithPriorOrders)
             .ToList();
 
         var avgLTV = clvData.Any() ? clvData.Average(c => c.PredictedLifetimeValue) : 0;
@@ -399,6 +412,8 @@ public class ReportingService : IReportingService
             .Where(o => o.ShopDomain == shopDomain && o.OrderDate >= request.StartDate && o.OrderDate <= request.EndDate)
             .ToListAsync();
 
+        var orderIds = orders.Select(o => o.Id).ToList();
+
         var refunds = await _context.Refunds
             .Include(r => r.Order)
             .Where(r => r.Order.ShopDomain == shopDomain && r.RefundedAt >= request.StartDate && r.RefundedAt <= request.EndDate)
@@ -408,13 +423,28 @@ public class ReportingService : IReportingService
             .Where(a => a.ShopDomain == shopDomain && a.SpendDate >= request.StartDate && a.SpendDate <= request.EndDate)
             .ToListAsync();
 
+        // Get order lines for COGS calculation
+        var orderLines = await _context.OrderLines
+            .Where(ol => orderIds.Contains(ol.OrderId))
+            .ToListAsync();
+
+        // Get products to lookup COGS
+        var productTitles = orderLines.Select(ol => ol.ProductTitle).Distinct().ToList();
+        var products = await _context.Products
+            .Where(p => p.ShopDomain == shopDomain && productTitles.Contains(p.Title))
+            .ToDictionaryAsync(p => p.Title, p => p.CostOfGoodsSold);
+
         var grossRevenue = orders.Sum(o => o.GrandTotal);
         var totalRefunds = refunds.Sum(r => r.Amount);
         var netRevenue = grossRevenue - totalRefunds;
         var totalAdsSpend = adsSpends.Sum(a => a.Amount);
 
-        // Estimate COGS (simplified - would need product-level COGS data for accuracy)
-        var totalCOGS = 0m; // Would calculate from order lines + product COGS
+        // Calculate COGS from order lines and product costs
+        var totalCOGS = orderLines.Sum(ol =>
+        {
+            var cogs = products.GetValueOrDefault(ol.ProductTitle);
+            return cogs.HasValue ? cogs.Value * ol.Quantity : 0m;
+        });
 
         var grossProfit = netRevenue - totalCOGS;
         var grossProfitMargin = netRevenue > 0 ? grossProfit / netRevenue * 100 : 0;
