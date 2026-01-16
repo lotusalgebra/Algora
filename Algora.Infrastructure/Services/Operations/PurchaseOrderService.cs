@@ -14,15 +14,18 @@ public class PurchaseOrderService : IPurchaseOrderService
 {
     private readonly AppDbContext _db;
     private readonly ISupplierService _supplierService;
+    private readonly IShopifyProductService _shopifyProductService;
     private readonly ILogger<PurchaseOrderService> _logger;
 
     public PurchaseOrderService(
         AppDbContext db,
         ISupplierService supplierService,
+        IShopifyProductService shopifyProductService,
         ILogger<PurchaseOrderService> logger)
     {
         _db = db;
         _supplierService = supplierService;
+        _shopifyProductService = shopifyProductService;
         _logger = logger;
     }
 
@@ -342,11 +345,25 @@ public class PurchaseOrderService : IPurchaseOrderService
     {
         var po = await _db.PurchaseOrders
             .Include(p => p.Lines)
+                .ThenInclude(l => l.Product)
+            .Include(p => p.Lines)
+                .ThenInclude(l => l.ProductVariant)
             .FirstOrDefaultAsync(p => p.Id == id)
             ?? throw new InvalidOperationException($"Purchase order {id} not found");
 
         if (po.Status != "shipped" && po.Status != "confirmed")
             throw new InvalidOperationException("Can only receive items for confirmed or shipped orders");
+
+        // Get primary location for inventory updates
+        string? primaryLocationId = null;
+        try
+        {
+            primaryLocationId = await _shopifyProductService.GetPrimaryLocationIdAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to get primary location for inventory sync");
+        }
 
         foreach (var receiveItem in dto.Lines)
         {
@@ -356,9 +373,56 @@ public class PurchaseOrderService : IPurchaseOrderService
             line.QuantityReceived += receiveItem.QuantityReceived;
             line.ReceivedAt = DateTime.UtcNow;
 
-            // Update inventory (would need to call LocationService)
             _logger.LogInformation("Received {Qty} of {Product} for PO {OrderNumber}",
                 receiveItem.QuantityReceived, line.ProductTitle, po.OrderNumber);
+
+            // Sync inventory to Shopify
+            if (primaryLocationId != null)
+            {
+                try
+                {
+                    // Get the variant's Shopify ID - prefer variant, fallback to product's first variant
+                    long? platformVariantId = line.ProductVariant?.PlatformVariantId;
+
+                    if (platformVariantId == null && line.Product != null)
+                    {
+                        // Try to get the first variant for this product
+                        var firstVariant = await _db.ProductVariants
+                            .FirstOrDefaultAsync(v => v.ProductId == line.ProductId);
+                        platformVariantId = firstVariant?.PlatformVariantId;
+                    }
+
+                    if (platformVariantId.HasValue && platformVariantId.Value > 0)
+                    {
+                        var inventoryItemId = await _shopifyProductService.GetInventoryItemIdAsync(platformVariantId.Value);
+                        if (!string.IsNullOrEmpty(inventoryItemId))
+                        {
+                            await _shopifyProductService.AdjustInventoryAsync(
+                                inventoryItemId,
+                                primaryLocationId,
+                                receiveItem.QuantityReceived,
+                                "received");
+
+                            _logger.LogInformation(
+                                "Synced {Qty} units to Shopify inventory for variant {VariantId}",
+                                receiveItem.QuantityReceived, platformVariantId.Value);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("No inventory item found for variant {VariantId}", platformVariantId.Value);
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No Shopify variant ID found for product {ProductTitle}", line.ProductTitle);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log but don't fail - inventory sync is non-critical
+                    _logger.LogWarning(ex, "Failed to sync inventory to Shopify for {ProductTitle}", line.ProductTitle);
+                }
+            }
         }
 
         // Add notes to all received lines if provided

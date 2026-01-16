@@ -93,6 +93,11 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddScoped<IAppConfigurationService, AppConfigurationService>();
 
+        // ----- Global Settings & Encryption -----
+        services.AddDataProtection();
+        services.AddSingleton<IEncryptionService, EncryptionService>();
+        services.AddScoped<IGlobalSettingsService, GlobalSettingsService>();
+
         // ----- Inventory Prediction -----
         services.AddScoped<IInventoryPredictionService, InventoryPredictionService>();
         services.AddScoped<IInventoryAlertService, InventoryAlertService>();

@@ -132,6 +132,29 @@ namespace Algora.Application.Interfaces
         /// <param name="imageId">The image GID to associate (or null to remove).</param>
         /// <returns>A task that completes when the variant image is updated.</returns>
         Task UpdateVariantImageAsync(long productId, string variantId, string? imageId);
+
+        /// <summary>
+        /// Adjusts inventory quantity for a variant at a specific location.
+        /// </summary>
+        /// <param name="inventoryItemId">The inventory item ID (numeric or GID).</param>
+        /// <param name="locationId">The location ID (numeric or GID) where inventory is stored.</param>
+        /// <param name="adjustment">The quantity to adjust (positive to add, negative to subtract).</param>
+        /// <param name="reason">Optional reason for the adjustment (e.g., "received", "correction", "damaged").</param>
+        /// <returns>A task that resolves to the new available quantity after adjustment.</returns>
+        Task<int> AdjustInventoryAsync(string inventoryItemId, string locationId, int adjustment, string? reason = null);
+
+        /// <summary>
+        /// Gets the inventory item ID for a variant.
+        /// </summary>
+        /// <param name="variantId">The variant numeric ID.</param>
+        /// <returns>A task that resolves to the inventory item GID, or null if not found.</returns>
+        Task<string?> GetInventoryItemIdAsync(long variantId);
+
+        /// <summary>
+        /// Gets the primary location ID for the shop.
+        /// </summary>
+        /// <returns>A task that resolves to the primary location GID.</returns>
+        Task<string?> GetPrimaryLocationIdAsync();
     }
 
     /// <summary>

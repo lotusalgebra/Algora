@@ -14,6 +14,7 @@ public class WebhookSyncService : IWebhookSyncService
 {
     private readonly AppDbContext _db;
     private readonly ILogger<WebhookSyncService> _logger;
+    private readonly ILoyaltyService _loyaltyService;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -21,10 +22,11 @@ public class WebhookSyncService : IWebhookSyncService
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
 
-    public WebhookSyncService(AppDbContext db, ILogger<WebhookSyncService> logger)
+    public WebhookSyncService(AppDbContext db, ILogger<WebhookSyncService> logger, ILoyaltyService loyaltyService)
     {
         _db = db;
         _logger = logger;
+        _loyaltyService = loyaltyService;
     }
 
     #region Order Webhooks
@@ -48,6 +50,7 @@ public class WebhookSyncService : IWebhookSyncService
             {
                 _logger.LogInformation("Order {OrderId} already exists, updating instead", shopifyOrder.Id);
                 await UpdateOrderFromPayload(existingOrder, shopifyOrder);
+                await _db.SaveChangesAsync();
             }
             else
             {
@@ -65,10 +68,21 @@ public class WebhookSyncService : IWebhookSyncService
                 }
 
                 _db.Orders.Add(order);
+                await _db.SaveChangesAsync();
                 _logger.LogInformation("Created order {OrderNumber} for shop {Shop}", order.OrderNumber, shopDomain);
-            }
 
-            await _db.SaveChangesAsync();
+                // Award loyalty points for the new order
+                try
+                {
+                    await _loyaltyService.ProcessOrderPointsAsync(order.Id);
+                    _logger.LogInformation("Processed loyalty points for order {OrderNumber}", order.OrderNumber);
+                }
+                catch (Exception loyaltyEx)
+                {
+                    // Log but don't fail the webhook - loyalty is non-critical
+                    _logger.LogWarning(loyaltyEx, "Failed to process loyalty points for order {OrderNumber}", order.OrderNumber);
+                }
+            }
         }
         catch (Exception ex)
         {
