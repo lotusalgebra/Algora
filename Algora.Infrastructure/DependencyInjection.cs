@@ -174,6 +174,15 @@ public static class DependencyInjection
         services.AddScoped<IAnalyticsService, AnalyticsService>();
         services.AddHostedService<AnalyticsBackgroundService>();
 
+        // ----- Meta Ads Integration -----
+        services.AddHttpClient("MetaAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<IMetaAdsService, Services.Advertising.MetaAdsService>();
+        services.AddHostedService<Services.Advertising.MetaAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 

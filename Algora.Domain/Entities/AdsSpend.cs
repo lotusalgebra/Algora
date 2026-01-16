@@ -68,6 +68,11 @@ namespace Algora.Domain.Entities
         public string? Notes { get; set; }
 
         /// <summary>
+        /// Source of the data (manual, api_sync).
+        /// </summary>
+        public string? Source { get; set; }
+
+        /// <summary>
         /// When the record was created.
         /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

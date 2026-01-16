@@ -119,6 +119,9 @@ namespace Algora.Infrastructure.Data
         public DbSet<AnalyticsSnapshot> AnalyticsSnapshots { get; set; } = null!;
         public DbSet<CustomerLifetimeValue> CustomerLifetimeValues { get; set; } = null!;
 
+        // ----- Advertising integrations -----
+        public DbSet<MetaAdsConnection> MetaAdsConnections { get; set; } = null!;
+
         // ----- Operations Manager entities -----
         public DbSet<Supplier> Suppliers { get; set; } = null!;
         public DbSet<SupplierProduct> SupplierProducts { get; set; } = null!;
