@@ -183,6 +183,15 @@ public static class DependencyInjection
         services.AddScoped<IMetaAdsService, Services.Advertising.MetaAdsService>();
         services.AddHostedService<Services.Advertising.MetaAdsSyncBackgroundService>();
 
+        // ----- Google Ads Integration -----
+        services.AddHttpClient("GoogleAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<IGoogleAdsService, Services.Advertising.GoogleAdsService>();
+        services.AddHostedService<Services.Advertising.GoogleAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 

@@ -1,0 +1,111 @@
+using Algora.Application.Interfaces;
+using Algora.Domain.Entities;
+using Algora.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+namespace Algora.Infrastructure.Services.Advertising;
+
+/// <summary>
+/// Background service that periodically syncs Google Ads data for connected accounts.
+/// </summary>
+public class GoogleAdsSyncBackgroundService : BackgroundService
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<GoogleAdsSyncBackgroundService> _logger;
+    private readonly TimeSpan _checkInterval = TimeSpan.FromMinutes(30);
+
+    public GoogleAdsSyncBackgroundService(
+        IServiceProvider serviceProvider,
+        ILogger<GoogleAdsSyncBackgroundService> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Google Ads Sync Background Service started");
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                await ProcessSyncJobsAsync(stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in Google Ads sync background service");
+            }
+
+            await Task.Delay(_checkInterval, stoppingToken);
+        }
+
+        _logger.LogInformation("Google Ads Sync Background Service stopped");
+    }
+
+    private async Task ProcessSyncJobsAsync(CancellationToken stoppingToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var googleAdsService = scope.ServiceProvider.GetRequiredService<IGoogleAdsService>();
+
+        // Get all active Google Ads connections that need syncing
+        var connections = await db.Set<GoogleAdsConnection>()
+            .Where(c => c.IsConnected && c.AutoSyncEnabled)
+            .ToListAsync(stoppingToken);
+
+        _logger.LogDebug("Found {Count} Google Ads connections to check", connections.Count);
+
+        foreach (var connection in connections)
+        {
+            if (stoppingToken.IsCancellationRequested) break;
+
+            try
+            {
+                // Check if it's time to sync based on frequency
+                var nextSyncTime = connection.LastSyncedAt?.AddHours(connection.SyncFrequencyHours)
+                                   ?? DateTime.MinValue;
+
+                if (DateTime.UtcNow < nextSyncTime)
+                {
+                    _logger.LogDebug("Skipping sync for {ShopDomain}, next sync at {NextSync}",
+                        connection.ShopDomain, nextSyncTime);
+                    continue;
+                }
+
+                _logger.LogInformation("Starting Google Ads sync for {ShopDomain}", connection.ShopDomain);
+
+                // Sync last 7 days of data
+                var startDate = DateTime.UtcNow.AddDays(-7);
+                var endDate = DateTime.UtcNow;
+
+                var result = await googleAdsService.SyncCampaignsAsync(
+                    connection.ShopDomain, startDate, endDate);
+
+                if (result.Success)
+                {
+                    _logger.LogInformation(
+                        "Google Ads sync completed for {ShopDomain}: {Created} created, {Updated} updated",
+                        connection.ShopDomain, result.RecordsCreated, result.RecordsUpdated);
+                }
+                else
+                {
+                    _logger.LogWarning(
+                        "Google Ads sync failed for {ShopDomain}: {Error}",
+                        connection.ShopDomain, result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error syncing Google Ads for {ShopDomain}", connection.ShopDomain);
+
+                // Update error status
+                connection.LastSyncError = ex.Message;
+                await db.SaveChangesAsync(stoppingToken);
+            }
+        }
+    }
+}
