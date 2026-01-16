@@ -1451,5 +1451,154 @@ namespace Algora.Infrastructure.Services
 
             _logger.LogInformation("Updated variant {VariantId} image to {ImageId}", variantId, imageId ?? "none");
         }
+
+        public async Task<int> AdjustInventoryAsync(string inventoryItemId, string locationId, int adjustment, string? reason = null)
+        {
+            // Ensure GID format
+            var inventoryItemGid = inventoryItemId.StartsWith("gid://")
+                ? inventoryItemId
+                : $"gid://shopify/InventoryItem/{inventoryItemId}";
+            var locationGid = locationId.StartsWith("gid://")
+                ? locationId
+                : $"gid://shopify/Location/{locationId}";
+
+            var gql = @"mutation inventoryAdjustQuantities($input: InventoryAdjustQuantitiesInput!) {
+              inventoryAdjustQuantities(input: $input) {
+                inventoryAdjustmentGroup {
+                  changes {
+                    name
+                    delta
+                    quantityAfterChange
+                  }
+                }
+                userErrors {
+                  field
+                  message
+                }
+              }
+            }";
+
+            var variables = new
+            {
+                input = new
+                {
+                    reason = reason ?? "correction",
+                    name = "available",
+                    changes = new[]
+                    {
+                        new
+                        {
+                            inventoryItemId = inventoryItemGid,
+                            locationId = locationGid,
+                            delta = adjustment
+                        }
+                    }
+                }
+            };
+
+            var raw = await SendGraphQueryRawAsync(gql, variables);
+            if (string.IsNullOrWhiteSpace(raw))
+                throw new InvalidOperationException("Empty response from Shopify inventory adjustment.");
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            var adjustEl = dataEl.GetProperty("inventoryAdjustQuantities");
+
+            // Check for user errors
+            var userErrors = adjustEl.TryGetProperty("userErrors", out var ue) && ue.ValueKind == JsonValueKind.Array
+                ? ue.EnumerateArray().ToList()
+                : new List<JsonElement>();
+
+            if (userErrors.Count > 0)
+            {
+                var msgs = userErrors.Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "");
+                throw new InvalidOperationException("Inventory adjustment failed: " + string.Join("; ", msgs));
+            }
+
+            // Get the new quantity from the response
+            if (adjustEl.TryGetProperty("inventoryAdjustmentGroup", out var group) &&
+                group.TryGetProperty("changes", out var changes) &&
+                changes.ValueKind == JsonValueKind.Array &&
+                changes.GetArrayLength() > 0)
+            {
+                var change = changes.EnumerateArray().First();
+                if (change.TryGetProperty("quantityAfterChange", out var qtyEl) && qtyEl.ValueKind == JsonValueKind.Number)
+                {
+                    return qtyEl.GetInt32();
+                }
+            }
+
+            _logger.LogInformation("Adjusted inventory for item {InventoryItemId} by {Delta} at location {LocationId}",
+                inventoryItemGid, adjustment, locationGid);
+            return 0; // Return 0 if we couldn't get the new quantity
+        }
+
+        public async Task<string?> GetInventoryItemIdAsync(long variantId)
+        {
+            var variantGid = $"gid://shopify/ProductVariant/{variantId}";
+
+            var gql = @"query getVariantInventory($id: ID!) {
+              productVariant(id: $id) {
+                inventoryItem {
+                  id
+                }
+              }
+            }";
+
+            var raw = await SendGraphQueryRawAsync(gql, new { id = variantGid });
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            if (!dataEl.TryGetProperty("productVariant", out var variantEl) || variantEl.ValueKind == JsonValueKind.Null)
+                return null;
+
+            if (!variantEl.TryGetProperty("inventoryItem", out var invItem) || invItem.ValueKind == JsonValueKind.Null)
+                return null;
+
+            return invItem.TryGetProperty("id", out var idEl) ? idEl.GetString() : null;
+        }
+
+        public async Task<string?> GetPrimaryLocationIdAsync()
+        {
+            var gql = @"query {
+              locations(first: 1) {
+                nodes {
+                  id
+                  name
+                  isActive
+                }
+              }
+            }";
+
+            var raw = await SendGraphQueryRawAsync(gql, null);
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            using var doc = JsonDocument.Parse(raw);
+            var root = doc.RootElement;
+            JsonElement dataEl;
+            if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var d)) dataEl = d;
+            else dataEl = root;
+
+            if (!dataEl.TryGetProperty("locations", out var locationsEl))
+                return null;
+
+            if (!locationsEl.TryGetProperty("nodes", out var nodes) || nodes.ValueKind != JsonValueKind.Array)
+                return null;
+
+            var firstLocation = nodes.EnumerateArray().FirstOrDefault();
+            if (firstLocation.ValueKind == JsonValueKind.Undefined || firstLocation.ValueKind == JsonValueKind.Null)
+                return null;
+
+            return firstLocation.TryGetProperty("id", out var idEl) ? idEl.GetString() : null;
+        }
     }
 }
