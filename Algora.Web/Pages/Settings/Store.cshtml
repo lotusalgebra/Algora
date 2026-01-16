@@ -1,0 +1,466 @@
+@page "/settings/store"
+@model Algora.Web.Pages.Settings.StoreModel
+@{
+    ViewData["Title"] = "Store Settings";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-xl font-bold text-gray-900 dark:text-white">Store Settings</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Configure your Shopify integration and communication channels</p>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Tab Navigation -->
+    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+            <li class="me-2">
+                <a href="/settings/store?activeTab=shopify"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "shopify" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fab fa-shopify me-2"></i>
+                    Shopify
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="/settings/store?activeTab=email"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "email" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fas fa-envelope me-2"></i>
+                    Email
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="/settings/store?activeTab=sms"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "sms" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fas fa-sms me-2"></i>
+                    SMS
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="/settings/store?activeTab=whatsapp"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "whatsapp" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fab fa-whatsapp me-2"></i>
+                    WhatsApp
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Shopify Tab -->
+    @if (Model.ActiveTab == "shopify")
+    {
+        <form method="post" asp-page-handler="SaveShopify">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-teal-400 flex items-center justify-center me-3">
+                        <i class="fab fa-shopify text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Shopify Integration</h2>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Configure custom Shopify app credentials</p>
+                    </div>
+                </div>
+
+                @if (Model.Shop != null)
+                {
+                    <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Shop:</span>
+                                <p class="font-medium text-gray-900 dark:text-white">@Model.Shop.ShopName</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Domain:</span>
+                                <p class="font-medium text-gray-900 dark:text-white">@Model.Shop.Domain</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Currency:</span>
+                                <p class="font-medium text-gray-900 dark:text-white">@(Model.Shop.Currency ?? "-")</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 dark:text-gray-400">Country:</span>
+                                <p class="font-medium text-gray-900 dark:text-white">@(Model.Shop.Country ?? "-")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="mb-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" asp-for="UseCustomCredentials" id="useCustomCredentials"
+                               class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                               onchange="toggleCustomCredentials(this.checked)" />
+                        <label for="useCustomCredentials" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            Use custom Shopify app credentials
+                        </label>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Enable this to use your own Shopify app instead of the default Algora app
+                    </p>
+                </div>
+
+                <div id="customCredentialsSection" class="@(Model.UseCustomCredentials ? "" : "hidden")">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">API Key</label>
+                            <input type="password" asp-for="CustomApiKey"
+                                   placeholder="@(Model.Shop?.CustomApiKey != null ? "****" : "Enter API key...")"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Leave empty to keep current</p>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">API Secret</label>
+                            <input type="password" asp-for="CustomApiSecret"
+                                   placeholder="@(Model.Shop?.CustomApiSecret != null ? "****" : "Enter API secret...")"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Leave empty to keep current</p>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">OAuth Scopes</label>
+                            <input type="text" asp-for="CustomScopes"
+                                   placeholder="read_products,write_products,..."
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">App URL</label>
+                            <input type="url" asp-for="CustomAppUrl"
+                                   placeholder="https://your-app-url.com"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-save me-2"></i> Save Shopify Settings
+                </button>
+            </div>
+        </form>
+    }
+
+    <!-- Email Tab -->
+    @if (Model.ActiveTab == "email")
+    {
+        <form method="post" asp-page-handler="SaveEmail">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center me-3">
+                            <i class="fas fa-envelope text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Email Settings</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Configure email delivery for campaigns and notifications</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if (Model.CommunicationSettings.EmailConfigured)
+                        {
+                            <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                <i class="fas fa-check-circle me-1"></i> Configured
+                            </span>
+                        }
+                        <button type="button" onclick="testConnection('Email')"
+                                class="px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:hover:bg-purple-800">
+                            <i class="fas fa-plug me-1"></i> Test
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex items-center">
+                    <input type="checkbox" asp-for="EmailEnabled"
+                           class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
+                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Enable email notifications</label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Provider</label>
+                        <select asp-for="EmailProvider"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-200">
+                            <option value="smtp">SMTP</option>
+                            <option value="sendgrid">SendGrid</option>
+                            <option value="mailgun">Mailgun</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">API Key (for SendGrid/Mailgun)</label>
+                        <input type="password" asp-for="EmailApiKey"
+                               placeholder="Enter API key..."
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">SMTP Host</label>
+                        <input type="text" asp-for="SmtpHost" placeholder="smtp.example.com"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">SMTP Port</label>
+                        <input type="number" asp-for="SmtpPort"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div class="flex items-center pt-8">
+                        <input type="checkbox" asp-for="SmtpUseSsl"
+                               class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
+                        <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Use SSL/TLS</label>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">SMTP Username</label>
+                        <input type="text" asp-for="SmtpUsername"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">SMTP Password</label>
+                        <input type="password" asp-for="SmtpPassword" placeholder="Leave empty to keep current"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">From Name</label>
+                        <input type="text" asp-for="DefaultFromName" placeholder="Your Store"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">From Email</label>
+                        <input type="email" asp-for="DefaultFromEmail" placeholder="noreply@yourstore.com"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Reply-To Email</label>
+                        <input type="email" asp-for="DefaultReplyTo" placeholder="support@yourstore.com"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-save me-2"></i> Save Email Settings
+                </button>
+            </div>
+        </form>
+    }
+
+    <!-- SMS Tab -->
+    @if (Model.ActiveTab == "sms")
+    {
+        <form method="post" asp-page-handler="SaveSms">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-lime-400 flex items-center justify-center me-3">
+                            <i class="fas fa-sms text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">SMS Settings</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Configure SMS messaging via Twilio</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if (Model.CommunicationSettings.SmsConfigured)
+                        {
+                            <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                <i class="fas fa-check-circle me-1"></i> Configured
+                            </span>
+                        }
+                        <button type="button" onclick="testConnection('Sms')"
+                                class="px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:hover:bg-purple-800">
+                            <i class="fas fa-plug me-1"></i> Test
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex items-center">
+                    <input type="checkbox" asp-for="SmsEnabled"
+                           class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
+                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Enable SMS notifications</label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Provider</label>
+                        <select asp-for="SmsProvider"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-200">
+                            <option value="twilio">Twilio</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">From Number</label>
+                        <input type="text" asp-for="SmsFromNumber" placeholder="+1234567890"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Account SID</label>
+                        <input type="text" asp-for="SmsAccountSid"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Auth Token</label>
+                        <input type="password" asp-for="SmsAuthToken" placeholder="Leave empty to keep current"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-save me-2"></i> Save SMS Settings
+                </button>
+            </div>
+        </form>
+    }
+
+    <!-- WhatsApp Tab -->
+    @if (Model.ActiveTab == "whatsapp")
+    {
+        <form method="post" asp-page-handler="SaveWhatsApp">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center me-3">
+                            <i class="fab fa-whatsapp text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">WhatsApp Business</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Configure WhatsApp via Meta Cloud API</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if (Model.CommunicationSettings.WhatsAppConfigured)
+                        {
+                            <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                <i class="fas fa-check-circle me-1"></i> Configured
+                            </span>
+                        }
+                        <button type="button" onclick="testConnection('WhatsApp')"
+                                class="px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:ring-4 focus:outline-none focus:ring-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:hover:bg-purple-800">
+                            <i class="fas fa-plug me-1"></i> Test
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex items-center">
+                    <input type="checkbox" asp-for="WhatsAppEnabled"
+                           class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600" />
+                    <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Enable WhatsApp messaging</label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Access Token</label>
+                        <input type="password" asp-for="WhatsAppAccessToken" placeholder="Leave empty to keep current"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Phone Number ID</label>
+                        <input type="text" asp-for="WhatsAppPhoneNumberId"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Business Account ID</label>
+                        <input type="text" asp-for="WhatsAppBusinessAccountId"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block mb-2 text-sm font-bold text-slate-700 dark:text-white">Webhook Verify Token</label>
+                        <input type="text" asp-for="WhatsAppWebhookVerifyToken"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:shadow-soft-primary-outline block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200" />
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Set this same token in your Meta App Dashboard webhook configuration
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800">
+                    <i class="fas fa-save me-2"></i> Save WhatsApp Settings
+                </button>
+            </div>
+        </form>
+    }
+</div>
+
+<!-- Test Result Toast -->
+<div id="testResultToast" class="fixed bottom-4 right-4 hidden z-50">
+    <div id="testResultContent" class="flex items-center p-4 mb-4 text-sm rounded-lg shadow-lg" role="alert">
+        <i id="testResultIcon" class="me-2"></i>
+        <span id="testResultMessage"></span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleCustomCredentials(checked) {
+            const section = document.getElementById('customCredentialsSection');
+            if (checked) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
+        }
+
+        async function testConnection(provider) {
+            const toast = document.getElementById('testResultToast');
+            const content = document.getElementById('testResultContent');
+            const icon = document.getElementById('testResultIcon');
+            const message = document.getElementById('testResultMessage');
+
+            // Show loading
+            content.className = 'flex items-center p-4 mb-4 text-sm rounded-lg shadow-lg bg-blue-50 text-blue-800 dark:bg-gray-800 dark:text-blue-400';
+            icon.className = 'fas fa-spinner fa-spin me-2';
+            message.textContent = 'Testing connection...';
+            toast.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`/settings/store?handler=Test${provider}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    content.className = 'flex items-center p-4 mb-4 text-sm rounded-lg shadow-lg bg-green-50 text-green-800 dark:bg-gray-800 dark:text-green-400';
+                    icon.className = 'fas fa-check-circle me-2';
+                    message.textContent = result.message || 'Connection successful!';
+                } else {
+                    content.className = 'flex items-center p-4 mb-4 text-sm rounded-lg shadow-lg bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+                    icon.className = 'fas fa-times-circle me-2';
+                    message.textContent = result.message || 'Connection failed';
+                }
+            } catch (error) {
+                content.className = 'flex items-center p-4 mb-4 text-sm rounded-lg shadow-lg bg-red-50 text-red-800 dark:bg-gray-800 dark:text-red-400';
+                icon.className = 'fas fa-times-circle me-2';
+                message.textContent = 'Network error: ' + error.message;
+            }
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 5000);
+        }
+    </script>
+}

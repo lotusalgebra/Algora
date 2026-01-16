@@ -436,6 +436,7 @@
                     <a href="/admin/clients" class="sidenav-dropdown-item @(IsActive("/admin/clients") ? "active" : "")">Clients</a>
                     <a href="/admin/plan-features" class="sidenav-dropdown-item @(IsActive("/admin/plan-features") ? "active" : "")">Plan Features</a>
                     <a href="/admin/plan-requests" class="sidenav-dropdown-item @(IsActive("/admin/plan-requests") ? "active" : "")">Plan Requests</a>
+                    <a href="/admin/settings" class="sidenav-dropdown-item @(IsActive("/admin/settings") ? "active" : "")">Global Settings</a>
                 </div>
 
                 <!-- Settings Section -->
@@ -446,6 +447,13 @@
                         <i class="fas fa-user text-xs"></i>
                     </span>
                     <span class="nav-text text-sm">Account</span>
+                </a>
+
+                <a href="/settings/store" class="sidenav-item @(IsActive("/settings/store") ? "active" : "")">
+                    <span class="icon-shape @(IsActive("/settings/store") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
+                        <i class="fas fa-cog text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Store Settings</span>
                 </a>
 
                 <a href="/plans" class="sidenav-item @(IsActive("/plans") ? "active" : "")">
