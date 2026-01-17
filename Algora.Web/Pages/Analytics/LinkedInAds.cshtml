@@ -1,0 +1,309 @@
+@page
+@model Algora.Web.Pages.Analytics.LinkedInAdsModel
+@{
+    ViewData["Title"] = "LinkedIn Ads Integration";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">LinkedIn Ads Integration</h4>
+                    <p class="text-sm text-secondary mb-0">
+                        Connect your LinkedIn Ads account to automatically sync campaign performance data.
+                    </p>
+                </div>
+                @if (Model.Connection?.IsConnected == true)
+                {
+                    <form method="post" asp-page-handler="Sync" class="d-inline">
+                        <button type="submit" class="btn bg-gradient-info">
+                            <i class="fas fa-sync-alt me-2"></i>Sync Now
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Account Selection (shown during OAuth flow) -->
+    @if (Model.AvailableAccounts.Count > 1)
+    {
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Select Ad Account</h6>
+                        <p class="text-sm text-secondary">Choose which LinkedIn Ad account to connect.</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-page-handler="SelectAccount">
+                            <input type="hidden" asp-for="AccessToken" />
+                            <input type="hidden" asp-for="RefreshToken" />
+                            <div class="mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Ad Account</label>
+                                <select asp-for="SelectedAdAccountId" class="form-select">
+                                    <option value="">-- Select an account --</option>
+                                    @foreach (var account in Model.AvailableAccounts)
+                                    {
+                                        <option value="@account.Id" data-org="@account.OrganizationId">
+                                            @account.Name - @account.Currency (@account.Status)
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="submit" class="btn bg-gradient-primary">
+                                <i class="fab fa-linkedin me-2"></i>Connect Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Connection Status -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Connection Status</h6>
+                            @if (Model.Connection?.IsConnected == true)
+                            {
+                                <span class="badge bg-gradient-success">Connected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-gradient-secondary">Not Connected</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Connection?.IsConnected == true)
+                        {
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Ad Account ID:</strong></p>
+                                <p class="text-sm text-secondary">@Model.Connection.AdAccountId</p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Connection.AdAccountName))
+                            {
+                                <div class="mb-3">
+                                    <p class="text-sm mb-1"><strong>Account Name:</strong></p>
+                                    <p class="text-sm text-secondary">@Model.Connection.AdAccountName</p>
+                                </div>
+                            }
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Connected:</strong></p>
+                                <p class="text-sm text-secondary">@Model.Connection.ConnectedAt?.ToString("MMM dd, yyyy")</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Last Synced:</strong></p>
+                                <p class="text-sm text-secondary">
+                                    @(Model.Connection.LastSyncedAt?.ToString("MMM dd, yyyy h:mm tt") ?? "Never")
+                                </p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Connection.LastSyncError))
+                            {
+                                <div class="alert alert-warning py-2 mb-3">
+                                    <small><i class="fas fa-exclamation-triangle me-1"></i>@Model.Connection.LastSyncError</small>
+                                </div>
+                            }
+                            <form method="post" asp-page-handler="Disconnect">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to disconnect LinkedIn Ads?')">
+                                    <i class="fas fa-unlink me-1"></i>Disconnect
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-sm text-secondary mb-4">
+                                Connect your LinkedIn Ads account to automatically import campaign data, including spend, impressions, clicks, and conversions.
+                            </p>
+                            <form method="post" asp-page-handler="Connect">
+                                <button type="submit" class="btn bg-gradient-primary">
+                                    <i class="fab fa-linkedin me-2"></i>Connect LinkedIn Ads
+                                </button>
+                            </form>
+                            <p class="text-xs text-secondary mt-3 mb-0">
+                                You'll be redirected to LinkedIn to authorize access.
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Connection?.IsConnected == true && Model.Summary != null)
+            {
+                <!-- Performance Summary -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Performance Summary</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="?period=7days" class="btn @(Model.Period == "7days" ? "btn-primary" : "btn-outline-primary")">7 Days</a>
+                                    <a href="?period=30days" class="btn @(Model.Period == "30days" ? "btn-primary" : "btn-outline-primary")">30 Days</a>
+                                    <a href="?period=90days" class="btn @(Model.Period == "90days" ? "btn-primary" : "btn-outline-primary")">90 Days</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Total Spend</p>
+                                    <h5 class="font-weight-bold mb-0">$@Model.Summary.TotalSpend.ToString("N2")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Conversion Value</p>
+                                    <h5 class="font-weight-bold mb-0 text-success">$@Model.Summary.TotalConversionValue.ToString("N2")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">ROAS</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.Roas.ToString("N2")x</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Active Campaigns</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.ActiveCampaigns</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Impressions</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalImpressions.ToString("N0")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Clicks</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalClicks.ToString("N0")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">CTR</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.Ctr.ToString("N2")%</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Conversions</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalConversions.ToString("N0")</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Connection?.IsConnected == true && Model.Campaigns.Any())
+        {
+            <!-- Campaigns Table -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <h6>Campaign Performance</h6>
+                        </div>
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Spend</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Impressions</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Clicks</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">CTR</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Conversions</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var campaign in Model.Campaigns.OrderByDescending(c => c.Spend))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">@campaign.CampaignName</h6>
+                                                            <p class="text-xs text-secondary mb-0">@campaign.ObjectiveType</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-sm @(campaign.Status == "ACTIVE" ? "bg-gradient-success" : "bg-gradient-secondary")">
+                                                        @campaign.Status
+                                                    </span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm font-weight-bold">$@campaign.Spend.ToString("N2")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Impressions.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Clicks.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Ctr.ToString("N2")%</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Conversions.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm font-weight-bold @(campaign.Roas > 1 ? "text-success" : "text-danger")">
+                                                        @(campaign.Roas?.ToString("N2") ?? "-")x
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Setup Instructions -->
+    @if (Model.Connection?.IsConnected != true && Model.AvailableAccounts.Count == 0)
+    {
+        <div class="row mt-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Setup Instructions</h6>
+                    </div>
+                    <div class="card-body">
+                        <ol class="ps-3">
+                            <li class="mb-2">Click <strong>"Connect LinkedIn Ads"</strong> to start the OAuth flow.</li>
+                            <li class="mb-2">Log in to your LinkedIn account and authorize the app.</li>
+                            <li class="mb-2">Select the ad account you want to connect.</li>
+                            <li class="mb-2">Your campaign data will automatically sync every 6 hours.</li>
+                        </ol>
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Requirements:</strong> You need a LinkedIn Campaign Manager account with at least one ad account.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

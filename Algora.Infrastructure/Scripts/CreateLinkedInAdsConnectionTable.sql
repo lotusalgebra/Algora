@@ -1,0 +1,44 @@
+-- Create LinkedIn Ads Connection table for storing LinkedIn Ads integration settings
+-- Run this script to add LinkedIn Ads support to the database
+
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'LinkedInAdsConnections')
+BEGIN
+    CREATE TABLE LinkedInAdsConnections (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        ShopDomain NVARCHAR(255) NOT NULL,
+        AccessToken NVARCHAR(MAX) NULL,      -- Encrypted OAuth access token
+        RefreshToken NVARCHAR(MAX) NULL,     -- Encrypted OAuth refresh token
+        AdAccountId NVARCHAR(100) NULL,      -- LinkedIn Ad Account ID (sponsored account URN)
+        AdAccountName NVARCHAR(255) NULL,    -- Display name of the ad account
+        OrganizationId NVARCHAR(100) NULL,   -- Organization ID (company URN)
+        Currency NVARCHAR(10) NOT NULL DEFAULT 'USD',
+        IsConnected BIT NOT NULL DEFAULT 0,
+        TokenExpiresAt DATETIME2 NULL,
+        RefreshTokenExpiresAt DATETIME2 NULL,
+        ConnectedAt DATETIME2 NULL,
+        LastSyncedAt DATETIME2 NULL,
+        LastSyncError NVARCHAR(MAX) NULL,
+        AutoSyncEnabled BIT NOT NULL DEFAULT 1,
+        SyncFrequencyHours INT NOT NULL DEFAULT 6,
+        CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+        UpdatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+
+        CONSTRAINT UQ_LinkedInAdsConnections_ShopDomain UNIQUE (ShopDomain)
+    );
+
+    -- Index for quick lookups by shop domain
+    CREATE INDEX IX_LinkedInAdsConnections_ShopDomain
+    ON LinkedInAdsConnections(ShopDomain);
+
+    -- Index for background sync service to find connections needing sync
+    CREATE INDEX IX_LinkedInAdsConnections_AutoSync
+    ON LinkedInAdsConnections(IsConnected, AutoSyncEnabled, LastSyncedAt)
+    WHERE IsConnected = 1 AND AutoSyncEnabled = 1;
+
+    PRINT 'LinkedInAdsConnections table created successfully.';
+END
+ELSE
+BEGIN
+    PRINT 'LinkedInAdsConnections table already exists.';
+END
+GO

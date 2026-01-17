@@ -219,6 +219,16 @@ public static class DependencyInjection
         services.AddScoped<ISnapchatAdsService, Services.Advertising.SnapchatAdsService>();
         services.AddHostedService<Services.Advertising.SnapchatAdsSyncBackgroundService>();
 
+        // ----- LinkedIn Ads Integration -----
+        services.AddHttpClient("LinkedInAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.DefaultRequestHeaders.Add("LinkedIn-Version", "202401");
+        });
+        services.AddScoped<ILinkedInAdsService, Services.Advertising.LinkedInAdsService>();
+        services.AddHostedService<Services.Advertising.LinkedInAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 
