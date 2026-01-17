@@ -192,6 +192,15 @@ public static class DependencyInjection
         services.AddScoped<IGoogleAdsService, Services.Advertising.GoogleAdsService>();
         services.AddHostedService<Services.Advertising.GoogleAdsSyncBackgroundService>();
 
+        // ----- TikTok Ads Integration -----
+        services.AddHttpClient("TikTokAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<ITikTokAdsService, Services.Advertising.TikTokAdsService>();
+        services.AddHostedService<Services.Advertising.TikTokAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 
