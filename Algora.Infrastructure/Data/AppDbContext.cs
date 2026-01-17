@@ -123,6 +123,7 @@ namespace Algora.Infrastructure.Data
         public DbSet<MetaAdsConnection> MetaAdsConnections { get; set; } = null!;
         public DbSet<GoogleAdsConnection> GoogleAdsConnections { get; set; } = null!;
         public DbSet<TikTokAdsConnection> TikTokAdsConnections { get; set; } = null!;
+        public DbSet<PinterestAdsConnection> PinterestAdsConnections { get; set; } = null!;
 
         // ----- Operations Manager entities -----
         public DbSet<Supplier> Suppliers { get; set; } = null!;

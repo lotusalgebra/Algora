@@ -201,6 +201,15 @@ public static class DependencyInjection
         services.AddScoped<ITikTokAdsService, Services.Advertising.TikTokAdsService>();
         services.AddHostedService<Services.Advertising.TikTokAdsSyncBackgroundService>();
 
+        // ----- Pinterest Ads Integration -----
+        services.AddHttpClient("PinterestAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<IPinterestAdsService, Services.Advertising.PinterestAdsService>();
+        services.AddHostedService<Services.Advertising.PinterestAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 
