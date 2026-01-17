@@ -210,6 +210,15 @@ public static class DependencyInjection
         services.AddScoped<IPinterestAdsService, Services.Advertising.PinterestAdsService>();
         services.AddHostedService<Services.Advertising.PinterestAdsSyncBackgroundService>();
 
+        // ----- Snapchat Ads Integration -----
+        services.AddHttpClient("SnapchatAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<ISnapchatAdsService, Services.Advertising.SnapchatAdsService>();
+        services.AddHostedService<Services.Advertising.SnapchatAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 
