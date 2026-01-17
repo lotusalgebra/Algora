@@ -229,6 +229,15 @@ public static class DependencyInjection
         services.AddScoped<ILinkedInAdsService, Services.Advertising.LinkedInAdsService>();
         services.AddHostedService<Services.Advertising.LinkedInAdsSyncBackgroundService>();
 
+        // ----- Twitter Ads Integration -----
+        services.AddHttpClient("TwitterAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<ITwitterAdsService, Services.Advertising.TwitterAdsService>();
+        services.AddHostedService<Services.Advertising.TwitterAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 
