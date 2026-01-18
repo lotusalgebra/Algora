@@ -465,6 +465,19 @@
                     <span class="nav-text text-sm">Store Settings</span>
                 </a>
 
+                <!-- Customer Portal Settings -->
+                <a class="sidenav-item sidenav-dropdown-toggle @(IsInSection("/settings/portal") ? "active" : "")" data-toggle="portal-collapse">
+                    <span class="icon-shape @(IsInSection("/settings/portal") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
+                        <i class="fas fa-users text-xs"></i>
+                    </span>
+                    <span class="nav-text text-sm">Customer Portal</span>
+                    <i class="fas fa-chevron-down ms-auto sidenav-arrow"></i>
+                </a>
+                <div id="portal-collapse" class="sidenav-collapse @(IsInSection("/settings/portal") ? "show" : "")">
+                    <a href="/settings/portal-theme" class="sidenav-dropdown-item @(IsActive("/settings/portal-theme") ? "active" : "")">Theme Designer</a>
+                    <a href="/settings/portal-fields" class="sidenav-dropdown-item @(IsActive("/settings/portal-fields") ? "active" : "")">Field Manager</a>
+                </div>
+
                 <a href="/plans" class="sidenav-item @(IsActive("/plans") ? "active" : "")">
                     <span class="icon-shape @(IsActive("/plans") ? "!bg-gradient-to-tl from-purple-700 to-pink-500 !text-white" : "")">
                         <i class="fas fa-credit-card text-xs"></i>
