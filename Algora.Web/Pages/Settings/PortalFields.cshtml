@@ -1,0 +1,438 @@
+@page "/settings/portal-fields"
+@model Algora.Web.Pages.Settings.PortalFieldsModel
+@{
+    ViewData["Title"] = "Customer Portal Fields";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Customer Portal Fields</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Configure form fields for registration and profile pages</p>
+        </div>
+        <button type="button" onclick="openAddFieldModal()" class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg hover:from-purple-700 hover:to-pink-600 transition-all">
+            <i class="fas fa-plus me-2"></i>Add Field
+        </button>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Tab Navigation -->
+    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+            <li class="me-2">
+                <a href="/settings/portal-fields?activeTab=Registration"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "Registration" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Registration
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="/settings/portal-fields?activeTab=Profile"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "Profile" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fas fa-user me-2"></i>
+                    Profile
+                </a>
+            </li>
+            <li class="me-2">
+                <a href="/settings/portal-fields?activeTab=Checkout"
+                   class="inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg @(Model.ActiveTab == "Checkout" ? "text-purple-600 border-purple-600 dark:text-purple-500 dark:border-purple-500" : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300")">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Checkout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Fields List -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                    @Model.ActiveTab Fields
+                    <span class="ml-2 px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 rounded-full">@Model.Fields.Count</span>
+                </h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Drag to reorder fields</p>
+            </div>
+        </div>
+
+        @if (Model.Fields.Any())
+        {
+            <ul id="fieldsList" class="divide-y divide-gray-200 dark:divide-gray-700">
+                @foreach (var field in Model.Fields.OrderBy(f => f.DisplayOrder))
+                {
+                    <li class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" data-field-id="@field.Id">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <!-- Drag Handle -->
+                                <div class="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="Drag to reorder">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+
+                                <!-- Field Icon -->
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center @(field.IsEnabled ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400" : "bg-gray-100 dark:bg-gray-700 text-gray-400")">
+                                    <i class="fas @GetFieldIcon(field.FieldType)"></i>
+                                </div>
+
+                                <!-- Field Info -->
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-medium text-gray-900 dark:text-white">@field.Label</span>
+                                        @if (field.IsSystemField)
+                                        {
+                                            <span class="px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded">System</span>
+                                        }
+                                        @if (field.IsRequired)
+                                        {
+                                            <span class="px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded">Required</span>
+                                        }
+                                        @if (!field.IsEnabled)
+                                        {
+                                            <span class="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 rounded">Disabled</span>
+                                        }
+                                    </div>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                        @field.FieldName &bull; @field.FieldType
+                                        @if (!string.IsNullOrEmpty(field.Placeholder))
+                                        {
+                                            <span>&bull; "@field.Placeholder"</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center gap-2">
+                                <!-- Toggle Enable -->
+                                <form method="post" asp-page-handler="ToggleField" asp-route-fieldId="@field.Id" asp-route-enable="@(!field.IsEnabled)" asp-route-activeTab="@Model.ActiveTab" class="inline">
+                                    <button type="submit" class="p-2 rounded-lg @(field.IsEnabled ? "text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20" : "text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700")" title="@(field.IsEnabled ? "Disable" : "Enable")">
+                                        <i class="fas @(field.IsEnabled ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                    </button>
+                                </form>
+
+                                <!-- Edit -->
+                                <button type="button" onclick="openEditFieldModal(@System.Text.Json.JsonSerializer.Serialize(field))" class="p-2 rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+
+                                <!-- Delete (only for non-system fields) -->
+                                @if (!field.IsSystemField)
+                                {
+                                    <form method="post" asp-page-handler="DeleteField" asp-route-fieldId="@field.Id" asp-route-activeTab="@Model.ActiveTab" class="inline" onsubmit="return confirm('Delete this field?');">
+                                        <button type="submit" class="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                    <i class="fas fa-inbox text-2xl text-gray-400"></i>
+                </div>
+                <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-1">No fields configured</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Add fields to customize the @Model.ActiveTab form</p>
+                <button type="button" onclick="openAddFieldModal()" class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:hover:bg-purple-900/40">
+                    <i class="fas fa-plus me-2"></i>Add First Field
+                </button>
+            </div>
+        }
+    </div>
+
+    <!-- Field Types Info -->
+    <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-400 mb-3">
+            <i class="fas fa-info-circle me-1"></i>Available Field Types
+        </h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-font w-4"></i><span>text - Single line text</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-envelope w-4"></i><span>email - Email address</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-phone w-4"></i><span>phone - Phone number</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-calendar w-4"></i><span>date - Date picker</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-list w-4"></i><span>select - Dropdown</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-check-square w-4"></i><span>checkbox - Yes/No</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-align-left w-4"></i><span>textarea - Multi-line</span>
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <i class="fas fa-hashtag w-4"></i><span>number - Numeric input</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Field Modal -->
+<div id="fieldModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/50" onclick="closeFieldModal()"></div>
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <form method="post" id="fieldForm">
+                <input type="hidden" name="Input.PageType" value="@Model.ActiveTab" />
+                <input type="hidden" name="fieldId" id="editFieldId" value="" />
+
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Add Field</h3>
+                        <button type="button" onclick="closeFieldModal()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Field Name *</label>
+                            <input type="text" name="Input.FieldName" id="fieldName" required pattern="[a-z_]+" title="Lowercase letters and underscores only" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="field_name" />
+                            <p class="text-xs text-gray-500 mt-1">Lowercase, underscores only</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Field Type *</label>
+                            <select name="Input.FieldType" id="fieldType" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="toggleSelectOptions()">
+                                <option value="text">Text</option>
+                                <option value="email">Email</option>
+                                <option value="phone">Phone</option>
+                                <option value="number">Number</option>
+                                <option value="date">Date</option>
+                                <option value="select">Select (Dropdown)</option>
+                                <option value="checkbox">Checkbox</option>
+                                <option value="textarea">Textarea</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Label *</label>
+                        <input type="text" name="Input.Label" id="fieldLabel" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Display label" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Placeholder</label>
+                            <input type="text" name="Input.Placeholder" id="fieldPlaceholder" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Placeholder text" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Default Value</label>
+                            <input type="text" name="Input.DefaultValue" id="fieldDefault" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Help Text</label>
+                        <input type="text" name="Input.HelpText" id="fieldHelp" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Additional instructions" />
+                    </div>
+
+                    <!-- Select Options (shown only for select type) -->
+                    <div id="selectOptionsDiv" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Options (one per line)</label>
+                        <textarea name="Input.SelectOptions" id="fieldSelectOptions" rows="4" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                    </div>
+
+                    <!-- Validation -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Validation Regex</label>
+                            <input type="text" name="Input.ValidationRegex" id="fieldRegex" class="w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="^[A-Z].+$" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Validation Message</label>
+                            <input type="text" name="Input.ValidationMessage" id="fieldRegexMsg" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Invalid format" />
+                        </div>
+                    </div>
+
+                    <!-- Layout -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Display Order</label>
+                            <input type="number" name="Input.DisplayOrder" id="fieldOrder" min="0" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="0" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Column Width</label>
+                            <select name="Input.ColumnWidth" id="fieldWidth" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="6">Half Width (6)</option>
+                                <option value="12" selected>Full Width (12)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="flex flex-wrap gap-6 pt-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" name="Input.IsRequired" id="fieldRequired" value="true" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ms-2 text-sm text-gray-700 dark:text-gray-300">Required</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer" id="enabledCheckboxWrapper">
+                            <input type="checkbox" name="Input.IsEnabled" id="fieldEnabled" value="true" checked class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ms-2 text-sm text-gray-700 dark:text-gray-300">Enabled</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                    <button type="button" onclick="closeFieldModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg hover:from-purple-700 hover:to-pink-600">
+                        <i class="fas fa-save me-2"></i><span id="submitBtnText">Add Field</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    // Initialize drag-and-drop reordering
+    const fieldsList = document.getElementById('fieldsList');
+    if (fieldsList) {
+        new Sortable(fieldsList, {
+            handle: '.cursor-move',
+            animation: 150,
+            onEnd: function(evt) {
+                const fieldIds = Array.from(fieldsList.children).map(li => parseInt(li.dataset.fieldId));
+                fetch('/settings/portal-fields?handler=ReorderFields', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    body: JSON.stringify({
+                        pageType: '@Model.ActiveTab',
+                        fieldIds: fieldIds
+                    })
+                });
+            }
+        });
+    }
+
+    function openAddFieldModal() {
+        document.getElementById('modalTitle').textContent = 'Add Field';
+        document.getElementById('submitBtnText').textContent = 'Add Field';
+        document.getElementById('fieldForm').action = '?handler=AddField';
+        document.getElementById('editFieldId').value = '';
+        document.getElementById('enabledCheckboxWrapper').classList.add('hidden');
+
+        // Reset form
+        document.getElementById('fieldName').value = '';
+        document.getElementById('fieldName').readOnly = false;
+        document.getElementById('fieldType').value = 'text';
+        document.getElementById('fieldType').disabled = false;
+        document.getElementById('fieldLabel').value = '';
+        document.getElementById('fieldPlaceholder').value = '';
+        document.getElementById('fieldDefault').value = '';
+        document.getElementById('fieldHelp').value = '';
+        document.getElementById('fieldSelectOptions').value = '';
+        document.getElementById('fieldRegex').value = '';
+        document.getElementById('fieldRegexMsg').value = '';
+        document.getElementById('fieldOrder').value = '0';
+        document.getElementById('fieldWidth').value = '12';
+        document.getElementById('fieldRequired').checked = false;
+        document.getElementById('fieldEnabled').checked = true;
+
+        toggleSelectOptions();
+        document.getElementById('fieldModal').classList.remove('hidden');
+    }
+
+    function openEditFieldModal(field) {
+        document.getElementById('modalTitle').textContent = 'Edit Field';
+        document.getElementById('submitBtnText').textContent = 'Save Changes';
+        document.getElementById('fieldForm').action = '?handler=UpdateField&fieldId=' + field.id;
+        document.getElementById('editFieldId').value = field.id;
+        document.getElementById('enabledCheckboxWrapper').classList.remove('hidden');
+
+        // Populate form
+        document.getElementById('fieldName').value = field.fieldName;
+        document.getElementById('fieldName').readOnly = true;
+        document.getElementById('fieldType').value = field.fieldType;
+        document.getElementById('fieldType').disabled = field.isSystemField;
+        document.getElementById('fieldLabel').value = field.label;
+        document.getElementById('fieldPlaceholder').value = field.placeholder || '';
+        document.getElementById('fieldDefault').value = field.defaultValue || '';
+        document.getElementById('fieldHelp').value = field.helpText || '';
+        document.getElementById('fieldSelectOptions').value = field.selectOptions ? field.selectOptions.join('\n') : '';
+        document.getElementById('fieldRegex').value = field.validationRegex || '';
+        document.getElementById('fieldRegexMsg').value = field.validationMessage || '';
+        document.getElementById('fieldOrder').value = field.displayOrder;
+        document.getElementById('fieldWidth').value = field.columnWidth;
+        document.getElementById('fieldRequired').checked = field.isRequired;
+        document.getElementById('fieldEnabled').checked = field.isEnabled;
+
+        toggleSelectOptions();
+        document.getElementById('fieldModal').classList.remove('hidden');
+    }
+
+    function closeFieldModal() {
+        document.getElementById('fieldModal').classList.add('hidden');
+    }
+
+    function toggleSelectOptions() {
+        const type = document.getElementById('fieldType').value;
+        const div = document.getElementById('selectOptionsDiv');
+        if (type === 'select') {
+            div.classList.remove('hidden');
+        } else {
+            div.classList.add('hidden');
+        }
+    }
+
+    // Close modal on escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeFieldModal();
+    });
+</script>
+}
+
+@functions {
+    string GetFieldIcon(string fieldType)
+    {
+        return fieldType switch
+        {
+            "email" => "fa-envelope",
+            "phone" => "fa-phone",
+            "date" => "fa-calendar",
+            "select" => "fa-list",
+            "checkbox" => "fa-check-square",
+            "textarea" => "fa-align-left",
+            "number" => "fa-hashtag",
+            "password" => "fa-lock",
+            _ => "fa-font"
+        };
+    }
+}

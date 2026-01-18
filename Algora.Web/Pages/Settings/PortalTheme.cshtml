@@ -1,0 +1,559 @@
+@page "/settings/portal-theme"
+@model Algora.Web.Pages.Settings.PortalThemeModel
+@{
+    ViewData["Title"] = "Customer Portal Theme";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Customer Portal Theme</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Customize the look and feel of your customer portal</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <form method="post" asp-page-handler="Reset" class="inline">
+                <button type="submit" onclick="return confirm('Reset theme to defaults?')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                    <i class="fas fa-undo me-2"></i>Reset to Defaults
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="flex items-center p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <form method="post" id="themeForm">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <!-- Settings Panel -->
+            <div class="xl:col-span-2 space-y-6">
+                <!-- Branding Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center me-3">
+                            <i class="fas fa-palette text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Branding</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Logo, store name, and basic identity</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Store Name</label>
+                            <input type="text" asp-for="Input.StoreName" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Logo URL</label>
+                            <input type="url" asp-for="Input.LogoUrl" placeholder="https://..." class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Favicon URL</label>
+                            <input type="url" asp-for="Input.FaviconUrl" placeholder="https://..." class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colors Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center me-3">
+                            <i class="fas fa-fill-drip text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Colors</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Primary, secondary, and accent colors</p>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Brand Colors</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Primary</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.PrimaryColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.PrimaryColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Primary Hover</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.PrimaryHoverColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.PrimaryHoverColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Secondary</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.SecondaryColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.SecondaryColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Accent</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.AccentColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.AccentColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Light Mode</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Background</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.BackgroundColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.BackgroundColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Surface</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.SurfaceColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.SurfaceColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Text</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.TextColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.TextColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Border</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.BorderColor" class="w-10 h-10 rounded cursor-pointer" onchange="updatePreview()" />
+                                <input type="text" asp-for="Input.BorderColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Status Colors</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Success</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.SuccessColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.SuccessColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Warning</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.WarningColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.WarningColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Error</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.ErrorColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.ErrorColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Dark Mode Colors</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Background</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.DarkBackgroundColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.DarkBackgroundColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Surface</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.DarkSurfaceColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.DarkSurfaceColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Text</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.DarkTextColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.DarkTextColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Border</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" asp-for="Input.DarkBorderColor" class="w-10 h-10 rounded cursor-pointer" />
+                                <input type="text" asp-for="Input.DarkBorderColor" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typography Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center me-3">
+                            <i class="fas fa-font text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Typography</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Fonts and text styling</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Body Font</label>
+                            <select asp-for="Input.FontFamily" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()">
+                                <option value="Inter">Inter</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Nunito">Nunito</option>
+                                <option value="Source Sans Pro">Source Sans Pro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Heading Font</label>
+                            <select asp-for="Input.HeadingFontFamily" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()">
+                                <option value="Inter">Inter</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Playfair Display">Playfair Display</option>
+                                <option value="Merriweather">Merriweather</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Base Font Size</label>
+                            <select asp-for="Input.FontSizeBase" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="14px">Small (14px)</option>
+                                <option value="16px">Medium (16px)</option>
+                                <option value="18px">Large (18px)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layout Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center me-3">
+                            <i class="fas fa-th-large text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Layout & Components</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Buttons, cards, and input styling</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Button Style</label>
+                            <select asp-for="Input.ButtonStyle" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()">
+                                <option value="rounded">Rounded</option>
+                                <option value="pill">Pill</option>
+                                <option value="square">Square</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Button Size</label>
+                            <select asp-for="Input.ButtonSize" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="small">Small</option>
+                                <option value="medium">Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Card Style</label>
+                            <select asp-for="Input.CardStyle" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" onchange="updatePreview()">
+                                <option value="shadow">Shadow</option>
+                                <option value="border">Border</option>
+                                <option value="flat">Flat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Card Radius</label>
+                            <select asp-for="Input.CardRadius" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="0">None</option>
+                                <option value="0.375rem">Small</option>
+                                <option value="0.75rem">Medium</option>
+                                <option value="1rem">Large</option>
+                                <option value="1.5rem">Extra Large</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center me-3">
+                            <i class="fas fa-cog text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Features</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Enable or disable portal features</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-6">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" asp-for="Input.EnableDarkMode" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ms-2 text-sm text-gray-700 dark:text-gray-300">Enable Dark Mode Toggle</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" asp-for="Input.EnableAnimations" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ms-2 text-sm text-gray-700 dark:text-gray-300">Enable Animations</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" asp-for="Input.ShowPoweredBy" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ms-2 text-sm text-gray-700 dark:text-gray-300">Show "Powered By" Footer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom CSS Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center me-3">
+                            <i class="fas fa-code text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Custom Code</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Add custom CSS or HTML</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Custom CSS</label>
+                            <textarea asp-for="Input.CustomCss" rows="6" placeholder="/* Add your custom CSS here */" class="w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1">Custom Head HTML</label>
+                            <textarea asp-for="Input.CustomHeadHtml" rows="3" placeholder="<!-- Add custom scripts or meta tags -->" class="w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg hover:from-purple-700 hover:to-pink-600 focus:ring-4 focus:ring-purple-300 transition-all">
+                        <i class="fas fa-save me-2"></i>Save Theme Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Preview Panel -->
+            <div class="xl:col-span-1">
+                <div class="sticky top-4">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Live Preview</h3>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="setPreviewMode('light')" id="lightModeBtn" class="p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                                    <i class="fas fa-sun text-xs"></i>
+                                </button>
+                                <button type="button" onclick="setPreviewMode('dark')" id="darkModeBtn" class="p-1.5 rounded text-gray-400">
+                                    <i class="fas fa-moon text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Preview Frame -->
+                        <div id="previewFrame" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden" style="min-height: 500px;">
+                            <div id="previewContent" class="p-4" style="background: var(--preview-bg, #ffffff);">
+                                <!-- Header Preview -->
+                                <div class="flex items-center justify-between mb-4 pb-3" style="border-bottom: 1px solid var(--preview-border, #e5e7eb);">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(to bottom right, var(--preview-primary, #7c3aed), var(--preview-secondary, #ec4899));">
+                                            <i class="fas fa-store text-white text-xs"></i>
+                                        </div>
+                                        <span id="previewStoreName" class="font-bold text-sm" style="color: var(--preview-text, #1f2937); font-family: var(--preview-heading-font, Inter);">Store Name</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs" style="color: var(--preview-muted, #6b7280);">Profile</span>
+                                        <span class="text-xs" style="color: var(--preview-muted, #6b7280);">Orders</span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Preview -->
+                                <div id="previewCard" class="p-4 mb-4" style="background: var(--preview-surface, #f9fafb); border-radius: var(--preview-card-radius, 0.75rem);">
+                                    <h4 class="font-semibold mb-2" style="color: var(--preview-text, #1f2937); font-family: var(--preview-heading-font, Inter);">Welcome Back!</h4>
+                                    <p class="text-xs mb-3" style="color: var(--preview-muted, #6b7280); font-family: var(--preview-font, Inter);">Manage your account and orders</p>
+
+                                    <!-- Input Preview -->
+                                    <div class="mb-3">
+                                        <label class="block text-xs font-medium mb-1" style="color: var(--preview-text, #1f2937);">Email</label>
+                                        <input type="text" value="customer@example.com" readonly class="w-full px-3 py-2 text-xs rounded" style="background: var(--preview-bg, #ffffff); border: 1px solid var(--preview-border, #e5e7eb); color: var(--preview-text, #1f2937);" />
+                                    </div>
+
+                                    <!-- Button Preview -->
+                                    <button type="button" id="previewButton" class="w-full py-2 text-xs font-semibold text-white" style="background: var(--preview-primary, #7c3aed); border-radius: var(--preview-btn-radius, 0.5rem);">
+                                        View Orders
+                                    </button>
+                                </div>
+
+                                <!-- Status Badges Preview -->
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="px-2 py-1 text-xs rounded-full text-white" style="background: var(--preview-success, #10b981);">Delivered</span>
+                                    <span class="px-2 py-1 text-xs rounded-full text-white" style="background: var(--preview-warning, #f59e0b);">Pending</span>
+                                    <span class="px-2 py-1 text-xs rounded-full text-white" style="background: var(--preview-error, #ef4444);">Cancelled</span>
+                                </div>
+
+                                <!-- Footer Preview -->
+                                <div class="text-center pt-3" style="border-top: 1px solid var(--preview-border, #e5e7eb);">
+                                    <span class="text-xs" style="color: var(--preview-muted, #6b7280);">Powered by Algora</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Tips -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <h4 class="text-sm font-semibold text-blue-800 dark:text-blue-400 mb-2">
+                            <i class="fas fa-lightbulb me-1"></i>Tips
+                        </h4>
+                        <ul class="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                            <li>Use consistent colors for brand recognition</li>
+                            <li>Test both light and dark modes</li>
+                            <li>Keep text readable with good contrast</li>
+                            <li>Custom CSS overrides default styles</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    let previewMode = 'light';
+
+    function setPreviewMode(mode) {
+        previewMode = mode;
+        document.getElementById('lightModeBtn').className = mode === 'light'
+            ? 'p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+            : 'p-1.5 rounded text-gray-400';
+        document.getElementById('darkModeBtn').className = mode === 'dark'
+            ? 'p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+            : 'p-1.5 rounded text-gray-400';
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const preview = document.getElementById('previewContent');
+        const card = document.getElementById('previewCard');
+        const button = document.getElementById('previewButton');
+
+        // Get values
+        const primary = document.querySelector('[name="Input.PrimaryColor"]').value;
+        const secondary = document.querySelector('[name="Input.SecondaryColor"]').value;
+        const storeName = document.querySelector('[name="Input.StoreName"]').value;
+        const fontFamily = document.querySelector('[name="Input.FontFamily"]').value;
+        const headingFont = document.querySelector('[name="Input.HeadingFontFamily"]').value;
+        const buttonStyle = document.querySelector('[name="Input.ButtonStyle"]').value;
+        const cardStyle = document.querySelector('[name="Input.CardStyle"]').value;
+
+        let bgColor, surfaceColor, textColor, mutedColor, borderColor;
+
+        if (previewMode === 'dark') {
+            bgColor = document.querySelector('[name="Input.DarkBackgroundColor"]').value;
+            surfaceColor = document.querySelector('[name="Input.DarkSurfaceColor"]').value;
+            textColor = document.querySelector('[name="Input.DarkTextColor"]').value;
+            mutedColor = document.querySelector('[name="Input.DarkTextMutedColor"]').value;
+            borderColor = document.querySelector('[name="Input.DarkBorderColor"]').value;
+        } else {
+            bgColor = document.querySelector('[name="Input.BackgroundColor"]').value;
+            surfaceColor = document.querySelector('[name="Input.SurfaceColor"]').value;
+            textColor = document.querySelector('[name="Input.TextColor"]').value;
+            mutedColor = document.querySelector('[name="Input.TextMutedColor"]').value;
+            borderColor = document.querySelector('[name="Input.BorderColor"]').value;
+        }
+
+        const successColor = document.querySelector('[name="Input.SuccessColor"]').value;
+        const warningColor = document.querySelector('[name="Input.WarningColor"]').value;
+        const errorColor = document.querySelector('[name="Input.ErrorColor"]').value;
+
+        // Button radius
+        const btnRadius = buttonStyle === 'pill' ? '9999px' : buttonStyle === 'square' ? '0' : '0.5rem';
+
+        // Card style
+        let cardShadow = '';
+        let cardBorder = '';
+        if (cardStyle === 'shadow') {
+            cardShadow = '0 1px 3px 0 rgb(0 0 0 / 0.1)';
+        } else if (cardStyle === 'border') {
+            cardBorder = `1px solid ${borderColor}`;
+        }
+
+        // Apply CSS variables
+        preview.style.setProperty('--preview-bg', bgColor);
+        preview.style.setProperty('--preview-surface', surfaceColor);
+        preview.style.setProperty('--preview-text', textColor);
+        preview.style.setProperty('--preview-muted', mutedColor);
+        preview.style.setProperty('--preview-border', borderColor);
+        preview.style.setProperty('--preview-primary', primary);
+        preview.style.setProperty('--preview-secondary', secondary);
+        preview.style.setProperty('--preview-success', successColor);
+        preview.style.setProperty('--preview-warning', warningColor);
+        preview.style.setProperty('--preview-error', errorColor);
+        preview.style.setProperty('--preview-font', fontFamily);
+        preview.style.setProperty('--preview-heading-font', headingFont);
+        preview.style.setProperty('--preview-btn-radius', btnRadius);
+
+        preview.style.background = bgColor;
+        preview.style.fontFamily = fontFamily;
+
+        card.style.boxShadow = cardShadow;
+        card.style.border = cardBorder;
+
+        document.getElementById('previewStoreName').textContent = storeName || 'Store Name';
+    }
+
+    // Sync color inputs
+    document.querySelectorAll('input[type="color"]').forEach(colorInput => {
+        colorInput.addEventListener('input', function() {
+            // Find the corresponding text input (next sibling)
+            const textInput = this.nextElementSibling;
+            if (textInput && textInput.type === 'text') {
+                textInput.value = this.value;
+            }
+            updatePreview();
+        });
+    });
+
+    document.querySelectorAll('input[type="text"][name*="Color"]').forEach(textInput => {
+        textInput.addEventListener('input', function() {
+            // Find the corresponding color input (previous sibling)
+            const colorInput = this.previousElementSibling;
+            if (colorInput && colorInput.type === 'color' && /^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                colorInput.value = this.value;
+            }
+            updatePreview();
+        });
+    });
+
+    // Initial preview update
+    document.addEventListener('DOMContentLoaded', updatePreview);
+</script>
+}

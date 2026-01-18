@@ -30,6 +30,8 @@
     <ProjectReference Include="..\Algora.Core\Algora.Core.csproj" />
     <ProjectReference Include="..\Algora.Infrastructure\Algora.Infrastructure.csproj" />
     <ProjectReference Include="..\Algora.WhatsApp\Algora.WhatsApp.csproj" />
+    <ProjectReference Include="..\..\Algora.CustomerPortal\Algora.CustomerPortal.Application\Algora.CustomerPortal.Application.csproj" />
+    <ProjectReference Include="..\..\Algora.CustomerPortal\Algora.CustomerPortal.Infrastructure\Algora.CustomerPortal.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

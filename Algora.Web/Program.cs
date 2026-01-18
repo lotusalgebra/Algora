@@ -1,5 +1,6 @@
 using Algora.Application.Interfaces;
 using Algora.Infrastructure;
+using Algora.CustomerPortal.Infrastructure;
 using Algora.WhatsApp;
 using Algora.Web.Services;
 using Algora.Web.Authorization;
@@ -12,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register all infrastructure services (DB, Shopify, PDF, etc.)
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Register Customer Portal services (theme, fields, auth)
+builder.Services.AddPortalInfrastructure(builder.Configuration);
 
 // Register WhatsApp module (Facebook WhatsApp Business API)
 builder.Services.AddWhatsAppModule(builder.Configuration);
