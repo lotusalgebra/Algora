@@ -127,6 +127,7 @@ namespace Algora.Infrastructure.Data
         public DbSet<SnapchatAdsConnection> SnapchatAdsConnections { get; set; } = null!;
         public DbSet<LinkedInAdsConnection> LinkedInAdsConnections { get; set; } = null!;
         public DbSet<TwitterAdsConnection> TwitterAdsConnections { get; set; } = null!;
+        public DbSet<AmazonAdsConnection> AmazonAdsConnections { get; set; } = null!;
 
         // ----- Operations Manager entities -----
         public DbSet<Supplier> Suppliers { get; set; } = null!;

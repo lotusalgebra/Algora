@@ -1,0 +1,334 @@
+@page
+@model Algora.Web.Pages.Analytics.AmazonAdsModel
+@{
+    ViewData["Title"] = "Amazon Ads Integration";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">Amazon Ads Integration</h4>
+                    <p class="text-sm text-secondary mb-0">
+                        Connect your Amazon Advertising account to sync Sponsored Products, Brands, and Display campaigns.
+                    </p>
+                </div>
+                @if (Model.Connection?.IsConnected == true)
+                {
+                    <form method="post" asp-page-handler="Sync" class="d-inline">
+                        <button type="submit" class="btn bg-gradient-info">
+                            <i class="fas fa-sync-alt me-2"></i>Sync Now
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Profile Selection (shown during OAuth flow) -->
+    @if (Model.AvailableProfiles.Count > 1)
+    {
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Select Advertising Profile</h6>
+                        <p class="text-sm text-secondary">Choose which Amazon Advertising profile to connect.</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-page-handler="SelectProfile">
+                            <input type="hidden" asp-for="AccessToken" />
+                            <input type="hidden" asp-for="RefreshToken" />
+                            <div class="mb-3">
+                                <label class="form-label text-xs font-weight-bold text-slate-700">Advertising Profile</label>
+                                <select asp-for="SelectedProfileId" class="form-select">
+                                    <option value="">-- Select a profile --</option>
+                                    @foreach (var profile in Model.AvailableProfiles)
+                                    {
+                                        <option value="@profile.ProfileId">
+                                            @(profile.AccountName ?? "Amazon Ads") - @profile.CountryCode (@profile.AccountType)
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="submit" class="btn bg-gradient-warning">
+                                <i class="fab fa-amazon me-2"></i>Connect Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Connection Status -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Connection Status</h6>
+                            @if (Model.Connection?.IsConnected == true)
+                            {
+                                <span class="badge bg-gradient-success">Connected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-gradient-secondary">Not Connected</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Connection?.IsConnected == true)
+                        {
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Profile ID:</strong></p>
+                                <p class="text-sm text-secondary">@Model.Connection.ProfileId</p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Connection.ProfileName))
+                            {
+                                <div class="mb-3">
+                                    <p class="text-sm mb-1"><strong>Account Name:</strong></p>
+                                    <p class="text-sm text-secondary">@Model.Connection.ProfileName</p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Connection.CountryCode))
+                            {
+                                <div class="mb-3">
+                                    <p class="text-sm mb-1"><strong>Marketplace:</strong></p>
+                                    <p class="text-sm text-secondary">@Model.Connection.CountryCode</p>
+                                </div>
+                            }
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Connected:</strong></p>
+                                <p class="text-sm text-secondary">@Model.Connection.ConnectedAt?.ToString("MMM dd, yyyy")</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-sm mb-1"><strong>Last Synced:</strong></p>
+                                <p class="text-sm text-secondary">
+                                    @(Model.Connection.LastSyncedAt?.ToString("MMM dd, yyyy h:mm tt") ?? "Never")
+                                </p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Connection.LastSyncError))
+                            {
+                                <div class="alert alert-warning py-2 mb-3">
+                                    <small><i class="fas fa-exclamation-triangle me-1"></i>@Model.Connection.LastSyncError</small>
+                                </div>
+                            }
+                            <form method="post" asp-page-handler="Disconnect">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to disconnect Amazon Ads?')">
+                                    <i class="fas fa-unlink me-1"></i>Disconnect
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="text-sm text-secondary mb-4">
+                                Connect your Amazon Advertising account to automatically import campaign data, including spend, sales, ACoS, and ROAS.
+                            </p>
+                            <form method="post" asp-page-handler="Connect">
+                                <button type="submit" class="btn bg-gradient-warning">
+                                    <i class="fab fa-amazon me-2"></i>Connect Amazon Ads
+                                </button>
+                            </form>
+                            <p class="text-xs text-secondary mt-3 mb-0">
+                                You'll be redirected to Amazon to authorize access.
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Connection?.IsConnected == true && Model.Summary != null)
+            {
+                <!-- Performance Summary -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Performance Summary</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="?period=7days" class="btn @(Model.Period == "7days" ? "btn-primary" : "btn-outline-primary")">7 Days</a>
+                                    <a href="?period=30days" class="btn @(Model.Period == "30days" ? "btn-primary" : "btn-outline-primary")">30 Days</a>
+                                    <a href="?period=90days" class="btn @(Model.Period == "90days" ? "btn-primary" : "btn-outline-primary")">90 Days</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Total Spend</p>
+                                    <h5 class="font-weight-bold mb-0">$@Model.Summary.TotalSpend.ToString("N2")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Total Sales</p>
+                                    <h5 class="font-weight-bold mb-0 text-success">$@Model.Summary.TotalSales.ToString("N2")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">ACoS</p>
+                                    <h5 class="font-weight-bold mb-0 @(Model.Summary.Acos < 30 ? "text-success" : "text-warning")">@Model.Summary.Acos.ToString("N1")%</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">ROAS</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.Roas.ToString("N2")x</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Impressions</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalImpressions.ToString("N0")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Clicks</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalClicks.ToString("N0")</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">CTR</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.Ctr.ToString("N2")%</h5>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <p class="text-sm mb-0 text-secondary">Orders</p>
+                                    <h5 class="font-weight-bold mb-0">@Model.Summary.TotalOrders.ToString("N0")</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Connection?.IsConnected == true && Model.Campaigns.Any())
+        {
+            <!-- Campaigns Table -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <h6>Campaign Performance</h6>
+                        </div>
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Spend</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Sales</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">ACoS</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Impressions</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Clicks</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">Orders</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-end">ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var campaign in Model.Campaigns.OrderByDescending(c => c.Spend))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">@campaign.CampaignName</h6>
+                                                            <p class="text-xs text-secondary mb-0">@campaign.TargetingType</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var typeBadge = campaign.CampaignType switch
+                                                        {
+                                                            "SPONSORED_PRODUCTS" => "bg-gradient-primary",
+                                                            "SPONSORED_BRANDS" => "bg-gradient-info",
+                                                            "SPONSORED_DISPLAY" => "bg-gradient-success",
+                                                            _ => "bg-gradient-secondary"
+                                                        };
+                                                        var typeLabel = campaign.CampaignType switch
+                                                        {
+                                                            "SPONSORED_PRODUCTS" => "SP",
+                                                            "SPONSORED_BRANDS" => "SB",
+                                                            "SPONSORED_DISPLAY" => "SD",
+                                                            _ => "?"
+                                                        };
+                                                    }
+                                                    <span class="badge badge-sm @typeBadge">@typeLabel</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm font-weight-bold">$@campaign.Spend.ToString("N2")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm text-success font-weight-bold">$@campaign.Sales.ToString("N2")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm @(campaign.Acos < 30 ? "text-success" : "text-warning")">@campaign.Acos.ToString("N1")%</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Impressions.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Clicks.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm">@campaign.Orders.ToString("N0")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="text-sm font-weight-bold @(campaign.Roas > 1 ? "text-success" : "text-danger")">
+                                                        @campaign.Roas.ToString("N2")x
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Setup Instructions -->
+    @if (Model.Connection?.IsConnected != true && Model.AvailableProfiles.Count == 0)
+    {
+        <div class="row mt-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Setup Instructions</h6>
+                    </div>
+                    <div class="card-body">
+                        <ol class="ps-3">
+                            <li class="mb-2">Click <strong>"Connect Amazon Ads"</strong> to start the Login with Amazon flow.</li>
+                            <li class="mb-2">Log in to your Amazon account and authorize the app.</li>
+                            <li class="mb-2">Select the advertising profile (marketplace) you want to connect.</li>
+                            <li class="mb-2">Your campaign data will automatically sync every 6 hours.</li>
+                        </ol>
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Requirements:</strong> You need an Amazon Advertising account with active campaigns (Sponsored Products, Brands, or Display).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
