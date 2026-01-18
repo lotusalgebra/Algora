@@ -247,6 +247,15 @@ public static class DependencyInjection
         services.AddScoped<IAmazonAdsService, Services.Advertising.AmazonAdsService>();
         services.AddHostedService<Services.Advertising.AmazonAdsSyncBackgroundService>();
 
+        // ----- Bing Ads Integration -----
+        services.AddHttpClient("BingAds", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(60);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        services.AddScoped<IBingAdsService, Services.Advertising.BingAdsService>();
+        services.AddHostedService<Services.Advertising.BingAdsSyncBackgroundService>();
+
         // ----- Reporting -----
         services.AddScoped<IReportingService, Services.Reporting.ReportingService>();
 

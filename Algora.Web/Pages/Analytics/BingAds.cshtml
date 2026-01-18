@@ -1,0 +1,438 @@
+@page
+@model Algora.Web.Pages.Analytics.BingAdsModel
+@{
+    ViewData["Title"] = "Microsoft Advertising";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary">
+                <div class="card-body p-3">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="icon icon-lg icon-shape bg-white shadow-primary text-center border-radius-xl">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 23 23" fill="none">
+                                    <path d="M1.5 21.5V8.5L8 1.5L21.5 8.5V21.5H1.5Z" fill="#00A4EF"/>
+                                    <path d="M1.5 8.5L8 1.5V8.5H1.5Z" fill="#FFB900"/>
+                                    <path d="M8 8.5V21.5H1.5V8.5H8Z" fill="#7FBA00"/>
+                                    <path d="M8 8.5H21.5V21.5H8V8.5Z" fill="#F25022"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h5 class="text-white mb-0">Microsoft Advertising</h5>
+                            <p class="text-white text-sm mb-0 opacity-8">
+                                Connect your Microsoft Advertising (Bing Ads) account to sync campaign performance data
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            @if (Model.Connection?.IsConnected == true)
+                            {
+                                <span class="badge bg-success">Connected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Not Connected</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span class="alert-icon"><i class="fas fa-check-circle"></i></span>
+            <span class="alert-text">@Model.SuccessMessage</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span class="alert-icon"><i class="fas fa-exclamation-circle"></i></span>
+            <span class="alert-text">@Model.ErrorMessage</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Account Selection (after OAuth) -->
+    @if (Model.AvailableAccounts.Count > 0 && Model.Connection?.IsConnected != true)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Select Advertising Account</h6>
+                        <p class="text-sm text-secondary mb-0">Choose the Microsoft Advertising account to connect</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-page-handler="SelectAccount">
+                            <input type="hidden" asp-for="AccessToken" />
+                            <input type="hidden" asp-for="RefreshToken" />
+                            <div class="row">
+                                @foreach (var account in Model.AvailableAccounts)
+                                {
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="card card-body border @(Model.SelectedAccountId == account.AccountId ? "border-primary" : "") cursor-pointer"
+                                             onclick="document.getElementById('account_@account.AccountId').checked = true; this.closest('form').querySelector('.account-card.border-primary')?.classList.remove('border-primary'); this.classList.add('border-primary');">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="SelectedAccountId"
+                                                       id="account_@account.AccountId" value="@account.AccountId"
+                                                       data-customer-id="@account.CustomerId"
+                                                       onchange="document.getElementById('SelectedCustomerId').value = this.dataset.customerId">
+                                                <label class="form-check-label" for="account_@account.AccountId">
+                                                    <strong>@account.AccountName</strong>
+                                                    <br />
+                                                    <small class="text-muted">
+                                                        Account #@account.AccountNumber
+                                                        <br />
+                                                        @account.Currency | @account.TimeZone
+                                                    </small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <input type="hidden" asp-for="SelectedCustomerId" />
+                            <button type="submit" class="btn bg-gradient-primary mt-3">
+                                <i class="fas fa-link me-2"></i>Connect Selected Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Connection?.IsConnected != true && Model.AvailableAccounts.Count == 0)
+    {
+        <!-- Connection Card -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <div class="icon icon-xl icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 23 23" fill="none">
+                                <rect width="11" height="11" fill="#F25022"/>
+                                <rect x="12" width="11" height="11" fill="#7FBA00"/>
+                                <rect y="12" width="11" height="11" fill="#00A4EF"/>
+                                <rect x="12" y="12" width="11" height="11" fill="#FFB900"/>
+                            </svg>
+                        </div>
+                        <h4>Connect Microsoft Advertising</h4>
+                        <p class="text-secondary mb-4">
+                            Link your Microsoft Advertising account to track campaign performance,
+                            analyze ROI, and make data-driven decisions for your Bing and Microsoft Search ads.
+                        </p>
+                        <ul class="list-unstyled text-start mx-auto" style="max-width: 400px;">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Track Search, Shopping, and Audience campaigns</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Monitor spend, clicks, conversions, and ROAS</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Automatic daily data synchronization</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Compare performance with other ad platforms</li>
+                        </ul>
+                        <form method="post" asp-page-handler="Connect" class="mt-4">
+                            <button type="submit" class="btn bg-gradient-primary btn-lg">
+                                <i class="fab fa-microsoft me-2"></i>Connect with Microsoft
+                            </button>
+                        </form>
+                        <p class="text-xs text-secondary mt-3">
+                            You'll be redirected to Microsoft to authorize access
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.Connection?.IsConnected == true)
+    {
+        <!-- Period Selector -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <div class="d-flex align-items-center">
+                                <span class="text-sm me-3">Date Range:</span>
+                                <div class="btn-group" role="group">
+                                    <a href="?Period=7days" class="btn btn-sm @(Model.Period == "7days" ? "btn-primary" : "btn-outline-primary")">7 Days</a>
+                                    <a href="?Period=30days" class="btn btn-sm @(Model.Period == "30days" ? "btn-primary" : "btn-outline-primary")">30 Days</a>
+                                    <a href="?Period=90days" class="btn btn-sm @(Model.Period == "90days" ? "btn-primary" : "btn-outline-primary")">90 Days</a>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form method="post" asp-page-handler="Sync" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-sync-alt me-1"></i>Sync Now
+                                    </button>
+                                </form>
+                                <form method="post" asp-page-handler="Disconnect" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to disconnect Microsoft Advertising?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-unlink me-1"></i>Disconnect
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Info -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <div>
+                                <span class="badge bg-gradient-primary me-2">@Model.Connection.AccountName</span>
+                                <span class="text-sm text-secondary">Account ID: @Model.Connection.AccountId</span>
+                            </div>
+                            <div class="text-sm text-secondary">
+                                @if (Model.Connection.LastSyncedAt.HasValue)
+                                {
+                                    <span>Last synced: @Model.Connection.LastSyncedAt.Value.ToString("MMM dd, yyyy HH:mm") UTC</span>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Connection.LastSyncError))
+                                {
+                                    <span class="text-danger ms-2" title="@Model.Connection.LastSyncError">
+                                        <i class="fas fa-exclamation-triangle"></i> Sync Error
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        @if (Model.Summary != null)
+        {
+            <div class="row mb-4">
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="numbers">
+                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Spend</p>
+                                        <h5 class="font-weight-bolder">$@Model.Summary.TotalSpend.ToString("N2")</h5>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
+                                        <i class="fas fa-dollar-sign text-lg opacity-10"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="numbers">
+                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Revenue</p>
+                                        <h5 class="font-weight-bolder">$@Model.Summary.TotalConversionValue.ToString("N2")</h5>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
+                                        <i class="fas fa-chart-line text-lg opacity-10"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="numbers">
+                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">ROAS</p>
+                                        <h5 class="font-weight-bolder">@Model.Summary.Roas.ToString("N2")x</h5>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <div class="icon icon-shape bg-gradient-info shadow-info text-center rounded-circle">
+                                        <i class="fas fa-percentage text-lg opacity-10"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="numbers">
+                                        <p class="text-sm mb-0 text-uppercase font-weight-bold">Conversions</p>
+                                        <h5 class="font-weight-bolder">@Model.Summary.TotalConversions.ToString("N0")</h5>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                                        <i class="fas fa-shopping-cart text-lg opacity-10"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="row mb-4">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="mb-0">Impressions</h6>
+                            <h3 class="mb-0">@Model.Summary.TotalImpressions.ToString("N0")</h3>
+                            <p class="text-sm text-secondary mb-0">Total ad views</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="mb-0">Clicks</h6>
+                            <h3 class="mb-0">@Model.Summary.TotalClicks.ToString("N0")</h3>
+                            <p class="text-sm text-secondary mb-0">
+                                CTR: @Model.Summary.Ctr.ToString("N2")% | CPC: $@Model.Summary.Cpc.ToString("N2")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h6 class="mb-0">Active Campaigns</h6>
+                            <h3 class="mb-0">@Model.Summary.ActiveCampaigns</h3>
+                            <p class="text-sm text-secondary mb-0">
+                                Search: @Model.Summary.SearchCampaigns | Shopping: @Model.Summary.ShoppingCampaigns | Audience: @Model.Summary.AudienceCampaigns
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Campaigns Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h6>Campaigns</h6>
+                    </div>
+                    <div class="card-body px-0 pt-0 pb-2">
+                        @if (Model.Campaigns.Count > 0)
+                        {
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Campaign</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Spend</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Impressions</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Clicks</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">CTR</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Conversions</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Revenue</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ROAS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var campaign in Model.Campaigns)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">@campaign.CampaignName</h6>
+                                                            <p class="text-xs text-secondary mb-0">
+                                                                <span class="badge badge-sm @(campaign.Status == "Active" ? "bg-gradient-success" : "bg-gradient-secondary")">
+                                                                    @campaign.Status
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-sm @GetCampaignTypeBadgeClass(campaign.CampaignType)">
+                                                        @campaign.CampaignType
+                                                    </span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">$@campaign.Spend.ToString("N2")</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">@campaign.Impressions.ToString("N0")</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">@campaign.Clicks.ToString("N0")</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">@campaign.Ctr.ToString("N2")%</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">@campaign.Conversions.ToString("N0")</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">$@(campaign.ConversionValue?.ToString("N2") ?? "0.00")</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span class="text-secondary text-xs font-weight-bold">@(campaign.Roas?.ToString("N2") ?? "0.00")x</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-chart-bar fa-3x text-secondary mb-3"></i>
+                                <p class="text-secondary">No campaign data available for this period.</p>
+                                <form method="post" asp-page-handler="Sync">
+                                    <button type="submit" class="btn btn-sm bg-gradient-primary">
+                                        <i class="fas fa-sync-alt me-1"></i>Sync Data
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetCampaignTypeBadgeClass(string campaignType)
+    {
+        return campaignType?.ToLower() switch
+        {
+            "search" => "bg-gradient-primary",
+            "shopping" => "bg-gradient-success",
+            "audience" => "bg-gradient-info",
+            "dynamicsearchads" => "bg-gradient-warning",
+            _ => "bg-gradient-secondary"
+        };
+    }
+}
