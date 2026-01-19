@@ -1,0 +1,377 @@
+@page "/customer-hub/portal-returns/details/{id:int}"
+@model Algora.Web.Pages.CustomerHub.PortalReturns.DetailsModel
+@using Algora.Application.DTOs.CustomerHub
+@{
+    ViewData["Title"] = $"Return Request #{Model.ReturnRequest?.Id}";
+}
+
+<div class="p-4">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4">
+            <a href="/customer-hub/portal-returns" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                    Return Request #@Model.ReturnRequest?.Id
+                </h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Order @Model.ReturnRequest?.OrderNumber
+                </p>
+            </div>
+        </div>
+        @if (Model.ReturnRequest != null)
+        {
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r @Model.GetStatusBadgeClass(Model.ReturnRequest.Status) text-white">
+                @Model.ReturnRequest.Status
+            </span>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+            <p class="text-sm text-red-700 dark:text-red-300">
+                <i class="fas fa-exclamation-circle me-2"></i>@Model.ErrorMessage
+            </p>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+            <p class="text-sm text-green-700 dark:text-green-300">
+                <i class="fas fa-check-circle me-2"></i>@Model.SuccessMessage
+            </p>
+        </div>
+    }
+
+    @if (Model.ReturnRequest != null)
+    {
+        var request = Model.ReturnRequest;
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Request Details -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Request Details</h2>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Request Type</p>
+                            <p class="font-medium text-gray-900 dark:text-white">@request.RequestType</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Preferred Resolution</p>
+                            <p class="font-medium text-gray-900 dark:text-white">
+                                @(request.PreferredResolution switch
+                                {
+                                    "Refund" => "Full Refund",
+                                    "StoreCredit" => "Store Credit",
+                                    "Exchange" => "Exchange Item",
+                                    _ => request.PreferredResolution
+                                })
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Submitted</p>
+                            <p class="font-medium text-gray-900 dark:text-white">@request.CreatedAt.ToString("MMM d, yyyy h:mm tt")</p>
+                        </div>
+                        @if (request.ResolvedAt.HasValue)
+                        {
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400">Resolved</p>
+                                <p class="font-medium text-gray-900 dark:text-white">@request.ResolvedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Reason</p>
+                        <p class="font-medium text-gray-900 dark:text-white">@request.Reason</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(request.AdditionalComments))
+                    {
+                        <div class="mt-4">
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Additional Comments</p>
+                            <p class="text-gray-900 dark:text-white text-sm mt-1">@request.AdditionalComments</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(request.ReturnTrackingNumber))
+                    {
+                        <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <p class="text-blue-700 dark:text-blue-300 text-sm">
+                                <i class="fas fa-shipping-fast me-2"></i>
+                                Return Tracking: <span class="font-mono font-medium">@request.ReturnTrackingNumber</span>
+                            </p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Items -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Items (@request.Items.Sum(i => i.Quantity))
+                    </h2>
+                    <div class="space-y-4">
+                        @foreach (var item in request.Items)
+                        {
+                            <div class="flex gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-600 flex-shrink-0">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Title" class="w-full h-full object-cover" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                            <i class="fas fa-image text-2xl"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-gray-900 dark:text-white">@item.Title</p>
+                                    @if (!string.IsNullOrEmpty(item.VariantTitle))
+                                    {
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">@item.VariantTitle</p>
+                                    }
+                                    <div class="flex flex-wrap gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        <span>Qty: @item.Quantity</span>
+                                        <span>Condition: @item.Condition</span>
+                                        @if (!string.IsNullOrEmpty(item.Sku))
+                                        {
+                                            <span>SKU: @item.Sku</span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(item.ItemReason))
+                                    {
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            <i class="fas fa-comment me-1"></i>@item.ItemReason
+                                        </p>
+                                    }
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-gray-900 dark:text-white">@item.TotalPrice.ToString("C")</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">@item.UnitPrice.ToString("C") each</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+                        <span class="font-semibold text-gray-900 dark:text-white">Total Value</span>
+                        <span class="text-xl font-bold text-purple-600 dark:text-purple-400">
+                            @request.Items.Sum(i => i.TotalPrice).ToString("C")
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Actions (if pending or approved) -->
+                @if (request.Status == "Pending" || request.Status == "Approved" || request.Status == "Processing")
+                {
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h2>
+
+                        @if (request.Status == "Pending")
+                        {
+                            <div class="space-y-4">
+                                <!-- Approve Form -->
+                                <form method="post" asp-page-handler="Approve" asp-route-id="@request.Id"
+                                      class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <h3 class="font-medium text-green-800 dark:text-green-200 mb-3">
+                                        <i class="fas fa-check-circle me-2"></i>Approve Return
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-green-700 dark:text-green-300 mb-1">
+                                                Return Label URL (optional)
+                                            </label>
+                                            <input type="url" name="ReturnLabelUrl" asp-for="ReturnLabelUrl"
+                                                   placeholder="https://..."
+                                                   class="w-full px-3 py-2 text-sm border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-green-700 dark:text-green-300 mb-1">
+                                                Admin Notes (optional)
+                                            </label>
+                                            <textarea name="AdminNotes" asp-for="AdminNotes" rows="2"
+                                                      placeholder="Add any notes for the customer..."
+                                                      class="w-full px-3 py-2 text-sm border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700"></textarea>
+                                        </div>
+                                        <button type="submit"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg">
+                                            <i class="fas fa-check me-2"></i>Approve Return Request
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <!-- Reject Form -->
+                                <form method="post" asp-page-handler="Reject" asp-route-id="@request.Id"
+                                      class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                    <h3 class="font-medium text-red-800 dark:text-red-200 mb-3">
+                                        <i class="fas fa-times-circle me-2"></i>Reject Return
+                                    </h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-red-700 dark:text-red-300 mb-1">
+                                                Rejection Reason <span class="text-red-500">*</span>
+                                            </label>
+                                            <textarea name="RejectReason" asp-for="RejectReason" rows="2" required
+                                                      placeholder="Explain why this return is being rejected..."
+                                                      class="w-full px-3 py-2 text-sm border border-red-300 dark:border-red-600 rounded-lg bg-white dark:bg-gray-700"></textarea>
+                                        </div>
+                                        <button type="submit"
+                                                onclick="return confirm('Are you sure you want to reject this return request?')"
+                                                class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
+                                            <i class="fas fa-times me-2"></i>Reject Return Request
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                        else if (request.Status == "Approved" || request.Status == "Processing")
+                        {
+                            <!-- Complete Form -->
+                            <form method="post" asp-page-handler="Complete" asp-route-id="@request.Id"
+                                  class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                                <h3 class="font-medium text-purple-800 dark:text-purple-200 mb-3">
+                                    <i class="fas fa-check-double me-2"></i>Complete Return & Issue Refund
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
+                                            Refund Amount <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                                            <input type="number" step="0.01" name="RefundAmount" asp-for="RefundAmount" required
+                                                   class="w-full pl-8 pr-3 py-2 text-sm border border-purple-300 dark:border-purple-600 rounded-lg bg-white dark:bg-gray-700" />
+                                        </div>
+                                        <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                                            Suggested: @request.Items.Sum(i => i.TotalPrice).ToString("C")
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-purple-700 dark:text-purple-300 mb-1">
+                                            Final Notes (optional)
+                                        </label>
+                                        <textarea name="AdminNotes" asp-for="AdminNotes" rows="2"
+                                                  placeholder="Add any final notes..."
+                                                  class="w-full px-3 py-2 text-sm border border-purple-300 dark:border-purple-600 rounded-lg bg-white dark:bg-gray-700"></textarea>
+                                    </div>
+                                    <button type="submit"
+                                            onclick="return confirm('Complete this return and issue the refund?')"
+                                            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg">
+                                        <i class="fas fa-check-double me-2"></i>Complete Return & Issue Refund
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Customer Info -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Customer</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                                <i class="fas fa-user text-purple-600 dark:text-purple-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900 dark:text-white break-all">@request.CustomerEmail</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Summary</h2>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 dark:text-gray-400">Items</span>
+                            <span class="font-medium text-gray-900 dark:text-white">@request.Items.Sum(i => i.Quantity)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500 dark:text-gray-400">Request Value</span>
+                            <span class="font-medium text-gray-900 dark:text-white">@request.Items.Sum(i => i.TotalPrice).ToString("C")</span>
+                        </div>
+                        @if (request.RefundAmount.HasValue)
+                        {
+                            <div class="flex justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <span class="font-semibold text-gray-900 dark:text-white">Refunded</span>
+                                <span class="font-bold text-green-600 dark:text-green-400">@request.RefundAmount.Value.ToString("C")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Admin Notes (if completed/rejected) -->
+                @if (!string.IsNullOrEmpty(request.AdminNotes) && (request.Status == "Completed" || request.Status == "Rejected"))
+                {
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Admin Notes</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">@request.AdminNotes</p>
+                    </div>
+                }
+
+                <!-- Return Label -->
+                @if (!string.IsNullOrEmpty(request.ReturnLabelUrl))
+                {
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Return Label</h2>
+                        <a href="@request.ReturnLabelUrl" target="_blank"
+                           class="inline-flex items-center text-sm text-purple-600 dark:text-purple-400 hover:underline">
+                            <i class="fas fa-external-link-alt me-2"></i>View Return Label
+                        </a>
+                    </div>
+                }
+
+                <!-- Update Notes (for approved/processing) -->
+                @if (request.Status == "Approved" || request.Status == "Processing")
+                {
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Update Details</h2>
+                        <form method="post" asp-page-handler="UpdateNotes" asp-route-id="@request.Id">
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Return Label URL</label>
+                                    <input type="url" name="ReturnLabelUrl" asp-for="ReturnLabelUrl"
+                                           placeholder="https://..."
+                                           class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Admin Notes</label>
+                                    <textarea name="AdminNotes" asp-for="AdminNotes" rows="3"
+                                              class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"></textarea>
+                                </div>
+                                <button type="submit" class="w-full px-4 py-2 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-lg">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
+            <i class="fas fa-search text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Return request not found</h6>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">The requested return could not be found.</p>
+            <a href="/customer-hub/portal-returns"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg">
+                <i class="fas fa-arrow-left me-2"></i>Back to Returns
+            </a>
+        </div>
+    }
+</div>

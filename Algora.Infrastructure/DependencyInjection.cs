@@ -283,6 +283,15 @@ public static class DependencyInjection
         services.AddScoped<IChatbotBridgeService, ChatbotBridgeService>();
         services.AddHostedService<LoyaltyBackgroundService>();
 
+        // ----- Portal Return Admin (connects to CustomerPortal database) -----
+        var portalConnectionString = configuration.GetConnectionString("Portal");
+        if (!string.IsNullOrEmpty(portalConnectionString))
+        {
+            services.AddDbContext<PortalAdminDbContext>(o => o.UseSqlServer(portalConnectionString));
+            services.AddScoped<IPortalReturnAdminService, PortalReturnAdminService>();
+            services.AddScoped<IPortalReturnNotificationService, PortalReturnNotificationService>();
+        }
+
         // HttpClient for Chatbot API Bridge
         services.AddHttpClient<IChatbotBridgeService, ChatbotBridgeService>(client =>
         {
