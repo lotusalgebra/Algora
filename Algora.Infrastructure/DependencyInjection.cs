@@ -11,6 +11,7 @@ using Algora.Infrastructure.Services;
 using Algora.Infrastructure.Services.Communication;
 using Algora.Infrastructure.Services.Operations;
 using Algora.Infrastructure.Services.CustomerHub;
+using Algora.Infrastructure.Services.CustomerPortal;
 using Algora.Infrastructure.Services.Scrapers;
 using Algora.Infrastructure.Shopify;
 using Algora.Infrastructure.Shopify.Billing;
@@ -282,6 +283,9 @@ public static class DependencyInjection
         services.AddScoped<ILoyaltyService, LoyaltyService>();
         services.AddScoped<IChatbotBridgeService, ChatbotBridgeService>();
         services.AddHostedService<LoyaltyBackgroundService>();
+
+        // ----- Customer Portal Theme -----
+        services.AddScoped<IPortalThemeService, PortalThemeService>();
 
         // ----- Portal Return Admin (connects to CustomerPortal database) -----
         var portalConnectionString = configuration.GetConnectionString("Portal");

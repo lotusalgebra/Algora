@@ -162,6 +162,9 @@ namespace Algora.Infrastructure.Data
         public DbSet<ProductSeoData> ProductSeoData { get; set; } = null!;
         public DbSet<PricingSuggestion> PricingSuggestions { get; set; } = null!;
 
+        // ----- Customer Portal entities -----
+        public DbSet<PortalThemeSettings> PortalThemeSettings { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1504,6 +1507,25 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.Provider).IsRequired().HasMaxLength(50);
                 b.HasIndex(x => x.ProductId);
                 b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ==================== CUSTOMER PORTAL ENTITIES ====================
+
+            modelBuilder.Entity<PortalThemeSettings>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.StoreName).HasMaxLength(200);
+                b.Property(x => x.LogoUrl).HasMaxLength(500);
+                b.Property(x => x.FaviconUrl).HasMaxLength(500);
+                b.Property(x => x.PrimaryColor).HasMaxLength(20);
+                b.Property(x => x.SecondaryColor).HasMaxLength(20);
+                b.Property(x => x.AccentColor).HasMaxLength(20);
+                b.Property(x => x.FontFamily).HasMaxLength(100);
+                b.Property(x => x.HeadingFontFamily).HasMaxLength(100);
+                b.Property(x => x.ButtonStyle).HasMaxLength(20);
+                b.Property(x => x.CardStyle).HasMaxLength(20);
+                b.HasIndex(x => x.ShopDomain).IsUnique();
             });
 
         }

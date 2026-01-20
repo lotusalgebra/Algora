@@ -1,5 +1,5 @@
-using Algora.CustomerPortal.Application.DTOs;
-using Algora.CustomerPortal.Application.Interfaces;
+using Algora.Application.DTOs.CustomerPortal;
+using Algora.Application.Interfaces;
 using Algora.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
