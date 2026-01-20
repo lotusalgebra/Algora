@@ -12,7 +12,7 @@ Algora is a comprehensive e-commerce management platform built with ASP.NET Core
 | **Free** | $0 | 100 | 50 | Basic features |
 | **Basic** | $99 | 500 | 250 | WhatsApp, Email Campaigns |
 | **Premium** | $199 | 2,000 | 1,000 | +SMS, Advanced Reports |
-| **Enterprise** | $299 | Unlimited | Unlimited | +API Access, Full features |
+| **Enterprise** | $299 | Unlimited | Unlimited | +API Access, Customer Portal, Full features |
 
 ---
 
@@ -236,6 +236,57 @@ Algora is a comprehensive e-commerce management platform built with ASP.NET Core
 | Feature | URL | Description |
 |---------|-----|-------------|
 | Plan Requests | `/admin/planrequests` | Manage plan upgrade/downgrade requests |
+| Clients | `/admin/clients` | View and manage all clients |
+| Plan Features | `/admin/plan-features` | Configure features available per plan |
+
+---
+
+### CUSTOMER PORTAL (Enterprise Only)
+
+> **Note:** The Customer Portal is a standalone branded portal for your customers. It runs as a separate application and is only available on the Enterprise plan.
+
+#### Authentication
+| Feature | URL | Description |
+|---------|-----|-------------|
+| Login | `/Auth/Login` | Customer login with email/password |
+| Register | `/Auth/Register` | Customer registration with custom fields |
+| Forgot Password | `/Auth/ForgotPassword` | Password reset request |
+| Reset Password | `/Auth/ResetPassword` | Password reset with token |
+
+#### Orders
+| Feature | URL | Description |
+|---------|-----|-------------|
+| Order History | `/Orders` | View all customer orders with filtering |
+| Order Details | `/Orders/Details/{id}` | View order details, tracking, invoice download |
+| Reorder | - | One-click reorder from previous orders |
+
+#### Returns
+| Feature | URL | Description |
+|---------|-----|-------------|
+| Request Return | `/Orders/RequestReturn/{id}` | Submit return/exchange request |
+| Return Status | `/Orders/ReturnStatus/{id}` | Track return request status |
+| Return History | `/Orders/Returns` | View all return requests |
+
+#### Account
+| Feature | URL | Description |
+|---------|-----|-------------|
+| Profile | `/Account/Profile` | View and edit profile information |
+| Change Password | `/Account/ChangePassword` | Update account password |
+
+#### Theme Configuration (Admin)
+| Setting | Description |
+|---------|-------------|
+| Logo & Branding | Custom logo, favicon, store name |
+| Colors | Primary, secondary, accent, background colors |
+| Typography | Font family for body and headings |
+| Button Style | Rounded, pill, or square buttons |
+| Custom CSS | Additional CSS overrides |
+
+#### Custom Fields (Admin)
+| Page | Default Fields | Custom Fields |
+|------|----------------|---------------|
+| Registration | Email, Password, First Name, Last Name | Phone, Date of Birth, Address, Custom |
+| Profile | First Name, Last Name, Email, Phone | Date of Birth, Address, Custom |
 
 ---
 
