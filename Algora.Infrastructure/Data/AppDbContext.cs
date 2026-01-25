@@ -164,6 +164,7 @@ namespace Algora.Infrastructure.Data
 
         // ----- Customer Portal entities -----
         public DbSet<PortalThemeSettings> PortalThemeSettings { get; set; } = null!;
+        public DbSet<PortalFieldConfiguration> PortalFieldConfigurations { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -1526,6 +1527,24 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ButtonStyle).HasMaxLength(20);
                 b.Property(x => x.CardStyle).HasMaxLength(20);
                 b.HasIndex(x => x.ShopDomain).IsUnique();
+            });
+
+            modelBuilder.Entity<PortalFieldConfiguration>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.ShopDomain).IsRequired().HasMaxLength(200);
+                b.Property(x => x.PageType).IsRequired().HasMaxLength(50);
+                b.Property(x => x.FieldName).IsRequired().HasMaxLength(100);
+                b.Property(x => x.FieldType).IsRequired().HasMaxLength(50);
+                b.Property(x => x.Label).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Placeholder).HasMaxLength(500);
+                b.Property(x => x.HelpText).HasMaxLength(500);
+                b.Property(x => x.ValidationRegex).HasMaxLength(500);
+                b.Property(x => x.ValidationMessage).HasMaxLength(500);
+                b.Property(x => x.DefaultValue).HasMaxLength(500);
+                b.Property(x => x.CssClass).HasMaxLength(200);
+                b.HasIndex(x => new { x.ShopDomain, x.PageType, x.FieldName }).IsUnique();
+                b.HasIndex(x => new { x.ShopDomain, x.PageType, x.DisplayOrder });
             });
 
         }

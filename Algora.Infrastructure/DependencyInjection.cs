@@ -284,8 +284,9 @@ public static class DependencyInjection
         services.AddScoped<IChatbotBridgeService, ChatbotBridgeService>();
         services.AddHostedService<LoyaltyBackgroundService>();
 
-        // ----- Customer Portal Theme -----
+        // ----- Customer Portal Theme & Fields -----
         services.AddScoped<IPortalThemeService, PortalThemeService>();
+        services.AddScoped<IPortalFieldService, PortalFieldService>();
 
         // ----- Portal Return Admin (connects to CustomerPortal database) -----
         var portalConnectionString = configuration.GetConnectionString("Portal");
