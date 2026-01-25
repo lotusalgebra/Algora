@@ -1543,6 +1543,8 @@ namespace Algora.Infrastructure.Data
                 b.Property(x => x.ValidationMessage).HasMaxLength(500);
                 b.Property(x => x.DefaultValue).HasMaxLength(500);
                 b.Property(x => x.CssClass).HasMaxLength(200);
+                b.Property(x => x.MinValue).HasPrecision(18, 2);
+                b.Property(x => x.MaxValue).HasPrecision(18, 2);
                 b.HasIndex(x => new { x.ShopDomain, x.PageType, x.FieldName }).IsUnique();
                 b.HasIndex(x => new { x.ShopDomain, x.PageType, x.DisplayOrder });
             });
